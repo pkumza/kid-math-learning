@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>运算王国大冒险 · 数学小课堂</title>
+<style>
+  :root{
+    --blue:#2563EB; --orange:#EA580C; --green:#16A34A; --purple:#7C3AED;
+    --ink:#1F2937; --soft:#6B7280; --card:#fff;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",
+      "Hiragino Sans GB","Helvetica Neue",sans-serif;
+    color:var(--ink);
+    background:linear-gradient(160deg,#EAF4FF 0%,#FFF6EC 55%,#FDEFF6 100%);
+    min-height:100vh;
+  }
+  .wrap{max-width:780px; margin:0 auto; padding:10px 16px 50px;}
+
+  header{display:flex; align-items:center; justify-content:space-between; padding:10px 4px;}
+  .brand{display:flex; align-items:center; gap:10px; font-weight:800; font-size:1.2rem;}
+  .brand .fox{font-size:1.8rem;}
+  .brand small{color:var(--soft); font-weight:600; font-size:.8rem; display:block;}
+  .icon-btn{
+    border:none; background:#fff; border-radius:14px; width:44px; height:44px;
+    font-size:1.25rem; cursor:pointer; box-shadow:0 3px 8px rgba(0,0,0,.08); transition:transform .1s;
+  }
+  .icon-btn:active{transform:scale(.92);}
+
+  .hero{text-align:center; background:#fff; border-radius:28px; padding:24px 18px;
+    box-shadow:0 12px 30px rgba(80,90,130,.12); margin-bottom:20px;}
+  .hero .map{font-size:3.6rem;}
+  .hero h1{font-size:1.9rem; margin:.1em 0 .15em;}
+  .hero p{color:var(--soft); font-size:1.02rem; line-height:1.7; margin:.3em 0;}
+  .hero .guide{display:inline-flex; align-items:center; gap:8px; margin-top:8px;
+    background:#F5F3FF; color:var(--purple); font-weight:800; padding:8px 16px; border-radius:999px;}
+
+  .module{margin:22px 0 8px;}
+  .module-head{display:flex; align-items:center; gap:10px; font-size:1.15rem; font-weight:800; margin:6px 4px 12px;}
+  .module-head .ic{font-size:1.5rem;}
+  .module-head .bar{flex:1; height:3px; border-radius:3px; background:linear-gradient(90deg,currentColor,transparent); opacity:.25;}
+  .m-laws{color:var(--purple);} .m-mul{color:var(--blue);} .m-div{color:var(--green);} .m-frac{color:var(--orange);}
+  .m-nums{color:#0D9488;} .m-life{color:#DB2777;} .m-shop{color:#D97706;} .m-meas{color:#4F46E5;}
+
+  .stop{
+    display:flex; align-items:center; gap:14px; text-decoration:none; color:inherit;
+    background:var(--card); border-radius:22px; padding:16px 18px; margin-bottom:12px;
+    box-shadow:0 6px 16px rgba(80,90,130,.10); transition:transform .12s, box-shadow .12s;
+    border:2px solid transparent; position:relative;
+  }
+  .stop:hover{transform:translateY(-3px); box-shadow:0 12px 24px rgba(80,90,130,.16);}
+  .stop:active{transform:scale(.99);}
+  .num{
+    flex:none; width:46px; height:46px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-weight:900; font-size:1.3rem; color:#fff; box-shadow:0 4px 10px rgba(0,0,0,.15);
+  }
+  .stop .emoji{font-size:2rem; flex:none;}
+  .stop .body{flex:1; min-width:0;}
+  .stop .title{font-weight:800; font-size:1.18rem; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+  .stop .desc{color:var(--soft); font-size:.92rem; margin-top:2px; line-height:1.5;}
+  .stop .go{font-size:1.5rem; color:var(--soft); flex:none;}
+  .tag{font-size:.72rem; font-weight:800; padding:3px 9px; border-radius:999px; color:#fff;}
+  .tag.new{background:var(--orange);}
+  .tag.learned{background:var(--green);}
+  .tag.known{background:#9CA3AF;}
+  .visited-star{position:absolute; top:-8px; right:-6px; font-size:1.4rem; filter:drop-shadow(0 2px 2px rgba(0,0,0,.2)); display:none;}
+  .stop.done .visited-star{display:block;}
+  .stop.done{border-color:#BBF7D0;}
+  .progress-card{background:#fff; border-radius:20px; padding:16px 18px; margin-bottom:18px; box-shadow:0 6px 16px rgba(80,90,130,.10);}
+  .progress-top{display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap;}
+  .progress-label{font-weight:800;}
+  .progress-count{color:var(--soft); font-weight:700;}
+  .progress-count b{color:var(--purple); font-size:1.2rem;}
+  .reset-btn{margin-left:auto; border:none; background:#F3F4F6; color:#6B7280; font-weight:700; padding:7px 14px; border-radius:12px; cursor:pointer; font-size:.85rem;}
+  .reset-btn:active{transform:scale(.95);}
+  .progress-track{height:14px; border-radius:999px; background:#EEF2F7; overflow:hidden;}
+  .progress-fill{height:100%; width:0; border-radius:999px; background:linear-gradient(90deg,#4ADE80,#16A34A); transition:width .5s ease;}
+  /* 排序切换 */
+  .view-toggle{display:flex; gap:8px; justify-content:center; margin:2px 0 16px;}
+  .vt-btn{border:none; cursor:pointer; font-weight:800; font-size:.92rem; padding:9px 18px; border-radius:999px; background:#fff; color:var(--soft); box-shadow:0 2px 6px rgba(0,0,0,.06); transition:transform .1s;}
+  .vt-btn.active{background:var(--purple); color:#fff; box-shadow:0 4px 10px rgba(124,58,237,.35);}
+  .vt-btn:active{transform:scale(.95);}
+  #mapBody.flat{display:flex; flex-direction:column;}
+  #mapBody.flat .module{display:contents;}
+  #mapBody.flat .module-head{display:none;}
+  #mapBody.flat .known-card{display:none;}
+
+  .laws .num{background:linear-gradient(135deg,#A78BFA,#7C3AED);}
+  .mul .num{background:linear-gradient(135deg,#60A5FA,#2563EB);}
+  .div .num{background:linear-gradient(135deg,#4ADE80,#16A34A);}
+  .frac .num{background:linear-gradient(135deg,#FB923C,#EA580C);}
+  .nums .num{background:linear-gradient(135deg,#2DD4BF,#0D9488);}
+  .life .num{background:linear-gradient(135deg,#F472B6,#DB2777);}
+  .shop .num{background:linear-gradient(135deg,#FBBF24,#D97706);}
+  .meas .num{background:linear-gradient(135deg,#818CF8,#4F46E5);}
+
+  .known-card{
+    display:flex; align-items:center; gap:14px; background:#F3F4F6; border-radius:18px; padding:12px 18px; margin-bottom:12px;
+    border:2px dashed #D1D5DB;
+  }
+  .known-card .emoji{font-size:1.7rem;}
+  .known-card .title{font-weight:800; color:#6B7280;}
+  .known-card .desc{font-size:.85rem; color:#9CA3AF;}
+
+  details{margin-top:18px; background:#fff; border-radius:18px; padding:4px 18px; box-shadow:0 6px 16px rgba(80,90,130,.08);}
+  summary{cursor:pointer; font-weight:800; color:var(--purple); padding:12px 0; list-style:none;}
+  summary::-webkit-details-marker{display:none;}
+  details p{color:#374151; line-height:1.75; font-size:.95rem;}
+  details b{color:var(--ink);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand"><span class="fox">🦊</span><div>运算王国<small>数学小课堂</small></div></div>
+    <button class="icon-btn" id="muteBtn" title="声音开关">🔊</button>
+  </header>
+
+  <div class="hero">
+    <div class="map">🗺️</div>
+    <h1>运算王国大冒险</h1>
+    <p>跟着小狐狸，一关一关闯！<br>每一关都是一个有趣的数学小魔法 ✨</p>
+    <div class="guide">🦊 点一张卡片，开始冒险 →</div>
+  </div>
+
+  <!-- 进度 -->
+  <div class="progress-card">
+    <div class="progress-top">
+      <span class="progress-label">🏆 闯关进度</span>
+      <span class="progress-count"><b id="doneCount">0</b> / <b id="totalCount">36</b> 关</span>
+      <button id="resetBtn" class="reset-btn">重置进度</button>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <div class="view-toggle">
+    <button id="viewFlat" class="vt-btn active">📋 按顺序</button>
+    <button id="viewGrouped" class="vt-btn">🗂️ 按分类</button>
+  </div>
+
+  <div id="mapBody" class="flat">
+
+  <!-- 规律家族 -->
+  <div class="module">
+    <div class="module-head m-laws"><span class="ic">🧮</span>规律家族<span class="bar"></span></div>
+
+    <div class="known-card">
+      <span class="emoji">🔄</span>
+      <div class="body"><div class="title">交换律 <span class="tag known">已掌握</span></div>
+        <div class="desc">3+5=5+3，3×5=5×3 —— 你早就会啦！</div></div>
+    </div>
+
+    <a class="stop laws" href="乘法分配律.html" data-id="fenpei">
+      <span class="visited-star">⭐</span>
+      <div class="num">1</div><span class="emoji">🪄</span>
+      <div class="body"><div class="title">乘法分配律 <span class="tag js-status">新</span></div>
+        <div class="desc">把大乘法切成两块小乘法：6×12 = 6×10 + 6×2</div></div>
+      <span class="go">→</span>
+    </a>
+
+    <a class="stop laws" href="乘法结合律.html" data-id="jiehe">
+      <span class="visited-star">⭐</span>
+      <div class="num">2</div><span class="emoji">🤝</span>
+      <div class="body"><div class="title">乘法结合律 <span class="tag js-status">新</span></div>
+        <div class="desc">三个数相乘，先算哪两个都一样，凑成整十更好算！</div></div>
+      <span class="go">→</span>
+    </a>
+  </div>
+
+  <!-- 乘法进阶 -->
+  <div class="module">
+    <div class="module-head m-mul"><span class="ic">✖️</span>乘法进阶<span class="bar"></span></div>
+    <a class="stop mul" href="两位数乘法.html" data-id="liangwei">
+      <span class="visited-star">⭐</span>
+      <div class="num">3</div><span class="emoji">🔢</span>
+      <div class="body"><div class="title">两位数乘法 <span class="tag js-status">新</span></div>
+        <div class="desc">23×4 怎么算？拆开十位和个位 —— 竖式的秘密！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop mul" href="两位数乘两位数.html" data-id="liangwei2">
+      <span class="visited-star">⭐</span>
+      <div class="num">13</div><span class="emoji">📐</span>
+      <div class="body"><div class="title">两位数乘两位数 <span class="tag js-status">新</span></div>
+        <div class="desc">横竖各切一刀，23×14 分成四块加起来！</div></div>
+      <span class="go">→</span>
+    </a>
+  </div>
+
+  <!-- 除法王国 -->
+  <div class="module">
+    <div class="module-head m-div"><span class="ic">➗</span>除法王国<span class="bar"></span></div>
+    <a class="stop div" href="除法.html" data-id="chufa">
+      <span class="visited-star">⭐</span>
+      <div class="num">4</div><span class="emoji">🍪</span>
+      <div class="body"><div class="title">除法 · 平均分 <span class="tag js-status">新</span></div>
+        <div class="desc">把饼干公平地分给小伙伴，每人一样多！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop div" href="有余数的除法.html" data-id="yushu">
+      <span class="visited-star">⭐</span>
+      <div class="num">5</div><span class="emoji">🕵️</span>
+      <div class="body"><div class="title">有余数的除法 <span class="tag js-status">新</span></div>
+        <div class="desc">分不完怎么办？剩下的叫「余数」，来当小侦探！</div></div>
+      <span class="go">→</span>
+    </a>
+  </div>
+
+  <!-- 新世界 -->
+  <div class="module">
+    <div class="module-head m-frac"><span class="ic">🍕</span>新世界<span class="bar"></span></div>
+    <a class="stop frac" href="分数启蒙.html" data-id="fenshu">
+      <span class="visited-star">⭐</span>
+      <div class="num">6</div><span class="emoji">🍕</span>
+      <div class="body"><div class="title">分数启蒙 <span class="tag js-status">新</span></div>
+        <div class="desc">一块饼分给两个人，一人一半 —— 认识 1/2！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop frac" href="几分之几.html" data-id="jifen">
+      <span class="visited-star">⭐</span>
+      <div class="num">14</div><span class="emoji">🍰</span>
+      <div class="body"><div class="title">几分之几 <span class="tag js-status">新</span></div>
+        <div class="desc">4 份里取 3 份就是 3/4，还能比大小、相加！</div></div>
+      <span class="go">→</span>
+    </a>
+  </div>
+
+  <!-- 数字探秘 -->
+  <div class="module">
+    <div class="module-head m-nums"><span class="ic">🔢</span>数字探秘<span class="bar"></span></div>
+    <a class="stop nums" href="奇数与偶数.html" data-id="qiou">
+      <span class="visited-star">⭐</span>
+      <div class="num">7</div><span class="emoji">👯</span>
+      <div class="body"><div class="title">奇数与偶数 <span class="tag js-status">新</span></div>
+        <div class="desc">两两成对是双数，落单一个是单数！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop nums" href="数字找规律.html" data-id="guilv">
+      <span class="visited-star">⭐</span>
+      <div class="num">8</div><span class="emoji">🔍</span>
+      <div class="body"><div class="title">数字找规律 <span class="tag js-status">新</span></div>
+        <div class="desc">2,4,6,8…下一个是几？找到规律就能猜！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop nums" href="倍数大发现.html" data-id="beishu">
+      <span class="visited-star">⭐</span>
+      <div class="num">9</div><span class="emoji">🪜</span>
+      <div class="body"><div class="title">倍数大发现 <span class="tag js-status">新</span></div>
+        <div class="desc">在百数表上跳着数，看出神奇的条纹规律！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop nums" href="数的组成.html" data-id="weizhi">
+      <span class="visited-star">⭐</span>
+      <div class="num">10</div><span class="emoji">🧱</span>
+      <div class="body"><div class="title">数的组成 <span class="tag js-status">新</span></div>
+        <div class="desc">235 = 2个百 + 3个十 + 5个一，像积木！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop nums" href="平方数.html" data-id="pingfang">
+      <span class="visited-star">⭐</span>
+      <div class="num">16</div><span class="emoji">🟦</span>
+      <div class="body"><div class="title">平方数 <span class="tag js-status">新</span></div>
+        <div class="desc">1,4,9,16…能摆成正方形的数，藏着奇数规律！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop nums" href="质数与合数.html" data-id="zhishu">
+      <span class="visited-star">⭐</span>
+      <div class="num">19</div><span class="emoji">💎</span>
+      <div class="body"><div class="title">质数与合数 <span class="tag js-status">新</span></div>
+        <div class="desc">有的数只能排一排（质数），有的能拼方块（合数）！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop nums" href="因数大发现.html" data-id="yinshu">
+      <span class="visited-star">⭐</span>
+      <div class="num">25</div><span class="emoji">🧩</span>
+      <div class="body"><div class="title">因数大发现 <span class="tag js-status">新</span></div>
+        <div class="desc">12 能摆成 1×12、2×6、3×4，因数就是这些边长！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop nums" href="认识更大的数.html" data-id="dashu">
+      <span class="visited-star">⭐</span>
+      <div class="num">26</div><span class="emoji">💯</span>
+      <div class="body"><div class="title">认识更大的数 <span class="tag js-status">新</span></div>
+        <div class="desc">个十百千万，每往左一位大 10 倍，读出大数字！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop nums" href="三角形数.html" data-id="sanjiaoxing">
+      <span class="visited-star">⭐</span>
+      <div class="num">33</div><span class="emoji">🔺</span>
+      <div class="body"><div class="title">三角形数 <span class="tag js-status">新</span></div>
+        <div class="desc">1,3,6,10…摆成三角形，藏着连续数的规律！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop nums" href="加减竖式.html" data-id="shushi">
+      <span class="visited-star">⭐</span>
+      <div class="num">36</div><span class="emoji">🧮</span>
+      <div class="body"><div class="title">加减竖式 <span class="tag js-status">新</span></div>
+        <div class="desc">满十进一、不够借一当十，竖着算更轻松！</div></div>
+      <span class="go">→</span>
+    </a>
+  </div>
+
+  <!-- 图形与生活 -->
+  <div class="module">
+    <div class="module-head m-life"><span class="ic">🌈</span>图形与生活<span class="bar"></span></div>
+    <a class="stop life" href="图形与对称.html" data-id="duicheng">
+      <span class="visited-star">⭐</span>
+      <div class="num">11</div><span class="emoji">🦋</span>
+      <div class="body"><div class="title">图形与对称 <span class="tag js-status">新</span></div>
+        <div class="desc">沿一条线对折，两边一模一样的魔法！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop life" href="认识时间.html" data-id="shijian">
+      <span class="visited-star">⭐</span>
+      <div class="num">12</div><span class="emoji">⏰</span>
+      <div class="body"><div class="title">认识时间 <span class="tag js-status">新</span></div>
+        <div class="desc">短针指几点，长针指几分，学整点和半点！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop life" href="立体图形.html" data-id="liti">
+      <span class="visited-star">⭐</span>
+      <div class="num">18</div><span class="emoji">🧊</span>
+      <div class="body"><div class="title">立体图形 <span class="tag js-status">新</span></div>
+        <div class="desc">正方体、球、圆柱、圆锥 —— 生活里到处都是！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop life" href="旋转与平移.html" data-id="xuanzhuan">
+      <span class="visited-star">⭐</span>
+      <div class="num">29</div><span class="emoji">🔄</span>
+      <div class="body"><div class="title">旋转与平移 <span class="tag js-status">新</span></div>
+        <div class="desc">滑过去是平移，转方向是旋转 —— 图形会变身！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop life" href="角的认识.html" data-id="jiao">
+      <span class="visited-star">⭐</span>
+      <div class="num">31</div><span class="emoji">📐</span>
+      <div class="body"><div class="title">角的认识 <span class="tag js-status">新</span></div>
+        <div class="desc">直角、锐角、钝角 —— 角张得多大？</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop life" href="数图形.html" data-id="shutuxing">
+      <span class="visited-star">⭐</span>
+      <div class="num">35</div><span class="emoji">👁️</span>
+      <div class="body"><div class="title">数图形 <span class="tag js-status">新</span></div>
+        <div class="desc">一个图里藏着几个三角形？火眼金睛数一数！</div></div>
+      <span class="go">→</span>
+    </a>
+  </div>
+
+  <!-- 测量世界 -->
+  <div class="module">
+    <div class="module-head m-meas"><span class="ic">📏</span>测量世界<span class="bar"></span></div>
+    <a class="stop meas" href="认识长度.html" data-id="changdu">
+      <span class="visited-star">⭐</span>
+      <div class="num">20</div><span class="emoji">📏</span>
+      <div class="body"><div class="title">认识长度 <span class="tag js-status">新</span></div>
+        <div class="desc">用尺子量一量，几厘米？谁更长？</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop meas" href="面积.html" data-id="mianji">
+      <span class="visited-star">⭐</span>
+      <div class="num">21</div><span class="emoji">🟩</span>
+      <div class="body"><div class="title">面积 <span class="tag js-status">新</span></div>
+        <div class="desc">数一数铺了几个方格 = 长 × 宽！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop meas" href="周长.html" data-id="zhouchang">
+      <span class="visited-star">⭐</span>
+      <div class="num">22</div><span class="emoji">🔲</span>
+      <div class="body"><div class="title">周长 <span class="tag js-status">新</span></div>
+        <div class="desc">沿着边走一圈，一共有多长？</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop meas" href="重量.html" data-id="zhongliang">
+      <span class="visited-star">⭐</span>
+      <div class="num">27</div><span class="emoji">⚖️</span>
+      <div class="body"><div class="title">重量·克与千克 <span class="tag js-status">新</span></div>
+        <div class="desc">天平比一比，哪个更重？1 千克 = 1000 克！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop meas" href="容量.html" data-id="rongliang">
+      <span class="visited-star">⭐</span>
+      <div class="num">32</div><span class="emoji">🥤</span>
+      <div class="body"><div class="title">容量·升与毫升 <span class="tag js-status">新</span></div>
+        <div class="desc">量杯能装多少水？1 升 = 1000 毫升！</div></div>
+      <span class="go">→</span>
+    </a>
+  </div>
+
+  <!-- 生活数学 -->
+  <div class="module">
+    <div class="module-head m-shop"><span class="ic">🏪</span>生活数学<span class="bar"></span></div>
+    <a class="stop shop" href="认识人民币.html" data-id="renminbi">
+      <span class="visited-star">⭐</span>
+      <div class="num">15</div><span class="emoji">💰</span>
+      <div class="body"><div class="title">认识人民币 <span class="tag js-status">新</span></div>
+        <div class="desc">1元、5元、10元，买东西、找零钱！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop shop" href="简单统计图.html" data-id="tongji">
+      <span class="visited-star">⭐</span>
+      <div class="num">17</div><span class="emoji">📊</span>
+      <div class="body"><div class="title">简单统计图 <span class="tag js-status">新</span></div>
+        <div class="desc">看象形图和条形图，数一数、比多少！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop shop" href="几时几分.html" data-id="jishi">
+      <span class="visited-star">⭐</span>
+      <div class="num">23</div><span class="emoji">🕐</span>
+      <div class="body"><div class="title">几时几分 <span class="tag js-status">新</span></div>
+        <div class="desc">一大格是 5 分钟，认到几时几分！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop shop" href="可能性.html" data-id="kenengxing">
+      <span class="visited-star">⭐</span>
+      <div class="num">24</div><span class="emoji">🎲</span>
+      <div class="body"><div class="title">可能性 <span class="tag js-status">新</span></div>
+        <div class="desc">一定、可能、还是不可能？摸个球试试！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop shop" href="时间计算.html" data-id="shijianjisuan">
+      <span class="visited-star">⭐</span>
+      <div class="num">28</div><span class="emoji">⏳</span>
+      <div class="body"><div class="title">时间计算 <span class="tag js-status">新</span></div>
+        <div class="desc">从 3 点到 5 点看了多久？算算经过的时间！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop shop" href="谁更可能.html" data-id="gengkeneng">
+      <span class="visited-star">⭐</span>
+      <div class="num">30</div><span class="emoji">🤔</span>
+      <div class="body"><div class="title">谁更可能 <span class="tag js-status">新</span></div>
+        <div class="desc">红球多就更可能摸到红，数量多可能性就大！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop shop" href="24时计时.html" data-id="ershisi">
+      <span class="visited-star">⭐</span>
+      <div class="num">34</div><span class="emoji">🕗</span>
+      <div class="body"><div class="title">24 时计时法 <span class="tag js-status">新</span></div>
+        <div class="desc">下午 3 点 = 15 时，一天有 24 小时！</div></div>
+      <span class="go">→</span>
+    </a>
+  </div>
+  </div><!-- /mapBody -->
+
+  <details>
+    <summary>👨‍👩‍👧 给爸爸妈妈的话（学习路线说明）</summary>
+    <p>
+      这套课在孩子已会的基础（万以内加减、口诀、交换律）上，按一条连贯的线索展开：<br><br>
+      <b>① 分配律 → ② 结合律</b>：凑齐「三大运算规律」，让他理解运算的结构之美。<br>
+      <b>③ 两位数乘法</b>：分配律的直接应用（23×4 = 20×4+3×4），自然引出竖式。<br>
+      <b>④ 除法 → ⑤ 有余数的除法</b>：补齐第四种运算，用「平均分」和他熟悉的口诀互相印证。<br>
+      <b>⑥ 分数启蒙</b>：由「平均分」过渡到「一半」，轻轻推开分数的大门。<br>
+      <b>⑦ 奇偶 → ⑧ 找规律 → ⑨ 倍数</b>：深耕数感与规律（他的强项）。<br>
+      <b>⑩ 数的组成</b>：个、十、百位值，呼应两位数乘法的拆数。<br>
+      <b>⑪ 图形与对称、⑫ 认识时间</b>：拓展到几何与生活数学。<br>
+      <b>⑬ 两位数乘两位数</b>：面积模型，分配律的二维版（封顶乘法）。<br>
+      <b>⑭ 几分之几 · ⑯ 平方数</b>：深化分数；用"正方形数"串起乘法、奇数与规律。<br>
+      <b>⑮ 认识人民币 · ⑰ 简单统计图 · ⑱ 立体图形</b>：走进钱、数据与立体几何。<br>
+      <b>⑲ 质数与合数</b>：数论启蒙，接倍数与平方数。<br>
+      <b>⑳ 认识长度 · ㉑ 面积 · ㉒ 周长</b>：测量三件套（厘米、数方格、围一圈）。<br>
+      <b>㉓ 几时几分 · ㉔ 可能性</b>：时间进阶；概率启蒙（一定/可能/不可能）。<br>
+      <b>㉕ 因数大发现 · ㉖ 认识更大的数</b>：数论与位值进阶（因数、千万数位）。<br>
+      <b>㉗ 重量 · ㉘ 时间计算</b>：克与千克；算"经过了多久"。<br>
+      <b>㉙ 旋转与平移 · ㉚ 谁更可能</b>：图形变换；比可能性大小。<br>
+      <b>㉛ 角的认识 · ㉟ 数图形</b>：直角/锐角/钝角；火眼金睛数图形。<br>
+      <b>㉜ 容量 · ㉝ 三角形数 · ㉞ 24时计时 · ㊱ 加减竖式</b>：升与毫升、三角形数规律、24时法、进位退位竖式。<br><br>
+      建议按顺序闯关，每关 5–10 分钟，让他<b>动手操作、说出想法</b>。每一课的欢迎页里还有针对那一课的陪玩提示。通关一节课后，地图会自动点亮 <b>✓ 已学</b>，顶部进度条同步增长。
+    </p>
+  </details>
+
+</div>
+
+<script>
+"use strict";
+/* 通关进度（存在浏览器本地 localStorage；通关一节课会自动点亮） */
+const LESSON_IDS=['fenpei','jiehe','liangwei','chufa','yushu','fenshu','qiou','guilv','beishu','weizhi','duicheng','shijian','liangwei2','jifen','renminbi','pingfang','tongji','liti','zhishu','changdu','mianji','zhouchang','jishi','kenengxing','yinshu','dashu','zhongliang','shijianjisuan','xuanzhuan','gengkeneng','jiao','rongliang','sanjiaoxing','ershisi','shutuxing','shushi'];
+function isDone(id){ try{ return localStorage.getItem('yswg:done:'+id)==='1'; }catch(e){ return false; } }
+/* 首次打开：默认把前 30 关设为已完成（只跑一次；之后可用重置按钮清空） */
+(function seedDone(){ try{
+  if(localStorage.getItem('yswg:seeded30')==='v2') return;
+  LESSON_IDS.slice(0,30).forEach(id=>localStorage.setItem('yswg:done:'+id,'1'));
+  localStorage.setItem('yswg:seeded30','v2');
+}catch(e){} })();
+function renderProgress(){
+  let done=0;
+  document.querySelectorAll('.stop').forEach(a=>{
+    const id=a.dataset.id, ok=isDone(id), tag=a.querySelector('.js-status');
+    if(ok){ done++; a.classList.add('done'); if(tag){ tag.textContent='✓ 已学'; tag.className='tag learned js-status'; } }
+    else { a.classList.remove('done'); if(tag){ tag.textContent='新'; tag.className='tag new js-status'; } }
+  });
+  const total=document.querySelectorAll('.stop').length;
+  const tc=document.getElementById('totalCount'); if(tc) tc.textContent=total;
+  const c=document.getElementById('doneCount'); if(c) c.textContent=done;
+  const f=document.getElementById('progressFill'); if(f) f.style.width=(total?done/total*100:0)+'%';
+}
+renderProgress();
+/* 从课程返回 / 切回标签页时刷新（前进后退缓存） */
+window.addEventListener('pageshow', renderProgress);
+document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) renderProgress(); });
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  if(!confirm('确定把所有关卡重置为「没学过」吗？（只清掉本机进度）')) return;
+  try{ LESSON_IDS.forEach(id=>localStorage.removeItem('yswg:done:'+id)); }catch(e){}
+  renderProgress();
+});
+
+/* 排序视图：📋 按顺序(ID) / 🗂️ 按分类，默认按顺序 */
+const mapBody=document.getElementById('mapBody');
+document.querySelectorAll('#mapBody .stop').forEach(a=>{
+  const n=parseInt(((a.querySelector('.num')||{}).textContent||'0'),10);
+  a.style.order=n||0;
+});
+const vFlat=document.getElementById('viewFlat'), vGroup=document.getElementById('viewGrouped');
+function setView(flat){
+  if(mapBody) mapBody.classList.toggle('flat', flat);
+  if(vFlat) vFlat.classList.toggle('active', flat);
+  if(vGroup) vGroup.classList.toggle('active', !flat);
+  try{ localStorage.setItem('yswg:view', flat?'flat':'grouped'); }catch(e){}
+}
+if(vFlat) vFlat.addEventListener('click',()=>setView(true));
+if(vGroup) vGroup.addEventListener('click',()=>setView(false));
+(function(){ let v='flat'; try{ v=localStorage.getItem('yswg:view')||'flat'; }catch(e){} setView(v!=='grouped'); })();
+
+/* 语音 + 静音 */
+let muted=false, zhVoice=null;
+function pickVoice(){
+  if(!('speechSynthesis'in window)) return;
+  const vs=speechSynthesis.getVoices(); if(!vs||!vs.length) return;
+  const zh=vs.filter(v=>/zh|cmn|chinese|普通话|国语|中文/i.test((v.lang||'')+' '+(v.name||'')));
+  const female=/婷婷|美嘉|思琪|善怡|静|丽|语嫣|晓|Ting-?Ting|Mei-?Jia|Sin-?ji|Yu-?shu|Tian-?Tian|Li-?mu|Han|female|女/i;
+  const male=/男|male|Yu-?Long|Liang|国梁/i;
+  zhVoice = zh.find(v=>female.test(v.name))
+         || zh.find(v=>/zh[-_]?CN/i.test(v.lang)&&!male.test(v.name))
+         || zh.find(v=>!male.test(v.name))
+         || zh[0] || null;
+}
+if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; setTimeout(pickVoice,300); setTimeout(pickVoice,1200); }
+function say(t){
+  if(muted||!('speechSynthesis'in window)) return;
+  try{ if(!zhVoice) pickVoice(); speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t);
+    u.lang='zh-CN'; if(zhVoice)u.voice=zhVoice; u.rate=0.95; u.pitch=1.1; speechSynthesis.speak(u);
+  }catch(e){}
+}
+document.getElementById('muteBtn').addEventListener('click',function(){
+  muted=!muted; this.textContent=muted?'🔇':'🔊';
+  if(muted&&'speechSynthesis'in window) speechSynthesis.cancel();
+});
+/* 首次点击页面时欢迎一句（满足浏览器手势要求） */
+let welcomed=false;
+document.addEventListener('pointerdown',()=>{ if(!welcomed){ welcomed=true; say('欢迎来到运算王国！点一张卡片，开始冒险吧！'); } },{once:false});
+</script>
+</body>
+</html>

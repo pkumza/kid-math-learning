@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>时间小课堂 · 24时</title>
+<style>
+  :root{
+    --dot: clamp(15px, 4.2vw, 30px);
+    --blue:#2563EB; --blue2:#60A5FA;
+    --orange:#EA580C; --orange2:#FB923C;
+    --green:#16A34A; --green2:#4ADE80;
+    --purple:#7C3AED;
+    --ink:#1F2937; --soft:#6B7280;
+    --card:#ffffff;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",
+      "Hiragino Sans GB","Helvetica Neue",sans-serif;
+    color:var(--ink);
+    background:linear-gradient(160deg,#EAF4FF 0%,#FFF6EC 60%,#FDEFF6 100%);
+    min-height:100vh;
+    overflow-x:hidden;
+    user-select:none;
+  }
+  .wrap{max-width:760px; margin:0 auto; padding:10px 14px 40px;}
+
+  /* ---- 顶部 ---- */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 4px 6px;
+  }
+  .brand{display:flex; align-items:center; gap:8px; font-weight:800; font-size:1.15rem;}
+  .brand .fox{font-size:1.6rem;}
+  .brand small{color:var(--soft); font-weight:600; font-size:.78rem;}
+  .tools{display:flex; gap:8px;}
+  .icon-btn{
+    border:none; background:#fff; border-radius:14px; width:44px; height:44px;
+    font-size:1.25rem; cursor:pointer; box-shadow:0 3px 8px rgba(0,0,0,.08);
+    transition:transform .1s;
+  }
+  .icon-btn:active{transform:scale(.92);}
+
+  .steps{display:flex; gap:6px; justify-content:center; margin:4px 0 12px;}
+  .pill{
+    font-size:.82rem; font-weight:700; color:var(--soft);
+    background:#fff; padding:5px 12px; border-radius:999px;
+    box-shadow:0 2px 5px rgba(0,0,0,.05);
+  }
+  .pill.active{color:#fff; background:var(--purple); box-shadow:0 4px 10px rgba(124,58,237,.35);}
+
+  /* ---- 卡片 / 屏幕 ---- */
+  .screen{display:none; animation:pop .35s ease both;}
+  .screen.on{display:block;}
+  @keyframes pop{from{opacity:0; transform:translateY(12px) scale(.98);} to{opacity:1; transform:none;}}
+  .card{
+    background:var(--card); border-radius:26px; padding:22px 18px;
+    box-shadow:0 12px 30px rgba(80,90,130,.12); margin-bottom:16px;
+  }
+  h1{font-size:1.7rem; margin:.1em 0 .2em; text-align:center;}
+  h2{font-size:1.25rem; margin:.1em 0 .5em; text-align:center; color:var(--purple);}
+  .lead{text-align:center; color:var(--soft); font-size:1rem; line-height:1.7; margin:.3em 0 .2em;}
+  .pinyin{display:block; color:var(--soft); font-size:.95rem; letter-spacing:.06em; font-weight:600; text-align:center;}
+
+  /* ---- 按钮 ---- */
+  .big-btn{
+    display:block; width:100%; border:none; cursor:pointer;
+    font-size:1.3rem; font-weight:800; color:#fff;
+    padding:16px; border-radius:20px; margin-top:8px;
+    background:linear-gradient(135deg,#34D399,#10B981);
+    box-shadow:0 8px 18px rgba(16,185,129,.35);
+    transition:transform .12s, box-shadow .12s, filter .2s;
+  }
+  .big-btn.purple{background:linear-gradient(135deg,#A78BFA,#7C3AED); box-shadow:0 8px 18px rgba(124,58,237,.35);}
+  .big-btn.orange{background:linear-gradient(135deg,#FDBA74,#F97316); box-shadow:0 8px 18px rgba(249,115,22,.35);}
+  .big-btn:active{transform:translateY(2px) scale(.99);}
+  .big-btn:disabled{filter:grayscale(.7) opacity(.55); cursor:not-allowed; box-shadow:none;}
+  .big-btn.ready{animation:bounce 1s infinite;}
+  @keyframes bounce{0%,100%{transform:none;}50%{transform:translateY(-5px);}}
+
+  /* ---- 时段选择 ---- */
+  .moments{display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin:10px 0 6px;}
+  .moment{
+    border:3px solid #E5E7EB; background:#fff; cursor:pointer; border-radius:18px;
+    padding:14px 8px; text-align:center; transition:transform .1s, border-color .15s, box-shadow .15s;
+    box-shadow:0 4px 10px rgba(0,0,0,.06);
+  }
+  .moment:active{transform:scale(.96);}
+  .moment .emo{font-size:2.4rem; line-height:1.1;}
+  .moment .mlabel{font-weight:900; font-size:1.05rem; margin-top:4px; color:var(--ink);}
+  .moment .msub{font-size:.82rem; color:var(--soft); font-weight:700; margin-top:2px;}
+  .moment.sel{border-color:var(--purple); box-shadow:0 6px 16px rgba(124,58,237,.28);}
+
+  /* ---- 时钟 ---- */
+  .clock-wrap{display:flex; align-items:center; justify-content:center; margin:8px 0 4px;}
+  .clock{width:min(58vw,230px); height:min(58vw,230px);}
+  .clock .face{fill:#FFFDF7; stroke:var(--blue); stroke-width:6;}
+  .clock .tick{stroke:#CBD5E1; stroke-width:2;}
+  .clock .num{font-weight:900; fill:var(--ink); font-size:18px; text-anchor:middle; dominant-baseline:central;}
+  .clock .hour-hand{stroke:var(--blue); stroke-width:11; stroke-linecap:round; transition:transform .5s cubic-bezier(.4,1.4,.6,1);}
+  .clock .min-hand{stroke:var(--orange); stroke-width:6; stroke-linecap:round; transition:transform .5s cubic-bezier(.4,1.4,.6,1);}
+  .clock .pin{fill:var(--purple);}
+
+  /* ---- 读法面板 ---- */
+  .eq{
+    background:#F8FAFF; border-radius:18px; padding:14px 12px; margin-top:12px; text-align:center;
+    border:2px dashed #DBE3F4;
+  }
+  .eq .big-read{font-size:1.7rem; font-weight:900; letter-spacing:1px; line-height:1.5;}
+  .eq .arrow{font-size:1.5rem; margin:2px 0; color:var(--purple);}
+  .eq .digit{font-size:1.6rem; font-weight:900; color:var(--green); margin-top:2px;}
+  .bl{color:var(--blue);} .or{color:var(--orange);} .gr{color:var(--green);} .pl{color:var(--purple);}
+  .note{
+    margin-top:10px; background:#FFFDF5; border-radius:14px; padding:10px 12px;
+    color:#92400E; font-weight:700; line-height:1.6; font-size:1rem; text-align:center;
+  }
+  .unlock{text-align:center; font-weight:800; color:var(--purple); margin:12px 0 4px; min-height:1.4em;}
+
+  /* ---- 闯关 ---- */
+  .level-tag{text-align:center; color:var(--soft); font-weight:800; margin-bottom:2px;}
+  .q-emo{font-size:3rem; text-align:center; line-height:1.1; margin:4px 0 2px;}
+  .ask{text-align:center; font-size:1.5rem; font-weight:900; margin:8px 0 6px;}
+  .q-hint{text-align:center; color:var(--orange); font-weight:800; font-size:1rem; margin-bottom:6px; min-height:1.3em;}
+  .options{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+  .opt{
+    border:none; cursor:pointer; min-width:104px; font-size:1.5rem; font-weight:900;
+    padding:16px 8px; border-radius:18px; background:#fff; color:var(--ink);
+    box-shadow:0 5px 12px rgba(0,0,0,.1); transition:transform .1s;
+    border:3px solid #E5E7EB;
+  }
+  .opt:active{transform:scale(.95);}
+  .opt.correct{background:var(--green); color:#fff; border-color:var(--green);}
+  .opt.wrong{background:#FCA5A5; border-color:#EF4444; animation:shake .35s;}
+  @keyframes shake{0%,100%{transform:none;}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+  .feedback{text-align:center; font-weight:900; font-size:1.3rem; min-height:1.5em; margin-top:12px;}
+  .stars{font-size:1.6rem; letter-spacing:6px; text-align:center;}
+
+  /* ---- 完成 ---- */
+  .badge{font-size:4.5rem; text-align:center; animation:spin 3s linear infinite;}
+  @keyframes spin{from{transform:rotate(-8deg);}50%{transform:rotate(8deg);}to{transform:rotate(-8deg);}}
+  .trophy-name{text-align:center; font-size:1.5rem; font-weight:900; color:var(--purple); margin:6px 0;}
+
+  details{margin-top:8px; background:#F8FAFF; border-radius:16px; padding:4px 14px;}
+  summary{cursor:pointer; font-weight:800; color:var(--purple); padding:10px 0; list-style:none;}
+  summary::-webkit-details-marker{display:none;}
+  details p{color:#374151; line-height:1.75; font-size:.95rem;}
+  details b{color:var(--ink);}
+
+  #confetti{position:fixed; inset:0; pointer-events:none; display:none; z-index:99;}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="wrap">
+
+  <header>
+    <div class="brand"><span class="fox">🦊</span><div>时间小课堂<br><small>24时</small></div></div>
+    <div class="tools">
+      <button class="icon-btn" id="homeBtn" title="重新开始">🏠</button>
+      <button class="icon-btn" id="muteBtn" title="声音开关">🔊</button>
+    </div>
+  </header>
+
+  <div class="steps">
+    <span class="pill" data-step="1">① 探索</span>
+    <span class="pill" data-step="2">② 闯关</span>
+    <span class="pill" data-step="3">③ 完成</span>
+  </div>
+
+  <!-- ============ 欢迎 ============ -->
+  <section class="screen on" id="welcome">
+    <div class="card">
+      <div style="font-size:3.4rem;text-align:center">🕗🚄</div>
+      <h1>24 时计时法</h1>
+      <span class="pinyin">èr shí sì shí jì shí fǎ · 24时</span>
+      <p class="lead">
+        一天有 <b>24</b> 个小时！🌞🌙<br>
+        <b class="bl">上午</b>的点钟不变～<br>
+        <b class="or">下午、晚上</b>要 <b class="pl">+ 12</b>！<br>
+        下午 3 点 就是 <b class="gr">15 时</b>。<br>
+        火车票、电视表都用 24 时哦！🎫📺
+      </p>
+      <button class="big-btn" id="startBtn">开始探索 →</button>
+
+      <details>
+        <summary>👨‍👩‍👧 给爸爸妈妈的话（点开）</summary>
+        <p>
+          <b>为什么选「24 时计时法」？</b> 孩子已经会看钟、会算几时几分。24 时计时法把
+          一天的 24 小时<b>不重复地编号</b>，是生活里随处可见的实用知识（火车票、航班、
+          电视节目表、闹钟设置都用它）。<br><br>
+          <b>本课只教一条核心规则：</b><b class="bl">上午（含中午前）的钟点和 24 时一样</b>；
+          <b class="or">下午和晚上的钟点要 + 12</b>——下午 1 点=13 时、下午 3 点=15 时、
+          晚上 8 点=20 时。两个特殊点单独记：中午 12 点=12 时，晚上 12 点=0 时（夜里）。<br><br>
+          <b>可以一起玩：</b>问他「现在是下午还是上午？」先判断，再决定要不要 +12。
+          回家看看电视节目表或火车票上的「19:30」，让他说说那是晚上几点，巩固最好。
+        </p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ 探索 ============ -->
+  <section class="screen" id="explore">
+    <div class="card">
+      <h2>🕗 选一个时刻，看两种说法</h2>
+      <p class="lead" style="margin-top:0">
+        点一个小图，看看它的<b class="bl">普通说法</b>和<b class="gr">24 时说法</b>～
+      </p>
+
+      <div class="moments" id="moments">
+        <div class="moment" data-i="0"><div class="emo">🌅</div><div class="mlabel">上午 8 点</div><div class="msub">起床上学</div></div>
+        <div class="moment" data-i="1"><div class="emo">🌞</div><div class="mlabel">中午 12 点</div><div class="msub">吃午饭</div></div>
+        <div class="moment" data-i="2"><div class="emo">☀️</div><div class="mlabel">下午 3 点</div><div class="msub">出去玩</div></div>
+        <div class="moment" data-i="3"><div class="emo">🌙</div><div class="mlabel">晚上 8 点</div><div class="msub">睡觉前</div></div>
+      </div>
+
+      <div class="clock-wrap">
+        <svg class="clock" id="clock" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <circle class="face" cx="100" cy="100" r="94"></circle>
+          <g id="ticks"></g>
+          <g id="nums"></g>
+          <line class="hour-hand" id="hourHand" x1="100" y1="100" x2="100" y2="48"></line>
+          <line class="min-hand"  id="minHand"  x1="100" y1="100" x2="100" y2="24"></line>
+          <circle class="pin" cx="100" cy="100" r="7"></circle>
+        </svg>
+      </div>
+
+      <div class="eq" id="eq"><div class="big-read muted" style="color:var(--soft)">👆 点上面的小图看看吧</div></div>
+      <div class="note" id="note"></div>
+
+      <div class="unlock" id="unlock"></div>
+      <button class="big-btn purple" id="toPractice" disabled>去闯关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 闯关 ============ -->
+  <section class="screen" id="practice">
+    <div class="card">
+      <div class="level-tag" id="levelTag">第 1 / 3 关</div>
+      <div class="q-emo" id="qEmo">☀️</div>
+      <div class="ask" id="ask">下午 3 点，用 24 时计时是几时？</div>
+      <div class="q-hint" id="qHint">下午要 + 12 哦 ✨</div>
+
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="big-btn" id="nextLevel" style="display:none">下一关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 完成 ============ -->
+  <section class="screen" id="done">
+    <div class="card">
+      <div class="badge">🎖️</div>
+      <h1>太厉害啦！</h1>
+      <div class="trophy-name">🎖️ 时间小管家</div>
+      <p class="lead">
+        你学会 24 时计时啦！⏰<br>
+        <b class="bl">上午</b>不变，<b class="or">下午晚上</b> <b class="pl">+ 12</b><br>
+        下午 3 点 = <b class="gr">15 时</b>，晚上 8 点 = <b class="gr">20 时</b>！
+      </p>
+      <p class="lead" style="font-size:.95rem">
+        🌟 看看电视表：<b>19:30</b> 是晚上几点呀？
+      </p>
+      <button class="big-btn orange" id="again">再玩一次 🔁</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+"use strict";
+const $=(s,el=document)=>el.querySelector(s);
+const $$=(s,el=document)=>[...el.querySelectorAll(s)];
+
+/* ---------- 声音 ---------- */
+let muted=false, audioCtx=null;
+function ac(){ if(!audioCtx){ try{audioCtx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return audioCtx; }
+function beep(freq,dur,type,vol,when){
+  if(muted) return; const c=ac(); if(!c) return;
+  const t=c.currentTime+(when||0), o=c.createOscillator(), g=c.createGain();
+  o.type=type||'sine'; o.frequency.value=freq;
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol||0.15,t+0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g).connect(c.destination); o.start(t); o.stop(t+dur+0.02);
+}
+const sClick=()=>beep(680,0.06,'triangle',0.12,0);
+const sCut  =()=>{beep(900,0.05,'square',0.08,0); beep(500,0.07,'triangle',0.1,0.05);};
+const sGood =()=>[523,659,784].forEach((f,i)=>beep(f,0.12,'sine',0.16,i*0.09));
+const sWin  =()=>[523,659,784,1047,1319].forEach((f,i)=>beep(f,0.16,'sine',0.18,i*0.12));
+const sBad  =()=>beep(190,0.2,'sawtooth',0.1,0);
+
+/* ---------- 语音（中文朗读） ---------- */
+let zhVoice=null;
+function pickVoice(){
+  if(!('speechSynthesis'in window)) return;
+  const vs=speechSynthesis.getVoices(); if(!vs||!vs.length) return;
+  const zh=vs.filter(v=>/zh|cmn|chinese|普通话|国语|中文/i.test((v.lang||'')+' '+(v.name||'')));
+  const female=/婷婷|美嘉|思琪|善怡|静|丽|语嫣|晓|Ting-?Ting|Mei-?Jia|Sin-?ji|Yu-?shu|Tian-?Tian|Li-?mu|Han|female|女/i;
+  const male=/男|male|Yu-?Long|Liang|国梁/i;
+  zhVoice = zh.find(v=>female.test(v.name))
+         || zh.find(v=>/zh[-_]?CN/i.test(v.lang)&&!male.test(v.name))
+         || zh.find(v=>!male.test(v.name))
+         || zh[0] || null;
+}
+if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; setTimeout(pickVoice,300); setTimeout(pickVoice,1200); }
+function say(text){
+  if(muted||!('speechSynthesis'in window)) return;
+  try{ if(!zhVoice) pickVoice(); speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang='zh-CN'; if(zhVoice)u.voice=zhVoice; u.rate=0.95; u.pitch=1.1;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ---------- 屏幕切换 ---------- */
+function show(id,step){
+  $$('.screen').forEach(s=>s.classList.remove('on'));
+  $('#'+id).classList.add('on');
+  $$('.pill').forEach(p=>p.classList.toggle('active', +p.dataset.step===step));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ---------- 豆豆阵（沿用辅助函数） ---------- */
+function fillGrid(el,rows,cols,cls){
+  el.style.gridTemplateColumns=`repeat(${cols},var(--dot))`;
+  el.style.gridTemplateRows=`repeat(${rows},var(--dot))`;
+  el.innerHTML='';
+  const n=rows*cols;
+  for(let i=0;i<n;i++){ const d=document.createElement('div'); d.className='dot '+cls; el.appendChild(d); }
+}
+
+/* ---------- 钟面绘制 ---------- */
+function buildFace(ticksG,numsG){
+  ticksG.innerHTML=''; numsG.innerHTML='';
+  for(let i=1;i<=12;i++){
+    const ang=i*30*Math.PI/180;           // 12点为 0，顺时针
+    const sin=Math.sin(ang), cos=Math.cos(ang);
+    const x1=100+82*sin, y1=100-82*cos;
+    const x2=100+90*sin, y2=100-90*cos;
+    const tk=document.createElementNS('http://www.w3.org/2000/svg','line');
+    tk.setAttribute('class','tick');
+    tk.setAttribute('x1',x1); tk.setAttribute('y1',y1);
+    tk.setAttribute('x2',x2); tk.setAttribute('y2',y2);
+    ticksG.appendChild(tk);
+    const nx=100+70*sin, ny=100-70*cos;
+    const tx=document.createElementNS('http://www.w3.org/2000/svg','text');
+    tx.setAttribute('class','num');
+    tx.setAttribute('x',nx); tx.setAttribute('y',ny);
+    tx.textContent=i;
+    numsG.appendChild(tx);
+  }
+}
+function setHand(hand,angle){
+  hand.setAttribute('transform',`rotate(${angle} 100 100)`);
+}
+
+/* ============ 探索 ============ */
+buildFace($('#ticks'),$('#nums'));
+// clockHour = 表盘上的钟点(1~12)；h24 = 24时计时
+const MOMENTS=[
+  {i:0, emo:'🌅', ord:'上午 8 点', clockHour:8,  h24:'8 时',  hhmm:'08:00', period:'上午', note:'上午的钟点不变～上午 8 点就是 8 时。'},
+  {i:1, emo:'🌞', ord:'中午 12 点', clockHour:12, h24:'12 时', hhmm:'12:00', period:'中午', note:'中午 12 点要记住：就是 12 时哦！'},
+  {i:2, emo:'☀️', ord:'下午 3 点', clockHour:3,  h24:'15 时', hhmm:'15:00', period:'下午', note:'下午要 +12！3 + 12 = 15，所以是 15 时。'},
+  {i:3, emo:'🌙', ord:'晚上 8 点', clockHour:8,  h24:'20 时', hhmm:'20:00', period:'晚上', note:'晚上要 +12！8 + 12 = 20，所以是 20 时。'}
+];
+const tried=new Set(); let unlocked=false;
+
+function renderMoment(m){
+  // 表盘指向钟点（整点，分针指12）
+  const hourAngle = (m.clockHour%12)*30;
+  setHand($('#minHand'),0);
+  setHand($('#hourHand'),hourAngle);
+
+  $$('.moment').forEach(el=>el.classList.toggle('sel', +el.dataset.i===m.i));
+
+  const plus = (m.period==='下午'||m.period==='晚上');
+  $('#eq').innerHTML =
+    `<div class="big-read"><span class="bl">${m.ord}</span></div>`+
+    `<div class="arrow">⇅</div>`+
+    `<div class="big-read"><span class="gr">${m.h24}</span></div>`+
+    `<div class="digit">${m.hhmm}</div>`;
+  $('#note').textContent = m.note;
+
+  tried.add(m.i);
+  const n=tried.size;
+  if(!unlocked){
+    if(n<2){ $('#unlock').textContent=`已经看了 ${n} 个时刻，再看 ${2-n} 个就解锁闯关！`; }
+    else{
+      unlocked=true; $('#toPractice').disabled=false; $('#toPractice').classList.add('ready');
+      $('#unlock').textContent='🎉 你记住啦：下午、晚上 + 12 就是 24 时！';
+      sWin(); say('你记住啦！上午不变，下午和晚上加十二，就是二十四时计时！太棒了！');
+      return;
+    }
+  }
+  sCut();
+  if(plus){
+    const add=m.clockHour;
+    say(`${m.ord}。${m.period}要加十二！${add} 加 12 等于 ${add+12}，所以是 ${m.h24}。`);
+  }else if(m.period==='中午'){
+    say('中午十二点，就是十二时哦！');
+  }else{
+    say(`${m.ord}。上午的钟点不变，就是 ${m.h24}。`);
+  }
+}
+
+$$('.moment').forEach(el=>{
+  el.addEventListener('click',()=>{ sClick(); renderMoment(MOMENTS[+el.dataset.i]); });
+});
+$('#toPractice').addEventListener('click',()=>{ sClick(); startPractice(); });
+
+/* ============ 闯关 ============ */
+const PROB=[
+  {emo:'☀️', ask:'下午 3 点，用 24 时计时是几时？', hint:'下午要 + 12 哦 ✨', options:['13 时','15 时','3 时'], ans:'15 时'},
+  {emo:'🌙', ask:'晚上 8 点是几时？',               hint:'晚上要 + 12 哦 ✨', options:['8 时','18 时','20 时'], ans:'20 时'},
+  {emo:'🌅', ask:'上午 9 点是几时？',               hint:'上午不用加哦，一样～', options:['9 时','19 时','21 时'], ans:'9 时'}
+];
+let pi=0, answered=false;
+function startPractice(){ pi=0; answered=false; show('practice',2); renderLevel(); }
+
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+function renderLevel(){
+  const p=PROB[pi];
+  $('#levelTag').textContent=`第 ${pi+1} / 3 关`;
+  $('#qEmo').textContent=p.emo;
+  $('#ask').textContent=p.ask;
+  $('#qHint').textContent=p.hint;
+  $('#feedback').textContent='';
+  $('#nextLevel').style.display='none';
+
+  const opts=shuffle(p.options.slice());
+  const box=$('#options'); box.innerHTML='';
+  opts.forEach(v=>{
+    const btn=document.createElement('button');
+    btn.className='opt'; btn.textContent=v;
+    btn.addEventListener('click',()=>choose(btn,v,p.ans));
+    box.appendChild(btn);
+  });
+  say(p.ask);
+}
+
+function choose(btn,v,ans){
+  if(answered) return;
+  if(v===ans){
+    answered=true;
+    btn.classList.add('correct'); sGood();
+    $('#feedback').innerHTML='<span class="gr">答对啦！🎉</span><div class="stars">⭐⭐⭐</div>';
+    say('答对啦！你真厉害！');
+    $$('.opt').forEach(o=>o.disabled=true);
+    const last=(pi===PROB.length-1);
+    const nb=$('#nextLevel');
+    nb.textContent = last ? '完成啦 🎉' : '下一关 →';
+    nb.style.display='block';
+  }else{
+    btn.classList.add('wrong'); sBad();
+    $('#feedback').innerHTML='<span class="or">再想想～ 你可以的！</span>';
+    say('再想想，你可以的！');
+    setTimeout(()=>btn.classList.remove('wrong'),400);
+  }
+}
+
+$('#nextLevel').addEventListener('click',()=>{
+  sClick(); answered=false;
+  if(pi===PROB.length-1){ finish(); }
+  else{ pi++; renderLevel(); }
+});
+
+/* ============ 完成 ============ */
+function finish(){
+  show('done',3); sWin(); say('太厉害啦！你已经是时间小管家啦！');
+  confetti();
+}
+$('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('explore',1); say('我们再玩一次！'); });
+
+/* ---------- 顶部按钮 ---------- */
+$('#startBtn').addEventListener('click',()=>{
+  ac(); sClick(); show('explore',1);
+  say('一天有二十四个小时。上午的点钟不变，下午和晚上要加十二。点一个小图看看吧！');
+});
+$('#muteBtn').addEventListener('click',()=>{
+  muted=!muted; $('#muteBtn').textContent=muted?'🔇':'🔊';
+  if(muted&&'speechSynthesis'in window) speechSynthesis.cancel(); else sClick();
+});
+$('#homeBtn').addEventListener('click',()=>{ sClick(); if('speechSynthesis'in window)speechSynthesis.cancel(); location.href='index.html'; });
+
+function resetAll(){
+  tried.clear(); unlocked=false; answered=false; pi=0;
+  $$('.moment').forEach(el=>el.classList.remove('sel'));
+  $('#toPractice').disabled=true; $('#toPractice').classList.remove('ready'); $('#unlock').textContent='';
+  setHand($('#minHand'),0); setHand($('#hourHand'),0);
+  $('#eq').innerHTML='<div class="big-read muted" style="color:var(--soft)">👆 点上面的小图看看吧</div>';
+  $('#note').textContent='';
+}
+
+/* ---------- 彩带 ---------- */
+function confetti(){
+  const cv=$('#confetti'), ctx=cv.getContext('2d');
+  cv.width=innerWidth; cv.height=innerHeight; cv.style.display='block';
+  const colors=['#2563EB','#F97316','#16A34A','#EAB308','#EC4899','#7C3AED'];
+  const P=[];
+  for(let i=0;i<150;i++) P.push({
+    x:innerWidth/2+(Math.random()-0.5)*120, y:innerHeight*0.28,
+    vx:(Math.random()-0.5)*13, vy:Math.random()*-13-3, g:0.32,
+    s:7+Math.random()*9, c:colors[i%colors.length], rot:Math.random()*6, vr:(Math.random()-0.5)*0.4
+  });
+  let t=0;
+  (function anim(){
+    t++; ctx.clearRect(0,0,cv.width,cv.height);
+    P.forEach(p=>{ p.vy+=p.g; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c;
+      ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6); ctx.restore();
+    });
+    if(t<150) requestAnimationFrame(anim); else cv.style.display='none';
+  })();
+}
+
+/* 初始 */
+setHand($('#minHand'),0); setHand($('#hourHand'),0);
+/* —— 通关记录（本地 localStorage）—— */
+(function(){var ID='ershisi';try{var d=document.getElementById('done');if(d){var mark=function(){if(d.classList.contains('on')){try{localStorage.setItem('yswg:done:'+ID,'1');}catch(e){}}};new MutationObserver(mark).observe(d,{attributes:true,attributeFilter:['class']});mark();}}catch(e){}})();
+</script>
+</body>
+</html>

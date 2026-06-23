@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>数字找规律 · 找规律小课堂</title>
+<style>
+  :root{
+    --dot: clamp(15px, 4.2vw, 30px);
+    --blue:#2563EB; --blue2:#60A5FA;
+    --orange:#EA580C; --orange2:#FB923C;
+    --green:#16A34A; --green2:#4ADE80;
+    --purple:#7C3AED;
+    --ink:#1F2937; --soft:#6B7280;
+    --card:#ffffff;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",
+      "Hiragino Sans GB","Helvetica Neue",sans-serif;
+    color:var(--ink);
+    background:linear-gradient(160deg,#EAF4FF 0%,#FFF6EC 60%,#FDEFF6 100%);
+    min-height:100vh;
+    overflow-x:hidden;
+    user-select:none;
+  }
+  .wrap{max-width:760px; margin:0 auto; padding:10px 14px 40px;}
+
+  /* ---- 顶部 ---- */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 4px 6px;
+  }
+  .brand{display:flex; align-items:center; gap:8px; font-weight:800; font-size:1.15rem;}
+  .brand .fox{font-size:1.6rem;}
+  .brand small{color:var(--soft); font-weight:600; font-size:.78rem;}
+  .tools{display:flex; gap:8px;}
+  .icon-btn{
+    border:none; background:#fff; border-radius:14px; width:44px; height:44px;
+    font-size:1.25rem; cursor:pointer; box-shadow:0 3px 8px rgba(0,0,0,.08);
+    transition:transform .1s;
+  }
+  .icon-btn:active{transform:scale(.92);}
+
+  .steps{display:flex; gap:6px; justify-content:center; margin:4px 0 12px;}
+  .pill{
+    font-size:.82rem; font-weight:700; color:var(--soft);
+    background:#fff; padding:5px 12px; border-radius:999px;
+    box-shadow:0 2px 5px rgba(0,0,0,.05);
+  }
+  .pill.active{color:#fff; background:var(--purple); box-shadow:0 4px 10px rgba(124,58,237,.35);}
+
+  /* ---- 卡片 / 屏幕 ---- */
+  .screen{display:none; animation:pop .35s ease both;}
+  .screen.on{display:block;}
+  @keyframes pop{from{opacity:0; transform:translateY(12px) scale(.98);} to{opacity:1; transform:none;}}
+  .card{
+    background:var(--card); border-radius:26px; padding:22px 18px;
+    box-shadow:0 12px 30px rgba(80,90,130,.12); margin-bottom:16px;
+  }
+  h1{font-size:1.7rem; margin:.1em 0 .2em; text-align:center;}
+  h2{font-size:1.25rem; margin:.1em 0 .5em; text-align:center; color:var(--purple);}
+  .lead{text-align:center; color:var(--soft); font-size:1rem; line-height:1.7; margin:.3em 0 .2em;}
+  .pinyin{display:block; color:var(--soft); font-size:.95rem; letter-spacing:.06em; font-weight:600; text-align:center;}
+
+  /* ---- 按钮 ---- */
+  .big-btn{
+    display:block; width:100%; border:none; cursor:pointer;
+    font-size:1.3rem; font-weight:800; color:#fff;
+    padding:16px; border-radius:20px; margin-top:8px;
+    background:linear-gradient(135deg,#34D399,#10B981);
+    box-shadow:0 8px 18px rgba(16,185,129,.35);
+    transition:transform .12s, box-shadow .12s, filter .2s;
+  }
+  .big-btn.purple{background:linear-gradient(135deg,#A78BFA,#7C3AED); box-shadow:0 8px 18px rgba(124,58,237,.35);}
+  .big-btn.orange{background:linear-gradient(135deg,#FDBA74,#F97316); box-shadow:0 8px 18px rgba(249,115,22,.35);}
+  .big-btn:active{transform:translateY(2px) scale(.99);}
+  .big-btn:disabled{filter:grayscale(.7) opacity(.55); cursor:not-allowed; box-shadow:none;}
+  .big-btn.ready{animation:bounce 1s infinite;}
+  @keyframes bounce{0%,100%{transform:none;}50%{transform:translateY(-5px);}}
+
+  /* ---- 规律按钮组 ---- */
+  .rule-btns{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:8px 0 4px;}
+  .rule-btn{
+    border:none; cursor:pointer; font-size:1.05rem; font-weight:800; color:#fff;
+    padding:12px 16px; border-radius:16px;
+    background:linear-gradient(135deg,#A78BFA,#7C3AED);
+    box-shadow:0 5px 12px rgba(124,58,237,.3); transition:transform .1s, filter .15s;
+  }
+  .rule-btn:active{transform:scale(.95);}
+  .rule-btn.sel{filter:brightness(1.12); outline:3px solid #FDE68A;}
+  .rule-btn.add{background:linear-gradient(135deg,#60A5FA,#2563EB); box-shadow:0 5px 12px rgba(37,99,235,.3);}
+  .rule-btn.dbl{background:linear-gradient(135deg,#FDBA74,#F97316); box-shadow:0 5px 12px rgba(249,115,22,.3);}
+  .rule-btn.sub{background:linear-gradient(135deg,#4ADE80,#16A34A); box-shadow:0 5px 12px rgba(22,163,74,.3);}
+
+  /* ---- 数列 ---- */
+  .seq{display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:4px; margin:18px 0 8px; min-height:90px;}
+  .num{
+    width:clamp(46px,13vw,64px); height:clamp(46px,13vw,64px);
+    display:flex; align-items:center; justify-content:center;
+    font-size:clamp(1.4rem,5.5vw,1.9rem); font-weight:900; color:#fff;
+    border-radius:18px; background:linear-gradient(135deg,#60A5FA,#2563EB);
+    box-shadow:0 5px 12px rgba(37,99,235,.3); animation:dotin .3s ease both;
+  }
+  .num.q{
+    background:linear-gradient(135deg,#A78BFA,#7C3AED); box-shadow:0 5px 12px rgba(124,58,237,.4);
+    animation:qpulse 1s infinite;
+  }
+  .num.reveal{background:linear-gradient(135deg,#4ADE80,#16A34A); box-shadow:0 5px 14px rgba(22,163,74,.4);}
+  @keyframes dotin{from{transform:scale(0);}to{transform:scale(1);}}
+  @keyframes qpulse{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+  .arrow{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    color:var(--orange); font-weight:900; min-width:34px; animation:dotin .3s ease both;
+  }
+  .arrow .tag{font-size:.92rem; background:#FFF3E6; color:var(--orange); padding:1px 7px; border-radius:999px; line-height:1.4;}
+  .arrow .line{font-size:1.3rem; line-height:1;}
+  .arrow.dbl .tag{background:#FFF3E6; color:var(--orange);}
+
+  /* ---- 算式面板 ---- */
+  .eq{
+    background:#F8FAFF; border-radius:18px; padding:14px 12px; margin-top:12px; text-align:center;
+    border:2px dashed #DBE3F4;
+  }
+  .eq .line{font-size:1.45rem; font-weight:800; line-height:1.7; letter-spacing:.5px;}
+  .eq .line.small{font-size:1.15rem;}
+  .muted{color:var(--soft);}
+  .bl{color:var(--blue);} .or{color:var(--orange);} .gr{color:var(--green); } .pu{color:var(--purple);}
+  .note{
+    margin-top:10px; background:#FFFDF5; border-radius:14px; padding:10px 12px;
+    color:#92400E; font-weight:700; line-height:1.6; font-size:1rem; text-align:center;
+  }
+  .reveal-btn{
+    display:block; margin:12px auto 0; border:none; cursor:pointer;
+    background:linear-gradient(135deg,#FDE68A,#F59E0B); color:#7c2d12; font-weight:800;
+    padding:12px 22px; border-radius:16px; font-size:1.1rem; box-shadow:0 5px 12px rgba(245,158,11,.3);
+  }
+  .reveal-btn:active{transform:scale(.96);}
+  .reveal-btn:disabled{filter:grayscale(.6) opacity(.5); cursor:not-allowed; box-shadow:none;}
+  .unlock{text-align:center; font-weight:800; color:var(--purple); margin:12px 0 4px; min-height:1.4em;}
+  .ctl-hint{text-align:center; color:var(--soft); font-weight:700; margin:2px 0 6px;}
+
+  /* ---- 闯关 ---- */
+  .level-tag{text-align:center; color:var(--soft); font-weight:800; margin-bottom:2px;}
+  .q-hint{text-align:center; color:var(--orange); font-weight:800; font-size:1.05rem; margin:6px 0;}
+  .ask{text-align:center; font-size:1.6rem; font-weight:900; margin:10px 0 6px;}
+  .options{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+  .opt{
+    border:none; cursor:pointer; min-width:92px; font-size:1.7rem; font-weight:900;
+    padding:14px 8px; border-radius:18px; background:#fff; color:var(--ink);
+    box-shadow:0 5px 12px rgba(0,0,0,.1); transition:transform .1s;
+    border:3px solid #E5E7EB;
+  }
+  .opt:active{transform:scale(.95);}
+  .opt.correct{background:var(--green); color:#fff; border-color:var(--green);}
+  .opt.wrong{background:#FCA5A5; border-color:#EF4444; animation:shake .35s;}
+  @keyframes shake{0%,100%{transform:none;}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+  .feedback{text-align:center; font-weight:900; font-size:1.3rem; min-height:1.5em; margin-top:12px;}
+  .stars{font-size:1.6rem; letter-spacing:6px; text-align:center;}
+
+  /* ---- 完成 ---- */
+  .badge{font-size:4.5rem; text-align:center; animation:spin 3s linear infinite;}
+  @keyframes spin{from{transform:rotate(-8deg);}50%{transform:rotate(8deg);}to{transform:rotate(-8deg);}}
+  .trophy-name{text-align:center; font-size:1.5rem; font-weight:900; color:var(--purple); margin:6px 0;}
+
+  details{margin-top:8px; background:#F8FAFF; border-radius:16px; padding:4px 14px;}
+  summary{cursor:pointer; font-weight:800; color:var(--purple); padding:10px 0; list-style:none;}
+  summary::-webkit-details-marker{display:none;}
+  details p{color:#374151; line-height:1.75; font-size:.95rem;}
+  details b{color:var(--ink);}
+
+  #confetti{position:fixed; inset:0; pointer-events:none; display:none; z-index:99;}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="wrap">
+
+  <header>
+    <div class="brand"><span class="fox">🦊</span><div>数字找规律<br><small>找规律小课堂</small></div></div>
+    <div class="tools">
+      <button class="icon-btn" id="homeBtn" title="重新开始">🏠</button>
+      <button class="icon-btn" id="muteBtn" title="声音开关">🔊</button>
+    </div>
+  </header>
+
+  <div class="steps">
+    <span class="pill" data-step="1">① 探索</span>
+    <span class="pill" data-step="2">② 闯关</span>
+    <span class="pill" data-step="3">③ 完成</span>
+  </div>
+
+  <!-- ============ 欢迎 ============ -->
+  <section class="screen on" id="welcome">
+    <div class="card">
+      <div style="font-size:3.4rem;text-align:center">🔢🔍</div>
+      <h1>数字找规律</h1>
+      <span class="pinyin">shù zì zhǎo guī lǜ · 数字找规律</span>
+      <p class="lead">
+        数字排队，藏着小秘密！🤫<br>
+        看懂<b>「每一步怎么变」</b>，<br>
+        就能猜出<b>下一个数</b>～<br>
+        你最爱找规律啦，来试试！
+      </p>
+      <button class="big-btn" id="startBtn">开始探索 →</button>
+
+      <details>
+        <summary>👨‍👩‍👧 给爸爸妈妈的话（点开）</summary>
+        <p>
+          <b>为什么选「找规律」？</b> 孩子已掌握万以内加减、乘法口诀和翻倍，
+          找规律把这些技能串起来：观察相邻两数<b>「怎么变」</b>，再用加减或翻倍推出下一个。
+          这是数感和代数思维（数列、函数）的最早雏形，也正好对上他爱找规律的天性。<br><br>
+          <b>怎么一起玩：</b> 探索时每个数之间都画了箭头并标出 <b>+2、×2、−2</b>，
+          请他先<b>说出</b>这一步是怎么变的，再点「揭晓」验证最后一个数。
+          多换几种规律，让他自己发现「找到变化，就能预测」。<br><br>
+          <b>可以追问：</b>「这一步是加还是乘？」「那再下一个会是几？」
+          鼓励他大声把规律讲出来——能<b>说清规律</b>，比答对一道题更重要。
+        </p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ 探索 ============ -->
+  <section class="screen" id="explore">
+    <div class="card">
+      <h2>🔍 看看数字怎么变</h2>
+      <p class="lead" style="margin-top:0">
+        点一个规律，数字就排好队～<br>箭头上的小标签，就是<b>每一步怎么变</b>！
+      </p>
+
+      <div class="rule-btns">
+        <button class="rule-btn add" data-rule="add2">每次 +2</button>
+        <button class="rule-btn add" data-rule="add5">每次 +5</button>
+        <button class="rule-btn dbl" data-rule="dbl">每次翻倍</button>
+        <button class="rule-btn sub" data-rule="sub2">每次 −2</button>
+      </div>
+
+      <div class="ctl-hint">👇 最后一个先盖住，先猜一猜再揭晓！</div>
+
+      <div class="seq" id="seq"></div>
+
+      <button class="reveal-btn" id="revealBtn" disabled>揭晓 ✨</button>
+
+      <div class="note" id="note">先点上面一个规律吧～</div>
+
+      <div class="unlock" id="unlock"></div>
+      <button class="big-btn purple" id="toPractice" disabled>去闯关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 闯关 ============ -->
+  <section class="screen" id="practice">
+    <div class="card">
+      <div class="level-tag" id="levelTag">第 1 / 3 关</div>
+      <h2 style="margin-top:2px">接下来是几？</h2>
+      <div class="q-hint" id="qHint">看看每一步怎么变 ✨</div>
+
+      <div class="seq" id="seqP"></div>
+
+      <div class="ask" id="ask">问号那里是几呢？</div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="big-btn" id="nextLevel" style="display:none">下一关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 完成 ============ -->
+  <section class="screen" id="done">
+    <div class="card">
+      <div class="badge">🎖️</div>
+      <h1>太厉害啦！</h1>
+      <div class="trophy-name">🎖️ 规律小神探</div>
+      <p class="lead">
+        你学会找规律啦：<br>
+        看懂<b class="or">每一步怎么变</b>，<br>
+        就能猜出<b class="gr">下一个数</b>！🔍<br>
+        +2、+5、翻倍、−2 你都会啦！💪
+      </p>
+      <p class="lead" style="font-size:.95rem">
+        🌟 考考爸爸妈妈：<b>3, 6, 9, 12,</b> 下一个是几？
+      </p>
+      <button class="big-btn orange" id="again">再玩一次 🔁</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+"use strict";
+const $=(s,el=document)=>el.querySelector(s);
+const $$=(s,el=document)=>[...el.querySelectorAll(s)];
+
+/* ---------- 声音 ---------- */
+let muted=false, audioCtx=null;
+function ac(){ if(!audioCtx){ try{audioCtx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return audioCtx; }
+function beep(freq,dur,type,vol,when){
+  if(muted) return; const c=ac(); if(!c) return;
+  const t=c.currentTime+(when||0), o=c.createOscillator(), g=c.createGain();
+  o.type=type||'sine'; o.frequency.value=freq;
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol||0.15,t+0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g).connect(c.destination); o.start(t); o.stop(t+dur+0.02);
+}
+const sClick=()=>beep(680,0.06,'triangle',0.12,0);
+const sCut  =()=>{beep(900,0.05,'square',0.08,0); beep(500,0.07,'triangle',0.1,0.05);};
+const sGood =()=>[523,659,784].forEach((f,i)=>beep(f,0.12,'sine',0.16,i*0.09));
+const sWin  =()=>[523,659,784,1047,1319].forEach((f,i)=>beep(f,0.16,'sine',0.18,i*0.12));
+const sBad  =()=>beep(190,0.2,'sawtooth',0.1,0);
+
+/* ---------- 语音（中文朗读） ---------- */
+let zhVoice=null;
+function pickVoice(){
+  if(!('speechSynthesis'in window)) return;
+  const vs=speechSynthesis.getVoices(); if(!vs||!vs.length) return;
+  const zh=vs.filter(v=>/zh|cmn|chinese|普通话|国语|中文/i.test((v.lang||'')+' '+(v.name||'')));
+  const female=/婷婷|美嘉|思琪|善怡|静|丽|语嫣|晓|Ting-?Ting|Mei-?Jia|Sin-?ji|Yu-?shu|Tian-?Tian|Li-?mu|Han|female|女/i;
+  const male=/男|male|Yu-?Long|Liang|国梁/i;
+  zhVoice = zh.find(v=>female.test(v.name))
+         || zh.find(v=>/zh[-_]?CN/i.test(v.lang)&&!male.test(v.name))
+         || zh.find(v=>!male.test(v.name))
+         || zh[0] || null;
+}
+if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; setTimeout(pickVoice,300); setTimeout(pickVoice,1200); }
+function say(text){
+  if(muted||!('speechSynthesis'in window)) return;
+  try{ if(!zhVoice) pickVoice(); speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang='zh-CN'; if(zhVoice)u.voice=zhVoice; u.rate=0.95; u.pitch=1.1;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ---------- 屏幕切换 ---------- */
+function show(id,step){
+  $$('.screen').forEach(s=>s.classList.remove('on'));
+  $('#'+id).classList.add('on');
+  $$('.pill').forEach(p=>p.classList.toggle('active', +p.dataset.step===step));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ---------- 豆豆阵（保留辅助函数） ---------- */
+function fillGrid(el,rows,cols,cls){
+  el.style.gridTemplateColumns=`repeat(${cols},var(--dot))`;
+  el.style.gridTemplateRows=`repeat(${rows},var(--dot))`;
+  el.innerHTML='';
+  const n=rows*cols;
+  for(let i=0;i<n;i++){ const d=document.createElement('div'); d.className='dot '+cls; el.appendChild(d); }
+}
+
+/* ============ 探索 ============ */
+const RULES={
+  add2:{seq:[2,4,6,8,10],  tag:'+2', dbl:false, name:'每次加二', words:'每次加二！下一个是十！'},
+  add5:{seq:[5,10,15,20,25],tag:'+5', dbl:false, name:'每次加五', words:'每次加五！下一个是二十五！'},
+  dbl: {seq:[1,2,4,8,16],   tag:'×2', dbl:true,  name:'每次翻倍', words:'每次翻倍，乘以二！下一个是十六！'},
+  sub2:{seq:[10,8,6,4,2],   tag:'−2', dbl:false, name:'每次减二', words:'每次减二！下一个是二！'}
+};
+const seqEl=$('#seq'), revealBtn=$('#revealBtn'), note=$('#note'), unlock=$('#unlock'), toPractice=$('#toPractice');
+const tried=new Set(); let unlocked=false; let curRule=null, revealed=false;
+
+function renderSeq(container, seq, tag, dbl, hideLast){
+  container.innerHTML='';
+  seq.forEach((v,i)=>{
+    if(i>0){
+      const a=document.createElement('div');
+      a.className='arrow'+(dbl?' dbl':'');
+      a.innerHTML=`<div class="tag">${tag}</div><div class="line">➜</div>`;
+      container.appendChild(a);
+    }
+    const n=document.createElement('div');
+    const isLast=(i===seq.length-1);
+    if(isLast && hideLast){ n.className='num q'; n.textContent='?'; }
+    else{ n.className='num'; n.textContent=v; }
+    container.appendChild(n);
+  });
+}
+
+function pickRule(key){
+  curRule=key; revealed=false;
+  const R=RULES[key];
+  $$('.rule-btn').forEach(b=>b.classList.toggle('sel', b.dataset.rule===key));
+  renderSeq(seqEl, R.seq, R.tag, R.dbl, true);
+  revealBtn.disabled=false;
+  note.textContent='先猜一猜：最后那个「?」是几呢？然后点「揭晓」～';
+  sClick();
+  say(`这是${R.name}的队伍。最后一个先盖住啦，你先猜猜是几？`);
+}
+
+function doReveal(){
+  if(!curRule || revealed) return;
+  revealed=true;
+  const R=RULES[curRule];
+  renderSeq(seqEl, R.seq, R.tag, R.dbl, false);
+  const nums=$$('.num', seqEl);
+  if(nums.length){ const last=nums[nums.length-1]; last.classList.remove('q'); last.classList.add('reveal'); }
+  const ans=R.seq[R.seq.length-1];
+  note.textContent=`✨ 规律是「${R.name}」，所以下一个就是 ${ans}！你猜对了吗？`;
+  sGood(); say(R.words);
+
+  tried.add(curRule);
+  const n=tried.size;
+  if(!unlocked){
+    if(n<2){ unlock.textContent=`已经看懂 ${n} 种规律，再试 ${2-n} 种就解锁闯关！`; }
+    else{
+      unlocked=true; toPractice.disabled=false; toPractice.classList.add('ready');
+      unlock.textContent='🎉 你发现啦：找到「每一步怎么变」，就能猜出下一个数！';
+      setTimeout(()=>{ sWin(); say('你发现啦！找到每一步怎么变，就能猜出下一个数！太棒了！'); },700);
+    }
+  }
+}
+
+$$('.rule-btn').forEach(b=>b.addEventListener('click',()=>pickRule(b.dataset.rule)));
+revealBtn.addEventListener('click', doReveal);
+$('#toPractice').addEventListener('click',()=>{ sClick(); startPractice(); });
+
+/* ============ 闯关 ============ */
+const PROB=[
+  {seq:[2,4,6,8], tag:'+2', dbl:false, ans:10, opts:[9,10,12]},
+  {seq:[5,10,15], tag:'+5', dbl:false, ans:20, opts:[16,20,25]},
+  {seq:[1,2,4,8], tag:'×2', dbl:true,  ans:16, opts:[10,12,16]}
+];
+let pi=0;
+function startPractice(){ pi=0; show('practice',2); renderLevel(); }
+
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+function renderLevel(){
+  const P=PROB[pi];
+  $('#levelTag').textContent=`第 ${pi+1} / 3 关`;
+  $('#qHint').textContent= P.dbl ? '每一步都翻倍（×2）哦 ✨' : `每一步都 ${P.tag} 哦 ✨`;
+  /* 数列 + 末尾问号 */
+  renderSeq($('#seqP'), [...P.seq, '?'], P.tag, P.dbl, true);
+  $('#ask').textContent='问号那里是几呢？';
+  $('#feedback').textContent='';
+  $('#nextLevel').style.display='none';
+
+  const opts=shuffle([...P.opts]);
+  const box=$('#options'); box.innerHTML='';
+  opts.forEach(v=>{
+    const btn=document.createElement('button');
+    btn.className='opt'; btn.textContent=v;
+    btn.addEventListener('click',()=>choose(btn,v,P.ans));
+    box.appendChild(btn);
+  });
+  const seqWords=P.seq.join('，');
+  say(`${seqWords}，接下来是几？看看每一步是怎么变的。`);
+}
+
+let answered=false;
+function choose(btn,v,ans){
+  if(answered) return;
+  if(v===ans){
+    answered=true;
+    btn.classList.add('correct'); sGood();
+    /* 把问号变成答案 */
+    const nums=$$('.num', $('#seqP'));
+    if(nums.length){ const last=nums[nums.length-1]; last.classList.remove('q'); last.classList.add('reveal'); last.textContent=ans; }
+    $('#feedback').innerHTML='<span class="gr">答对啦！🎉</span><div class="stars">⭐⭐⭐</div>';
+    say('答对啦！你真厉害！');
+    $$('.opt').forEach(o=>o.disabled=true);
+    const last=(pi===PROB.length-1);
+    const nb=$('#nextLevel');
+    nb.textContent = last ? '完成啦 🎉' : '下一关 →';
+    nb.style.display='block';
+  }else{
+    btn.classList.add('wrong'); sBad();
+    $('#feedback').innerHTML='<span class="or">再看看规律～ 你可以的！</span>';
+    say('再看看规律，你可以的！');
+    setTimeout(()=>btn.classList.remove('wrong'),400);
+  }
+}
+
+$('#nextLevel').addEventListener('click',()=>{
+  sClick(); answered=false;
+  if(pi===PROB.length-1){ finish(); }
+  else{ pi++; renderLevel(); }
+});
+
+/* ============ 完成 ============ */
+function finish(){
+  show('done',3); sWin(); say('太厉害啦！你已经是规律小神探啦！');
+  confetti();
+}
+$('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('explore',1); say('我们再玩一次！点一个规律试试看！'); });
+
+/* ---------- 顶部按钮 ---------- */
+$('#startBtn').addEventListener('click',()=>{
+  ac(); sClick(); show('explore',1);
+  say('数字排队，藏着小秘密！点一个规律，看看每一步是怎么变的！');
+});
+$('#muteBtn').addEventListener('click',()=>{
+  muted=!muted; $('#muteBtn').textContent=muted?'🔇':'🔊';
+  if(muted&&'speechSynthesis'in window) speechSynthesis.cancel(); else sClick();
+});
+$('#homeBtn').addEventListener('click',()=>{ sClick(); if('speechSynthesis'in window)speechSynthesis.cancel(); location.href='index.html'; });
+
+function resetAll(){
+  tried.clear(); unlocked=false; answered=false; pi=0; curRule=null; revealed=false;
+  toPractice.disabled=true; toPractice.classList.remove('ready'); unlock.textContent='';
+  revealBtn.disabled=true; seqEl.innerHTML=''; note.textContent='先点上面一个规律吧～';
+  $$('.rule-btn').forEach(b=>b.classList.remove('sel'));
+}
+
+/* ---------- 彩带 ---------- */
+function confetti(){
+  const cv=$('#confetti'), ctx=cv.getContext('2d');
+  cv.width=innerWidth; cv.height=innerHeight; cv.style.display='block';
+  const colors=['#2563EB','#F97316','#16A34A','#EAB308','#EC4899','#7C3AED'];
+  const P=[];
+  for(let i=0;i<150;i++) P.push({
+    x:innerWidth/2+(Math.random()-0.5)*120, y:innerHeight*0.28,
+    vx:(Math.random()-0.5)*13, vy:Math.random()*-13-3, g:0.32,
+    s:7+Math.random()*9, c:colors[i%colors.length], rot:Math.random()*6, vr:(Math.random()-0.5)*0.4
+  });
+  let t=0;
+  (function anim(){
+    t++; ctx.clearRect(0,0,cv.width,cv.height);
+    P.forEach(p=>{ p.vy+=p.g; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c;
+      ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6); ctx.restore();
+    });
+    if(t<150) requestAnimationFrame(anim); else cv.style.display='none';
+  })();
+}
+
+/* —— 通关记录（本地 localStorage）—— */
+(function(){var ID='guilv';try{var d=document.getElementById('done');if(d){var mark=function(){if(d.classList.contains('on')){try{localStorage.setItem('yswg:done:'+ID,'1');}catch(e){}}};new MutationObserver(mark).observe(d,{attributes:true,attributeFilter:['class']});mark();}}catch(e){}})();
+</script>
+</body>
+</html>

@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>分数小课堂 · 一半和一半</title>
+<style>
+  :root{
+    --dot: clamp(15px, 4.2vw, 30px);
+    --blue:#2563EB; --blue2:#60A5FA;
+    --orange:#EA580C; --orange2:#FB923C;
+    --green:#16A34A; --green2:#4ADE80;
+    --purple:#7C3AED;
+    --ink:#1F2937; --soft:#6B7280;
+    --card:#ffffff;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",
+      "Hiragino Sans GB","Helvetica Neue",sans-serif;
+    color:var(--ink);
+    background:linear-gradient(160deg,#EAF4FF 0%,#FFF6EC 60%,#FDEFF6 100%);
+    min-height:100vh;
+    overflow-x:hidden;
+    user-select:none;
+  }
+  .wrap{max-width:760px; margin:0 auto; padding:10px 14px 40px;}
+
+  /* ---- 顶部 ---- */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 4px 6px;
+  }
+  .brand{display:flex; align-items:center; gap:8px; font-weight:800; font-size:1.15rem;}
+  .brand .fox{font-size:1.6rem;}
+  .brand small{color:var(--soft); font-weight:600; font-size:.78rem;}
+  .tools{display:flex; gap:8px;}
+  .icon-btn{
+    border:none; background:#fff; border-radius:14px; width:44px; height:44px;
+    font-size:1.25rem; cursor:pointer; box-shadow:0 3px 8px rgba(0,0,0,.08);
+    transition:transform .1s;
+  }
+  .icon-btn:active{transform:scale(.92);}
+
+  .steps{display:flex; gap:6px; justify-content:center; margin:4px 0 12px;}
+  .pill{
+    font-size:.82rem; font-weight:700; color:var(--soft);
+    background:#fff; padding:5px 12px; border-radius:999px;
+    box-shadow:0 2px 5px rgba(0,0,0,.05);
+  }
+  .pill.active{color:#fff; background:var(--purple); box-shadow:0 4px 10px rgba(124,58,237,.35);}
+
+  /* ---- 卡片 / 屏幕 ---- */
+  .screen{display:none; animation:pop .35s ease both;}
+  .screen.on{display:block;}
+  @keyframes pop{from{opacity:0; transform:translateY(12px) scale(.98);} to{opacity:1; transform:none;}}
+  .card{
+    background:var(--card); border-radius:26px; padding:22px 18px;
+    box-shadow:0 12px 30px rgba(80,90,130,.12); margin-bottom:16px;
+  }
+  h1{font-size:1.7rem; margin:.1em 0 .2em; text-align:center;}
+  h2{font-size:1.25rem; margin:.1em 0 .5em; text-align:center; color:var(--purple);}
+  .lead{text-align:center; color:var(--soft); font-size:1rem; line-height:1.7; margin:.3em 0 .2em;}
+  .pinyin{display:block; color:var(--soft); font-size:.95rem; letter-spacing:.06em; font-weight:600;}
+
+  /* ---- 按钮 ---- */
+  .big-btn{
+    display:block; width:100%; border:none; cursor:pointer;
+    font-size:1.3rem; font-weight:800; color:#fff;
+    padding:16px; border-radius:20px; margin-top:8px;
+    background:linear-gradient(135deg,#34D399,#10B981);
+    box-shadow:0 8px 18px rgba(16,185,129,.35);
+    transition:transform .12s, box-shadow .12s, filter .2s;
+  }
+  .big-btn.purple{background:linear-gradient(135deg,#A78BFA,#7C3AED); box-shadow:0 8px 18px rgba(124,58,237,.35);}
+  .big-btn.orange{background:linear-gradient(135deg,#FDBA74,#F97316); box-shadow:0 8px 18px rgba(249,115,22,.35);}
+  .big-btn:active{transform:translateY(2px) scale(.99);}
+  .big-btn:disabled{filter:grayscale(.7) opacity(.55); cursor:not-allowed; box-shadow:none;}
+  .big-btn.ready{animation:bounce 1s infinite;}
+  @keyframes bounce{0%,100%{transform:none;}50%{transform:translateY(-5px);}}
+
+  /* ---- 豆豆阵（保留参考样式以备复用） ---- */
+  .array-wrap{display:flex; align-items:center; justify-content:center; gap:8px; margin:10px 0 6px;}
+  .rows-label{
+    writing-mode:vertical-rl; text-orientation:upright;
+    font-weight:800; color:var(--soft); font-size:.95rem; letter-spacing:2px;
+  }
+  .array{display:flex; align-items:center; justify-content:center; gap:6px;}
+  .block{display:flex; flex-direction:column; align-items:center; gap:6px;}
+  .block-cap{
+    font-weight:900; font-size:1rem; color:#fff; min-width:30px; text-align:center;
+    padding:2px 10px; border-radius:999px;
+  }
+  .block.blue .block-cap{background:var(--blue);}
+  .block.orange .block-cap{background:var(--orange);}
+  .grid{display:grid; gap:6px; transition:all .25s ease;}
+  .dot{
+    width:var(--dot); height:var(--dot); border-radius:50%;
+    box-shadow:inset 0 -3px 4px rgba(0,0,0,.18), inset 0 2px 3px rgba(255,255,255,.5);
+    animation:dotin .3s ease both;
+  }
+  @keyframes dotin{from{transform:scale(0);}to{transform:scale(1);}}
+  .dot.blue{background:radial-gradient(circle at 35% 30%,var(--blue2),var(--blue));}
+  .dot.orange{background:radial-gradient(circle at 35% 30%,var(--orange2),var(--orange));}
+  .cut{
+    align-self:stretch; position:relative; width:24px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .cut::before{
+    content:""; position:absolute; top:6px; bottom:6px; left:50%;
+    border-left:3px dashed #94A3B8; transform:translateX(-50%);
+  }
+  .cut span{font-size:1.4rem; background:#fff; border-radius:50%; padding:2px; z-index:1;}
+
+  /* ---- 切刀控制（保留参考样式以备复用） ---- */
+  .controls{display:flex; align-items:center; gap:10px; justify-content:center; margin:14px 0 6px;}
+  .round{
+    border:none; width:52px; height:52px; border-radius:50%; font-size:1.5rem; font-weight:900;
+    color:#fff; background:linear-gradient(135deg,#A78BFA,#7C3AED); cursor:pointer;
+    box-shadow:0 5px 12px rgba(124,58,237,.35);
+  }
+  .round:active{transform:scale(.9);}
+  input[type=range]{
+    -webkit-appearance:none; appearance:none; height:14px; border-radius:999px;
+    background:linear-gradient(90deg,var(--blue2),var(--orange2)); outline:none; flex:1; max-width:280px;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; width:40px; height:40px; border-radius:50%;
+    background:#fff center/22px no-repeat; cursor:pointer;
+    box-shadow:0 3px 8px rgba(0,0,0,.25); border:3px solid var(--purple);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:36px; height:36px; border-radius:50%; background:#fff; cursor:pointer;
+    box-shadow:0 3px 8px rgba(0,0,0,.25); border:3px solid var(--purple);
+  }
+  .ctl-hint{text-align:center; color:var(--soft); font-weight:700; margin:2px 0;}
+  .magic-btn{
+    display:block; margin:8px auto 0; border:none; cursor:pointer;
+    background:linear-gradient(135deg,#FDE68A,#F59E0B); color:#7c2d12; font-weight:800;
+    padding:10px 18px; border-radius:16px; font-size:1.02rem; box-shadow:0 5px 12px rgba(245,158,11,.3);
+  }
+  .magic-btn:active{transform:scale(.96);}
+
+  /* ---- 算式面板 ---- */
+  .eq{
+    background:#F8FAFF; border-radius:18px; padding:14px 12px; margin-top:12px; text-align:center;
+    border:2px dashed #DBE3F4;
+  }
+  .eq .line{font-size:1.45rem; font-weight:800; line-height:1.7; letter-spacing:.5px;}
+  .eq .line.small{font-size:1.15rem;}
+  .muted{color:var(--soft);}
+  .bl{color:var(--blue);} .or{color:var(--orange);} .gr{color:var(--green);}
+  .note{
+    margin-top:10px; background:#FFFDF5; border-radius:14px; padding:10px 12px;
+    color:#92400E; font-weight:700; line-height:1.6; font-size:1rem; text-align:center;
+  }
+  .unlock{text-align:center; font-weight:800; color:var(--purple); margin:12px 0 4px; min-height:1.4em;}
+
+  /* ---- 闯关 ---- */
+  .level-tag{text-align:center; color:var(--soft); font-weight:800; margin-bottom:2px;}
+  .q-big{text-align:center; font-size:2.4rem; font-weight:900; margin:4px 0 2px;}
+  .q-hint{text-align:center; color:var(--orange); font-weight:800; font-size:1.05rem; margin-bottom:6px;}
+  .facts{display:flex; gap:10px; justify-content:center; margin:12px 0 6px; flex-wrap:wrap;}
+  .fact{font-weight:900; font-size:1.2rem; color:#fff; padding:8px 14px; border-radius:14px;}
+  .fact.blue{background:var(--blue);} .fact.orange{background:var(--orange);}
+  .ask{text-align:center; font-size:1.6rem; font-weight:900; margin:10px 0 6px;}
+  .options{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+  .opt{
+    border:none; cursor:pointer; min-width:92px; font-size:1.7rem; font-weight:900;
+    padding:14px 8px; border-radius:18px; background:#fff; color:var(--ink);
+    box-shadow:0 5px 12px rgba(0,0,0,.1); transition:transform .1s;
+    border:3px solid #E5E7EB;
+  }
+  .opt:active{transform:scale(.95);}
+  .opt.correct{background:var(--green); color:#fff; border-color:var(--green);}
+  .opt.wrong{background:#FCA5A5; border-color:#EF4444; animation:shake .35s;}
+  @keyframes shake{0%,100%{transform:none;}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+  .feedback{text-align:center; font-weight:900; font-size:1.3rem; min-height:1.5em; margin-top:12px;}
+  .stars{font-size:1.6rem; letter-spacing:6px; text-align:center;}
+
+  /* ---- 完成 ---- */
+  .badge{font-size:4.5rem; text-align:center; animation:spin 3s linear infinite;}
+  @keyframes spin{from{transform:rotate(-8deg);}50%{transform:rotate(8deg);}to{transform:rotate(-8deg);}}
+  .trophy-name{text-align:center; font-size:1.5rem; font-weight:900; color:var(--purple); margin:6px 0;}
+
+  details{margin-top:8px; background:#F8FAFF; border-radius:16px; padding:4px 14px;}
+  summary{cursor:pointer; font-weight:800; color:var(--purple); padding:10px 0; list-style:none;}
+  summary::-webkit-details-marker{display:none;}
+  details p{color:#374151; line-height:1.75; font-size:.95rem;}
+  details b{color:var(--ink);}
+
+  #confetti{position:fixed; inset:0; pointer-events:none; display:none; z-index:99;}
+
+  /* ====== 分数专属样式 ====== */
+  /* 披萨圆盘 */
+  .pie-wrap{display:flex; flex-direction:column; align-items:center; gap:6px; margin:6px 0 4px;}
+  .pie{
+    width:min(74vw,260px); height:min(74vw,260px);
+    border-radius:50%;
+    box-shadow:0 8px 22px rgba(120,90,40,.25), inset 0 0 0 8px #FBBF24;
+    position:relative; cursor:pointer; touch-action:manipulation;
+  }
+  /* 扇形片：用 conic-gradient 的色段实现，每片单独 div 叠加分割线 */
+  .pie .slice{
+    position:absolute; inset:0; border-radius:50%;
+    -webkit-clip-path:polygon(50% 50%, 50% 0, 50% 0);
+            clip-path:polygon(50% 50%, 50% 0, 50% 0);
+    transition:filter .15s, transform .15s;
+  }
+  .pie .slice .label{
+    position:absolute; font-size:1.3rem; pointer-events:none;
+    transform:translate(-50%,-50%);
+  }
+  /* 分割线层 */
+  .pie .lines{position:absolute; inset:0; pointer-events:none;}
+  .pie .lines i{
+    position:absolute; left:50%; top:50%; width:3px; height:50%;
+    background:#fff; transform-origin:top center; border-radius:2px;
+  }
+  .pie::after{
+    content:""; position:absolute; left:50%; top:50%; width:14px; height:14px;
+    background:#92400E; border-radius:50%; transform:translate(-50%,-50%); pointer-events:none;
+  }
+
+  /* 竖排分数 */
+  .frac{
+    display:inline-flex; flex-direction:column; align-items:center; justify-content:center;
+    line-height:1.05; vertical-align:middle;
+  }
+  .frac .num,.frac .den{font-weight:900; padding:0 .12em;}
+  .frac .bar{
+    width:100%; min-width:1.1em; height:0; border-top:.13em solid currentColor;
+    margin:.12em 0; border-radius:2px;
+  }
+  /* 揭示大分数 */
+  .frac-show{
+    display:flex; align-items:center; justify-content:center; gap:14px;
+    margin:14px 0 6px; flex-wrap:wrap;
+  }
+  .frac-show .frac{font-size:2.6rem; color:var(--green);}
+  .frac-cn{font-size:1.3rem; font-weight:900; color:var(--purple);}
+
+  /* 份数按钮组 */
+  .seg{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:6px 0 4px;}
+  .seg button{
+    border:none; cursor:pointer; font-size:1.15rem; font-weight:900;
+    padding:12px 16px; border-radius:16px; color:#fff;
+    background:linear-gradient(135deg,#A78BFA,#7C3AED);
+    box-shadow:0 5px 12px rgba(124,58,237,.3); transition:transform .1s, filter .15s;
+  }
+  .seg button:active{transform:scale(.95);}
+  .seg button.sel{filter:brightness(1.12); outline:4px solid #DDD6FE;}
+
+  /* 比一比双圆 */
+  .compare{display:flex; gap:14px; justify-content:center; align-items:flex-start; flex-wrap:wrap; margin:8px 0;}
+  .compare .col{display:flex; flex-direction:column; align-items:center; gap:6px;}
+  .compare .pie{width:min(38vw,150px); height:min(38vw,150px); cursor:default;}
+  .compare .frac{font-size:1.6rem; color:var(--green);}
+  .cmp-tag{font-weight:900; font-size:1rem; color:var(--soft);}
+
+  /* 分数大按钮里的竖排分数 */
+  .opt .frac{font-size:1.5rem; color:inherit;}
+  .opt.fopt{min-width:96px; padding:14px 10px;}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="wrap">
+
+  <header>
+    <div class="brand"><span class="fox">🦊</span><div>分数小课堂<br><small>一半和一半</small></div></div>
+    <div class="tools">
+      <button class="icon-btn" id="homeBtn" title="返回地图">🏠</button>
+      <button class="icon-btn" id="muteBtn" title="声音开关">🔊</button>
+    </div>
+  </header>
+
+  <div class="steps">
+    <span class="pill" data-step="1">① 探索</span>
+    <span class="pill" data-step="2">② 闯关</span>
+    <span class="pill" data-step="3">③ 完成</span>
+  </div>
+
+  <!-- ============ 欢迎 ============ -->
+  <section class="screen on" id="welcome">
+    <div class="card">
+      <div style="font-size:3.4rem;text-align:center">🍕✨</div>
+      <h1>分数启蒙</h1>
+      <span class="pinyin">yī bàn hé yī bàn · 一半和一半</span>
+      <p class="lead">
+        一块香喷喷的大饼 🥧<br>
+        两个人，怎么分才<b>公平</b>？<br>
+        当然是 —— <b>一人一半！</b><br>
+        「一半」就是你认识的第一个分数～
+      </p>
+      <button class="big-btn" id="startBtn">开始探索 →</button>
+
+      <details>
+        <summary>👨‍👩‍👧 给爸爸妈妈的话（点开）</summary>
+        <p>
+          <b>为什么选「分数启蒙」？</b> 孩子已经会「平均分」（除法）。
+          分数其实就是平均分的另一种说法：把 <b>1 个整体平均分成几份，每份就是「几分之一」</b>。
+          从他熟悉的「分饼、一人一半」出发，自然过渡到 <b>1/2、1/3、1/4</b>，
+          是「跳一跳够得到」的下一步，也为以后的分数运算打底。<br><br>
+          <b>怎么一起玩：</b> 让他亲手点「分成 2 份 / 4 份」，
+          再点扇形「吃掉」一块，引导他发现 <b>份数越多、每份反而越小</b>
+          （1/4 比 1/2 小）。这一点最反直觉，多用真实的饼干、苹果、巧克力切给他看。<br><br>
+          <b>可以追问：</b>「分给 4 个小朋友，每人吃几分之一？」
+          「为什么切成 4 块，每块比切成 2 块的小？」「2 个 1/4 合起来是多少？」
+          目标是他能把<b>「平均分」和「分数」联系起来</b>。
+        </p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ 探索 ============ -->
+  <section class="screen" id="explore">
+    <div class="card">
+      <h2>🍕 平均分一块披萨</h2>
+      <p class="lead" style="margin-top:0">
+        把整块披萨<b>平均</b>分成几份？<br>每一份就是「几分之一」～ 点点看！
+      </p>
+
+      <div class="seg" id="seg">
+        <button data-n="2">分成 2 份</button>
+        <button data-n="3">分成 3 份</button>
+        <button data-n="4">分成 4 份</button>
+      </div>
+
+      <div class="pie-wrap">
+        <div class="pie" id="pie"></div>
+        <div class="ctl-hint">👆 点一块披萨，把它「吃掉 / 涂色」</div>
+      </div>
+
+      <div class="frac-show" id="fracShow"></div>
+      <div class="note" id="note"></div>
+
+      <button class="magic-btn" id="compareBtn">⚖️ 比一比：1/2 和 1/4 谁大？</button>
+
+      <!-- 比一比面板 -->
+      <div id="comparePanel" style="display:none">
+        <div class="compare">
+          <div class="col">
+            <div class="pie" id="pieA"></div>
+            <div class="frac" data-num="1" data-den="2"></div>
+            <div class="cmp-tag">切 2 份，取 1 份</div>
+          </div>
+          <div class="col">
+            <div class="pie" id="pieB"></div>
+            <div class="frac" data-num="1" data-den="4"></div>
+            <div class="cmp-tag">切 4 份，取 1 份</div>
+          </div>
+        </div>
+        <div class="note" style="background:#F3F0FF;color:#5B21B6">
+          ✨ 看！<b>1/2</b> 那块更大。<b>分的份数越多，每份反而越小！</b>
+        </div>
+      </div>
+
+      <div class="unlock" id="unlock"></div>
+      <button class="big-btn purple" id="toPractice" disabled>去闯关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 闯关 ============ -->
+  <section class="screen" id="practice">
+    <div class="card">
+      <div class="level-tag" id="levelTag">第 1 / 3 关</div>
+      <div class="q-big" id="qBig">？</div>
+      <div class="q-hint" id="qHint"></div>
+
+      <div class="pie-wrap">
+        <div class="pie" id="pieP"></div>
+      </div>
+
+      <div class="ask" id="ask"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="big-btn" id="nextLevel" style="display:none">下一关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 完成 ============ -->
+  <section class="screen" id="done">
+    <div class="card">
+      <div class="badge">🍰</div>
+      <h1>太厉害啦！</h1>
+      <div class="trophy-name">🎖️ 分数小魔法师</div>
+      <p class="lead">
+        你认识了第一批分数：<br>
+        <b class="gr">1/2</b>、<b class="bl">1/3</b>、<b class="or">1/4</b><br>
+        还知道 <b>份数越多，每份越小</b>，<br>
+        <b>2 个 1/4 合起来就是一半！</b> 💪
+      </p>
+      <p class="lead" style="font-size:.95rem">
+        🌟 试试考考爸爸妈妈：<b>一块巧克力分给 4 个人，每人吃几分之一？</b>
+      </p>
+      <button class="big-btn orange" id="again">再玩一次 🔁</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+"use strict";
+const $=(s,el=document)=>el.querySelector(s);
+const $$=(s,el=document)=>[...el.querySelectorAll(s)];
+
+/* ---------- 声音 ---------- */
+let muted=false, audioCtx=null;
+function ac(){ if(!audioCtx){ try{audioCtx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return audioCtx; }
+function beep(freq,dur,type,vol,when){
+  if(muted) return; const c=ac(); if(!c) return;
+  const t=c.currentTime+(when||0), o=c.createOscillator(), g=c.createGain();
+  o.type=type||'sine'; o.frequency.value=freq;
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol||0.15,t+0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g).connect(c.destination); o.start(t); o.stop(t+dur+0.02);
+}
+const sClick=()=>beep(680,0.06,'triangle',0.12,0);
+const sCut  =()=>{beep(900,0.05,'square',0.08,0); beep(500,0.07,'triangle',0.1,0.05);};
+const sGood =()=>[523,659,784].forEach((f,i)=>beep(f,0.12,'sine',0.16,i*0.09));
+const sWin  =()=>[523,659,784,1047,1319].forEach((f,i)=>beep(f,0.16,'sine',0.18,i*0.12));
+const sBad  =()=>beep(190,0.2,'sawtooth',0.1,0);
+
+/* ---------- 语音（中文朗读） ---------- */
+let zhVoice=null;
+function pickVoice(){
+  if(!('speechSynthesis'in window)) return;
+  const vs=speechSynthesis.getVoices(); if(!vs||!vs.length) return;
+  const zh=vs.filter(v=>/zh|cmn|chinese|普通话|国语|中文/i.test((v.lang||'')+' '+(v.name||'')));
+  const female=/婷婷|美嘉|思琪|善怡|静|丽|语嫣|晓|Ting-?Ting|Mei-?Jia|Sin-?ji|Yu-?shu|Tian-?Tian|Li-?mu|Han|female|女/i;
+  const male=/男|male|Yu-?Long|Liang|国梁/i;
+  zhVoice = zh.find(v=>female.test(v.name))
+         || zh.find(v=>/zh[-_]?CN/i.test(v.lang)&&!male.test(v.name))
+         || zh.find(v=>!male.test(v.name))
+         || zh[0] || null;
+}
+if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; setTimeout(pickVoice,300); setTimeout(pickVoice,1200); }
+function say(text){
+  if(muted||!('speechSynthesis'in window)) return;
+  try{ if(!zhVoice) pickVoice(); speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang='zh-CN'; if(zhVoice)u.voice=zhVoice; u.rate=0.95; u.pitch=1.1;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ---------- 屏幕切换 ---------- */
+function show(id,step){
+  $$('.screen').forEach(s=>s.classList.remove('on'));
+  $('#'+id).classList.add('on');
+  $$('.pill').forEach(p=>p.classList.toggle('active', +p.dataset.step===step));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ---------- 豆豆阵（保留参考函数） ---------- */
+function fillGrid(el,rows,cols,cls){
+  el.style.gridTemplateColumns=`repeat(${cols},var(--dot))`;
+  el.style.gridTemplateRows=`repeat(${rows},var(--dot))`;
+  el.innerHTML='';
+  const n=rows*cols;
+  for(let i=0;i<n;i++){ const d=document.createElement('div'); d.className='dot '+cls; el.appendChild(d); }
+}
+
+/* ---------- 工具：中文分数名 / 竖排分数 HTML ---------- */
+const CN_NUM=['零','一','二','三','四','五','六','七','八','九','十'];
+function cnFrac(num,den){
+  // 一/二/三/四…分之 一/二…
+  return `${CN_NUM[den]||den}分之${CN_NUM[num]||num}`;
+}
+function fracHTML(num,den){
+  return `<span class="frac"><span class="num">${num}</span><span class="bar"></span><span class="den">${den}</span></span>`;
+}
+
+/* ---------- 工具：在 .pie 元素里画 N 等份扇形 ---------- */
+const PIE_COLORS=['#FBBF24','#F59E0B','#FCD34D','#FBBF24','#F59E0B','#FCD34D'];
+// 用 SVG 画扇形，份数清晰、分割线明显，可点击
+function buildPie(el,parts,opts){
+  opts=opts||{};
+  const eaten = opts.eaten || new Set();   // 已吃掉/涂色的份索引
+  const highlight = (opts.highlight==null)?-1:opts.highlight; // 高亮某一份
+  const interactive = !!opts.onEat;
+  const size=100, cx=50, cy=50, r=49;
+  const slices=[], lines=[], labels=[];
+  for(let i=0;i<parts;i++){
+    const a0=(i/parts)*2*Math.PI - Math.PI/2;     // 从正上方开始
+    const a1=((i+1)/parts)*2*Math.PI - Math.PI/2;
+    const x0=cx+r*Math.cos(a0), y0=cy+r*Math.sin(a0);
+    const x1=cx+r*Math.cos(a1), y1=cy+r*Math.sin(a1);
+    const large=(a1-a0)>Math.PI?1:0;
+    let fill = PIE_COLORS[i%PIE_COLORS.length];
+    let cls='pieslice';
+    if(eaten.has(i)){ fill='#16A34A'; cls+=' eaten'; }
+    else if(i===highlight){ fill='#4ADE80'; cls+=' hi'; }
+    const d=`M${cx},${cy} L${x0.toFixed(2)},${y0.toFixed(2)} A${r},${r} 0 ${large} 1 ${x1.toFixed(2)},${y1.toFixed(2)} Z`;
+    slices.push(`<path class="${cls}" data-i="${i}" d="${d}" fill="${fill}" stroke="#fff" stroke-width="2" stroke-linejoin="round"/>`);
+    // 一份中心放 emoji 标签
+    const am=(a0+a1)/2, lr=r*0.55;
+    const lx=cx+lr*Math.cos(am), ly=cy+lr*Math.sin(am);
+    let emo = eaten.has(i) ? '😋' : '🍕';
+    labels.push(`<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-size="11">${emo}</text>`);
+  }
+  el.innerHTML =
+    `<svg viewBox="0 0 ${size} ${size}" width="100%" height="100%" style="display:block">`+
+    `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#FDE68A" stroke="#92400E" stroke-width="2.5"/>`+
+    slices.join('')+labels.join('')+
+    `<circle cx="${cx}" cy="${cy}" r="3.2" fill="#92400E"/>`+
+    `</svg>`;
+  if(interactive){
+    $$('.pieslice',el).forEach(p=>{
+      p.style.cursor='pointer';
+      p.addEventListener('click',()=>opts.onEat(+p.dataset.i));
+    });
+  }
+}
+
+/* ============ 探索 ============ */
+let curParts=0;
+let eaten=new Set();
+const triedParts=new Set();   // 试过哪些份数 (2/3/4)
+let unlocked=false;
+const pie=$('#pie'), fracShow=$('#fracShow'), note=$('#note'), unlock=$('#unlock'), toPractice=$('#toPractice');
+
+function renderExplore(parts,quiet){
+  curParts=parts; eaten=new Set();
+  // 高亮第 0 份作为「这一份 = 1/n」
+  buildPie(pie, parts, {highlight:0, eaten:eaten, onEat:eatSlice});
+  fracShow.innerHTML =
+    `这一份 = ${fracHTML(1,parts)} <span class="frac-cn">${cnFrac(1,parts)}</span>`;
+  updateEatNote();
+  triedParts.add(parts);
+  // 份数按钮选中态
+  $$('#seg button').forEach(b=>b.classList.toggle('sel', +b.dataset.n===parts));
+  if(!quiet){ sCut(); say(`把披萨平均分成 ${CN_NUM[parts]} 份，每一份就是${cnFrac(1,parts)}。`); }
+  checkUnlock();
+}
+
+function eatSlice(i){
+  if(eaten.has(i)) eaten.delete(i); else eaten.add(i);
+  buildPie(pie, curParts, {highlight:(eaten.size?-1:0), eaten:eaten, onEat:eatSlice});
+  sClick();
+  updateEatNote(true);
+}
+
+function updateEatNote(fromEat){
+  const m=eaten.size;
+  if(m===0){
+    note.innerHTML = (curParts===2)
+      ? `分成 2 份，每份就是「一半」= ${fracHTML(1,2)}！`
+      : `平均分成 ${CN_NUM[curParts]} 份，每份都是 ${fracHTML(1,curParts)} 哦～`;
+  }else{
+    note.innerHTML = `你吃掉了 ${m} 份，已经吃了 ${fracHTML(m,curParts)}（${m} 个 ${fracHTML(1,curParts)}）！`;
+    if(fromEat){
+      if(m===curParts) say(`你把整块都吃完啦！${curParts} 个${cnFrac(1,curParts)}合起来，就是一整个！`);
+      else if(curParts===2 && m===1) say('吃掉一半，还剩一半！');
+    }
+  }
+}
+
+function checkUnlock(){
+  if(unlocked) return;
+  const n=triedParts.size;
+  if(n<3){
+    unlock.textContent=`已经试了 ${n} 种分法，再试 ${3-n} 种（还有「比一比」）就解锁闯关！`;
+  }else{
+    unlocked=true; toPractice.disabled=false; toPractice.classList.add('ready');
+    unlock.textContent='🎉 你认识 1/2、1/3、1/4 啦！分得越多，每份越小～';
+    sWin(); say('太棒了！你认识了二分之一、三分之一和四分之一！分得越多，每一份反而越小哦！');
+  }
+}
+
+$$('#seg button').forEach(b=>{
+  b.addEventListener('click',()=>{ renderExplore(+b.dataset.n); });
+});
+
+/* 比一比 */
+let compareOpened=false;
+$('#compareBtn').addEventListener('click',()=>{
+  const panel=$('#comparePanel');
+  const open = panel.style.display==='none';
+  panel.style.display = open ? 'block' : 'none';
+  sClick();
+  if(open){
+    buildPie($('#pieA'), 2, {highlight:0});
+    buildPie($('#pieB'), 4, {highlight:0});
+    // 渲染两个竖排分数标签
+    $$('#comparePanel .frac').forEach(f=>{
+      f.innerHTML=`<span class="num">${f.dataset.num}</span><span class="bar"></span><span class="den">${f.dataset.den}</span>`;
+    });
+    say('比一比！左边切成两份取一份，是二分之一。右边切成四份取一份，是四分之一。看！二分之一那一块更大。分的份数越多，每一份反而越小！');
+    if(!compareOpened){ compareOpened=true; triedParts.add('cmp'); }
+  }
+});
+
+$('#toPractice').addEventListener('click',()=>{ sClick(); startPractice(); });
+
+/* ============ 闯关 ============ */
+/* 每关：parts=平均分份数(画饼)，eatCount=已吃份数(可选)，ask=问题，
+   options=[{num,den}]，correct索引，hint，reveal揭示语音 */
+const LV=[
+  {
+    parts:4, eat:0,
+    hint:'蛋糕平均切成 4 份 🍰',
+    ask:`每一份是几分之一？`,
+    options:[{num:1,den:2},{num:1,den:3},{num:1,den:4}],
+    correctIdx:2,
+    say:'把蛋糕平均分成 4 份，每一份是几分之一？',
+    reveal:'对啦！平均分成 4 份，每份就是四分之一！'
+  },
+  {
+    parts:2, eat:0, compareWith:4,   // 特殊：第2关画两个饼比大小
+    hint:'1/2 和 1/4，哪个更大？',
+    ask:`哪个更大？`,
+    options:[{num:1,den:2},{num:1,den:4}],
+    correctIdx:0,
+    say:'二分之一和四分之一，哪个更大呢？',
+    reveal:'答对啦！分得越多每份越小，所以二分之一比四分之一大！'
+  },
+  {
+    parts:4, eat:2,
+    hint:'2 个 1/4 合起来 🍕🍕',
+    ask:`合起来是几分之几？`,
+    options:[{num:1,den:4},{num:2,den:4},{num:3,den:4}],
+    correctIdx:1,
+    say:'两个四分之一合起来，是几分之几？',
+    reveal:'太棒了！2 个四分之一就是四分之二，也正好是一半！'
+  }
+];
+let pi=0, answered=false;
+function startPractice(){ pi=0; answered=false; show('practice',2); renderLevel(); }
+
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+function renderLevel(){
+  const L=LV[pi];
+  answered=false;
+  $('#levelTag').textContent=`第 ${pi+1} / 3 关`;
+  $('#qBig').textContent=L.ask;
+  $('#qHint').textContent=L.hint;
+  $('#feedback').textContent='';
+  $('#nextLevel').style.display='none';
+
+  // 画饼区
+  const pieP=$('#pieP');
+  if(L.compareWith){
+    // 第2关：并排两个饼，直观比大小
+    pieP.style.display='none';
+    let cmp=$('#pieP_cmp');
+    if(!cmp){
+      cmp=document.createElement('div'); cmp.id='pieP_cmp';
+      cmp.className='compare'; pieP.parentNode.appendChild(cmp);
+    }
+    cmp.style.display='flex';
+    cmp.innerHTML=
+      `<div class="col"><div class="pie" id="cmpA"></div>`+
+        `<div class="frac"><span class="num">1</span><span class="bar"></span><span class="den">2</span></div>`+
+        `<div class="cmp-tag">切 2 份取 1 份</div></div>`+
+      `<div class="col"><div class="pie" id="cmpB"></div>`+
+        `<div class="frac"><span class="num">1</span><span class="bar"></span><span class="den">4</span></div>`+
+        `<div class="cmp-tag">切 4 份取 1 份</div></div>`;
+    buildPie($('#cmpA'),2,{highlight:0});
+    buildPie($('#cmpB'),4,{highlight:0});
+  }else{
+    const cmp=$('#pieP_cmp'); if(cmp) cmp.style.display='none';
+    pieP.style.display='block';
+    const eatSet=new Set();
+    for(let i=0;i<(L.eat||0);i++) eatSet.add(i);
+    buildPie(pieP, L.parts, {highlight:(L.eat?-1:0), eaten:eatSet});
+  }
+
+  // 选项（竖排分数大按钮）
+  const items=L.options.map((o,idx)=>({o,correct:idx===L.correctIdx}));
+  shuffle(items);
+  const box=$('#options'); box.innerHTML='';
+  items.forEach(it=>{
+    const btn=document.createElement('button');
+    btn.className='opt fopt';
+    btn.innerHTML=fracHTML(it.o.num,it.o.den);
+    btn.addEventListener('click',()=>choose(btn,it.correct,it.o));
+    box.appendChild(btn);
+  });
+  $('#ask').textContent='👇 选一选';
+  say(L.say);
+}
+
+function choose(btn,correct,o){
+  if(answered) return;
+  if(correct){
+    answered=true;
+    btn.classList.add('correct'); sGood();
+    $('#feedback').innerHTML='<span class="gr">答对啦！🎉</span><div class="stars">⭐⭐⭐</div>';
+    say(LV[pi].reveal);
+    $$('.opt').forEach(o=>o.disabled=true);
+    const last=(pi===LV.length-1);
+    const nb=$('#nextLevel');
+    nb.textContent = last ? '完成啦 🎉' : '下一关 →';
+    nb.style.display='block';
+  }else{
+    btn.classList.add('wrong'); sBad();
+    $('#feedback').innerHTML='<span class="or">再想一想～ 你可以的！</span>';
+    say('再想一想，你一定可以的！');
+    setTimeout(()=>btn.classList.remove('wrong'),400);
+  }
+}
+
+$('#nextLevel').addEventListener('click',()=>{
+  sClick(); answered=false;
+  if(pi===LV.length-1){ finish(); }
+  else{ pi++; renderLevel(); }
+});
+
+/* ============ 完成 ============ */
+function finish(){
+  show('done',3); sWin(); say('太厉害啦！你已经是分数小魔法师啦！');
+  confetti();
+}
+$('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('explore',1); renderExplore(2,true); say('我们再玩一次！'); });
+
+/* ---------- 顶部按钮 ---------- */
+$('#startBtn').addEventListener('click',()=>{
+  ac(); sClick(); show('explore',1);
+  renderExplore(2,true);
+  say('一块披萨，分给两个人。点一点，把它平均分成两份。每一份就是一半，也就是二分之一！');
+});
+$('#muteBtn').addEventListener('click',()=>{
+  muted=!muted; $('#muteBtn').textContent=muted?'🔇':'🔊';
+  if(muted&&'speechSynthesis'in window) speechSynthesis.cancel(); else sClick();
+});
+$('#homeBtn').addEventListener('click',()=>{ sClick(); if('speechSynthesis'in window)speechSynthesis.cancel(); location.href='index.html'; });
+
+function resetAll(){
+  triedParts.clear(); unlocked=false; answered=false; pi=0; compareOpened=false;
+  toPractice.disabled=true; toPractice.classList.remove('ready'); unlock.textContent='';
+  $('#comparePanel').style.display='none';
+}
+
+/* ---------- 彩带 ---------- */
+function confetti(){
+  const cv=$('#confetti'), ctx=cv.getContext('2d');
+  cv.width=innerWidth; cv.height=innerHeight; cv.style.display='block';
+  const colors=['#2563EB','#F97316','#16A34A','#EAB308','#EC4899','#7C3AED'];
+  const P=[];
+  for(let i=0;i<150;i++) P.push({
+    x:innerWidth/2+(Math.random()-0.5)*120, y:innerHeight*0.28,
+    vx:(Math.random()-0.5)*13, vy:Math.random()*-13-3, g:0.32,
+    s:7+Math.random()*9, c:colors[i%colors.length], rot:Math.random()*6, vr:(Math.random()-0.5)*0.4
+  });
+  let t=0;
+  (function anim(){
+    t++; ctx.clearRect(0,0,cv.width,cv.height);
+    P.forEach(p=>{ p.vy+=p.g; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c;
+      ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6); ctx.restore();
+    });
+    if(t<150) requestAnimationFrame(anim); else cv.style.display='none';
+  })();
+}
+
+/* 初始 */
+renderExplore(2,true);
+/* —— 通关记录（本地 localStorage）—— */
+(function(){var ID='fenshu';try{var d=document.getElementById('done');if(d){var mark=function(){if(d.classList.contains('on')){try{localStorage.setItem('yswg:done:'+ID,'1');}catch(e){}}};new MutationObserver(mark).observe(d,{attributes:true,attributeFilter:['class']});mark();}}catch(e){}})();
+</script>
+</body>
+</html>

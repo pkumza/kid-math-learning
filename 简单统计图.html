@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>数学王国 · 统计小课堂</title>
+<style>
+  :root{
+    --dot: clamp(15px, 4.2vw, 30px);
+    --blue:#2563EB; --blue2:#60A5FA;
+    --orange:#EA580C; --orange2:#FB923C;
+    --green:#16A34A; --green2:#4ADE80;
+    --purple:#7C3AED;
+    --ink:#1F2937; --soft:#6B7280;
+    --card:#ffffff;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",
+      "Hiragino Sans GB","Helvetica Neue",sans-serif;
+    color:var(--ink);
+    background:linear-gradient(160deg,#EAF4FF 0%,#FFF6EC 60%,#FDEFF6 100%);
+    min-height:100vh;
+    overflow-x:hidden;
+    user-select:none;
+  }
+  .wrap{max-width:760px; margin:0 auto; padding:10px 14px 40px;}
+
+  /* ---- 顶部 ---- */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 4px 6px;
+  }
+  .brand{display:flex; align-items:center; gap:8px; font-weight:800; font-size:1.15rem;}
+  .brand .fox{font-size:1.6rem;}
+  .brand small{color:var(--soft); font-weight:600; font-size:.78rem;}
+  .tools{display:flex; gap:8px;}
+  .icon-btn{
+    border:none; background:#fff; border-radius:14px; width:44px; height:44px;
+    font-size:1.25rem; cursor:pointer; box-shadow:0 3px 8px rgba(0,0,0,.08);
+    transition:transform .1s;
+  }
+  .icon-btn:active{transform:scale(.92);}
+
+  .steps{display:flex; gap:6px; justify-content:center; margin:4px 0 12px;}
+  .pill{
+    font-size:.82rem; font-weight:700; color:var(--soft);
+    background:#fff; padding:5px 12px; border-radius:999px;
+    box-shadow:0 2px 5px rgba(0,0,0,.05);
+  }
+  .pill.active{color:#fff; background:var(--purple); box-shadow:0 4px 10px rgba(124,58,237,.35);}
+
+  /* ---- 卡片 / 屏幕 ---- */
+  .screen{display:none; animation:pop .35s ease both;}
+  .screen.on{display:block;}
+  @keyframes pop{from{opacity:0; transform:translateY(12px) scale(.98);} to{opacity:1; transform:none;}}
+  .card{
+    background:var(--card); border-radius:26px; padding:22px 18px;
+    box-shadow:0 12px 30px rgba(80,90,130,.12); margin-bottom:16px;
+  }
+  h1{font-size:1.7rem; margin:.1em 0 .2em; text-align:center;}
+  h2{font-size:1.25rem; margin:.1em 0 .5em; text-align:center; color:var(--purple);}
+  .lead{text-align:center; color:var(--soft); font-size:1rem; line-height:1.7; margin:.3em 0 .2em;}
+  .pinyin{display:block; color:var(--soft); font-size:.95rem; letter-spacing:.06em; font-weight:600;}
+
+  /* ---- 按钮 ---- */
+  .big-btn{
+    display:block; width:100%; border:none; cursor:pointer;
+    font-size:1.3rem; font-weight:800; color:#fff;
+    padding:16px; border-radius:20px; margin-top:8px;
+    background:linear-gradient(135deg,#34D399,#10B981);
+    box-shadow:0 8px 18px rgba(16,185,129,.35);
+    transition:transform .12s, box-shadow .12s, filter .2s;
+  }
+  .big-btn.purple{background:linear-gradient(135deg,#A78BFA,#7C3AED); box-shadow:0 8px 18px rgba(124,58,237,.35);}
+  .big-btn.orange{background:linear-gradient(135deg,#FDBA74,#F97316); box-shadow:0 8px 18px rgba(249,115,22,.35);}
+  .big-btn:active{transform:translateY(2px) scale(.99);}
+  .big-btn:disabled{filter:grayscale(.7) opacity(.55); cursor:not-allowed; box-shadow:none;}
+  .big-btn.ready{animation:bounce 1s infinite;}
+  @keyframes bounce{0%,100%{transform:none;}50%{transform:translateY(-5px);}}
+
+  /* ---- 统计图行（象形图） ---- */
+  .chart{margin:14px 0 6px;}
+  .picto-row{
+    display:flex; align-items:center; gap:6px; margin:8px 0;
+    padding:8px 10px; border-radius:18px; cursor:pointer;
+    background:#F8FAFF; border:3px solid transparent; transition:all .2s;
+  }
+  .picto-row:active{transform:scale(.98);}
+  .picto-row.hi{border-color:var(--purple); background:#F3EEFF; box-shadow:0 6px 14px rgba(124,58,237,.18);}
+  .picto-name{font-size:1.7rem; min-width:2.2em; text-align:center;}
+  .picto-icons{flex:1; display:flex; flex-wrap:wrap; gap:4px; font-size:1.6rem; line-height:1;}
+  .picto-icons span{animation:dotin .3s ease both;}
+  @keyframes dotin{from{transform:scale(0);}to{transform:scale(1);}}
+  .picto-num{
+    font-weight:900; font-size:1.2rem; color:#fff; min-width:34px; text-align:center;
+    padding:4px 10px; border-radius:999px; background:var(--green);
+  }
+
+  /* ---- 条形图 ---- */
+  .bars{display:flex; align-items:flex-end; justify-content:center; gap:18px;
+    height:200px; padding:10px 6px 0; border-bottom:4px solid #CBD5E1;}
+  .bar-col{display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer; flex:1; max-width:90px;}
+  .bar-col:active{transform:scale(.97);}
+  .bar{
+    width:100%; border-radius:12px 12px 0 0; transition:all .35s ease;
+    display:flex; align-items:flex-start; justify-content:center;
+    color:#fff; font-weight:900; font-size:1.1rem; padding-top:6px;
+    box-shadow:inset 0 -4px 6px rgba(0,0,0,.12);
+  }
+  .bar-col.hi .bar{outline:4px solid var(--purple); outline-offset:2px;}
+  .bar.c0{background:linear-gradient(180deg,#FB7185,#E11D48);}
+  .bar.c1{background:linear-gradient(180deg,#FBBF24,#F59E0B);}
+  .bar.c2{background:linear-gradient(180deg,#A78BFA,#7C3AED);}
+  .bar-foot{font-size:1.7rem;}
+
+  .toggle-row{display:flex; justify-content:center; margin:14px 0 6px;}
+  .magic-btn{
+    display:block; margin:8px auto 0; border:none; cursor:pointer;
+    background:linear-gradient(135deg,#FDE68A,#F59E0B); color:#7c2d12; font-weight:800;
+    padding:10px 18px; border-radius:16px; font-size:1.02rem; box-shadow:0 5px 12px rgba(245,158,11,.3);
+  }
+  .magic-btn:active{transform:scale(.96);}
+
+  /* ---- 信息面板 ---- */
+  .eq{
+    background:#F8FAFF; border-radius:18px; padding:14px 12px; margin-top:12px; text-align:center;
+    border:2px dashed #DBE3F4;
+  }
+  .eq .line{font-size:1.3rem; font-weight:800; line-height:1.7; letter-spacing:.5px;}
+  .eq .line.small{font-size:1.1rem;}
+  .muted{color:var(--soft);}
+  .bl{color:var(--blue);} .or{color:var(--orange);} .gr{color:var(--green);}
+  .note{
+    margin-top:10px; background:#FFFDF5; border-radius:14px; padding:10px 12px;
+    color:#92400E; font-weight:700; line-height:1.6; font-size:1rem; text-align:center;
+  }
+  .unlock{text-align:center; font-weight:800; color:var(--purple); margin:12px 0 4px; min-height:1.4em;}
+
+  /* ---- 闯关 ---- */
+  .level-tag{text-align:center; color:var(--soft); font-weight:800; margin-bottom:2px;}
+  .q-big{text-align:center; font-size:1.7rem; font-weight:900; margin:4px 0 2px;}
+  .q-hint{text-align:center; color:var(--orange); font-weight:800; font-size:1.05rem; margin-bottom:6px;}
+  .ask{text-align:center; font-size:1.6rem; font-weight:900; margin:10px 0 6px;}
+  .options{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+  .opt{
+    border:none; cursor:pointer; min-width:92px; font-size:1.7rem; font-weight:900;
+    padding:14px 8px; border-radius:18px; background:#fff; color:var(--ink);
+    box-shadow:0 5px 12px rgba(0,0,0,.1); transition:transform .1s;
+    border:3px solid #E5E7EB;
+  }
+  .opt:active{transform:scale(.95);}
+  .opt.correct{background:var(--green); color:#fff; border-color:var(--green);}
+  .opt.wrong{background:#FCA5A5; border-color:#EF4444; animation:shake .35s;}
+  @keyframes shake{0%,100%{transform:none;}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+  .feedback{text-align:center; font-weight:900; font-size:1.3rem; min-height:1.5em; margin-top:12px;}
+  .stars{font-size:1.6rem; letter-spacing:6px; text-align:center;}
+
+  /* ---- 完成 ---- */
+  .badge{font-size:4.5rem; text-align:center; animation:spin 3s linear infinite;}
+  @keyframes spin{from{transform:rotate(-8deg);}50%{transform:rotate(8deg);}to{transform:rotate(-8deg);}}
+  .trophy-name{text-align:center; font-size:1.5rem; font-weight:900; color:var(--purple); margin:6px 0;}
+
+  details{margin-top:8px; background:#F8FAFF; border-radius:16px; padding:4px 14px;}
+  summary{cursor:pointer; font-weight:800; color:var(--purple); padding:10px 0; list-style:none;}
+  summary::-webkit-details-marker{display:none;}
+  details p{color:#374151; line-height:1.75; font-size:.95rem;}
+  details b{color:var(--ink);}
+
+  #confetti{position:fixed; inset:0; pointer-events:none; display:none; z-index:99;}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="wrap">
+
+  <header>
+    <div class="brand"><span class="fox">🦊</span><div>数学王国<br><small>统计小课堂</small></div></div>
+    <div class="tools">
+      <button class="icon-btn" id="homeBtn" title="重新开始">🏠</button>
+      <button class="icon-btn" id="muteBtn" title="声音开关">🔊</button>
+    </div>
+  </header>
+
+  <div class="steps">
+    <span class="pill" data-step="1">① 探索</span>
+    <span class="pill" data-step="2">② 闯关</span>
+    <span class="pill" data-step="3">③ 完成</span>
+  </div>
+
+  <!-- ============ 欢迎 ============ -->
+  <section class="screen on" id="welcome">
+    <div class="card">
+      <div style="font-size:3.4rem;text-align:center">📊🍎</div>
+      <h1>简单统计图</h1>
+      <span class="pinyin">jiǎn dān tǒng jì tú · 看图数一数</span>
+      <p class="lead">
+        把东西排成一张图，📊<br>
+        一眼就能看出<b>谁多谁少</b>！<br>
+        这就是<b>统计图</b>，<br>
+        我们来看图数一数～
+      </p>
+      <button class="big-btn" id="startBtn">开始探索 →</button>
+
+      <details>
+        <summary>👨‍👩‍👧 给爸爸妈妈的话（点开）</summary>
+        <p>
+          <b>为什么选「简单统计图」？</b> 孩子已会万以内加减、比多少和数数。
+          统计图把抽象的数量变成<b>看得见的图形</b>，让他用「读图」代替「死数」，
+          这是数据素养的第一步，也为以后的折线图、表格打基础。<br><br>
+          <b>怎么一起玩：</b> 探索页是「小朋友最喜欢的水果」。先让他点每一行
+          （象形图，<b>一个图标代表一个</b>），数一数；再按按钮切换成<b>条形图</b>，
+          告诉他<b>同样的数据可以画成不同的图</b>，但谁多谁少不变。<br><br>
+          <b>可以追问：</b>「哪种水果最多？最少？」「一共多少个？」
+          「苹果比香蕉多几个？」引导他<b>看图比较</b>，而不是一个一个慢慢数。
+        </p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ 探索 ============ -->
+  <section class="screen" id="explore">
+    <div class="card">
+      <h2>🍎 小朋友最喜欢的水果</h2>
+      <p class="lead" style="margin-top:0">
+        每个图标代表 <b>1 个</b> 小朋友的选择。<br>👇 点一点每一行，看看谁最多、谁最少～
+      </p>
+
+      <div class="chart" id="chart"></div>
+
+      <div class="toggle-row">
+        <button class="magic-btn" id="toggleBtn">🔄 切换成 条形图</button>
+      </div>
+
+      <div class="eq" id="eq"></div>
+      <div class="note" id="note">👆 点一点上面的水果，听听它的秘密！</div>
+
+      <div class="unlock" id="unlock"></div>
+      <button class="big-btn purple" id="toPractice" disabled>去闯关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 闯关 ============ -->
+  <section class="screen" id="practice">
+    <div class="card">
+      <div class="level-tag" id="levelTag">第 1 / 3 关</div>
+      <div class="q-big" id="qBig"></div>
+      <div class="q-hint" id="qHint"></div>
+
+      <div class="chart" id="chartP"></div>
+
+      <div class="ask" id="ask"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="big-btn" id="nextLevel" style="display:none">下一关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 完成 ============ -->
+  <section class="screen" id="done">
+    <div class="card">
+      <div class="badge">🎖️</div>
+      <h1>太厉害啦！</h1>
+      <div class="trophy-name">🎖️ 统计小专家</div>
+      <p class="lead">
+        你学会了看<b class="gr">统计图</b>！<br>
+        一眼就能看出<b class="bl">谁最多</b>、<b class="or">谁最少</b>、<br>
+        一共多少、相差几个！📊
+      </p>
+      <p class="lead" style="font-size:.95rem">
+        🌟 试试考考爸爸妈妈：<b>家里谁的鞋子最多？</b>画张图数一数！
+      </p>
+      <button class="big-btn orange" id="again">再玩一次 🔁</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+"use strict";
+const $=(s,el=document)=>el.querySelector(s);
+const $$=(s,el=document)=>[...el.querySelectorAll(s)];
+
+/* ---------- 声音 ---------- */
+let muted=false, audioCtx=null;
+function ac(){ if(!audioCtx){ try{audioCtx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return audioCtx; }
+function beep(freq,dur,type,vol,when){
+  if(muted) return; const c=ac(); if(!c) return;
+  const t=c.currentTime+(when||0), o=c.createOscillator(), g=c.createGain();
+  o.type=type||'sine'; o.frequency.value=freq;
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol||0.15,t+0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g).connect(c.destination); o.start(t); o.stop(t+dur+0.02);
+}
+const sClick=()=>beep(680,0.06,'triangle',0.12,0);
+const sCut  =()=>{beep(900,0.05,'square',0.08,0); beep(500,0.07,'triangle',0.1,0.05);};
+const sGood =()=>[523,659,784].forEach((f,i)=>beep(f,0.12,'sine',0.16,i*0.09));
+const sWin  =()=>[523,659,784,1047,1319].forEach((f,i)=>beep(f,0.16,'sine',0.18,i*0.12));
+const sBad  =()=>beep(190,0.2,'sawtooth',0.1,0);
+
+/* ---------- 语音（中文朗读） ---------- */
+let zhVoice=null;
+function pickVoice(){
+  if(!('speechSynthesis'in window)) return;
+  const vs=speechSynthesis.getVoices(); if(!vs||!vs.length) return;
+  const zh=vs.filter(v=>/zh|cmn|chinese|普通话|国语|中文/i.test((v.lang||'')+' '+(v.name||'')));
+  const female=/婷婷|美嘉|思琪|善怡|静|丽|语嫣|晓|Ting-?Ting|Mei-?Jia|Sin-?ji|Yu-?shu|Tian-?Tian|Li-?mu|Han|female|女/i;
+  const male=/男|male|Yu-?Long|Liang|国梁/i;
+  zhVoice = zh.find(v=>female.test(v.name))
+         || zh.find(v=>/zh[-_]?CN/i.test(v.lang)&&!male.test(v.name))
+         || zh.find(v=>!male.test(v.name))
+         || zh[0] || null;
+}
+if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; setTimeout(pickVoice,300); setTimeout(pickVoice,1200); }
+function say(text){
+  if(muted||!('speechSynthesis'in window)) return;
+  try{ if(!zhVoice) pickVoice(); speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang='zh-CN'; if(zhVoice)u.voice=zhVoice; u.rate=0.95; u.pitch=1.1;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ---------- 屏幕切换 ---------- */
+function show(id,step){
+  $$('.screen').forEach(s=>s.classList.remove('on'));
+  $('#'+id).classList.add('on');
+  $$('.pill').forEach(p=>p.classList.toggle('active', +p.dataset.step===step));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ---------- 豆豆阵（保留备用） ---------- */
+function fillGrid(el,rows,cols,cls){
+  el.style.gridTemplateColumns=`repeat(${cols},var(--dot))`;
+  el.style.gridTemplateRows=`repeat(${rows},var(--dot))`;
+  el.innerHTML='';
+  const n=rows*cols;
+  for(let i=0;i<n;i++){ const d=document.createElement('div'); d.className='dot '+cls; el.appendChild(d); }
+}
+
+/* ============ 数据 ============ */
+const DATA=[
+  {name:'苹果', icon:'🍎', n:5},
+  {name:'香蕉', icon:'🍌', n:3},
+  {name:'葡萄', icon:'🍇', n:4}
+];
+const TOTAL=DATA.reduce((s,d)=>s+d.n,0); // 12
+const maxN=Math.max(...DATA.map(d=>d.n)); // 5
+const minN=Math.min(...DATA.map(d=>d.n)); // 3
+
+/* ============ 探索 ============ */
+let isBar=false; const seen=new Set(); let unlocked=false;
+const chart=$('#chart'), eqE=$('#eq'), noteE=$('#note'), unlockE=$('#unlock'), toPractice=$('#toPractice');
+
+function buildPicto(host, onClick){
+  host.innerHTML='';
+  host.className='chart';
+  DATA.forEach((d,i)=>{
+    const row=document.createElement('div');
+    row.className='picto-row'; row.dataset.i=i;
+    const icons=Array.from({length:d.n},()=>`<span>${d.icon}</span>`).join('');
+    row.innerHTML=`<div class="picto-name">${d.icon}</div>`+
+                  `<div class="picto-icons">${icons}</div>`+
+                  `<div class="picto-num">${d.n}</div>`;
+    if(onClick) row.addEventListener('click',()=>onClick(i,row));
+    host.appendChild(row);
+  });
+}
+
+function buildBars(host, onClick){
+  host.innerHTML='';
+  host.className='chart';
+  const bars=document.createElement('div'); bars.className='bars';
+  DATA.forEach((d,i)=>{
+    const col=document.createElement('div');
+    col.className='bar-col'; col.dataset.i=i;
+    const h=Math.round(d.n/maxN*150)+24;
+    col.innerHTML=`<div class="bar c${i}" style="height:${h}px">${d.n}</div>`+
+                  `<div class="bar-foot">${d.icon}</div>`;
+    if(onClick) col.addEventListener('click',()=>onClick(i,col));
+    bars.appendChild(col);
+  });
+  host.appendChild(bars);
+}
+
+function renderExplore(){
+  if(isBar) buildBars(chart, pickExplore);
+  else      buildPicto(chart, pickExplore);
+  $('#toggleBtn').textContent = isBar ? '🔄 切换成 象形图' : '🔄 切换成 条形图';
+}
+
+function pickExplore(i,el){
+  sClick();
+  $$('#chart .picto-row, #chart .bar-col').forEach(r=>r.classList.remove('hi'));
+  el.classList.add('hi');
+  const d=DATA[i];
+  let head;
+  if(d.n===maxN) head=`${d.name}最多，${d.n} 个！🏆`;
+  else if(d.n===minN) head=`${d.name}最少，${d.n} 个！`;
+  else head=`${d.name}有 ${d.n} 个。`;
+  const diff=maxN-minN;
+  eqE.innerHTML =
+    `<div class="line">${d.icon} ${d.name} = <span class="gr">${d.n}</span> 个</div>`+
+    `<div class="line small">一共 <span class="bl">${TOTAL}</span> 个 = 5 + 3 + 4</div>`+
+    `<div class="line small">🍎 苹果比 🍌 香蕉 <span class="or">多 ${diff}</span> 个</div>`;
+  noteE.textContent = head;
+  say(head + `一共十二个。苹果比香蕉多${diff}个。`);
+
+  seen.add(i);
+  if(!unlocked && seen.size>=DATA.length){
+    unlocked=true; toPractice.disabled=false; toPractice.classList.add('ready');
+    unlockE.textContent='🎉 你会看图啦！谁多谁少一眼就知道！';
+    sWin();
+  }else if(!unlocked){
+    unlockE.textContent=`已经看了 ${seen.size} 种水果，再点 ${DATA.length-seen.size} 种就解锁闯关！`;
+  }
+}
+
+$('#toggleBtn').addEventListener('click',()=>{
+  sCut(); isBar=!isBar; renderExplore();
+  say(isBar ? '这是条形图！长条越高，数量越多。还是一样的数据哦！'
+            : '这是象形图！一个图标代表一个。');
+});
+$('#toPractice').addEventListener('click',()=>{ sClick(); startPractice(); });
+
+/* ============ 闯关 ============ */
+const PROB=[
+  { q:'哪种水果最多？🏆', hint:'看哪一行最长～',
+    ask:'最多的是哪个？', ans:'🍎 苹果', opts:['🍎 苹果','🍌 香蕉','🍇 葡萄'],
+    voice:'看一看，哪种水果最多呢？' },
+  { q:'香蕉 🍌 有几个？', hint:'数一数香蕉那一行～',
+    ask:'🍌 香蕉 = ?', ans:'3', opts:['3','4','5'],
+    voice:'香蕉有几个呢？数一数。' },
+  { q:'苹果 🍎 比香蕉 🍌 多几个？', hint:'5 个比 3 个多多少～',
+    ask:'🍎 5 − 🍌 3 = ?', ans:'2', opts:['1','2','3'],
+    voice:'苹果有五个，香蕉有三个，苹果比香蕉多几个呢？' }
+];
+let pi=0;
+function startPractice(){ pi=0; show('practice',2); renderLevel(); }
+
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+function renderLevel(){
+  const p=PROB[pi];
+  $('#levelTag').textContent=`第 ${pi+1} / 3 关`;
+  $('#qBig').textContent=p.q;
+  $('#qHint').textContent=p.hint;
+  buildPicto($('#chartP'), null);
+  $('#ask').textContent=p.ask;
+  $('#feedback').textContent='';
+  $('#nextLevel').style.display='none';
+
+  const opts=shuffle(p.opts.slice());
+  const box=$('#options'); box.innerHTML='';
+  opts.forEach(v=>{
+    const btn=document.createElement('button');
+    btn.className='opt'; btn.textContent=v;
+    btn.addEventListener('click',()=>choose(btn,v,p.ans));
+    box.appendChild(btn);
+  });
+  say(p.voice);
+}
+
+let answered=false;
+function choose(btn,v,ans){
+  if(answered) return;
+  if(v===ans){
+    answered=true;
+    btn.classList.add('correct'); sGood();
+    $('#feedback').innerHTML='<span class="gr">答对啦！🎉</span><div class="stars">⭐⭐⭐</div>';
+    say('答对啦！你真厉害！');
+    $$('.opt').forEach(o=>o.disabled=true);
+    const last=(pi===PROB.length-1);
+    const nb=$('#nextLevel');
+    nb.textContent = last ? '完成啦 🎉' : '下一关 →';
+    nb.style.display='block';
+  }else{
+    btn.classList.add('wrong'); sBad();
+    $('#feedback').innerHTML='<span class="or">再看看图～ 你可以的！</span>';
+    say('再看看图，你可以的！');
+    setTimeout(()=>btn.classList.remove('wrong'),400);
+  }
+}
+
+$('#nextLevel').addEventListener('click',()=>{
+  sClick(); answered=false;
+  if(pi===PROB.length-1){ finish(); }
+  else{ pi++; renderLevel(); }
+});
+
+/* ============ 完成 ============ */
+function finish(){
+  show('done',3); sWin(); say('太厉害啦！你已经是统计小专家啦！');
+  confetti();
+}
+$('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('explore',1); say('我们再玩一次！'); });
+
+/* ---------- 顶部按钮 ---------- */
+$('#startBtn').addEventListener('click',()=>{
+  ac(); sClick(); show('explore',1);
+  isBar=false; renderExplore();
+  say('这是小朋友最喜欢的水果。点一点每一行，看看谁最多、谁最少！');
+});
+$('#muteBtn').addEventListener('click',()=>{
+  muted=!muted; $('#muteBtn').textContent=muted?'🔇':'🔊';
+  if(muted&&'speechSynthesis'in window) speechSynthesis.cancel(); else sClick();
+});
+$('#homeBtn').addEventListener('click',()=>{ sClick(); if('speechSynthesis'in window)speechSynthesis.cancel(); location.href='index.html'; });
+
+function resetAll(){
+  seen.clear(); unlocked=false; answered=false; pi=0; isBar=false;
+  toPractice.disabled=true; toPractice.classList.remove('ready'); unlockE.textContent='';
+  noteE.textContent='👆 点一点上面的水果，听听它的秘密！';
+  eqE.innerHTML='';
+  renderExplore();
+}
+
+/* ---------- 彩带 ---------- */
+function confetti(){
+  const cv=$('#confetti'), ctx=cv.getContext('2d');
+  cv.width=innerWidth; cv.height=innerHeight; cv.style.display='block';
+  const colors=['#2563EB','#F97316','#16A34A','#EAB308','#EC4899','#7C3AED'];
+  const P=[];
+  for(let i=0;i<150;i++) P.push({
+    x:innerWidth/2+(Math.random()-0.5)*120, y:innerHeight*0.28,
+    vx:(Math.random()-0.5)*13, vy:Math.random()*-13-3, g:0.32,
+    s:7+Math.random()*9, c:colors[i%colors.length], rot:Math.random()*6, vr:(Math.random()-0.5)*0.4
+  });
+  let t=0;
+  (function anim(){
+    t++; ctx.clearRect(0,0,cv.width,cv.height);
+    P.forEach(p=>{ p.vy+=p.g; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c;
+      ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6); ctx.restore();
+    });
+    if(t<150) requestAnimationFrame(anim); else cv.style.display='none';
+  })();
+}
+
+/* 初始 */
+renderExplore();
+/* —— 通关记录（本地 localStorage）—— */
+(function(){var ID='tongji';try{var d=document.getElementById('done');if(d){var mark=function(){if(d.classList.contains('on')){try{localStorage.setItem('yswg:done:'+ID,'1');}catch(e){}}};new MutationObserver(mark).observe(d,{attributes:true,attributeFilter:['class']});mark();}}catch(e){}})();
+</script>
+</body>
+</html>

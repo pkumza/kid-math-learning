@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>可能性 · 可能性小课堂</title>
+<style>
+  :root{
+    --dot: clamp(15px, 4.2vw, 30px);
+    --blue:#2563EB; --blue2:#60A5FA;
+    --orange:#EA580C; --orange2:#FB923C;
+    --green:#16A34A; --green2:#4ADE80;
+    --purple:#7C3AED;
+    --ink:#1F2937; --soft:#6B7280;
+    --card:#ffffff;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",
+      "Hiragino Sans GB","Helvetica Neue",sans-serif;
+    color:var(--ink);
+    background:linear-gradient(160deg,#EAF4FF 0%,#FFF6EC 60%,#FDEFF6 100%);
+    min-height:100vh;
+    overflow-x:hidden;
+    user-select:none;
+  }
+  .wrap{max-width:760px; margin:0 auto; padding:10px 14px 40px;}
+
+  /* ---- 顶部 ---- */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 4px 6px;
+  }
+  .brand{display:flex; align-items:center; gap:8px; font-weight:800; font-size:1.15rem;}
+  .brand .fox{font-size:1.6rem;}
+  .brand small{color:var(--soft); font-weight:600; font-size:.78rem;}
+  .tools{display:flex; gap:8px;}
+  .icon-btn{
+    border:none; background:#fff; border-radius:14px; width:44px; height:44px;
+    font-size:1.25rem; cursor:pointer; box-shadow:0 3px 8px rgba(0,0,0,.08);
+    transition:transform .1s;
+  }
+  .icon-btn:active{transform:scale(.92);}
+
+  .steps{display:flex; gap:6px; justify-content:center; margin:4px 0 12px;}
+  .pill{
+    font-size:.82rem; font-weight:700; color:var(--soft);
+    background:#fff; padding:5px 12px; border-radius:999px;
+    box-shadow:0 2px 5px rgba(0,0,0,.05);
+  }
+  .pill.active{color:#fff; background:var(--purple); box-shadow:0 4px 10px rgba(124,58,237,.35);}
+
+  /* ---- 卡片 / 屏幕 ---- */
+  .screen{display:none; animation:pop .35s ease both;}
+  .screen.on{display:block;}
+  @keyframes pop{from{opacity:0; transform:translateY(12px) scale(.98);} to{opacity:1; transform:none;}}
+  .card{
+    background:var(--card); border-radius:26px; padding:22px 18px;
+    box-shadow:0 12px 30px rgba(80,90,130,.12); margin-bottom:16px;
+  }
+  h1{font-size:1.7rem; margin:.1em 0 .2em; text-align:center;}
+  h2{font-size:1.25rem; margin:.1em 0 .5em; text-align:center; color:var(--purple);}
+  .lead{text-align:center; color:var(--soft); font-size:1rem; line-height:1.7; margin:.3em 0 .2em;}
+  .pinyin{display:block; color:var(--soft); font-size:.95rem; letter-spacing:.06em; font-weight:600;}
+
+  /* ---- 按钮 ---- */
+  .big-btn{
+    display:block; width:100%; border:none; cursor:pointer;
+    font-size:1.3rem; font-weight:800; color:#fff;
+    padding:16px; border-radius:20px; margin-top:8px;
+    background:linear-gradient(135deg,#34D399,#10B981);
+    box-shadow:0 8px 18px rgba(16,185,129,.35);
+    transition:transform .12s, box-shadow .12s, filter .2s;
+  }
+  .big-btn.purple{background:linear-gradient(135deg,#A78BFA,#7C3AED); box-shadow:0 8px 18px rgba(124,58,237,.35);}
+  .big-btn.orange{background:linear-gradient(135deg,#FDBA74,#F97316); box-shadow:0 8px 18px rgba(249,115,22,.35);}
+  .big-btn:active{transform:translateY(2px) scale(.99);}
+  .big-btn:disabled{filter:grayscale(.7) opacity(.55); cursor:not-allowed; box-shadow:none;}
+  .big-btn.ready{animation:bounce 1s infinite;}
+  @keyframes bounce{0%,100%{transform:none;}50%{transform:translateY(-5px);}}
+
+  /* ---- 盒子 / 球 ---- */
+  .box-wrap{display:flex; align-items:center; justify-content:center; margin:14px 0 6px;}
+  .box{
+    background:linear-gradient(160deg,#FEF3C7,#FCD34D);
+    border:5px solid #D97706; border-radius:20px;
+    padding:18px 16px 16px; min-width:200px; min-height:120px;
+    display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center;
+    box-shadow:inset 0 6px 14px rgba(0,0,0,.12), 0 6px 14px rgba(217,119,6,.25);
+    position:relative;
+  }
+  .box-label{
+    position:absolute; top:-14px; left:50%; transform:translateX(-50%);
+    background:#D97706; color:#fff; font-weight:800; font-size:.85rem;
+    padding:2px 14px; border-radius:999px; white-space:nowrap;
+  }
+  .ball{
+    width:var(--dot); height:var(--dot); border-radius:50%;
+    box-shadow:inset 0 -3px 4px rgba(0,0,0,.25), inset 0 2px 3px rgba(255,255,255,.55);
+    animation:dotin .3s ease both;
+  }
+  @keyframes dotin{from{transform:scale(0);}to{transform:scale(1);}}
+  .ball.red{background:radial-gradient(circle at 35% 30%,#FCA5A5,#DC2626);}
+  .ball.blue{background:radial-gradient(circle at 35% 30%,var(--blue2),var(--blue));}
+
+  /* ---- 情景按钮 ---- */
+  .scene-btns{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:8px 0 4px;}
+  .scene{
+    border:3px solid #E5E7EB; cursor:pointer; font-size:1rem; font-weight:800;
+    padding:12px 14px; border-radius:16px; background:#fff; color:var(--ink);
+    box-shadow:0 4px 10px rgba(0,0,0,.08); transition:transform .1s;
+  }
+  .scene:active{transform:scale(.95);}
+  .scene.sel{border-color:var(--purple); background:#F3EEFF; color:var(--purple);}
+
+  /* ---- 可能性标签 ---- */
+  .verdict{
+    text-align:center; font-size:1.9rem; font-weight:900; margin:14px 0 4px;
+    min-height:1.4em; transition:color .2s;
+  }
+  .verdict.certain{color:var(--green);}
+  .verdict.maybe{color:#F97316;}
+  .verdict.impossible{color:#9CA3AF;}
+  .verdict-sub{text-align:center; color:var(--soft); font-weight:700; min-height:1.4em; margin-bottom:4px;}
+
+  .draw-btn{
+    display:block; margin:8px auto 0; border:none; cursor:pointer;
+    background:linear-gradient(135deg,#FDE68A,#F59E0B); color:#7c2d12; font-weight:800;
+    padding:12px 22px; border-radius:16px; font-size:1.1rem; box-shadow:0 5px 12px rgba(245,158,11,.3);
+  }
+  .draw-btn:active{transform:scale(.96);}
+  .drawn{text-align:center; font-size:1.3rem; font-weight:900; min-height:1.6em; margin-top:10px;}
+  .drawn .ball{display:inline-block; vertical-align:middle; margin:0 6px;}
+
+  .unlock{text-align:center; font-weight:800; color:var(--purple); margin:12px 0 4px; min-height:1.4em;}
+
+  /* ---- 闯关 ---- */
+  .level-tag{text-align:center; color:var(--soft); font-weight:800; margin-bottom:2px;}
+  .q-big{text-align:center; font-size:1.5rem; font-weight:900; margin:4px 0 2px;}
+  .q-hint{text-align:center; color:var(--orange); font-weight:800; font-size:1.05rem; margin-bottom:6px;}
+  .ask{text-align:center; font-size:1.4rem; font-weight:900; margin:10px 0 8px;}
+  .options{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+  .opt{
+    border:none; cursor:pointer; min-width:108px; font-size:1.2rem; font-weight:900;
+    padding:16px 10px; border-radius:18px; background:#fff; color:var(--ink);
+    box-shadow:0 5px 12px rgba(0,0,0,.1); transition:transform .1s;
+    border:3px solid #E5E7EB;
+  }
+  .opt:active{transform:scale(.95);}
+  .opt.correct{background:var(--green); color:#fff; border-color:var(--green);}
+  .opt.wrong{background:#FCA5A5; border-color:#EF4444; animation:shake .35s;}
+  @keyframes shake{0%,100%{transform:none;}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+  .feedback{text-align:center; font-weight:900; font-size:1.3rem; min-height:1.5em; margin-top:12px;}
+  .stars{font-size:1.6rem; letter-spacing:6px; text-align:center;}
+
+  /* ---- 完成 ---- */
+  .badge{font-size:4.5rem; text-align:center; animation:spin 3s linear infinite;}
+  @keyframes spin{from{transform:rotate(-8deg);}50%{transform:rotate(8deg);}to{transform:rotate(-8deg);}}
+  .trophy-name{text-align:center; font-size:1.5rem; font-weight:900; color:var(--purple); margin:6px 0;}
+
+  details{margin-top:8px; background:#F8FAFF; border-radius:16px; padding:4px 14px;}
+  summary{cursor:pointer; font-weight:800; color:var(--purple); padding:10px 0; list-style:none;}
+  summary::-webkit-details-marker{display:none;}
+  details p{color:#374151; line-height:1.75; font-size:.95rem;}
+  details b{color:var(--ink);}
+
+  #confetti{position:fixed; inset:0; pointer-events:none; display:none; z-index:99;}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="wrap">
+
+  <header>
+    <div class="brand"><span class="fox">🦊</span><div>数学王国<br><small>可能性小课堂</small></div></div>
+    <div class="tools">
+      <button class="icon-btn" id="homeBtn" title="重新开始">🏠</button>
+      <button class="icon-btn" id="muteBtn" title="声音开关">🔊</button>
+    </div>
+  </header>
+
+  <div class="steps">
+    <span class="pill" data-step="1">① 探索</span>
+    <span class="pill" data-step="2">② 闯关</span>
+    <span class="pill" data-step="3">③ 完成</span>
+  </div>
+
+  <!-- ============ 欢迎 ============ -->
+  <section class="screen on" id="welcome">
+    <div class="card">
+      <div style="font-size:3.4rem;text-align:center">🎁🔴</div>
+      <h1>可能性</h1>
+      <span class="pinyin">kě néng xìng · 一定・可能・不可能</span>
+      <p class="lead">
+        从盒子里摸一个球，<br>
+        能摸到 <b style="color:#DC2626">红色</b> 吗？🤔<br>
+        有时 <b class="gr">一定</b> 能，有时 <b style="color:#F97316">可能</b> 能，<br>
+        有时 <b style="color:#9CA3AF">根本不可能</b>——<br>
+        这就是「可能性」！🎉
+      </p>
+      <button class="big-btn" id="startBtn">开始探索 →</button>
+
+      <details>
+        <summary>👨‍👩‍👧 给爸爸妈妈的话（点开）</summary>
+        <p>
+          <b>为什么选「可能性」？</b> 孩子已经掌握了四则运算、分数和统计图，是时候认识
+          <b>「不确定」</b>的世界了。可能性（概率启蒙）不需要任何计算，只靠观察和直觉判断，
+          却是统计与概率的根基，也是生活里随处可见的思维方式。<br><br>
+          <b>核心三个词：</b><b>一定</b>（certain，肯定会发生）、<b>可能</b>（maybe，也许会也许不会）、
+          <b>不可能</b>（impossible，绝对不会发生）。看盒子里的球就能判断：全是红球 → 摸红球
+          <b>一定</b>；有红有蓝 → <b>可能</b>；全是蓝球 → <b>不可能</b>。<br><br>
+          <b>怎么一起玩：</b>多按几次「摸一摸」，让他亲眼看到「可能」时有时摸到红、有时摸到蓝，
+          理解为什么叫「可能」。可以追问生活里的例子：<b>「明天太阳会升起吗？」</b>（一定）、
+          <b>「明天会下雨吗？」</b>（可能）、<b>「猫会变成鱼吗？」</b>（不可能）。
+        </p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ 探索 ============ -->
+  <section class="screen" id="explore">
+    <div class="card">
+      <h2>🎁 摸一个球，能摸到红色吗？</h2>
+      <p class="lead" style="margin-top:0">
+        换换盒子里的球，<br>看看摸到 <b style="color:#DC2626">红球</b> 的可能性怎么变～
+      </p>
+
+      <div class="scene-btns">
+        <button class="scene" data-scene="all">🔴 全是红球</button>
+        <button class="scene" data-scene="mix">🔴🔵 有红有蓝</button>
+        <button class="scene" data-scene="none">🔵 全是蓝球</button>
+      </div>
+
+      <div class="box-wrap">
+        <div class="box" id="box"><div class="box-label">盒子 🎁</div></div>
+      </div>
+
+      <div class="verdict" id="verdict">点上面的按钮试试看 👆</div>
+      <div class="verdict-sub" id="verdictSub"></div>
+
+      <button class="draw-btn" id="drawBtn" disabled>摸一摸 ✋</button>
+      <div class="drawn" id="drawn"></div>
+
+      <div class="unlock" id="unlock"></div>
+      <button class="big-btn purple" id="toPractice" disabled>去闯关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 闯关 ============ -->
+  <section class="screen" id="practice">
+    <div class="card">
+      <div class="level-tag" id="levelTag">第 1 / 3 关</div>
+      <div class="q-big" id="qBig">摸出红球，是……？</div>
+      <div class="q-hint" id="qHint">先看看盒子里有什么球 👀</div>
+
+      <div class="box-wrap">
+        <div class="box" id="boxP"><div class="box-label">盒子 🎁</div></div>
+      </div>
+
+      <div class="ask" id="ask">从盒子里摸出一个 <b style="color:#DC2626">红球</b>，是……？</div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="big-btn" id="nextLevel" style="display:none">下一关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 完成 ============ -->
+  <section class="screen" id="done">
+    <div class="card">
+      <div class="badge">🎖️</div>
+      <h1>太厉害啦！</h1>
+      <div class="trophy-name">🎖️ 可能性小专家</div>
+      <p class="lead">
+        你学会了三个魔法词：<br>
+        <b class="gr">一定</b> · <b style="color:#F97316">可能</b> · <b style="color:#9CA3AF">不可能</b><br>
+        现在你能判断事情会不会发生啦！💪
+      </p>
+      <p class="lead" style="font-size:.95rem">
+        🌟 考考爸爸妈妈：<b>明天太阳会升起吗？</b>（一定 / 可能 / 不可能？）
+      </p>
+      <button class="big-btn orange" id="again">再玩一次 🔁</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+"use strict";
+const $=(s,el=document)=>el.querySelector(s);
+const $$=(s,el=document)=>[...el.querySelectorAll(s)];
+
+/* ---------- 声音 ---------- */
+let muted=false, audioCtx=null;
+function ac(){ if(!audioCtx){ try{audioCtx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return audioCtx; }
+function beep(freq,dur,type,vol,when){
+  if(muted) return; const c=ac(); if(!c) return;
+  const t=c.currentTime+(when||0), o=c.createOscillator(), g=c.createGain();
+  o.type=type||'sine'; o.frequency.value=freq;
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol||0.15,t+0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g).connect(c.destination); o.start(t); o.stop(t+dur+0.02);
+}
+const sClick=()=>beep(680,0.06,'triangle',0.12,0);
+const sCut  =()=>{beep(900,0.05,'square',0.08,0); beep(500,0.07,'triangle',0.1,0.05);};
+const sGood =()=>[523,659,784].forEach((f,i)=>beep(f,0.12,'sine',0.16,i*0.09));
+const sWin  =()=>[523,659,784,1047,1319].forEach((f,i)=>beep(f,0.16,'sine',0.18,i*0.12));
+const sBad  =()=>beep(190,0.2,'sawtooth',0.1,0);
+
+/* ---------- 语音（中文朗读） ---------- */
+let zhVoice=null;
+function pickVoice(){
+  if(!('speechSynthesis'in window)) return;
+  const vs=speechSynthesis.getVoices(); if(!vs||!vs.length) return;
+  const zh=vs.filter(v=>/zh|cmn|chinese|普通话|国语|中文/i.test((v.lang||'')+' '+(v.name||'')));
+  const female=/婷婷|美嘉|思琪|善怡|静|丽|语嫣|晓|Ting-?Ting|Mei-?Jia|Sin-?ji|Yu-?shu|Tian-?Tian|Li-?mu|Han|female|女/i;
+  const male=/男|male|Yu-?Long|Liang|国梁/i;
+  zhVoice = zh.find(v=>female.test(v.name))
+         || zh.find(v=>/zh[-_]?CN/i.test(v.lang)&&!male.test(v.name))
+         || zh.find(v=>!male.test(v.name))
+         || zh[0] || null;
+}
+if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; setTimeout(pickVoice,300); setTimeout(pickVoice,1200); }
+function say(text){
+  if(muted||!('speechSynthesis'in window)) return;
+  try{ if(!zhVoice) pickVoice(); speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang='zh-CN'; if(zhVoice)u.voice=zhVoice; u.rate=0.95; u.pitch=1.1;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ---------- 屏幕切换 ---------- */
+function show(id,step){
+  $$('.screen').forEach(s=>s.classList.remove('on'));
+  $('#'+id).classList.add('on');
+  $$('.pill').forEach(p=>p.classList.toggle('active', +p.dataset.step===step));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ---------- 豆豆阵（保留辅助函数） ---------- */
+function fillGrid(el,rows,cols,cls){
+  el.style.gridTemplateColumns=`repeat(${cols},var(--dot))`;
+  el.style.gridTemplateRows=`repeat(${rows},var(--dot))`;
+  el.innerHTML='';
+  const n=rows*cols;
+  for(let i=0;i<n;i++){ const d=document.createElement('div'); d.className='dot '+cls; el.appendChild(d); }
+}
+
+/* ---------- 画盒子里的球 ---------- */
+function fillBox(boxEl,balls){
+  // balls: 数组，每项 'red' 或 'blue'
+  [...boxEl.querySelectorAll('.ball')].forEach(b=>b.remove());
+  balls.forEach(c=>{
+    const b=document.createElement('div'); b.className='ball '+c; boxEl.appendChild(b);
+  });
+}
+
+/* ============ 探索 ============ */
+const SCENES={
+  all:  {balls:['red','red','red','red','red','red'], verdict:'一定 ✅', cls:'certain',
+         sub:'盒子里全是红球，摸出来一定是红球！'},
+  mix:  {balls:['red','red','red','blue','blue','blue'], verdict:'可能 🤔', cls:'maybe',
+         sub:'有红有蓝，可能摸到红，也可能摸到蓝。'},
+  none: {balls:['blue','blue','blue','blue','blue','blue'], verdict:'不可能 🚫', cls:'impossible',
+         sub:'盒子里全是蓝球，根本摸不到红球！'}
+};
+let curScene=null; const triedScenes=new Set(); let unlocked=false;
+const box=$('#box'), verdict=$('#verdict'), verdictSub=$('#verdictSub'),
+      drawBtn=$('#drawBtn'), drawn=$('#drawn'), unlock=$('#unlock'), toPractice=$('#toPractice');
+
+function pickScene(name,quiet){
+  curScene=name; const s=SCENES[name];
+  fillBox(box,s.balls);
+  verdict.className='verdict '+s.cls; verdict.textContent=s.verdict;
+  verdictSub.textContent=s.sub;
+  drawBtn.disabled=false; drawn.innerHTML='';
+  $$('.scene').forEach(b=>b.classList.toggle('sel', b.dataset.scene===name));
+  triedScenes.add(name);
+  if(!quiet){ sCut(); say('摸出红球，是'+s.verdict.replace(/[^一定可能不]/g,'')+'。'+s.sub); }
+  checkUnlock();
+}
+
+function checkUnlock(){
+  if(unlocked) return;
+  const n=triedScenes.size;
+  if(n<3){ unlock.textContent=`已经试了 ${n} 种盒子，再试 ${3-n} 种就解锁闯关！`; }
+  else{
+    unlocked=true; toPractice.disabled=false; toPractice.classList.add('ready');
+    unlock.textContent='🎉 你全试过啦！一定、可能、不可能，你都认识了！';
+    sWin(); say('你全试过啦！一定、可能、不可能，你都认识了！太棒了！');
+  }
+}
+
+function drawOne(){
+  if(!curScene) return;
+  const s=SCENES[curScene];
+  const c=s.balls[Math.floor(Math.random()*s.balls.length)];
+  const word=(c==='red')?'红球':'蓝球';
+  drawn.innerHTML=`摸到了：<div class="ball ${c}"></div> ${word}！`;
+  sClick(); say('摸到了'+word+'！');
+}
+
+$$('.scene').forEach(b=>b.addEventListener('click',()=>{ sClick(); pickScene(b.dataset.scene); }));
+$('#drawBtn').addEventListener('click',drawOne);
+$('#toPractice').addEventListener('click',()=>{ sClick(); startPractice(); });
+
+/* ============ 闯关 ============ */
+const PROB=[
+  {balls:['red','red','red','red','red','red'], ans:'certain',
+   hint:'盒子里全是红球 🔴', say:'盒子里全是红球。摸出红球，是一定、可能、还是不可能？'},
+  {balls:['red','red','red','blue','blue','blue'], ans:'maybe',
+   hint:'盒子里有红有蓝 🔴🔵', say:'盒子里有红有蓝。摸出红球，是一定、可能、还是不可能？'},
+  {balls:['blue','blue','blue','blue','blue','blue'], ans:'impossible',
+   hint:'盒子里全是蓝球 🔵', say:'盒子里全是蓝球。摸出红球，是一定、可能、还是不可能？'}
+];
+const LABELS={certain:'一定 ✅', maybe:'可能 🤔', impossible:'不可能 🚫'};
+let pi=0;
+function startPractice(){ pi=0; show('practice',2); renderLevel(); }
+
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+let answered=false;
+function renderLevel(){
+  answered=false;
+  const q=PROB[pi];
+  $('#levelTag').textContent=`第 ${pi+1} / 3 关`;
+  $('#qBig').textContent='摸出红球，是……？';
+  $('#qHint').textContent=q.hint;
+  fillBox($('#boxP'),q.balls);
+  $('#feedback').textContent='';
+  $('#nextLevel').style.display='none';
+
+  const keys=shuffle(['certain','maybe','impossible']);
+  const box2=$('#options'); box2.innerHTML='';
+  keys.forEach(key=>{
+    const btn=document.createElement('button');
+    btn.className='opt'; btn.textContent=LABELS[key];
+    btn.addEventListener('click',()=>choose(btn,key,q.ans));
+    box2.appendChild(btn);
+  });
+  say(q.say);
+}
+
+function choose(btn,key,ans){
+  if(answered) return;
+  if(key===ans){
+    answered=true;
+    btn.classList.add('correct'); sGood();
+    $('#feedback').innerHTML='<span class="gr">答对啦！🎉</span><div class="stars">⭐⭐⭐</div>';
+    say('答对啦！你真厉害！');
+    $$('.opt').forEach(o=>o.disabled=true);
+    const last=(pi===PROB.length-1);
+    const nb=$('#nextLevel');
+    nb.textContent = last ? '完成啦 🎉' : '下一关 →';
+    nb.style.display='block';
+  }else{
+    btn.classList.add('wrong'); sBad();
+    $('#feedback').innerHTML='<span class="or">再看看盒子～ 你可以的！</span>';
+    say('再看看盒子里的球，你可以的！');
+    setTimeout(()=>btn.classList.remove('wrong'),400);
+  }
+}
+
+$('#nextLevel').addEventListener('click',()=>{
+  sClick();
+  if(pi===PROB.length-1){ finish(); }
+  else{ pi++; renderLevel(); }
+});
+
+/* ============ 完成 ============ */
+function finish(){
+  show('done',3); sWin(); say('太厉害啦！你已经是可能性小专家啦！');
+  confetti();
+}
+$('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('explore',1); say('我们再玩一次！'); });
+
+/* ---------- 顶部按钮 ---------- */
+$('#startBtn').addEventListener('click',()=>{
+  ac(); sClick(); show('explore',1);
+  say('从盒子里摸一个球，能摸到红色吗？换换盒子里的球，试试看！');
+});
+$('#muteBtn').addEventListener('click',()=>{
+  muted=!muted; $('#muteBtn').textContent=muted?'🔇':'🔊';
+  if(muted&&'speechSynthesis'in window) speechSynthesis.cancel(); else sClick();
+});
+$('#homeBtn').addEventListener('click',()=>{ sClick(); if('speechSynthesis'in window)speechSynthesis.cancel(); location.href='index.html'; });
+
+function resetAll(){
+  triedScenes.clear(); unlocked=false; answered=false; pi=0; curScene=null;
+  toPractice.disabled=true; toPractice.classList.remove('ready'); unlock.textContent='';
+  drawBtn.disabled=true; drawn.innerHTML='';
+  verdict.className='verdict'; verdict.textContent='点上面的按钮试试看 👆';
+  verdictSub.textContent='';
+  $$('.scene').forEach(b=>b.classList.remove('sel'));
+  [...box.querySelectorAll('.ball')].forEach(b=>b.remove());
+}
+
+/* ---------- 彩带 ---------- */
+function confetti(){
+  const cv=$('#confetti'), ctx=cv.getContext('2d');
+  cv.width=innerWidth; cv.height=innerHeight; cv.style.display='block';
+  const colors=['#2563EB','#F97316','#16A34A','#EAB308','#EC4899','#7C3AED'];
+  const P=[];
+  for(let i=0;i<150;i++) P.push({
+    x:innerWidth/2+(Math.random()-0.5)*120, y:innerHeight*0.28,
+    vx:(Math.random()-0.5)*13, vy:Math.random()*-13-3, g:0.32,
+    s:7+Math.random()*9, c:colors[i%colors.length], rot:Math.random()*6, vr:(Math.random()-0.5)*0.4
+  });
+  let t=0;
+  (function anim(){
+    t++; ctx.clearRect(0,0,cv.width,cv.height);
+    P.forEach(p=>{ p.vy+=p.g; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c;
+      ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6); ctx.restore();
+    });
+    if(t<150) requestAnimationFrame(anim); else cv.style.display='none';
+  })();
+}
+
+/* 初始 */
+/* —— 通关记录（本地 localStorage）—— */
+(function(){var ID='kenengxing';try{var d=document.getElementById('done');if(d){var mark=function(){if(d.classList.contains('on')){try{localStorage.setItem('yswg:done:'+ID,'1');}catch(e){}}};new MutationObserver(mark).observe(d,{attributes:true,attributeFilter:['class']});mark();}}catch(e){}})();
+</script>
+</body>
+</html>

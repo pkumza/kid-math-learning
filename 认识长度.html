@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>数学王国 · 长度小课堂</title>
+<style>
+  :root{
+    --dot: clamp(15px, 4.2vw, 30px);
+    --blue:#2563EB; --blue2:#60A5FA;
+    --orange:#EA580C; --orange2:#FB923C;
+    --green:#16A34A; --green2:#4ADE80;
+    --purple:#7C3AED;
+    --ink:#1F2937; --soft:#6B7280;
+    --card:#ffffff;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",
+      "Hiragino Sans GB","Helvetica Neue",sans-serif;
+    color:var(--ink);
+    background:linear-gradient(160deg,#EAF4FF 0%,#FFF6EC 60%,#FDEFF6 100%);
+    min-height:100vh;
+    overflow-x:hidden;
+    user-select:none;
+  }
+  .wrap{max-width:760px; margin:0 auto; padding:10px 14px 40px;}
+
+  /* ---- 顶部 ---- */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 4px 6px;
+  }
+  .brand{display:flex; align-items:center; gap:8px; font-weight:800; font-size:1.15rem;}
+  .brand .fox{font-size:1.6rem;}
+  .brand small{color:var(--soft); font-weight:600; font-size:.78rem;}
+  .tools{display:flex; gap:8px;}
+  .icon-btn{
+    border:none; background:#fff; border-radius:14px; width:44px; height:44px;
+    font-size:1.25rem; cursor:pointer; box-shadow:0 3px 8px rgba(0,0,0,.08);
+    transition:transform .1s;
+  }
+  .icon-btn:active{transform:scale(.92);}
+
+  .steps{display:flex; gap:6px; justify-content:center; margin:4px 0 12px;}
+  .pill{
+    font-size:.82rem; font-weight:700; color:var(--soft);
+    background:#fff; padding:5px 12px; border-radius:999px;
+    box-shadow:0 2px 5px rgba(0,0,0,.05);
+  }
+  .pill.active{color:#fff; background:var(--purple); box-shadow:0 4px 10px rgba(124,58,237,.35);}
+
+  /* ---- 卡片 / 屏幕 ---- */
+  .screen{display:none; animation:pop .35s ease both;}
+  .screen.on{display:block;}
+  @keyframes pop{from{opacity:0; transform:translateY(12px) scale(.98);} to{opacity:1; transform:none;}}
+  .card{
+    background:var(--card); border-radius:26px; padding:22px 18px;
+    box-shadow:0 12px 30px rgba(80,90,130,.12); margin-bottom:16px;
+  }
+  h1{font-size:1.7rem; margin:.1em 0 .2em; text-align:center;}
+  h2{font-size:1.25rem; margin:.1em 0 .5em; text-align:center; color:var(--purple);}
+  .lead{text-align:center; color:var(--soft); font-size:1rem; line-height:1.7; margin:.3em 0 .2em;}
+  .pinyin{display:block; color:var(--soft); font-size:.95rem; letter-spacing:.06em; font-weight:600;}
+
+  /* ---- 按钮 ---- */
+  .big-btn{
+    display:block; width:100%; border:none; cursor:pointer;
+    font-size:1.3rem; font-weight:800; color:#fff;
+    padding:16px; border-radius:20px; margin-top:8px;
+    background:linear-gradient(135deg,#34D399,#10B981);
+    box-shadow:0 8px 18px rgba(16,185,129,.35);
+    transition:transform .12s, box-shadow .12s, filter .2s;
+  }
+  .big-btn.purple{background:linear-gradient(135deg,#A78BFA,#7C3AED); box-shadow:0 8px 18px rgba(124,58,237,.35);}
+  .big-btn.orange{background:linear-gradient(135deg,#FDBA74,#F97316); box-shadow:0 8px 18px rgba(249,115,22,.35);}
+  .big-btn:active{transform:translateY(2px) scale(.99);}
+  .big-btn:disabled{filter:grayscale(.7) opacity(.55); cursor:not-allowed; box-shadow:none;}
+  .big-btn.ready{animation:bounce 1s infinite;}
+  @keyframes bounce{0%,100%{transform:none;}50%{transform:translateY(-5px);}}
+
+  /* ---- 尺子测量 ---- */
+  .ruler-stage{margin:10px 0 6px;}
+  .ruler-stage svg{display:block; width:100%; height:auto;}
+  .measure-out{
+    text-align:center; font-size:1.5rem; font-weight:900; margin:8px 0 2px;
+  }
+  .measure-out .num{color:var(--green); font-size:2rem;}
+
+  /* ---- 控制 ---- */
+  .controls{display:flex; align-items:center; gap:10px; justify-content:center; margin:14px 0 6px;}
+  .round{
+    border:none; width:52px; height:52px; border-radius:50%; font-size:1.5rem; font-weight:900;
+    color:#fff; background:linear-gradient(135deg,#A78BFA,#7C3AED); cursor:pointer;
+    box-shadow:0 5px 12px rgba(124,58,237,.35);
+  }
+  .round:active{transform:scale(.9);}
+  input[type=range]{
+    -webkit-appearance:none; appearance:none; height:14px; border-radius:999px;
+    background:linear-gradient(90deg,var(--blue2),var(--orange2)); outline:none; flex:1; max-width:280px;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; width:40px; height:40px; border-radius:50%;
+    background:#fff center/22px no-repeat; cursor:pointer;
+    box-shadow:0 3px 8px rgba(0,0,0,.25); border:3px solid var(--purple);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:36px; height:36px; border-radius:50%; background:#fff; cursor:pointer;
+    box-shadow:0 3px 8px rgba(0,0,0,.25); border:3px solid var(--purple);
+  }
+  .ctl-hint{text-align:center; color:var(--soft); font-weight:700; margin:2px 0;}
+  .magic-btn{
+    display:block; margin:8px auto 0; border:none; cursor:pointer;
+    background:linear-gradient(135deg,#FDE68A,#F59E0B); color:#7c2d12; font-weight:800;
+    padding:10px 18px; border-radius:16px; font-size:1.02rem; box-shadow:0 5px 12px rgba(245,158,11,.3);
+  }
+  .magic-btn:active{transform:scale(.96);}
+
+  /* ---- 信息面板 ---- */
+  .eq{
+    background:#F8FAFF; border-radius:18px; padding:14px 12px; margin-top:12px; text-align:center;
+    border:2px dashed #DBE3F4;
+  }
+  .eq .line{font-size:1.45rem; font-weight:800; line-height:1.7; letter-spacing:.5px;}
+  .eq .line.small{font-size:1.15rem;}
+  .muted{color:var(--soft);}
+  .bl{color:var(--blue);} .or{color:var(--orange);} .gr{color:var(--green);}
+  .note{
+    margin-top:10px; background:#FFFDF5; border-radius:14px; padding:10px 12px;
+    color:#92400E; font-weight:700; line-height:1.6; font-size:1rem; text-align:center;
+  }
+  .unlock{text-align:center; font-weight:800; color:var(--purple); margin:12px 0 4px; min-height:1.4em;}
+
+  /* ---- 闯关 ---- */
+  .level-tag{text-align:center; color:var(--soft); font-weight:800; margin-bottom:2px;}
+  .q-big{text-align:center; font-size:1.7rem; font-weight:900; margin:4px 0 2px;}
+  .q-hint{text-align:center; color:var(--orange); font-weight:800; font-size:1.05rem; margin-bottom:6px;}
+  .ask{text-align:center; font-size:1.4rem; font-weight:900; margin:10px 0 6px;}
+  .options{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+  .opt{
+    border:none; cursor:pointer; min-width:92px; font-size:1.5rem; font-weight:900;
+    padding:14px 8px; border-radius:18px; background:#fff; color:var(--ink);
+    box-shadow:0 5px 12px rgba(0,0,0,.1); transition:transform .1s;
+    border:3px solid #E5E7EB;
+  }
+  .opt:active{transform:scale(.95);}
+  .opt.correct{background:var(--green); color:#fff; border-color:var(--green);}
+  .opt.wrong{background:#FCA5A5; border-color:#EF4444; animation:shake .35s;}
+  @keyframes shake{0%,100%{transform:none;}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+  .feedback{text-align:center; font-weight:900; font-size:1.3rem; min-height:1.5em; margin-top:12px;}
+  .stars{font-size:1.6rem; letter-spacing:6px; text-align:center;}
+
+  /* ---- 完成 ---- */
+  .badge{font-size:4.5rem; text-align:center; animation:spin 3s linear infinite;}
+  @keyframes spin{from{transform:rotate(-8deg);}50%{transform:rotate(8deg);}to{transform:rotate(-8deg);}}
+  .trophy-name{text-align:center; font-size:1.5rem; font-weight:900; color:var(--purple); margin:6px 0;}
+
+  details{margin-top:8px; background:#F8FAFF; border-radius:16px; padding:4px 14px;}
+  summary{cursor:pointer; font-weight:800; color:var(--purple); padding:10px 0; list-style:none;}
+  summary::-webkit-details-marker{display:none;}
+  details p{color:#374151; line-height:1.75; font-size:.95rem;}
+  details b{color:var(--ink);}
+
+  #confetti{position:fixed; inset:0; pointer-events:none; display:none; z-index:99;}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="wrap">
+
+  <header>
+    <div class="brand"><span class="fox">🦊</span><div>数学王国<br><small>长度小课堂</small></div></div>
+    <div class="tools">
+      <button class="icon-btn" id="homeBtn" title="重新开始">🏠</button>
+      <button class="icon-btn" id="muteBtn" title="声音开关">🔊</button>
+    </div>
+  </header>
+
+  <div class="steps">
+    <span class="pill" data-step="1">① 探索</span>
+    <span class="pill" data-step="2">② 闯关</span>
+    <span class="pill" data-step="3">③ 完成</span>
+  </div>
+
+  <!-- ============ 欢迎 ============ -->
+  <section class="screen on" id="welcome">
+    <div class="card">
+      <div style="font-size:3.4rem;text-align:center">📏✏️</div>
+      <h1>认识长度</h1>
+      <span class="pinyin">rèn shi cháng dù · 用尺子量一量</span>
+      <p class="lead">
+        这支铅笔有多长呢？🤔<br>
+        我们用<b>尺子</b>量一量！<br>
+        把左边对齐 <b class="gr">0</b>，<br>
+        看另一头指到几，就是几<b class="or">厘米</b>！
+      </p>
+      <button class="big-btn" id="startBtn">开始探索 →</button>
+
+      <details>
+        <summary>👨‍👩‍👧 给爸爸妈妈的话（点开）</summary>
+        <p>
+          <b>为什么学「长度·厘米」？</b> 孩子已掌握数数与位值，测量是把数字和真实世界连起来的第一步，
+          也是几何与单位换算的根基。本课只引入<b>厘米(cm)</b>一个单位，目标是建立
+          「<b>左端对齐 0，右端指到几就是几厘米</b>」这一最关键的读尺习惯。<br><br>
+          <b>怎么一起玩：</b> 看屏幕上的尺子，用 ◀▶ 或滑块改变铅笔长度，
+          让孩子大声读出「这支铅笔长 □ 厘米」。再用家里真的尺子量一量铅笔、勺子、小汽车，
+          每次都<b>先把一头对准 0</b>。<br><br>
+          <b>可以追问：</b>「为什么要从 0 开始量？」「哪个更长一点？」
+          鼓励他先猜再量，比一比谁猜得准。
+        </p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ 探索 ============ -->
+  <section class="screen" id="explore">
+    <div class="card">
+      <h2>📏 量一量铅笔</h2>
+      <p class="lead" style="margin-top:0">
+        铅笔的左端对齐 <b class="gr">0</b>，<br>看右端指到几，就是几厘米～
+      </p>
+
+      <div class="ruler-stage" id="stage"></div>
+      <div class="measure-out" id="measure"></div>
+
+      <div class="ctl-hint">👇 拉一拉，把铅笔变长或变短</div>
+      <div class="controls">
+        <button class="round" id="minus">◀</button>
+        <input type="range" id="slider" min="3" max="9" step="1" value="5">
+        <button class="round" id="plus">▶</button>
+      </div>
+      <button class="magic-btn" id="magic">⚖️ 两支比一比，谁更长？</button>
+
+      <div class="note" id="note"></div>
+
+      <div class="unlock" id="unlock"></div>
+      <button class="big-btn purple" id="toPractice" disabled>去闯关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 闯关 ============ -->
+  <section class="screen" id="practice">
+    <div class="card">
+      <div class="level-tag" id="levelTag">第 1 / 3 关</div>
+      <div class="q-big" id="qBig"></div>
+      <div class="q-hint" id="qHint"></div>
+
+      <div class="ruler-stage" id="stageP"></div>
+
+      <div class="ask" id="ask"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="big-btn" id="nextLevel" style="display:none">下一关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 完成 ============ -->
+  <section class="screen" id="done">
+    <div class="card">
+      <div class="badge">🎖️</div>
+      <h1>太厉害啦！</h1>
+      <div class="trophy-name">🎖️ 测量小能手</div>
+      <p class="lead">
+        你学会了用尺子量长度！<br>
+        左端对齐 <b class="gr">0</b>，右端指到几，<br>
+        就是几<b class="or">厘米</b>！📏
+      </p>
+      <p class="lead" style="font-size:.95rem">
+        🌟 用家里的尺子量一量：<b>你的铅笔有多长？</b>
+      </p>
+      <button class="big-btn orange" id="again">再玩一次 🔁</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+"use strict";
+const $=(s,el=document)=>el.querySelector(s);
+const $$=(s,el=document)=>[...el.querySelectorAll(s)];
+
+/* ---------- 声音 ---------- */
+let muted=false, audioCtx=null;
+function ac(){ if(!audioCtx){ try{audioCtx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return audioCtx; }
+function beep(freq,dur,type,vol,when){
+  if(muted) return; const c=ac(); if(!c) return;
+  const t=c.currentTime+(when||0), o=c.createOscillator(), g=c.createGain();
+  o.type=type||'sine'; o.frequency.value=freq;
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol||0.15,t+0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g).connect(c.destination); o.start(t); o.stop(t+dur+0.02);
+}
+const sClick=()=>beep(680,0.06,'triangle',0.12,0);
+const sCut  =()=>{beep(900,0.05,'square',0.08,0); beep(500,0.07,'triangle',0.1,0.05);};
+const sGood =()=>[523,659,784].forEach((f,i)=>beep(f,0.12,'sine',0.16,i*0.09));
+const sWin  =()=>[523,659,784,1047,1319].forEach((f,i)=>beep(f,0.16,'sine',0.18,i*0.12));
+const sBad  =()=>beep(190,0.2,'sawtooth',0.1,0);
+
+/* ---------- 语音（中文朗读） ---------- */
+let zhVoice=null;
+function pickVoice(){
+  if(!('speechSynthesis'in window)) return;
+  const vs=speechSynthesis.getVoices(); if(!vs||!vs.length) return;
+  const zh=vs.filter(v=>/zh|cmn|chinese|普通话|国语|中文/i.test((v.lang||'')+' '+(v.name||'')));
+  const female=/婷婷|美嘉|思琪|善怡|静|丽|语嫣|晓|Ting-?Ting|Mei-?Jia|Sin-?ji|Yu-?shu|Tian-?Tian|Li-?mu|Han|female|女/i;
+  const male=/男|male|Yu-?Long|Liang|国梁/i;
+  zhVoice = zh.find(v=>female.test(v.name))
+         || zh.find(v=>/zh[-_]?CN/i.test(v.lang)&&!male.test(v.name))
+         || zh.find(v=>!male.test(v.name))
+         || zh[0] || null;
+}
+if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; setTimeout(pickVoice,300); setTimeout(pickVoice,1200); }
+function say(text){
+  if(muted||!('speechSynthesis'in window)) return;
+  try{ if(!zhVoice) pickVoice(); speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang='zh-CN'; if(zhVoice)u.voice=zhVoice; u.rate=0.95; u.pitch=1.1;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ---------- 屏幕切换 ---------- */
+function show(id,step){
+  $$('.screen').forEach(s=>s.classList.remove('on'));
+  $('#'+id).classList.add('on');
+  $$('.pill').forEach(p=>p.classList.toggle('active', +p.dataset.step===step));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ---------- 豆豆阵（保留辅助函数） ---------- */
+function fillGrid(el,rows,cols,cls){
+  el.style.gridTemplateColumns=`repeat(${cols},var(--dot))`;
+  el.style.gridTemplateRows=`repeat(${rows},var(--dot))`;
+  el.innerHTML='';
+  const n=rows*cols;
+  for(let i=0;i<n;i++){ const d=document.createElement('div'); d.className='dot '+cls; el.appendChild(d); }
+}
+
+/* ---------- 画一把尺子 + 物体 ----------
+   返回 SVG 字符串。尺子 0~10 厘米。
+   items: [{cm, color, color2, label}] 物体左端对齐 0，长度 cm。
+   一个物体竖直放在尺子上方；两个物体上下排开。            */
+const RX0=40, RX10=560, RY=160, RH=46;            // 尺子坐标（0 与 10 的 x，尺面顶 y）
+const PX = cm => RX0 + (RX10-RX0)*cm/10;          // 厘米 -> x 像素
+let _gid=0;
+function rulerSVG(items, showTick){
+  const W=600;
+  let bars='', n=items.length;
+  const barH=22, gap=10, tipW=14;
+  const uid='r'+(_gid++);                 // 每次渲染唯一的渐变 id，避免多个 SVG 互相冲突
+  // 物体堆在尺子上方
+  const blockH=n*barH+(n-1)*gap;
+  let topY=RY-18-blockH;
+  items.forEach((it,i)=>{
+    const x0=PX(0), xEnd=PX(it.cm), xBody=xEnd-tipW;   // 笔尖尖端正好落在 cm 刻度上
+    const y=topY+i*(barH+gap), w=Math.max(2,xBody-x0);
+    const c1=it.color2||'#FB923C', c2=it.color||'#EA580C', gid=`${uid}g${i}`;
+    bars+=`<defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs>`;
+    // 笔身
+    bars+=`<rect x="${x0}" y="${y}" width="${w}" height="${barH}" rx="6" fill="url(#${gid})" stroke="${c2}" stroke-width="1.5"/>`;
+    // 笔尖（右端三角，尖端对齐 cm 刻度）
+    bars+=`<polygon points="${xBody},${y} ${xEnd},${y+barH/2} ${xBody},${y+barH}" fill="#F8C471" stroke="#B9770E" stroke-width="1.5"/>`;
+    bars+=`<polygon points="${xEnd-5},${y+barH/2-3} ${xEnd},${y+barH/2} ${xEnd-5},${y+barH/2+3}" fill="#5B3A0A"/>`;
+    if(it.label){ bars+=`<text x="${(x0+xBody)/2}" y="${y+barH/2+5}" font-size="14" font-weight="800" fill="#fff" text-anchor="middle">${it.label}</text>`; }
+    // 右端到尺子的对齐虚线（对齐到尖端 = cm 刻度）
+    if(showTick!==false){
+      bars+=`<line x1="${xEnd}" y1="${y}" x2="${xEnd}" y2="${RY}" stroke="#94A3B8" stroke-width="2" stroke-dasharray="4 4"/>`;
+    }
+  });
+
+  // 尺面
+  let ruler=`<rect x="${RX0-6}" y="${RY}" width="${RX10-RX0+12}" height="${RH}" rx="6" fill="#FEF3C7" stroke="#D97706" stroke-width="2.5"/>`;
+  // 刻度
+  for(let c=0;c<=10;c++){
+    const x=PX(c);
+    ruler+=`<line x1="${x}" y1="${RY}" x2="${x}" y2="${RY+ (c%5===0?22:14)}" stroke="#92400E" stroke-width="${c%5===0?2.5:1.6}"/>`;
+    ruler+=`<text x="${x}" y="${RY+RH-4}" font-size="15" font-weight="800" fill="#92400E" text-anchor="middle">${c}</text>`;
+    // 半刻度
+    if(c<10){ const xh=PX(c+0.5); ruler+=`<line x1="${xh}" y1="${RY}" x2="${xh}" y2="${RY+9}" stroke="#B45309" stroke-width="1.2"/>`; }
+  }
+  // 0 处的对齐标记
+  ruler+=`<text x="${PX(0)}" y="${RY-6}" font-size="13" font-weight="900" fill="#16A34A" text-anchor="middle">起点0</text>`;
+
+  return `<svg viewBox="0 0 ${W} ${RY+RH+18}" xmlns="http://www.w3.org/2000/svg" role="img">${bars}${ruler}</svg>`;
+}
+
+/* ============ 探索 ============ */
+let len=5; const tried=new Set(); let unlocked=false; let comparing=false;
+const stage=$('#stage'), measure=$('#measure'), note=$('#note'), slider=$('#slider'),
+      unlock=$('#unlock'), toPractice=$('#toPractice');
+
+function renderExplore(nv,quiet){
+  comparing=false;
+  len=Math.max(3,Math.min(9,nv));
+  slider.value=len;
+  stage.innerHTML=rulerSVG([{cm:len,color:'#EA580C',color2:'#FB923C'}]);
+  measure.innerHTML=`这支铅笔长 <span class="num">${len}</span> 厘米`;
+  note.textContent=`左端对齐 0，右端指到 ${len}，就是 ${len} 厘米！`;
+  tried.add(len);
+  checkUnlock();
+  if(!quiet){ sCut(); say(`这支铅笔长 ${len} 厘米。`); }
+}
+
+function showCompare(){
+  comparing=true;
+  const a=4, b=7;
+  stage.innerHTML=rulerSVG([
+    {cm:a,color:'#2563EB',color2:'#60A5FA'},
+    {cm:b,color:'#EA580C',color2:'#FB923C'}
+  ]);
+  measure.innerHTML=`蓝色 <span class="bl">${a}</span> 厘米，橙色 <span class="or">${b}</span> 厘米`;
+  note.textContent=`${b} 比 ${a} 大，所以橙色的更长！数字大的就更长～`;
+  tried.add('cmp');
+  checkUnlock();
+  sGood(); say(`蓝色长 ${a} 厘米，橙色长 ${b} 厘米。${b} 比 ${a} 大，橙色更长！`);
+}
+
+function checkUnlock(){
+  const n=tried.size;
+  if(!unlocked){
+    if(n<3){ unlock.textContent=`已经量了 ${n} 次，再试 ${3-n} 次就解锁闯关！`; }
+    else{
+      unlocked=true; toPractice.disabled=false; toPractice.classList.add('ready');
+      unlock.textContent='🎉 你会量长度啦！右端指到几，就是几厘米！';
+      sWin(); say('你会量长度啦！右端指到几，就是几厘米！太棒了！');
+    }
+  }
+}
+
+slider.addEventListener('input',()=>renderExplore(+slider.value));
+$('#minus').addEventListener('click',()=>renderExplore(len-1));
+$('#plus').addEventListener('click',()=>renderExplore(len+1));
+$('#magic').addEventListener('click',showCompare);
+$('#toPractice').addEventListener('click',()=>{ sClick(); startPractice(); });
+
+/* ============ 闯关 ============ */
+// type 'read' = 读数选项；type 'compare' = 选更长的
+const PROB=[
+  {type:'read', cm:6, name:'铅笔', color:'#EA580C', color2:'#FB923C', opts:[5,6,7]},
+  {type:'compare', a:3, b:8},
+  {type:'read', cm:4, name:'彩色铅笔', color:'#7C3AED', color2:'#A78BFA', opts:[3,4,5]}
+];
+let pi=0, answered=false;
+function startPractice(){ pi=0; show('practice',2); renderLevel(); }
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+function renderLevel(){
+  answered=false;
+  const p=PROB[pi];
+  $('#levelTag').textContent=`第 ${pi+1} / 3 关`;
+  $('#feedback').textContent='';
+  $('#nextLevel').style.display='none';
+  const box=$('#options'); box.innerHTML='';
+
+  if(p.type==='read'){
+    $('#qBig').textContent=`这${p.name==='蜡笔'?'根':'支'}${p.name}有几厘米？`;
+    $('#qHint').textContent='看右端指到几 👀';
+    $('#stageP').innerHTML=rulerSVG([{cm:p.cm,color:p.color,color2:p.color2}]);
+    $('#ask').textContent='它长几厘米？';
+    shuffle(p.opts.slice()).forEach(v=>{
+      const btn=document.createElement('button');
+      btn.className='opt'; btn.textContent=v+' 厘米';
+      btn.addEventListener('click',()=>choose(btn,v,p.cm));
+      box.appendChild(btn);
+    });
+    say(`这${p.name==='蜡笔'?'根':'支'}${p.name}有几厘米？看右端指到几。`);
+  } else {
+    $('#qBig').textContent='两条线段，哪条更长？';
+    $('#qHint').textContent='右端指到的数字越大越长 👀';
+    $('#stageP').innerHTML=rulerSVG([
+      {cm:p.a,color:'#2563EB',color2:'#60A5FA'},
+      {cm:p.b,color:'#EA580C',color2:'#FB923C'}
+    ]);
+    $('#ask').innerHTML=`点一点：哪条更长？`;
+    const choices=shuffle([
+      {txt:'蓝色更长', val:p.a, color:'#2563EB'},
+      {txt:'橙色更长', val:p.b, color:'#EA580C'}
+    ]);
+    const longer=Math.max(p.a,p.b);
+    choices.forEach(c=>{
+      const btn=document.createElement('button');
+      btn.className='opt'; btn.textContent=c.txt; btn.style.fontSize='1.2rem';
+      btn.addEventListener('click',()=>choose(btn,c.val,longer));
+      box.appendChild(btn);
+    });
+    say(`两条线段，哪条更长？右端指到的数字越大就越长。`);
+  }
+}
+
+function choose(btn,v,ans){
+  if(answered) return;
+  if(v===ans){
+    answered=true;
+    btn.classList.add('correct'); sGood();
+    $('#feedback').innerHTML='<span class="gr">答对啦！🎉</span><div class="stars">⭐⭐⭐</div>';
+    say('答对啦！你真厉害！');
+    $$('.opt').forEach(o=>o.disabled=true);
+    const last=(pi===PROB.length-1);
+    const nb=$('#nextLevel');
+    nb.textContent = last ? '完成啦 🎉' : '下一关 →';
+    nb.style.display='block';
+  }else{
+    btn.classList.add('wrong'); sBad();
+    $('#feedback').innerHTML='<span class="or">再看一看尺子～ 你可以的！</span>';
+    say('再看一看尺子，你可以的！');
+    setTimeout(()=>btn.classList.remove('wrong'),400);
+  }
+}
+
+$('#nextLevel').addEventListener('click',()=>{
+  sClick();
+  if(pi===PROB.length-1){ finish(); }
+  else{ pi++; renderLevel(); }
+});
+
+/* ============ 完成 ============ */
+function finish(){
+  show('done',3); sWin(); say('太厉害啦！你已经是测量小能手啦！');
+  confetti();
+}
+$('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('explore',1); say('我们再玩一次！'); });
+
+/* ---------- 顶部按钮 ---------- */
+$('#startBtn').addEventListener('click',()=>{
+  ac(); sClick(); show('explore',1);
+  renderExplore(5,true);
+  say('这支铅笔的左端对齐零，看右端指到几，就是几厘米。拉一拉，量一量吧！');
+});
+$('#muteBtn').addEventListener('click',()=>{
+  muted=!muted; $('#muteBtn').textContent=muted?'🔇':'🔊';
+  if(muted&&'speechSynthesis'in window) speechSynthesis.cancel(); else sClick();
+});
+$('#homeBtn').addEventListener('click',()=>{ sClick(); if('speechSynthesis'in window)speechSynthesis.cancel(); location.href='index.html'; });
+
+function resetAll(){
+  tried.clear(); unlocked=false; answered=false; pi=0;
+  toPractice.disabled=true; toPractice.classList.remove('ready'); unlock.textContent='';
+  renderExplore(5,true);
+}
+
+/* ---------- 彩带 ---------- */
+function confetti(){
+  const cv=$('#confetti'), ctx=cv.getContext('2d');
+  cv.width=innerWidth; cv.height=innerHeight; cv.style.display='block';
+  const colors=['#2563EB','#F97316','#16A34A','#EAB308','#EC4899','#7C3AED'];
+  const P=[];
+  for(let i=0;i<150;i++) P.push({
+    x:innerWidth/2+(Math.random()-0.5)*120, y:innerHeight*0.28,
+    vx:(Math.random()-0.5)*13, vy:Math.random()*-13-3, g:0.32,
+    s:7+Math.random()*9, c:colors[i%colors.length], rot:Math.random()*6, vr:(Math.random()-0.5)*0.4
+  });
+  let t=0;
+  (function anim(){
+    t++; ctx.clearRect(0,0,cv.width,cv.height);
+    P.forEach(p=>{ p.vy+=p.g; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c;
+      ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6); ctx.restore();
+    });
+    if(t<150) requestAnimationFrame(anim); else cv.style.display='none';
+  })();
+}
+
+/* 初始 */
+renderExplore(5,true);
+/* —— 通关记录（本地 localStorage）—— */
+(function(){var ID='changdu';try{var d=document.getElementById('done');if(d){var mark=function(){if(d.classList.contains('on')){try{localStorage.setItem('yswg:done:'+ID,'1');}catch(e){}}};new MutationObserver(mark).observe(d,{attributes:true,attributeFilter:['class']});mark();}}catch(e){}})();
+</script>
+</body>
+</html>

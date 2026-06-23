@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>数图形 · 数图形小课堂</title>
+<style>
+  :root{
+    --dot: clamp(15px, 4.2vw, 30px);
+    --blue:#2563EB; --blue2:#60A5FA;
+    --orange:#EA580C; --orange2:#FB923C;
+    --green:#16A34A; --green2:#4ADE80;
+    --purple:#7C3AED;
+    --ink:#1F2937; --soft:#6B7280;
+    --card:#ffffff;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",
+      "Hiragino Sans GB","Helvetica Neue",sans-serif;
+    color:var(--ink);
+    background:linear-gradient(160deg,#EAF4FF 0%,#FFF6EC 60%,#FDEFF6 100%);
+    min-height:100vh;
+    overflow-x:hidden;
+    user-select:none;
+  }
+  .wrap{max-width:760px; margin:0 auto; padding:10px 14px 40px;}
+
+  /* ---- 顶部 ---- */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 4px 6px;
+  }
+  .brand{display:flex; align-items:center; gap:8px; font-weight:800; font-size:1.15rem;}
+  .brand .fox{font-size:1.6rem;}
+  .brand small{color:var(--soft); font-weight:600; font-size:.78rem;}
+  .tools{display:flex; gap:8px;}
+  .icon-btn{
+    border:none; background:#fff; border-radius:14px; width:44px; height:44px;
+    font-size:1.25rem; cursor:pointer; box-shadow:0 3px 8px rgba(0,0,0,.08);
+    transition:transform .1s;
+  }
+  .icon-btn:active{transform:scale(.92);}
+
+  .steps{display:flex; gap:6px; justify-content:center; margin:4px 0 12px;}
+  .pill{
+    font-size:.82rem; font-weight:700; color:var(--soft);
+    background:#fff; padding:5px 12px; border-radius:999px;
+    box-shadow:0 2px 5px rgba(0,0,0,.05);
+  }
+  .pill.active{color:#fff; background:var(--purple); box-shadow:0 4px 10px rgba(124,58,237,.35);}
+
+  /* ---- 卡片 / 屏幕 ---- */
+  .screen{display:none; animation:pop .35s ease both;}
+  .screen.on{display:block;}
+  @keyframes pop{from{opacity:0; transform:translateY(12px) scale(.98);} to{opacity:1; transform:none;}}
+  .card{
+    background:var(--card); border-radius:26px; padding:22px 18px;
+    box-shadow:0 12px 30px rgba(80,90,130,.12); margin-bottom:16px;
+  }
+  h1{font-size:1.7rem; margin:.1em 0 .2em; text-align:center;}
+  h2{font-size:1.25rem; margin:.1em 0 .5em; text-align:center; color:var(--purple);}
+  .lead{text-align:center; color:var(--soft); font-size:1rem; line-height:1.7; margin:.3em 0 .2em;}
+  .pinyin{display:block; color:var(--soft); font-size:.95rem; letter-spacing:.06em; font-weight:600; text-align:center;}
+
+  /* ---- 按钮 ---- */
+  .big-btn{
+    display:block; width:100%; border:none; cursor:pointer;
+    font-size:1.3rem; font-weight:800; color:#fff;
+    padding:16px; border-radius:20px; margin-top:8px;
+    background:linear-gradient(135deg,#34D399,#10B981);
+    box-shadow:0 8px 18px rgba(16,185,129,.35);
+    transition:transform .12s, box-shadow .12s, filter .2s;
+  }
+  .big-btn.purple{background:linear-gradient(135deg,#A78BFA,#7C3AED); box-shadow:0 8px 18px rgba(124,58,237,.35);}
+  .big-btn.orange{background:linear-gradient(135deg,#FDBA74,#F97316); box-shadow:0 8px 18px rgba(249,115,22,.35);}
+  .big-btn:active{transform:translateY(2px) scale(.99);}
+  .big-btn:disabled{filter:grayscale(.7) opacity(.55); cursor:not-allowed; box-shadow:none;}
+  .big-btn.ready{animation:bounce 1s infinite;}
+  @keyframes bounce{0%,100%{transform:none;}50%{transform:translateY(-5px);}}
+
+  /* ---- 数图形舞台 ---- */
+  .shape-wrap{display:flex; align-items:center; justify-content:center; margin:10px 0 6px;}
+  .shape-stage{
+    position:relative; display:flex; align-items:center; justify-content:center;
+    padding:10px; background:#F8FAFF; border-radius:18px; border:2px dashed #DBE3F4;
+  }
+  .shape-stage svg{display:block; width:min(74vw,300px); height:auto;}
+  /* SVG 内：被高亮的部件 */
+  .piece{transition:fill .2s, opacity .2s; }
+  .piece.hl{ animation:flashfill .5s ease; }
+  @keyframes flashfill{0%{transform:scale(1);}50%{transform:scale(1.04);}100%{transform:scale(1);}}
+
+  /* ---- 计数牌 ---- */
+  .counter{
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    margin:12px 0 4px; font-weight:900;
+  }
+  .count-num{
+    font-size:2.4rem; color:#fff; min-width:64px; text-align:center;
+    background:linear-gradient(135deg,#A78BFA,#7C3AED); border-radius:16px; padding:4px 14px;
+    box-shadow:0 5px 12px rgba(124,58,237,.35);
+  }
+  .count-label{font-size:1.1rem; color:var(--soft);}
+  .tally{display:flex; gap:7px; justify-content:center; flex-wrap:wrap; min-height:1.6rem; margin:6px 0 2px;}
+  .tally span{font-size:1.5rem; animation:dotin .3s ease both;}
+  @keyframes dotin{from{transform:scale(0);}to{transform:scale(1);}}
+
+  .ctl-hint{text-align:center; color:var(--soft); font-weight:700; margin:6px 0;}
+  .magic-btn{
+    display:block; margin:8px auto 0; border:none; cursor:pointer;
+    background:linear-gradient(135deg,#FDE68A,#F59E0B); color:#7c2d12; font-weight:800;
+    padding:12px 22px; border-radius:16px; font-size:1.1rem; box-shadow:0 5px 12px rgba(245,158,11,.3);
+  }
+  .magic-btn:active{transform:scale(.96);}
+  .magic-btn:disabled{filter:grayscale(.6) opacity(.6); cursor:not-allowed;}
+
+  .note{
+    margin-top:10px; background:#FFFDF5; border-radius:14px; padding:10px 12px;
+    color:#92400E; font-weight:700; line-height:1.6; font-size:1rem; text-align:center;
+  }
+  .swap-btn{
+    display:block; margin:10px auto 0; border:none; cursor:pointer;
+    background:#EEF2FB; color:var(--purple); font-weight:800;
+    padding:9px 18px; border-radius:14px; font-size:.98rem;
+  }
+  .swap-btn:active{transform:scale(.96);}
+  .unlock{text-align:center; font-weight:800; color:var(--purple); margin:12px 0 4px; min-height:1.4em;}
+
+  /* ---- 闯关 ---- */
+  .level-tag{text-align:center; color:var(--soft); font-weight:800; margin-bottom:2px;}
+  .q-big{text-align:center; font-size:1.5rem; font-weight:900; margin:4px 0 2px;}
+  .q-hint{text-align:center; color:var(--orange); font-weight:800; font-size:1.02rem; margin-bottom:6px;}
+  .ask{text-align:center; font-size:1.4rem; font-weight:900; margin:10px 0 6px;}
+  .options{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+  .opt{
+    border:none; cursor:pointer; min-width:92px; font-size:1.9rem; font-weight:900;
+    padding:14px 8px; border-radius:18px; background:#fff; color:var(--ink);
+    box-shadow:0 5px 12px rgba(0,0,0,.1); transition:transform .1s;
+    border:3px solid #E5E7EB;
+  }
+  .opt:active{transform:scale(.95);}
+  .opt.correct{background:var(--green); color:#fff; border-color:var(--green);}
+  .opt.wrong{background:#FCA5A5; border-color:#EF4444; animation:shake .35s;}
+  @keyframes shake{0%,100%{transform:none;}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+  .feedback{text-align:center; font-weight:900; font-size:1.3rem; min-height:1.5em; margin-top:12px;}
+  .stars{font-size:1.6rem; letter-spacing:6px; text-align:center;}
+
+  /* ---- 完成 ---- */
+  .badge{font-size:4.5rem; text-align:center; animation:spin 3s linear infinite;}
+  @keyframes spin{from{transform:rotate(-8deg);}50%{transform:rotate(8deg);}to{transform:rotate(-8deg);}}
+  .trophy-name{text-align:center; font-size:1.5rem; font-weight:900; color:var(--purple); margin:6px 0;}
+
+  details{margin-top:8px; background:#F8FAFF; border-radius:16px; padding:4px 14px;}
+  summary{cursor:pointer; font-weight:800; color:var(--purple); padding:10px 0; list-style:none;}
+  summary::-webkit-details-marker{display:none;}
+  details p{color:#374151; line-height:1.75; font-size:.95rem;}
+  details b{color:var(--ink);}
+
+  .bl{color:var(--blue);} .or{color:var(--orange);} .gr{color:var(--green);} .pu{color:var(--purple);}
+
+  #confetti{position:fixed; inset:0; pointer-events:none; display:none; z-index:99;}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="wrap">
+
+  <header>
+    <div class="brand"><span class="fox">🦊</span><div>数学王国<br><small>数图形小课堂</small></div></div>
+    <div class="tools">
+      <button class="icon-btn" id="homeBtn" title="重新开始">🏠</button>
+      <button class="icon-btn" id="muteBtn" title="声音开关">🔊</button>
+    </div>
+  </header>
+
+  <div class="steps">
+    <span class="pill" data-step="1">① 探索</span>
+    <span class="pill" data-step="2">② 闯关</span>
+    <span class="pill" data-step="3">③ 完成</span>
+  </div>
+
+  <!-- ============ 欢迎 ============ -->
+  <section class="screen on" id="welcome">
+    <div class="card">
+      <div style="font-size:3.4rem;text-align:center">🔍🔺</div>
+      <h1>数图形</h1>
+      <span class="pinyin">shǔ tú xíng · 数一数有几个</span>
+      <p class="lead">
+        一个图里藏着好几个三角形！🔺<br>
+        除了<b>小的</b>，<br>
+        几个小的还能拼成一个<b class="pu">大的</b>～<br>
+        要<b class="pu">有顺序地数</b>，才不会数错。<br>
+        来当<b class="or">火眼金睛</b>！👀
+      </p>
+      <button class="big-btn" id="startBtn">开始探索 →</button>
+
+      <details>
+        <summary>👨‍👩‍👧 给爸爸妈妈的话（点开）</summary>
+        <p>
+          <b>为什么选「数图形」？</b> 这是孩子第一次接触<b>「组合」</b>的思维：
+          几个小图形可以拼成更大的图形，所以一张图里的三角形（或正方形）个数，
+          往往比一眼看到的多。<br><br>
+          <b>关键方法是「有顺序地数」：</b> 先把所有<b>小的</b>数一遍，
+          再数<b>合起来的大的</b>，做到<b>不重不漏</b>。这正是日后排列计数、
+          甚至找规律的基础，比单纯数数更进一步。<br><br>
+          <b>怎么一起玩：</b> 探索屏点「数一数」，屏幕会一个一个高亮、一个一个加，
+          请孩子跟着一起数出声。闯关时不要急着报数，引导他<b>用手指点着数</b>：
+          「小的有几个？大的有几个？加起来呢？」<br><br>
+          <b>可以追问：</b>「除了小三角形，还有没有大的藏起来啦？」
+          鼓励他自己发现「拼起来的大三角形」。
+        </p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ 探索 ============ -->
+  <section class="screen" id="explore">
+    <div class="card">
+      <h2>🔍 一个一个数，不重不漏</h2>
+      <p class="lead" id="exLead" style="margin-top:0">
+        这个大三角形，中间画了一条线。<br>
+        里面藏着<b class="pu">几个三角形</b>呢？<br>
+        点「<b class="or">数一数</b>」，跟着一起数！✨
+      </p>
+
+      <div class="shape-wrap">
+        <div class="shape-stage" id="exStage"></div>
+      </div>
+
+      <div class="counter">
+        <span class="count-num" id="exCount">0</span>
+        <span class="count-label" id="exLabel">个三角形</span>
+      </div>
+      <div class="tally" id="exTally"></div>
+
+      <button class="magic-btn" id="countBtn">🔎 数一数 ✨</button>
+
+      <div class="note" id="note">先数小的，再数合起来的大的，就不会漏啦！</div>
+      <button class="swap-btn" id="swapBtn" style="display:none">🔁 换一个图形再数</button>
+
+      <div class="unlock" id="unlock"></div>
+      <button class="big-btn purple" id="toPractice" disabled>去闯关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 闯关 ============ -->
+  <section class="screen" id="practice">
+    <div class="card">
+      <div class="level-tag" id="levelTag">第 1 / 3 关</div>
+      <div class="q-big" id="qBig">数一数有几个三角形？</div>
+      <div class="q-hint" id="qHint">小的 + 拼起来的大的，都要数哦！</div>
+
+      <div class="shape-wrap">
+        <div class="shape-stage" id="pStage"></div>
+      </div>
+
+      <div class="ask" id="ask">一共有几个？👇</div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="big-btn" id="nextLevel" style="display:none">下一关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 完成 ============ -->
+  <section class="screen" id="done">
+    <div class="card">
+      <div class="badge">🎖️</div>
+      <h1>太厉害啦！</h1>
+      <div class="trophy-name">🎖️ 火眼金睛</div>
+      <p class="lead">
+        你学会了数图形的本领：<br>
+        <b class="pu">先数小的</b>，<br>
+        <b class="or">再数合起来的大的</b>，<br>
+        <b class="gr">不重不漏</b>，一个都不漏！👀
+      </p>
+      <p class="lead" style="font-size:.95rem">
+        🌟 找一找：窗户、地砖上，藏着几个正方形呢？
+      </p>
+      <button class="big-btn orange" id="again">再玩一次 🔁</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+"use strict";
+const $=(s,el=document)=>el.querySelector(s);
+const $$=(s,el=document)=>[...el.querySelectorAll(s)];
+
+/* ---------- 声音 ---------- */
+let muted=false, audioCtx=null;
+function ac(){ if(!audioCtx){ try{audioCtx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return audioCtx; }
+function beep(freq,dur,type,vol,when){
+  if(muted) return; const c=ac(); if(!c) return;
+  const t=c.currentTime+(when||0), o=c.createOscillator(), g=c.createGain();
+  o.type=type||'sine'; o.frequency.value=freq;
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol||0.15,t+0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g).connect(c.destination); o.start(t); o.stop(t+dur+0.02);
+}
+const sClick=()=>beep(680,0.06,'triangle',0.12,0);
+const sCut  =()=>{beep(900,0.05,'square',0.08,0); beep(500,0.07,'triangle',0.1,0.05);};
+const sGood =()=>[523,659,784].forEach((f,i)=>beep(f,0.12,'sine',0.16,i*0.09));
+const sWin  =()=>[523,659,784,1047,1319].forEach((f,i)=>beep(f,0.16,'sine',0.18,i*0.12));
+const sBad  =()=>beep(190,0.2,'sawtooth',0.1,0);
+const sPop  =(i)=>beep(540+(i||0)*90,0.1,'sine',0.16,0);
+
+/* ---------- 语音（中文朗读） ---------- */
+let zhVoice=null;
+function pickVoice(){
+  if(!('speechSynthesis'in window)) return;
+  const vs=speechSynthesis.getVoices(); if(!vs||!vs.length) return;
+  const zh=vs.filter(v=>/zh|cmn|chinese|普通话|国语|中文/i.test((v.lang||'')+' '+(v.name||'')));
+  const female=/婷婷|美嘉|思琪|善怡|静|丽|语嫣|晓|Ting-?Ting|Mei-?Jia|Sin-?ji|Yu-?shu|Tian-?Tian|Li-?mu|Han|female|女/i;
+  const male=/男|male|Yu-?Long|Liang|国梁/i;
+  zhVoice = zh.find(v=>female.test(v.name))
+         || zh.find(v=>/zh[-_]?CN/i.test(v.lang)&&!male.test(v.name))
+         || zh.find(v=>!male.test(v.name))
+         || zh[0] || null;
+}
+if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; setTimeout(pickVoice,300); setTimeout(pickVoice,1200); }
+function say(text){
+  if(muted||!('speechSynthesis'in window)) return;
+  try{ if(!zhVoice) pickVoice(); speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang='zh-CN'; if(zhVoice)u.voice=zhVoice; u.rate=0.95; u.pitch=1.1;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ---------- 屏幕切换 ---------- */
+function show(id,step){
+  $$('.screen').forEach(s=>s.classList.remove('on'));
+  $('#'+id).classList.add('on');
+  $$('.pill').forEach(p=>p.classList.toggle('active', +p.dataset.step===step));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ---------- 豆豆阵（保留辅助函数） ---------- */
+function fillGrid(el,rows,cols,cls){
+  el.style.gridTemplateColumns=`repeat(${cols},var(--dot))`;
+  el.style.gridTemplateRows=`repeat(${rows},var(--dot))`;
+  el.innerHTML='';
+  const n=rows*cols;
+  for(let i=0;i<n;i++){ const d=document.createElement('div'); d.className='dot '+cls; el.appendChild(d); }
+}
+
+/* ============================================================
+   自绘 SVG 图形库（每个图形都标注：哪些部件构成哪个被数的图形）
+   设计原则：图形简单、个数明确无歧义。
+   ============================================================ */
+
+/* —— 图形 A：大三角形 + 1 条中线 = 3 个三角形（2 小 + 1 大） —— */
+/* 顶点 T(100,18) 底边左 L(20,170) 右 R(180,170) 中点 M(100,170) */
+function shapeTriMedian(){
+  return `<svg viewBox="0 0 200 188" xmlns="http://www.w3.org/2000/svg">
+    <polygon class="piece base" points="20,170 100,170 100,18" fill="#EEF2FB" stroke="#94A3B8" stroke-width="3" stroke-linejoin="round"/>
+    <polygon class="piece base" points="100,170 180,170 100,18" fill="#EEF2FB" stroke="#94A3B8" stroke-width="3" stroke-linejoin="round"/>
+    <!-- 高亮覆盖层（默认透明） -->
+    <polygon id="hlA1" class="piece hlpart" points="20,170 100,170 100,18" fill="#60A5FA" fill-opacity="0" stroke="#2563EB" stroke-width="0" stroke-linejoin="round"/>
+    <polygon id="hlA2" class="piece hlpart" points="100,170 180,170 100,18" fill="#FB923C" fill-opacity="0" stroke="#EA580C" stroke-width="0" stroke-linejoin="round"/>
+    <polygon id="hlA3" class="piece hlpart" points="20,170 180,170 100,18" fill="#4ADE80" fill-opacity="0" stroke="#16A34A" stroke-width="0" stroke-linejoin="round"/>
+  </svg>`;
+}
+// 数的顺序：小1、小2、大1
+const STEPS_TRI = [
+  {id:'hlA1', word:'小三角形，1 个'},
+  {id:'hlA2', word:'小三角形，2 个'},
+  {id:'hlA3', word:'合起来的大三角形，3 个'}
+];
+
+/* —— 图形 B：2×2 方格 = 4 个小正方形 + 1 个大正方形 = 5 个 —— */
+function shapeSquares2x2(){
+  // 外框 20..180 (160宽)，中线 100
+  return `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <rect x="20" y="20" width="80" height="80" fill="#EEF2FB" stroke="#94A3B8" stroke-width="3"/>
+    <rect x="100" y="20" width="80" height="80" fill="#EEF2FB" stroke="#94A3B8" stroke-width="3"/>
+    <rect x="20" y="100" width="80" height="80" fill="#EEF2FB" stroke="#94A3B8" stroke-width="3"/>
+    <rect x="100" y="100" width="80" height="80" fill="#EEF2FB" stroke="#94A3B8" stroke-width="3"/>
+    <rect id="hlB1" class="piece hlpart" x="20"  y="20"  width="80" height="80"  fill="#60A5FA" fill-opacity="0" stroke="#2563EB" stroke-width="0"/>
+    <rect id="hlB2" class="piece hlpart" x="100" y="20"  width="80" height="80"  fill="#FB923C" fill-opacity="0" stroke="#EA580C" stroke-width="0"/>
+    <rect id="hlB3" class="piece hlpart" x="20"  y="100" width="80" height="80"  fill="#A78BFA" fill-opacity="0" stroke="#7C3AED" stroke-width="0"/>
+    <rect id="hlB4" class="piece hlpart" x="100" y="100" width="80" height="80"  fill="#FBBF24" fill-opacity="0" stroke="#D97706" stroke-width="0"/>
+    <rect id="hlB5" class="piece hlpart" x="20"  y="20"  width="160" height="160" fill="#4ADE80" fill-opacity="0" stroke="#16A34A" stroke-width="0"/>
+  </svg>`;
+}
+const STEPS_SQ = [
+  {id:'hlB1', word:'小正方形，1 个'},
+  {id:'hlB2', word:'小正方形，2 个'},
+  {id:'hlB3', word:'小正方形，3 个'},
+  {id:'hlB4', word:'小正方形，4 个'},
+  {id:'hlB5', word:'合起来的大正方形，5 个'}
+];
+
+/* —— 图形 C：4 个并排的小三角形（不拼成大三角）= 4 个 —— */
+/* 每个小三角形独立站着，明确无歧义 */
+function shapeFourTris(){
+  // 4 个朝上的小三角，底边在 y=150，各宽 36，间隔 8
+  const tris=[
+    {x:16,  fill:'#60A5FA', st:'#2563EB'},
+    {x:64,  fill:'#FB923C', st:'#EA580C'},
+    {x:112, fill:'#A78BFA', st:'#7C3AED'},
+    {x:160, fill:'#4ADE80', st:'#16A34A'}
+  ];
+  let base='', hl='';
+  tris.forEach((t,i)=>{
+    const x=t.x, w=36;
+    const pts=`${x},150 ${x+w},150 ${x+w/2},40`;
+    base+=`<polygon class="piece base" points="${pts}" fill="#EEF2FB" stroke="#94A3B8" stroke-width="3" stroke-linejoin="round"/>`;
+    hl  +=`<polygon id="hlC${i+1}" class="piece hlpart" points="${pts}" fill="${t.fill}" fill-opacity="0" stroke="${t.st}" stroke-width="0" stroke-linejoin="round"/>`;
+  });
+  return `<svg viewBox="0 0 212 170" xmlns="http://www.w3.org/2000/svg">${base}${hl}</svg>`;
+}
+const STEPS_FOUR = [
+  {id:'hlC1', word:'三角形，1 个'},
+  {id:'hlC2', word:'三角形，2 个'},
+  {id:'hlC3', word:'三角形，3 个'},
+  {id:'hlC4', word:'三角形，4 个'}
+];
+
+/* —— 高亮一个部件 —— */
+function highlight(stage,id){
+  const el=$('#'+id,stage); if(!el) return;
+  el.setAttribute('fill-opacity','0.78');
+  el.setAttribute('stroke-width','5');
+  el.classList.remove('hl'); void el.getBBox; el.classList.add('hl');
+}
+function clearHighlights(stage){
+  $$('.hlpart',stage).forEach(el=>{ el.setAttribute('fill-opacity','0'); el.setAttribute('stroke-width','0'); el.classList.remove('hl'); });
+}
+
+/* ============ 探索：逐个高亮地数 ============ */
+let exVariant=0;                 // 0=三角形(中线)  1=2×2正方形
+let exDone=[false,false];        // 每个图形是否数过
+let counting=false, unlocked=false;
+const EX=[
+  {svg:shapeTriMedian, steps:STEPS_TRI, total:3, label:'个三角形',
+   lead:'这个大三角形，中间画了一条线。<br>里面藏着<b class="pu">几个三角形</b>呢？<br>点「<b class="or">数一数</b>」，跟着一起数！✨',
+   intro:'这个大三角形，中间画了一条线。点数一数，我们一起来数三角形！',
+   win:'一共 3 个！2 个小的，加上合起来的 1 个大的！'},
+  {svg:shapeSquares2x2, steps:STEPS_SQ, total:5, label:'个正方形',
+   lead:'这是一个 <b>2 乘 2</b> 的大方格。<br>里面藏着<b class="pu">几个正方形</b>呢？<br>别忘了外面一圈的<b class="or">大正方形</b>！✨',
+   intro:'这是一个二乘二的方格。点数一数，我们一起来数正方形！',
+   win:'一共 5 个！4 个小的，加上合起来的 1 个大的！'}
+];
+
+function loadExplore(){
+  const v=EX[exVariant];
+  $('#exStage').innerHTML=v.svg();
+  $('#exLead').innerHTML=v.lead;
+  $('#exLabel').textContent=v.label;
+  $('#exCount').textContent='0';
+  $('#exTally').innerHTML='';
+  $('#countBtn').disabled=false;
+  $('#countBtn').textContent='🔎 数一数 ✨';
+  $('#note').textContent='先数小的，再数合起来的大的，就不会漏啦！';
+}
+
+function runCount(){
+  if(counting) return;
+  counting=true;
+  const v=EX[exVariant];
+  const stage=$('#exStage'), countEl=$('#exCount'), tally=$('#exTally');
+  clearHighlights(stage);
+  countEl.textContent='0'; tally.innerHTML='';
+  $('#countBtn').disabled=true;
+  say('先数小的，再数合起来的大的，就不会漏啦！');
+
+  let i=0;
+  const stepOnce=()=>{
+    clearHighlights(stage);
+    const st=v.steps[i];
+    highlight(stage,st.id);
+    countEl.textContent=String(i+1);
+    sPop(i);
+    const star=document.createElement('span'); star.textContent='⭐'; tally.appendChild(star);
+    say(st.word);
+    i++;
+    if(i<v.steps.length){
+      setTimeout(stepOnce,1300);
+    }else{
+      setTimeout(()=>{
+        // 最后保留大图形高亮一会，再恢复全部小图形以示完整
+        $('#note').textContent=`✨ 一共 ${v.total} 个！${exVariant===0?'2 个小的 + 1 个大的':'4 个小的 + 1 个大的'}～`;
+        say(v.win);
+        sWin();
+        finishCountVariant();
+        counting=false;
+        $('#countBtn').disabled=false;
+        $('#countBtn').textContent='🔎 再数一遍';
+      },1300);
+    }
+  };
+  setTimeout(stepOnce,500);
+}
+
+function finishCountVariant(){
+  exDone[exVariant]=true;
+  if(exVariant===0){
+    $('#swapBtn').style.display='block';
+  }
+  // 数过至少一个图形就解锁；都数完更鼓励
+  if(!unlocked){
+    unlocked=true;
+    $('#toPractice').disabled=false; $('#toPractice').classList.add('ready');
+    $('#unlock').textContent='🎉 你学会有顺序地数啦！可以去闯关咯！';
+  }else if(exDone[0]&&exDone[1]){
+    $('#unlock').textContent='👀 两个图形都数对啦，火眼金睛就是你！';
+  }
+}
+
+$('#countBtn').addEventListener('click',()=>{ sClick(); runCount(); });
+$('#swapBtn').addEventListener('click',()=>{
+  sClick(); exVariant=(exVariant===0)?1:0; loadExplore();
+  $('#swapBtn').textContent = exVariant===1 ? '🔁 换回三角形再数' : '🔁 换成正方形再数';
+  say(EX[exVariant].intro);
+});
+$('#toPractice').addEventListener('click',()=>{ sClick(); startPractice(); });
+
+/* ============ 闯关 ============ */
+const PROB=[
+  { svg:shapeTriMedian,  qBig:'数一数有几个三角形？', hint:'2 个小的 + 拼起来的 1 个大的，都要数哦！',
+    ask:'一共有几个三角形？👇', ans:3, opts:[2,3,4], unit:'个三角形',
+    sayQ:'数一数，这个图里一共有几个三角形？记得小的和合起来的大的都要数！',
+    sayWin:'答对啦！2 个小的，加上 1 个大的，一共 3 个！' },
+  { svg:shapeSquares2x2, qBig:'数一数有几个正方形？', hint:'4 个小的 + 外面一圈的 1 个大的，都要数哦！',
+    ask:'一共有几个正方形？👇', ans:5, opts:[4,5,6], unit:'个正方形',
+    sayQ:'数一数，这个图里一共有几个正方形？别忘了外面的大正方形！',
+    sayWin:'答对啦！4 个小的，加上 1 个大的，一共 5 个！' },
+  { svg:shapeFourTris,   qBig:'数一数有几个三角形？', hint:'一个一个数，不要数漏啦！',
+    ask:'一共有几个三角形？👇', ans:4, opts:[3,4,5], unit:'个三角形',
+    sayQ:'数一数，这里一共有几个三角形？用手指点着，一个一个数！',
+    sayWin:'答对啦！一个一个数，正好 4 个三角形！' }
+];
+let pi=0, answered=false;
+function startPractice(){ pi=0; answered=false; show('practice',2); renderLevel(); }
+
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+function renderLevel(){
+  answered=false;
+  const p=PROB[pi];
+  $('#levelTag').textContent=`第 ${pi+1} / 3 关`;
+  $('#qBig').textContent=p.qBig;
+  $('#qHint').textContent=p.hint;
+  $('#ask').textContent=p.ask;
+  $('#pStage').innerHTML=p.svg();
+  $('#feedback').textContent='';
+  $('#nextLevel').style.display='none';
+
+  const box=$('#options'); box.innerHTML='';
+  shuffle(p.opts.slice()).forEach(v=>{
+    const btn=document.createElement('button');
+    btn.className='opt'; btn.textContent=v;
+    btn.addEventListener('click',()=>choose(btn,v,p));
+    box.appendChild(btn);
+  });
+  say(p.sayQ);
+}
+
+function choose(btn,v,p){
+  if(answered) return;
+  if(v===p.ans){
+    answered=true;
+    btn.classList.add('correct'); sGood();
+    $('#feedback').innerHTML='<span class="gr">答对啦！🎉</span><div class="stars">⭐⭐⭐</div>';
+    say(p.sayWin);
+    $$('.opt').forEach(o=>o.disabled=true);
+    const last=(pi===PROB.length-1);
+    const nb=$('#nextLevel');
+    nb.textContent = last ? '完成啦 🎉' : '下一关 →';
+    nb.style.display='block';
+  }else{
+    btn.classList.add('wrong'); sBad();
+    $('#feedback').innerHTML='<span class="or">再数一数～ 小的和大的都要数哦！</span>';
+    say('再数一数，小的和大的都要数哦！');
+    setTimeout(()=>btn.classList.remove('wrong'),400);
+  }
+}
+
+$('#nextLevel').addEventListener('click',()=>{
+  sClick(); answered=false;
+  if(pi===PROB.length-1){ finish(); }
+  else{ pi++; renderLevel(); }
+});
+
+/* ============ 完成 ============ */
+function finish(){
+  show('done',3); sWin(); say('太厉害啦！你已经是火眼金睛啦！');
+  confetti();
+}
+$('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('explore',1); say('我们再玩一次！'); });
+
+/* ---------- 顶部按钮 ---------- */
+$('#startBtn').addEventListener('click',()=>{
+  ac(); sClick(); show('explore',1);
+  say('这个大三角形，中间画了一条线。点数一数，我们一起来数三角形！');
+});
+$('#muteBtn').addEventListener('click',()=>{
+  muted=!muted; $('#muteBtn').textContent=muted?'🔇':'🔊';
+  if(muted&&'speechSynthesis'in window) speechSynthesis.cancel(); else sClick();
+});
+$('#homeBtn').addEventListener('click',()=>{ sClick(); if('speechSynthesis'in window)speechSynthesis.cancel(); location.href='index.html'; });
+
+function resetAll(){
+  exVariant=0; exDone=[false,false]; counting=false; unlocked=false; answered=false; pi=0;
+  $('#toPractice').disabled=true; $('#toPractice').classList.remove('ready'); $('#unlock').textContent='';
+  $('#swapBtn').style.display='none'; $('#swapBtn').textContent='🔁 换成正方形再数';
+  loadExplore();
+}
+
+/* ---------- 彩带 ---------- */
+function confetti(){
+  const cv=$('#confetti'), ctx=cv.getContext('2d');
+  cv.width=innerWidth; cv.height=innerHeight; cv.style.display='block';
+  const colors=['#2563EB','#F97316','#16A34A','#EAB308','#EC4899','#7C3AED'];
+  const P=[];
+  for(let i=0;i<150;i++) P.push({
+    x:innerWidth/2+(Math.random()-0.5)*120, y:innerHeight*0.28,
+    vx:(Math.random()-0.5)*13, vy:Math.random()*-13-3, g:0.32,
+    s:7+Math.random()*9, c:colors[i%colors.length], rot:Math.random()*6, vr:(Math.random()-0.5)*0.4
+  });
+  let t=0;
+  (function anim(){
+    t++; ctx.clearRect(0,0,cv.width,cv.height);
+    P.forEach(p=>{ p.vy+=p.g; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c;
+      ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6); ctx.restore();
+    });
+    if(t<150) requestAnimationFrame(anim); else cv.style.display='none';
+  })();
+}
+
+/* 初始 */
+loadExplore();
+/* —— 通关记录（本地 localStorage）—— */
+(function(){var ID='shutuxing';try{var d=document.getElementById('done');if(d){var mark=function(){if(d.classList.contains('on')){try{localStorage.setItem('yswg:done:'+ID,'1');}catch(e){}}};new MutationObserver(mark).observe(d,{attributes:true,attributeFilter:['class']});mark();}}catch(e){}})();
+</script>
+</body>
+</html>

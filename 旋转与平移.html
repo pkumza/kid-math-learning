@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>旋转与平移 · 图形变换小课堂</title>
+<style>
+  :root{
+    --dot: clamp(15px, 4.2vw, 30px);
+    --blue:#2563EB; --blue2:#60A5FA;
+    --orange:#EA580C; --orange2:#FB923C;
+    --green:#16A34A; --green2:#4ADE80;
+    --purple:#7C3AED;
+    --ink:#1F2937; --soft:#6B7280;
+    --card:#ffffff;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",
+      "Hiragino Sans GB","Helvetica Neue",sans-serif;
+    color:var(--ink);
+    background:linear-gradient(160deg,#EAF4FF 0%,#FFF6EC 60%,#FDEFF6 100%);
+    min-height:100vh;
+    overflow-x:hidden;
+    user-select:none;
+  }
+  .wrap{max-width:760px; margin:0 auto; padding:10px 14px 40px;}
+
+  /* ---- 顶部 ---- */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 4px 6px;
+  }
+  .brand{display:flex; align-items:center; gap:8px; font-weight:800; font-size:1.15rem;}
+  .brand .fox{font-size:1.6rem;}
+  .brand small{color:var(--soft); font-weight:600; font-size:.78rem;}
+  .tools{display:flex; gap:8px;}
+  .icon-btn{
+    border:none; background:#fff; border-radius:14px; width:44px; height:44px;
+    font-size:1.25rem; cursor:pointer; box-shadow:0 3px 8px rgba(0,0,0,.08);
+    transition:transform .1s;
+  }
+  .icon-btn:active{transform:scale(.92);}
+
+  .steps{display:flex; gap:6px; justify-content:center; margin:4px 0 12px;}
+  .pill{
+    font-size:.82rem; font-weight:700; color:var(--soft);
+    background:#fff; padding:5px 12px; border-radius:999px;
+    box-shadow:0 2px 5px rgba(0,0,0,.05);
+  }
+  .pill.active{color:#fff; background:var(--purple); box-shadow:0 4px 10px rgba(124,58,237,.35);}
+
+  /* ---- 卡片 / 屏幕 ---- */
+  .screen{display:none; animation:pop .35s ease both;}
+  .screen.on{display:block;}
+  @keyframes pop{from{opacity:0; transform:translateY(12px) scale(.98);} to{opacity:1; transform:none;}}
+  .card{
+    background:var(--card); border-radius:26px; padding:22px 18px;
+    box-shadow:0 12px 30px rgba(80,90,130,.12); margin-bottom:16px;
+  }
+  h1{font-size:1.7rem; margin:.1em 0 .2em; text-align:center;}
+  h2{font-size:1.25rem; margin:.1em 0 .5em; text-align:center; color:var(--purple);}
+  .lead{text-align:center; color:var(--soft); font-size:1rem; line-height:1.7; margin:.3em 0 .2em;}
+  .pinyin{display:block; color:var(--soft); font-size:.95rem; letter-spacing:.06em; font-weight:600; text-align:center;}
+
+  /* ---- 按钮 ---- */
+  .big-btn{
+    display:block; width:100%; border:none; cursor:pointer;
+    font-size:1.3rem; font-weight:800; color:#fff;
+    padding:16px; border-radius:20px; margin-top:8px;
+    background:linear-gradient(135deg,#34D399,#10B981);
+    box-shadow:0 8px 18px rgba(16,185,129,.35);
+    transition:transform .12s, box-shadow .12s, filter .2s;
+  }
+  .big-btn.purple{background:linear-gradient(135deg,#A78BFA,#7C3AED); box-shadow:0 8px 18px rgba(124,58,237,.35);}
+  .big-btn.orange{background:linear-gradient(135deg,#FDBA74,#F97316); box-shadow:0 8px 18px rgba(249,115,22,.35);}
+  .big-btn:active{transform:translateY(2px) scale(.99);}
+  .big-btn:disabled{filter:grayscale(.7) opacity(.55); cursor:not-allowed; box-shadow:none;}
+  .big-btn.ready{animation:bounce 1s infinite;}
+  @keyframes bounce{0%,100%{transform:none;}50%{transform:translateY(-5px);}}
+
+  /* ---- 变换舞台 ---- */
+  .stage-wrap{display:flex; align-items:center; justify-content:center; margin:10px 0 6px;}
+  .stage{
+    position:relative; width:100%; max-width:420px; height:200px;
+    background:#F8FAFF; border-radius:18px; border:2px dashed #DBE3F4;
+    overflow:hidden;
+  }
+  /* 起点虚影：标记图形最初的位置 */
+  .ghost{
+    position:absolute; top:50%; left:18%;
+    transform:translate(-50%,-50%);
+    opacity:.28; pointer-events:none;
+  }
+  /* 会动的图形 */
+  .mover{
+    position:absolute; top:50%; left:18%;
+    transform:translate(-50%,-50%) translateX(0) rotate(0deg);
+    transition:transform 1s cubic-bezier(.34,1.2,.5,1);
+    will-change:transform;
+  }
+  /* 转动点的小圆点 */
+  .pivot{
+    position:absolute; top:50%; left:18%;
+    width:12px; height:12px; border-radius:50%;
+    background:var(--purple); transform:translate(-50%,-50%);
+    box-shadow:0 0 0 4px rgba(124,58,237,.18);
+    opacity:0; transition:opacity .25s;
+  }
+  .pivot.show{opacity:1;}
+
+  /* ---- 操作按钮组 ---- */
+  .move-btns{display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin:14px 0 6px;}
+  .move-btn{
+    border:none; cursor:pointer; font-size:1.15rem; font-weight:800; color:#fff;
+    padding:14px 20px; border-radius:18px; transition:transform .1s;
+    box-shadow:0 5px 12px rgba(0,0,0,.12);
+  }
+  .move-btn:active{transform:scale(.95);}
+  .move-btn.slide{background:linear-gradient(135deg,#60A5FA,#2563EB);}
+  .move-btn.spin{background:linear-gradient(135deg,#A78BFA,#7C3AED);}
+  .reset-btn{
+    display:block; margin:8px auto 0; border:none; cursor:pointer;
+    background:#fff; color:var(--soft); font-weight:800;
+    padding:9px 18px; border-radius:16px; font-size:1rem; box-shadow:0 3px 8px rgba(0,0,0,.08);
+  }
+  .reset-btn:active{transform:scale(.95);}
+
+  .note{
+    margin-top:10px; background:#FFFDF5; border-radius:14px; padding:10px 12px;
+    color:#92400E; font-weight:700; line-height:1.6; font-size:1rem; text-align:center;
+  }
+  .unlock{text-align:center; font-weight:800; color:var(--purple); margin:12px 0 4px; min-height:1.4em;}
+
+  /* ---- 闯关 ---- */
+  .level-tag{text-align:center; color:var(--soft); font-weight:800; margin-bottom:2px;}
+  .q-big{text-align:center; font-size:1.5rem; font-weight:900; margin:4px 0 2px;}
+  .compare{display:flex; gap:14px; justify-content:center; align-items:center; flex-wrap:wrap; margin:14px 0 6px;}
+  .compare-box{
+    background:#F8FAFF; border-radius:18px; padding:10px; border:3px solid #E5E7EB;
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+  }
+  .compare-box .cap{font-weight:800; color:var(--soft); font-size:.9rem;}
+  .arrow{font-size:2rem; color:var(--purple); font-weight:900;}
+  .ask{text-align:center; font-size:1.4rem; font-weight:900; margin:10px 0 6px;}
+  .options{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+  .opt{
+    border:none; cursor:pointer; min-width:130px; font-size:1.4rem; font-weight:900;
+    padding:14px 12px; border-radius:18px; background:#fff; color:var(--ink);
+    box-shadow:0 5px 12px rgba(0,0,0,.1); transition:transform .1s;
+    border:3px solid #E5E7EB;
+  }
+  .opt:active{transform:scale(.95);}
+  .opt.correct{background:var(--green); color:#fff; border-color:var(--green);}
+  .opt.wrong{background:#FCA5A5; border-color:#EF4444; animation:shake .35s;}
+  @keyframes shake{0%,100%{transform:none;}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+  .feedback{text-align:center; font-weight:900; font-size:1.3rem; min-height:1.5em; margin-top:12px;}
+  .stars{font-size:1.6rem; letter-spacing:6px; text-align:center;}
+
+  /* 风车 / 钟表 缓慢旋转 */
+  .spin-demo{animation:turn 4s linear infinite; transform-origin:50% 50%;}
+  @keyframes turn{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+
+  /* ---- 完成 ---- */
+  .badge{font-size:4.5rem; text-align:center; animation:spin 3s linear infinite;}
+  @keyframes spin{from{transform:rotate(-8deg);}50%{transform:rotate(8deg);}to{transform:rotate(-8deg);}}
+  .trophy-name{text-align:center; font-size:1.5rem; font-weight:900; color:var(--purple); margin:6px 0;}
+
+  details{margin-top:8px; background:#F8FAFF; border-radius:16px; padding:4px 14px;}
+  summary{cursor:pointer; font-weight:800; color:var(--purple); padding:10px 0; list-style:none;}
+  summary::-webkit-details-marker{display:none;}
+  details p{color:#374151; line-height:1.75; font-size:.95rem;}
+  details b{color:var(--ink);}
+
+  .bl{color:var(--blue);} .or{color:var(--orange);} .gr{color:var(--green);} .pu{color:var(--purple);}
+
+  #confetti{position:fixed; inset:0; pointer-events:none; display:none; z-index:99;}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="wrap">
+
+  <header>
+    <div class="brand"><span class="fox">🦊</span><div>数学王国<br><small>图形变换小课堂</small></div></div>
+    <div class="tools">
+      <button class="icon-btn" id="homeBtn" title="重新开始">🏠</button>
+      <button class="icon-btn" id="muteBtn" title="声音开关">🔊</button>
+    </div>
+  </header>
+
+  <div class="steps">
+    <span class="pill" data-step="1">① 探索</span>
+    <span class="pill" data-step="2">② 闯关</span>
+    <span class="pill" data-step="3">③ 完成</span>
+  </div>
+
+  <!-- ============ 欢迎 ============ -->
+  <section class="screen on" id="welcome">
+    <div class="card">
+      <div style="font-size:3.4rem;text-align:center">➡️🔄</div>
+      <h1>旋转与平移</h1>
+      <span class="pinyin">xuán zhuǎn · píng yí · 图形会搬家</span>
+      <p class="lead">
+        把一个图形<b class="bl">「滑过去」</b>，<br>
+        就是<b class="bl">平移</b>～<br>
+        把它<b class="pu">「转个方向」</b>，<br>
+        就是<b class="pu">旋转</b>！<br>
+        它们都<b>不改变大小和样子</b>，<br>
+        只改变位置或方向。来玩玩看！
+      </p>
+      <button class="big-btn" id="startBtn">开始探索 →</button>
+
+      <details>
+        <summary>👨‍👩‍👧 给爸爸妈妈的话（点开）</summary>
+        <p>
+          <b>为什么选「旋转与平移」？</b> 孩子已经学过对称（轴对称），知道图形「翻一翻」会重合。
+          平移和旋转是另外两种<b>图形变换</b>：<b class="bl">平移</b>是图形沿直线滑动，方向和样子都不变，只是位置变了；
+          <b class="pu">旋转</b>是图形绕着一个点转方向（比如转 90°）。<br><br>
+          <b>怎么一起玩：</b> 探索屏有一面有明显方向的小旗子。点「平移」它会向右滑过去——
+          请孩子观察<b>旗子朝向没变</b>；点「旋转」它会绕中间的点转 90°——这次<b>方向变了</b>。
+          引导他说出区别：「滑过去 = 平移」「转方向 = 旋转」。<br><br>
+          <b>可以追问：</b>「电梯上上下下是平移还是旋转？」（平移）「风车、钟表指针、车轮呢？」（旋转）
+          「滑滑梯滑下去呢？」让他在生活里找一找这两种「图形搬家」的方式。
+        </p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ 探索 ============ -->
+  <section class="screen" id="explore">
+    <div class="card">
+      <h2>🚩 让小旗子动起来</h2>
+      <p class="lead" style="margin-top:0">
+        这面小旗子朝着<b>右边</b>。<br>
+        点<b class="bl">平移</b>让它<b>滑过去</b>，<br>
+        点<b class="pu">旋转</b>让它<b>转个方向</b>，<br>看看有什么不一样！
+      </p>
+
+      <div class="stage-wrap">
+        <div class="stage" id="stage">
+          <div class="ghost" id="ghost"></div>
+          <div class="pivot" id="pivot"></div>
+          <div class="mover" id="mover"></div>
+        </div>
+      </div>
+
+      <div class="move-btns">
+        <button class="move-btn slide" id="slideBtn">平移 ➡️</button>
+        <button class="move-btn spin" id="spinBtn">旋转 ↻</button>
+      </div>
+      <button class="reset-btn" id="resetMove">⟲ 复位</button>
+
+      <div class="note" id="note">浅浅的旗子是它<b>原来</b>的位置，方便你对比哦～</div>
+
+      <div class="unlock" id="unlock"></div>
+      <button class="big-btn purple" id="toPractice" disabled>去闯关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 闯关 ============ -->
+  <section class="screen" id="practice">
+    <div class="card">
+      <div class="level-tag" id="levelTag">第 1 / 3 关</div>
+      <div class="q-big" id="qBig">这是平移还是旋转？</div>
+
+      <div class="compare" id="compare"></div>
+
+      <div class="ask" id="ask"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="big-btn" id="nextLevel" style="display:none">下一关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 完成 ============ -->
+  <section class="screen" id="done">
+    <div class="card">
+      <div class="badge">🎖️</div>
+      <h1>太厉害啦！</h1>
+      <div class="trophy-name">🎖️ 变换小魔术师</div>
+      <p class="lead">
+        你学会了两种图形变换：<br>
+        <b class="bl">平移</b> = 滑过去，<b>方向不变</b>，只是位置变了；<br>
+        <b class="pu">旋转</b> = 转个方向（比如转 90°）！<br>
+        它们都不改变图形的大小和样子～
+      </p>
+      <p class="lead" style="font-size:.95rem">
+        🌟 找一找：电梯是平移，风车是旋转，还有哪些？
+      </p>
+      <button class="big-btn orange" id="again">再玩一次 🔁</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+"use strict";
+const $=(s,el=document)=>el.querySelector(s);
+const $$=(s,el=document)=>[...el.querySelectorAll(s)];
+
+/* ---------- 声音 ---------- */
+let muted=false, audioCtx=null;
+function ac(){ if(!audioCtx){ try{audioCtx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return audioCtx; }
+function beep(freq,dur,type,vol,when){
+  if(muted) return; const c=ac(); if(!c) return;
+  const t=c.currentTime+(when||0), o=c.createOscillator(), g=c.createGain();
+  o.type=type||'sine'; o.frequency.value=freq;
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol||0.15,t+0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g).connect(c.destination); o.start(t); o.stop(t+dur+0.02);
+}
+const sClick=()=>beep(680,0.06,'triangle',0.12,0);
+const sCut  =()=>{beep(900,0.05,'square',0.08,0); beep(500,0.07,'triangle',0.1,0.05);};
+const sGood =()=>[523,659,784].forEach((f,i)=>beep(f,0.12,'sine',0.16,i*0.09));
+const sWin  =()=>[523,659,784,1047,1319].forEach((f,i)=>beep(f,0.16,'sine',0.18,i*0.12));
+const sBad  =()=>beep(190,0.2,'sawtooth',0.1,0);
+
+/* ---------- 语音（中文朗读） ---------- */
+let zhVoice=null;
+function pickVoice(){
+  if(!('speechSynthesis'in window)) return;
+  const vs=speechSynthesis.getVoices(); if(!vs||!vs.length) return;
+  const zh=vs.filter(v=>/zh|cmn|chinese|普通话|国语|中文/i.test((v.lang||'')+' '+(v.name||'')));
+  const female=/婷婷|美嘉|思琪|善怡|静|丽|语嫣|晓|Ting-?Ting|Mei-?Jia|Sin-?ji|Yu-?shu|Tian-?Tian|Li-?mu|Han|female|女/i;
+  const male=/男|male|Yu-?Long|Liang|国梁/i;
+  zhVoice = zh.find(v=>female.test(v.name))
+         || zh.find(v=>/zh[-_]?CN/i.test(v.lang)&&!male.test(v.name))
+         || zh.find(v=>!male.test(v.name))
+         || zh[0] || null;
+}
+if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; setTimeout(pickVoice,300); setTimeout(pickVoice,1200); }
+function say(text){
+  if(muted||!('speechSynthesis'in window)) return;
+  try{ if(!zhVoice) pickVoice(); speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang='zh-CN'; if(zhVoice)u.voice=zhVoice; u.rate=0.95; u.pitch=1.1;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ---------- 屏幕切换 ---------- */
+function show(id,step){
+  $$('.screen').forEach(s=>s.classList.remove('on'));
+  $('#'+id).classList.add('on');
+  $$('.pill').forEach(p=>p.classList.toggle('active', +p.dataset.step===step));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ---------- 豆豆阵（保留辅助函数） ---------- */
+function fillGrid(el,rows,cols,cls){
+  el.style.gridTemplateColumns=`repeat(${cols},var(--dot))`;
+  el.style.gridTemplateRows=`repeat(${rows},var(--dot))`;
+  el.innerHTML='';
+  const n=rows*cols;
+  for(let i=0;i<n;i++){ const d=document.createElement('div'); d.className='dot '+cls; el.appendChild(d); }
+}
+
+/* ---------- 自绘 SVG 图形（有明显方向：小旗子） ---------- */
+/* 旗杆在左，旗面朝右；尺寸 80×80，旋转点在中心 */
+function svgFlag(size){
+  size=size||80;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+    <line x1="20" y1="10" x2="20" y2="70" stroke="#7C3AED" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="20" cy="10" r="5" fill="#7C3AED"/>
+    <path d="M20 14 H64 L54 26 L64 38 H20 Z" fill="#FB923C" stroke="#EA580C" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="35" cy="26" r="3.5" fill="#FFF7E6"/>
+  </svg>`;
+}
+/* 风车（多叶片，明显是转动的东西） */
+function svgPinwheel(size){
+  size=size||90;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+    <line x1="45" y1="45" x2="45" y2="86" stroke="#92400E" stroke-width="5" stroke-linecap="round"/>
+    <g class="spin-demo">
+      <path d="M45 45 L45 8 Q60 16 45 45 Z" fill="#60A5FA"/>
+      <path d="M45 45 L82 45 Q74 60 45 45 Z" fill="#FB923C"/>
+      <path d="M45 45 L45 82 Q30 74 45 45 Z" fill="#4ADE80"/>
+      <path d="M45 45 L8 45 Q16 30 45 45 Z" fill="#F472B6"/>
+    </g>
+    <circle cx="45" cy="45" r="6" fill="#7C3AED"/>
+  </svg>`;
+}
+/* 钟表（指针转动） */
+function svgClock(size){
+  size=size||90;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="45" cy="45" r="36" fill="#FEF3C7" stroke="#D97706" stroke-width="4"/>
+    <circle cx="45" cy="45" r="3" fill="#7C3AED"/>
+    <g class="spin-demo">
+      <line x1="45" y1="45" x2="45" y2="20" stroke="#7C3AED" stroke-width="5" stroke-linecap="round"/>
+      <line x1="45" y1="45" x2="62" y2="45" stroke="#EA580C" stroke-width="4" stroke-linecap="round"/>
+    </g>
+  </svg>`;
+}
+
+/* ============ 探索：让小旗子平移 / 旋转 ============ */
+const mover=$('#mover'), ghost=$('#ghost'), pivot=$('#pivot'), note=$('#note'), unlock=$('#unlock'), toPractice=$('#toPractice');
+const tried=new Set();        // 记录玩过 'slide' / 'spin'
+let unlocked=false;
+
+function buildStage(){
+  mover.innerHTML=svgFlag(80);
+  ghost.innerHTML=svgFlag(80);
+  resetMover(true);
+}
+function resetMover(quiet){
+  mover.style.transform='translate(-50%,-50%) translateX(0) rotate(0deg)';
+  pivot.classList.remove('show');
+  if(!quiet){ sClick(); note.innerHTML='复位啦！旗子回到原来的位置，再玩玩看～'; }
+}
+
+function doSlide(){
+  // 先回正方向，只改变位置：向右滑过去
+  pivot.classList.remove('show');
+  mover.style.transform='translate(-50%,-50%) translateX(180px) rotate(0deg)';
+  sCut();
+  note.innerHTML='<b class="bl">平移</b>：滑过去，方向没变！只是位置变了～';
+  say('平移！旗子滑过去，方向没有变，只是位置变了。');
+  mark('slide');
+}
+function doSpin(){
+  // 绕中心转 90°，位置不变，方向变了
+  pivot.classList.add('show');
+  // 保持当前是否平移过都先回到原位再转，更直观
+  mover.style.transform='translate(-50%,-50%) translateX(0) rotate(90deg)';
+  sCut();
+  note.innerHTML='<b class="pu">旋转</b>：绕中间的点转了 90°，方向变了！';
+  say('旋转！旗子绕着中间的点转了九十度，方向变了。');
+  mark('spin');
+}
+
+function mark(kind){
+  tried.add(kind);
+  if(unlocked) return;
+  if(tried.size<2){
+    const left = kind==='slide' ? '旋转' : '平移';
+    unlock.textContent=`很好！再试试「${left}」就能去闯关啦～`;
+  }else{
+    unlocked=true; toPractice.disabled=false; toPractice.classList.add('ready');
+    unlock.textContent='🎉 平移=位置变方向不变，旋转=方向变，你都玩过啦！';
+    sWin(); say('太棒啦！平移是位置变方向不变，旋转是转了方向，你两个都玩过了！');
+  }
+}
+
+$('#slideBtn').addEventListener('click',doSlide);
+$('#spinBtn').addEventListener('click',doSpin);
+$('#resetMove').addEventListener('click',()=>resetMover(false));
+$('#toPractice').addEventListener('click',()=>{ sClick(); startPractice(); });
+
+/* ============ 闯关 ============ */
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+let pi=0, answered=false;
+function startPractice(){ pi=0; answered=false; show('practice',2); renderLevel(); }
+
+function renderLevel(){
+  answered=false;
+  $('#levelTag').textContent=`第 ${pi+1} / 3 关`;
+  $('#feedback').textContent='';
+  $('#nextLevel').style.display='none';
+  const compare=$('#compare'), opts=$('#options');
+  compare.innerHTML=''; opts.innerHTML='';
+
+  if(pi===0){
+    /* 第1关：图形滑到旁边，方向没变 → 平移（前后对比） */
+    $('#qBig').textContent='旗子滑到了旁边';
+    $('#ask').textContent='方向没变，这是？';
+    compare.innerHTML=
+      `<div class="compare-box"><div class="cap">原来</div>${svgFlag(80)}</div>`+
+      `<div class="arrow">➡️</div>`+
+      `<div class="compare-box"><div class="cap">现在</div>${svgFlag(80)}</div>`;
+    makeChoice('平移 ➡️','旋转 ↻','平移 ➡️',
+      '对啦！旗子滑过去，方向一模一样，这是平移！',
+      '再看看～方向变了吗？两面旗子朝向一样哦～');
+    say('旗子滑到了旁边，方向没有变。这是平移，还是旋转？');
+  }else if(pi===1){
+    /* 第2关：图形转了个方向 → 旋转（前后对比，第二个旗子旋转90°） */
+    $('#qBig').textContent='旗子转了个方向';
+    $('#ask').textContent='方向变了，这是？';
+    compare.innerHTML=
+      `<div class="compare-box"><div class="cap">原来</div>${svgFlag(80)}</div>`+
+      `<div class="arrow">↻</div>`+
+      `<div class="compare-box"><div class="cap">现在</div><div style="transform:rotate(90deg)">${svgFlag(80)}</div></div>`;
+    makeChoice('平移 ➡️','旋转 ↻','旋转 ↻',
+      '对啦！旗子转了个方向，这是旋转！',
+      '再看看～旗子的方向是不是转过来了？');
+    say('旗子转了个方向。这是平移，还是旋转？');
+  }else{
+    /* 第3关：风车转动、钟表指针转动 → 旋转（小动画） */
+    $('#qBig').textContent='风车和钟表都在转';
+    $('#ask').textContent='它们绕着中间转方向，这是？';
+    compare.innerHTML=
+      `<div class="compare-box"><div class="cap">风车</div>${svgPinwheel(90)}</div>`+
+      `<div class="compare-box"><div class="cap">钟表</div>${svgClock(90)}</div>`;
+    makeChoice('平移 ➡️','旋转 ↻','旋转 ↻',
+      '对啦！风车和钟表指针都绕着中间转方向，这是旋转！',
+      '再看看～它们是绕着中间转圈圈的哦～');
+    say('风车在转，钟表指针也在转，它们绕着中间转方向。这是平移，还是旋转？');
+  }
+}
+
+/* 判断题：两个大按钮（1 正确 + 1 干扰） */
+function makeChoice(t1,t2,correctText,goodMsg,badMsg){
+  const opts=$('#options');
+  [t1,t2].forEach(label=>{
+    const btn=document.createElement('button');
+    btn.className='opt'; btn.textContent=label;
+    btn.addEventListener('click',()=>{
+      if(answered) return;
+      if(label===correctText){
+        answered=true; btn.classList.add('correct'); sGood();
+        $$('.opt').forEach(o=>o.disabled=true);
+        winFeedback(goodMsg);
+      }else{
+        btn.classList.add('wrong'); sBad();
+        $('#feedback').innerHTML='<span class="or">再看看～ 你可以的！</span>';
+        say(badMsg);
+        setTimeout(()=>btn.classList.remove('wrong'),400);
+      }
+    });
+    opts.appendChild(btn);
+  });
+}
+
+function winFeedback(msg){
+  $('#feedback').innerHTML='<span class="gr">答对啦！🎉</span><div class="stars">⭐⭐⭐</div>';
+  say(msg);
+  const last=(pi===2);
+  const nb=$('#nextLevel');
+  nb.textContent = last ? '完成啦 🎉' : '下一关 →';
+  nb.style.display='block';
+}
+
+$('#nextLevel').addEventListener('click',()=>{
+  sClick(); answered=false;
+  if(pi===2){ finish(); }
+  else{ pi++; renderLevel(); }
+});
+
+/* ============ 完成 ============ */
+function finish(){
+  show('done',3); sWin(); say('太厉害啦！你已经是变换小魔术师啦！');
+  confetti();
+}
+$('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('explore',1); say('我们再玩一次！'); });
+
+/* ---------- 顶部按钮 ---------- */
+$('#startBtn').addEventListener('click',()=>{
+  ac(); sClick(); show('explore',1);
+  say('这面小旗子朝着右边。点平移让它滑过去，点旋转让它转个方向，看看有什么不一样！');
+});
+$('#muteBtn').addEventListener('click',()=>{
+  muted=!muted; $('#muteBtn').textContent=muted?'🔇':'🔊';
+  if(muted&&'speechSynthesis'in window) speechSynthesis.cancel(); else sClick();
+});
+$('#homeBtn').addEventListener('click',()=>{ sClick(); if('speechSynthesis'in window)speechSynthesis.cancel(); location.href='index.html'; });
+
+function resetAll(){
+  tried.clear(); unlocked=false; answered=false; pi=0;
+  toPractice.disabled=true; toPractice.classList.remove('ready'); unlock.textContent='';
+  note.innerHTML='浅浅的旗子是它<b>原来</b>的位置，方便你对比哦～';
+  buildStage();
+}
+
+/* ---------- 彩带 ---------- */
+function confetti(){
+  const cv=$('#confetti'), ctx=cv.getContext('2d');
+  cv.width=innerWidth; cv.height=innerHeight; cv.style.display='block';
+  const colors=['#2563EB','#F97316','#16A34A','#EAB308','#EC4899','#7C3AED'];
+  const P=[];
+  for(let i=0;i<150;i++) P.push({
+    x:innerWidth/2+(Math.random()-0.5)*120, y:innerHeight*0.28,
+    vx:(Math.random()-0.5)*13, vy:Math.random()*-13-3, g:0.32,
+    s:7+Math.random()*9, c:colors[i%colors.length], rot:Math.random()*6, vr:(Math.random()-0.5)*0.4
+  });
+  let t=0;
+  (function anim(){
+    t++; ctx.clearRect(0,0,cv.width,cv.height);
+    P.forEach(p=>{ p.vy+=p.g; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c;
+      ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6); ctx.restore();
+    });
+    if(t<150) requestAnimationFrame(anim); else cv.style.display='none';
+  })();
+}
+
+/* 初始 */
+buildStage();
+/* —— 通关记录（本地 localStorage）—— */
+(function(){var ID='xuanzhuan';try{var d=document.getElementById('done');if(d){var mark=function(){if(d.classList.contains('on')){try{localStorage.setItem('yswg:done:'+ID,'1');}catch(e){}}};new MutationObserver(mark).observe(d,{attributes:true,attributeFilter:['class']});mark();}}catch(e){}})();
+</script>
+</body>
+</html>

@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>几分之几小课堂 · 分数比较与相加</title>
+<style>
+  :root{
+    --dot: clamp(15px, 4.2vw, 30px);
+    --blue:#2563EB; --blue2:#60A5FA;
+    --orange:#EA580C; --orange2:#FB923C;
+    --green:#16A34A; --green2:#4ADE80;
+    --purple:#7C3AED;
+    --ink:#1F2937; --soft:#6B7280;
+    --card:#ffffff;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",
+      "Hiragino Sans GB","Helvetica Neue",sans-serif;
+    color:var(--ink);
+    background:linear-gradient(160deg,#EAF4FF 0%,#FFF6EC 60%,#FDEFF6 100%);
+    min-height:100vh;
+    overflow-x:hidden;
+    user-select:none;
+  }
+  .wrap{max-width:760px; margin:0 auto; padding:10px 14px 40px;}
+
+  /* ---- 顶部 ---- */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 4px 6px;
+  }
+  .brand{display:flex; align-items:center; gap:8px; font-weight:800; font-size:1.15rem;}
+  .brand .fox{font-size:1.6rem;}
+  .brand small{color:var(--soft); font-weight:600; font-size:.78rem;}
+  .tools{display:flex; gap:8px;}
+  .icon-btn{
+    border:none; background:#fff; border-radius:14px; width:44px; height:44px;
+    font-size:1.25rem; cursor:pointer; box-shadow:0 3px 8px rgba(0,0,0,.08);
+    transition:transform .1s;
+  }
+  .icon-btn:active{transform:scale(.92);}
+
+  .steps{display:flex; gap:6px; justify-content:center; margin:4px 0 12px;}
+  .pill{
+    font-size:.82rem; font-weight:700; color:var(--soft);
+    background:#fff; padding:5px 12px; border-radius:999px;
+    box-shadow:0 2px 5px rgba(0,0,0,.05);
+  }
+  .pill.active{color:#fff; background:var(--purple); box-shadow:0 4px 10px rgba(124,58,237,.35);}
+
+  /* ---- 卡片 / 屏幕 ---- */
+  .screen{display:none; animation:pop .35s ease both;}
+  .screen.on{display:block;}
+  @keyframes pop{from{opacity:0; transform:translateY(12px) scale(.98);} to{opacity:1; transform:none;}}
+  .card{
+    background:var(--card); border-radius:26px; padding:22px 18px;
+    box-shadow:0 12px 30px rgba(80,90,130,.12); margin-bottom:16px;
+  }
+  h1{font-size:1.7rem; margin:.1em 0 .2em; text-align:center;}
+  h2{font-size:1.25rem; margin:.1em 0 .5em; text-align:center; color:var(--purple);}
+  .lead{text-align:center; color:var(--soft); font-size:1rem; line-height:1.7; margin:.3em 0 .2em;}
+  .pinyin{display:block; color:var(--soft); font-size:.95rem; letter-spacing:.06em; font-weight:600;}
+
+  /* ---- 按钮 ---- */
+  .big-btn{
+    display:block; width:100%; border:none; cursor:pointer;
+    font-size:1.3rem; font-weight:800; color:#fff;
+    padding:16px; border-radius:20px; margin-top:8px;
+    background:linear-gradient(135deg,#34D399,#10B981);
+    box-shadow:0 8px 18px rgba(16,185,129,.35);
+    transition:transform .12s, box-shadow .12s, filter .2s;
+  }
+  .big-btn.purple{background:linear-gradient(135deg,#A78BFA,#7C3AED); box-shadow:0 8px 18px rgba(124,58,237,.35);}
+  .big-btn.orange{background:linear-gradient(135deg,#FDBA74,#F97316); box-shadow:0 8px 18px rgba(249,115,22,.35);}
+  .big-btn:active{transform:translateY(2px) scale(.99);}
+  .big-btn:disabled{filter:grayscale(.7) opacity(.55); cursor:not-allowed; box-shadow:none;}
+  .big-btn.ready{animation:bounce 1s infinite;}
+  @keyframes bounce{0%,100%{transform:none;}50%{transform:translateY(-5px);}}
+
+  /* ---- 豆豆阵（保留参考样式以备复用） ---- */
+  .array-wrap{display:flex; align-items:center; justify-content:center; gap:8px; margin:10px 0 6px;}
+  .rows-label{
+    writing-mode:vertical-rl; text-orientation:upright;
+    font-weight:800; color:var(--soft); font-size:.95rem; letter-spacing:2px;
+  }
+  .array{display:flex; align-items:center; justify-content:center; gap:6px;}
+  .block{display:flex; flex-direction:column; align-items:center; gap:6px;}
+  .block-cap{
+    font-weight:900; font-size:1rem; color:#fff; min-width:30px; text-align:center;
+    padding:2px 10px; border-radius:999px;
+  }
+  .block.blue .block-cap{background:var(--blue);}
+  .block.orange .block-cap{background:var(--orange);}
+  .grid{display:grid; gap:6px; transition:all .25s ease;}
+  .dot{
+    width:var(--dot); height:var(--dot); border-radius:50%;
+    box-shadow:inset 0 -3px 4px rgba(0,0,0,.18), inset 0 2px 3px rgba(255,255,255,.5);
+    animation:dotin .3s ease both;
+  }
+  @keyframes dotin{from{transform:scale(0);}to{transform:scale(1);}}
+  .dot.blue{background:radial-gradient(circle at 35% 30%,var(--blue2),var(--blue));}
+  .dot.orange{background:radial-gradient(circle at 35% 30%,var(--orange2),var(--orange));}
+  .cut{
+    align-self:stretch; position:relative; width:24px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .cut::before{
+    content:""; position:absolute; top:6px; bottom:6px; left:50%;
+    border-left:3px dashed #94A3B8; transform:translateX(-50%);
+  }
+  .cut span{font-size:1.4rem; background:#fff; border-radius:50%; padding:2px; z-index:1;}
+
+  /* ---- 切刀控制（保留参考样式以备复用） ---- */
+  .controls{display:flex; align-items:center; gap:10px; justify-content:center; margin:14px 0 6px;}
+  .round{
+    border:none; width:52px; height:52px; border-radius:50%; font-size:1.5rem; font-weight:900;
+    color:#fff; background:linear-gradient(135deg,#A78BFA,#7C3AED); cursor:pointer;
+    box-shadow:0 5px 12px rgba(124,58,237,.35);
+  }
+  .round:active{transform:scale(.9);}
+  input[type=range]{
+    -webkit-appearance:none; appearance:none; height:14px; border-radius:999px;
+    background:linear-gradient(90deg,var(--blue2),var(--orange2)); outline:none; flex:1; max-width:280px;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; width:40px; height:40px; border-radius:50%;
+    background:#fff center/22px no-repeat; cursor:pointer;
+    box-shadow:0 3px 8px rgba(0,0,0,.25); border:3px solid var(--purple);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:36px; height:36px; border-radius:50%; background:#fff; cursor:pointer;
+    box-shadow:0 3px 8px rgba(0,0,0,.25); border:3px solid var(--purple);
+  }
+  .ctl-hint{text-align:center; color:var(--soft); font-weight:700; margin:2px 0;}
+  .magic-btn{
+    display:block; margin:8px auto 0; border:none; cursor:pointer;
+    background:linear-gradient(135deg,#FDE68A,#F59E0B); color:#7c2d12; font-weight:800;
+    padding:10px 18px; border-radius:16px; font-size:1.02rem; box-shadow:0 5px 12px rgba(245,158,11,.3);
+  }
+  .magic-btn:active{transform:scale(.96);}
+
+  /* ---- 算式面板 ---- */
+  .eq{
+    background:#F8FAFF; border-radius:18px; padding:14px 12px; margin-top:12px; text-align:center;
+    border:2px dashed #DBE3F4;
+  }
+  .eq .line{font-size:1.45rem; font-weight:800; line-height:1.7; letter-spacing:.5px;}
+  .eq .line.small{font-size:1.15rem;}
+  .muted{color:var(--soft);}
+  .bl{color:var(--blue);} .or{color:var(--orange);} .gr{color:var(--green);}
+  .note{
+    margin-top:10px; background:#FFFDF5; border-radius:14px; padding:10px 12px;
+    color:#92400E; font-weight:700; line-height:1.6; font-size:1rem; text-align:center;
+  }
+  .unlock{text-align:center; font-weight:800; color:var(--purple); margin:12px 0 4px; min-height:1.4em;}
+
+  /* ---- 闯关 ---- */
+  .level-tag{text-align:center; color:var(--soft); font-weight:800; margin-bottom:2px;}
+  .q-big{text-align:center; font-size:2.4rem; font-weight:900; margin:4px 0 2px;}
+  .q-hint{text-align:center; color:var(--orange); font-weight:800; font-size:1.05rem; margin-bottom:6px;}
+  .facts{display:flex; gap:10px; justify-content:center; margin:12px 0 6px; flex-wrap:wrap;}
+  .fact{font-weight:900; font-size:1.2rem; color:#fff; padding:8px 14px; border-radius:14px;}
+  .fact.blue{background:var(--blue);} .fact.orange{background:var(--orange);}
+  .ask{text-align:center; font-size:1.6rem; font-weight:900; margin:10px 0 6px;}
+  .options{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+  .opt{
+    border:none; cursor:pointer; min-width:92px; font-size:1.7rem; font-weight:900;
+    padding:14px 8px; border-radius:18px; background:#fff; color:var(--ink);
+    box-shadow:0 5px 12px rgba(0,0,0,.1); transition:transform .1s;
+    border:3px solid #E5E7EB;
+  }
+  .opt:active{transform:scale(.95);}
+  .opt.correct{background:var(--green); color:#fff; border-color:var(--green);}
+  .opt.wrong{background:#FCA5A5; border-color:#EF4444; animation:shake .35s;}
+  @keyframes shake{0%,100%{transform:none;}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+  .feedback{text-align:center; font-weight:900; font-size:1.3rem; min-height:1.5em; margin-top:12px;}
+  .stars{font-size:1.6rem; letter-spacing:6px; text-align:center;}
+
+  /* ---- 完成 ---- */
+  .badge{font-size:4.5rem; text-align:center; animation:spin 3s linear infinite;}
+  @keyframes spin{from{transform:rotate(-8deg);}50%{transform:rotate(8deg);}to{transform:rotate(-8deg);}}
+  .trophy-name{text-align:center; font-size:1.5rem; font-weight:900; color:var(--purple); margin:6px 0;}
+
+  details{margin-top:8px; background:#F8FAFF; border-radius:16px; padding:4px 14px;}
+  summary{cursor:pointer; font-weight:800; color:var(--purple); padding:10px 0; list-style:none;}
+  summary::-webkit-details-marker{display:none;}
+  details p{color:#374151; line-height:1.75; font-size:.95rem;}
+  details b{color:var(--ink);}
+
+  #confetti{position:fixed; inset:0; pointer-events:none; display:none; z-index:99;}
+
+  /* ====== 分数专属样式 ====== */
+  /* 竖排分数 */
+  .frac{
+    display:inline-flex; flex-direction:column; align-items:center; justify-content:center;
+    line-height:1.05; vertical-align:middle;
+  }
+  .frac .num,.frac .den{font-weight:900; padding:0 .12em;}
+  .frac .bar{
+    width:100%; min-width:1.1em; height:0; border-top:.13em solid currentColor;
+    margin:.12em 0; border-radius:2px;
+  }
+  /* 揭示大分数 */
+  .frac-show{
+    display:flex; align-items:center; justify-content:center; gap:14px;
+    margin:14px 0 6px; flex-wrap:wrap;
+  }
+  .frac-show .frac{font-size:2.6rem; color:var(--green);}
+  .frac-cn{font-size:1.3rem; font-weight:900; color:var(--purple);}
+
+  /* 分数大按钮里的竖排分数 */
+  .opt .frac{font-size:1.5rem; color:inherit;}
+  .opt.fopt{min-width:96px; padding:14px 10px;}
+
+  /* ---- 涂色长条 ---- */
+  .bar-wrap{display:flex; flex-direction:column; align-items:center; gap:6px; margin:8px 0 4px;}
+  .barline{
+    display:flex; width:min(86vw,420px); height:64px;
+    border-radius:16px; overflow:hidden;
+    border:4px solid #92400E; box-shadow:0 6px 16px rgba(120,90,40,.2);
+    background:#FDE68A;
+  }
+  .barline.small{height:46px; width:min(40vw,180px); border-width:3px;}
+  .seg-cell{
+    flex:1; display:flex; align-items:center; justify-content:center;
+    font-size:1.5rem; cursor:pointer; position:relative;
+    border-right:3px solid #fff;
+    background:#FDE68A; transition:background .15s, filter .15s;
+  }
+  .seg-cell:last-child{border-right:none;}
+  .small .seg-cell{font-size:1rem;}
+  .seg-cell.filled{background:linear-gradient(135deg,var(--green2),var(--green));}
+  .seg-cell.filled::after{content:"⭐"; font-size:1.3rem;}
+  .small .seg-cell.filled::after{font-size:.95rem;}
+  .seg-cell:not(.filled):active{filter:brightness(.92);}
+
+  /* 份数选择按钮组 */
+  .seg{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:6px 0 4px;}
+  .seg button{
+    border:none; cursor:pointer; font-size:1.15rem; font-weight:900;
+    padding:12px 16px; border-radius:16px; color:#fff;
+    background:linear-gradient(135deg,#A78BFA,#7C3AED);
+    box-shadow:0 5px 12px rgba(124,58,237,.3); transition:transform .1s, filter .15s;
+  }
+  .seg button:active{transform:scale(.95);}
+  .seg button.sel{filter:brightness(1.12); outline:4px solid #DDD6FE;}
+
+  /* 比一比 / 合一合 双条 */
+  .compare{display:flex; gap:14px; justify-content:center; align-items:flex-start; flex-wrap:wrap; margin:8px 0;}
+  .compare .col{display:flex; flex-direction:column; align-items:center; gap:6px;}
+  .compare .frac{font-size:1.5rem; color:var(--green);}
+  .cmp-tag{font-weight:900; font-size:1rem; color:var(--soft);}
+  .plus-eq{font-size:2rem; font-weight:900; color:var(--purple); align-self:center; padding:0 2px;}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="wrap">
+
+  <header>
+    <div class="brand"><span class="fox">🦊</span><div>数学王国<br><small>几分之几小课堂</small></div></div>
+    <div class="tools">
+      <button class="icon-btn" id="homeBtn" title="返回地图">🏠</button>
+      <button class="icon-btn" id="muteBtn" title="声音开关">🔊</button>
+    </div>
+  </header>
+
+  <div class="steps">
+    <span class="pill" data-step="1">① 探索</span>
+    <span class="pill" data-step="2">② 闯关</span>
+    <span class="pill" data-step="3">③ 完成</span>
+  </div>
+
+  <!-- ============ 欢迎 ============ -->
+  <section class="screen on" id="welcome">
+    <div class="card">
+      <div style="font-size:3.4rem;text-align:center">🍫✨</div>
+      <h1>几分之几</h1>
+      <span class="pinyin">jǐ fēn zhī jǐ · 取好几份</span>
+      <p class="lead">
+        上次你认识了「<b>一半</b>」🎉<br>
+        这次我们学取<b>好几份</b>——<br>
+        一条巧克力切成 <b>4 份</b>，取 <b>3 份</b>，<br>
+        就是 <b>四分之三 (3/4)</b>！还能<b>比大小</b>、<b>合起来</b>！
+      </p>
+      <button class="big-btn" id="startBtn">开始探索 →</button>
+
+      <details>
+        <summary>👨‍👩‍👧 给爸爸妈妈的话（点开）</summary>
+        <p>
+          <b>为什么选「几分之几」？</b> 孩子已经认识「一半、1/4」这类「几分之一」。
+          这一课往前一步：把整体<b>平均分成几份、取出几份</b>，就是「<b>几分之几</b>」
+          （切 4 份取 3 份 = 3/4）。这是从「一份」到「多份」的关键跨越。<br><br>
+          <b>怎么一起玩：</b> 让他亲手点格子涂色，<b>数涂了几份</b>，
+          大字就显示「几分之几」。再点「比一比」「合一合」，
+          引导他自己发现两条规律：<b>同样分母，分子大的更大</b>（3/4 > 2/4）；
+          <b>同样分母相加，分母不变、分子相加</b>（1/4 + 2/4 = 3/4）。<br><br>
+          <b>可以追问：</b>「一块饼切成 4 份，吃了 3 份，是几分之几？」
+          「2/4 和 3/4 谁大？为什么？」「1/4 加 2/4 等于多少？分母变了吗？」
+          多用真实的巧克力、饼干切给他看，比屏幕更有感觉。
+        </p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ 探索 ============ -->
+  <section class="screen" id="explore">
+    <div class="card">
+      <h2>🍫 涂一涂，数几份</h2>
+      <p class="lead" style="margin-top:0">
+        一条巧克力<b>平均</b>分成几份？<br>点格子涂色，看看涂了「<b>几分之几</b>」～
+      </p>
+
+      <div class="seg" id="seg">
+        <button data-n="2">分成 2 份</button>
+        <button data-n="3">分成 3 份</button>
+        <button data-n="4">分成 4 份</button>
+      </div>
+
+      <div class="bar-wrap">
+        <div class="barline" id="bar"></div>
+        <div class="ctl-hint">👆 点一格，把它「涂上⭐」</div>
+      </div>
+
+      <div class="frac-show" id="fracShow"></div>
+      <div class="note" id="note"></div>
+
+      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:10px">
+        <button class="magic-btn" id="compareBtn">⚖️ 比一比：2/4 和 3/4 谁大？</button>
+        <button class="magic-btn" id="addBtn">➕ 合一合：1/4 + 2/4 = ?</button>
+      </div>
+
+      <!-- 比一比面板 -->
+      <div id="comparePanel" style="display:none">
+        <div class="compare">
+          <div class="col">
+            <div class="barline small" id="cmpA"></div>
+            <div class="frac"><span class="num">2</span><span class="bar"></span><span class="den">4</span></div>
+            <div class="cmp-tag">涂了 2 份</div>
+          </div>
+          <div class="col">
+            <div class="barline small" id="cmpB"></div>
+            <div class="frac"><span class="num">3</span><span class="bar"></span><span class="den">4</span></div>
+            <div class="cmp-tag">涂了 3 份</div>
+          </div>
+        </div>
+        <div class="note" style="background:#F3F0FF;color:#5B21B6">
+          ✨ 看！<b>3/4</b> 涂得更多。<b>同样的分母，分子大的更大！</b>（3/4 &gt; 2/4）
+        </div>
+      </div>
+
+      <!-- 合一合面板 -->
+      <div id="addPanel" style="display:none">
+        <div class="compare">
+          <div class="col">
+            <div class="barline small" id="addA"></div>
+            <div class="frac"><span class="num">1</span><span class="bar"></span><span class="den">4</span></div>
+          </div>
+          <div class="plus-eq">+</div>
+          <div class="col">
+            <div class="barline small" id="addB"></div>
+            <div class="frac"><span class="num">2</span><span class="bar"></span><span class="den">4</span></div>
+          </div>
+          <div class="plus-eq">=</div>
+          <div class="col">
+            <div class="barline small" id="addC"></div>
+            <div class="frac" style="color:var(--purple)"><span class="num">3</span><span class="bar"></span><span class="den">4</span></div>
+          </div>
+        </div>
+        <div class="note" style="background:#F3F0FF;color:#5B21B6">
+          ✨ 1 份加 2 份，合起来 3 份！<b>分母不变，分子相加！</b>（1/4 + 2/4 = 3/4）
+        </div>
+      </div>
+
+      <div class="unlock" id="unlock"></div>
+      <button class="big-btn purple" id="toPractice" disabled>去闯关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 闯关 ============ -->
+  <section class="screen" id="practice">
+    <div class="card">
+      <div class="level-tag" id="levelTag">第 1 / 3 关</div>
+      <div class="q-big" id="qBig">？</div>
+      <div class="q-hint" id="qHint"></div>
+
+      <div id="stage"></div>
+
+      <div class="ask" id="ask"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="big-btn" id="nextLevel" style="display:none">下一关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 完成 ============ -->
+  <section class="screen" id="done">
+    <div class="card">
+      <div class="badge">🍫</div>
+      <h1>太厉害啦！</h1>
+      <div class="trophy-name">🎖️ 分数大师</div>
+      <p class="lead">
+        你学会了「<b>几分之几</b>」：<br>
+        切 4 份取 3 份就是 <b class="gr">3/4</b>，<br>
+        <b>分子大的更大</b>（3/4 &gt; 2/4），<br>
+        <b>合起来分母不变、分子相加</b>（1/4 + 2/4 = 3/4）！💪
+      </p>
+      <p class="lead" style="font-size:.95rem">
+        🌟 试试考考爸爸妈妈：<b>一块饼切成 4 份，吃了 3 份，是几分之几？</b>
+      </p>
+      <button class="big-btn orange" id="again">再玩一次 🔁</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+"use strict";
+const $=(s,el=document)=>el.querySelector(s);
+const $$=(s,el=document)=>[...el.querySelectorAll(s)];
+
+/* ---------- 声音 ---------- */
+let muted=false, audioCtx=null;
+function ac(){ if(!audioCtx){ try{audioCtx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return audioCtx; }
+function beep(freq,dur,type,vol,when){
+  if(muted) return; const c=ac(); if(!c) return;
+  const t=c.currentTime+(when||0), o=c.createOscillator(), g=c.createGain();
+  o.type=type||'sine'; o.frequency.value=freq;
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol||0.15,t+0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g).connect(c.destination); o.start(t); o.stop(t+dur+0.02);
+}
+const sClick=()=>beep(680,0.06,'triangle',0.12,0);
+const sCut  =()=>{beep(900,0.05,'square',0.08,0); beep(500,0.07,'triangle',0.1,0.05);};
+const sGood =()=>[523,659,784].forEach((f,i)=>beep(f,0.12,'sine',0.16,i*0.09));
+const sWin  =()=>[523,659,784,1047,1319].forEach((f,i)=>beep(f,0.16,'sine',0.18,i*0.12));
+const sBad  =()=>beep(190,0.2,'sawtooth',0.1,0);
+
+/* ---------- 语音（中文朗读） ---------- */
+let zhVoice=null;
+function pickVoice(){
+  if(!('speechSynthesis'in window)) return;
+  const vs=speechSynthesis.getVoices(); if(!vs||!vs.length) return;
+  const zh=vs.filter(v=>/zh|cmn|chinese|普通话|国语|中文/i.test((v.lang||'')+' '+(v.name||'')));
+  const female=/婷婷|美嘉|思琪|善怡|静|丽|语嫣|晓|Ting-?Ting|Mei-?Jia|Sin-?ji|Yu-?shu|Tian-?Tian|Li-?mu|Han|female|女/i;
+  const male=/男|male|Yu-?Long|Liang|国梁/i;
+  zhVoice = zh.find(v=>female.test(v.name))
+         || zh.find(v=>/zh[-_]?CN/i.test(v.lang)&&!male.test(v.name))
+         || zh.find(v=>!male.test(v.name))
+         || zh[0] || null;
+}
+if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; setTimeout(pickVoice,300); setTimeout(pickVoice,1200); }
+function say(text){
+  if(muted||!('speechSynthesis'in window)) return;
+  try{ if(!zhVoice) pickVoice(); speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang='zh-CN'; if(zhVoice)u.voice=zhVoice; u.rate=0.95; u.pitch=1.1;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ---------- 屏幕切换 ---------- */
+function show(id,step){
+  $$('.screen').forEach(s=>s.classList.remove('on'));
+  $('#'+id).classList.add('on');
+  $$('.pill').forEach(p=>p.classList.toggle('active', +p.dataset.step===step));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ---------- 豆豆阵（保留参考函数） ---------- */
+function fillGrid(el,rows,cols,cls){
+  el.style.gridTemplateColumns=`repeat(${cols},var(--dot))`;
+  el.style.gridTemplateRows=`repeat(${rows},var(--dot))`;
+  el.innerHTML='';
+  const n=rows*cols;
+  for(let i=0;i<n;i++){ const d=document.createElement('div'); d.className='dot '+cls; el.appendChild(d); }
+}
+
+/* ---------- 工具：中文分数名 / 竖排分数 HTML ---------- */
+const CN_NUM=['零','一','二','三','四','五','六','七','八','九','十'];
+function cnFrac(num,den){
+  // 一/二/三/四…分之 一/二…
+  return `${CN_NUM[den]||den}分之${CN_NUM[num]||num}`;
+}
+function fracHTML(num,den){
+  return `<span class="frac"><span class="num">${num}</span><span class="bar"></span><span class="den">${den}</span></span>`;
+}
+
+/* ---------- 工具：在长条里画 N 份、可涂色 ---------- */
+function buildBar(el,parts,opts){
+  opts=opts||{};
+  const filled = opts.filled || new Set();
+  const interactive = !!opts.onTap;
+  el.innerHTML='';
+  for(let i=0;i<parts;i++){
+    const c=document.createElement('div');
+    c.className='seg-cell'+(filled.has(i)?' filled':'');
+    c.dataset.i=i;
+    if(interactive){
+      c.addEventListener('click',()=>opts.onTap(i));
+    }
+    el.appendChild(c);
+  }
+}
+// 涂前 m 份（用于比一比/合一合的静态展示）
+function fillFirst(el,parts,m){
+  const set=new Set();
+  for(let i=0;i<m;i++) set.add(i);
+  buildBar(el,parts,{filled:set});
+}
+
+/* ============ 探索 ============ */
+let curParts=0;
+let filledSet=new Set();
+const triedActions=new Set();   // 试过：份数(2/3/4)、'cmp'、'add'
+let unlocked=false;
+const bar=$('#bar'), fracShow=$('#fracShow'), note=$('#note'), unlock=$('#unlock'), toPractice=$('#toPractice');
+
+function renderExplore(parts,quiet){
+  curParts=parts; filledSet=new Set();
+  buildBar(bar, parts, {filled:filledSet, onTap:tapCell});
+  updateFrac();
+  triedActions.add(parts);
+  $$('#seg button').forEach(b=>b.classList.toggle('sel', +b.dataset.n===parts));
+  if(!quiet){ sCut(); say(`把巧克力平均分成 ${CN_NUM[parts]} 份。点一点格子，涂上颜色，看看涂了几分之几！`); }
+  checkUnlock();
+}
+
+function tapCell(i){
+  if(filledSet.has(i)) filledSet.delete(i); else filledSet.add(i);
+  buildBar(bar, curParts, {filled:filledSet, onTap:tapCell});
+  sClick();
+  updateFrac(true);
+}
+
+function updateFrac(fromTap){
+  const m=filledSet.size;
+  fracShow.innerHTML =
+    `涂了 ${fracHTML(m,curParts)} <span class="frac-cn">${cnFrac(m,curParts)}</span>`;
+  if(m===0){
+    note.innerHTML = `平均分成 ${CN_NUM[curParts]} 份，点格子涂色试试～`;
+  }else{
+    note.innerHTML = `${curParts} 份里涂了 ${m} 份，就是 ${fracHTML(m,curParts)}（${cnFrac(m,curParts)}）！`;
+    if(fromTap){
+      if(m===curParts) say(`整条都涂满啦！${curParts} 份里取 ${curParts} 份，就是一整个！`);
+      else say(`${curParts} 份里涂了 ${m} 份，就是${cnFrac(m,curParts)}！`);
+    }
+  }
+}
+
+function checkUnlock(){
+  if(unlocked) return;
+  // 需要：至少试过一种份数涂色 + 比一比 + 合一合
+  const hasCmp=triedActions.has('cmp'), hasAdd=triedActions.has('add');
+  const hasColor=[2,3,4].some(n=>triedActions.has(n));
+  if(hasColor && hasCmp && hasAdd){
+    unlocked=true; toPractice.disabled=false; toPractice.classList.add('ready');
+    unlock.textContent='🎉 你会涂「几分之几」、会比大小、会相加啦！';
+    sWin(); say('太棒了！你会涂几分之几，会比大小，还会把分数加起来啦！');
+  }else{
+    const todo=[];
+    if(!hasColor) todo.push('涂个色');
+    if(!hasCmp) todo.push('点「比一比」');
+    if(!hasAdd) todo.push('点「合一合」');
+    unlock.textContent='再去「'+todo.join('、')+'」，就解锁闯关！';
+  }
+}
+
+$$('#seg button').forEach(b=>{
+  b.addEventListener('click',()=>{ renderExplore(+b.dataset.n); });
+});
+
+/* 比一比 */
+$('#compareBtn').addEventListener('click',()=>{
+  const panel=$('#comparePanel');
+  const open = panel.style.display==='none';
+  panel.style.display = open ? 'block' : 'none';
+  sClick();
+  if(open){
+    fillFirst($('#cmpA'),4,2);
+    fillFirst($('#cmpB'),4,3);
+    triedActions.add('cmp');
+    say('比一比！左边四份涂了两份，是四分之二。右边四份涂了三份，是四分之三。看！四分之三涂得更多。同样的分母，分子大的更大！');
+    checkUnlock();
+  }
+});
+
+/* 合一合 */
+$('#addBtn').addEventListener('click',()=>{
+  const panel=$('#addPanel');
+  const open = panel.style.display==='none';
+  panel.style.display = open ? 'block' : 'none';
+  sClick();
+  if(open){
+    fillFirst($('#addA'),4,1);
+    fillFirst($('#addB'),4,2);
+    fillFirst($('#addC'),4,3);
+    triedActions.add('add');
+    say('合一合！四分之一加四分之二。一份加两份，合起来就是三份，四分之三。分母不变，分子相加！');
+    checkUnlock();
+  }
+});
+
+$('#toPractice').addEventListener('click',()=>{ sClick(); startPractice(); });
+
+/* ============ 闯关 ============ */
+/* type: 'read' 看图说分数 / 'compare' 比大小 / 'add' 相加 */
+const LV=[
+  {
+    type:'read', parts:4, fill:3,
+    hint:'巧克力切成 4 份，涂了 3 份 🍫',
+    ask:`涂了几分之几？`,
+    options:[{num:2,den:4},{num:3,den:4},{num:4,den:4}],
+    correctIdx:1,
+    say:'这条巧克力平均分成四份，涂了三份。涂了几分之几呢？',
+    reveal:'对啦！4 份里取 3 份，就是四分之三！'
+  },
+  {
+    type:'compare', A:{num:3,den:4}, B:{num:1,den:4},
+    hint:'3/4 和 1/4，哪个大？',
+    ask:`哪个更大？`,
+    options:[{num:3,den:4},{num:1,den:4}],
+    correctIdx:0,
+    say:'四分之三和四分之一，哪个更大呢？',
+    reveal:'答对啦！同样的分母，分子大的更大，所以四分之三比四分之一大！'
+  },
+  {
+    type:'add', A:{num:1,den:4}, B:{num:2,den:4}, sum:{num:3,den:4},
+    hint:'1/4 + 2/4 = ?',
+    ask:`合起来是几分之几？`,
+    options:[{num:3,den:4},{num:3,den:8},{num:2,den:4}],
+    correctIdx:0,
+    say:'四分之一加四分之二，合起来是几分之几？',
+    reveal:'太棒了！分母不变、分子相加，1 加 2 等于 3，就是四分之三！'
+  }
+];
+let pi=0, answered=false;
+function startPractice(){ pi=0; answered=false; show('practice',2); renderLevel(); }
+
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+function renderLevel(){
+  const L=LV[pi];
+  answered=false;
+  $('#levelTag').textContent=`第 ${pi+1} / 3 关`;
+  $('#qBig').textContent=L.ask;
+  $('#qHint').textContent=L.hint;
+  $('#feedback').textContent='';
+  $('#nextLevel').style.display='none';
+
+  // 舞台区：根据题型画长条
+  const stage=$('#stage');
+  if(L.type==='read'){
+    stage.innerHTML='<div class="bar-wrap"><div class="barline" id="stBar"></div></div>';
+    fillFirst($('#stBar'), L.parts, L.fill);
+  }else if(L.type==='compare'){
+    stage.innerHTML=
+      '<div class="compare">'+
+        '<div class="col"><div class="barline small" id="stA"></div>'+
+          `<div class="cmp-tag">${fracHTML(L.A.num,L.A.den)}</div></div>`+
+        '<div class="col"><div class="barline small" id="stB"></div>'+
+          `<div class="cmp-tag">${fracHTML(L.B.num,L.B.den)}</div></div>`+
+      '</div>';
+    fillFirst($('#stA'), L.A.den, L.A.num);
+    fillFirst($('#stB'), L.B.den, L.B.num);
+  }else{ // add
+    stage.innerHTML=
+      '<div class="compare">'+
+        '<div class="col"><div class="barline small" id="stA"></div>'+
+          `<div class="frac">${'<span class="num">'+L.A.num+'</span><span class="bar"></span><span class="den">'+L.A.den+'</span>'}</div></div>`+
+        '<div class="plus-eq">+</div>'+
+        '<div class="col"><div class="barline small" id="stB"></div>'+
+          `<div class="frac">${'<span class="num">'+L.B.num+'</span><span class="bar"></span><span class="den">'+L.B.den+'</span>'}</div></div>`+
+        '<div class="plus-eq">=</div>'+
+        '<div class="col"><div class="barline small" id="stC"></div>'+
+          '<div class="frac" style="color:var(--purple)"><span class="num">?</span><span class="bar"></span><span class="den">'+L.sum.den+'</span></div></div>'+
+      '</div>';
+    fillFirst($('#stA'), L.A.den, L.A.num);
+    fillFirst($('#stB'), L.B.den, L.B.num);
+    fillFirst($('#stC'), L.sum.den, 0);
+  }
+
+  // 选项（竖排分数大按钮）
+  const items=L.options.map((o,idx)=>({o,correct:idx===L.correctIdx}));
+  shuffle(items);
+  const box=$('#options'); box.innerHTML='';
+  items.forEach(it=>{
+    const btn=document.createElement('button');
+    btn.className='opt fopt';
+    btn.innerHTML=fracHTML(it.o.num,it.o.den);
+    btn.addEventListener('click',()=>choose(btn,it.correct));
+    box.appendChild(btn);
+  });
+  $('#ask').textContent='👇 选一选';
+  say(L.say);
+}
+
+function choose(btn,correct){
+  if(answered) return;
+  if(correct){
+    answered=true;
+    btn.classList.add('correct'); sGood();
+    $('#feedback').innerHTML='<span class="gr">答对啦！🎉</span><div class="stars">⭐⭐⭐</div>';
+    say(LV[pi].reveal);
+    $$('.opt').forEach(o=>o.disabled=true);
+    const last=(pi===LV.length-1);
+    const nb=$('#nextLevel');
+    nb.textContent = last ? '完成啦 🎉' : '下一关 →';
+    nb.style.display='block';
+  }else{
+    btn.classList.add('wrong'); sBad();
+    $('#feedback').innerHTML='<span class="or">再想一想～ 你可以的！</span>';
+    say('再想一想，你一定可以的！');
+    setTimeout(()=>btn.classList.remove('wrong'),400);
+  }
+}
+
+$('#nextLevel').addEventListener('click',()=>{
+  sClick(); answered=false;
+  if(pi===LV.length-1){ finish(); }
+  else{ pi++; renderLevel(); }
+});
+
+/* ============ 完成 ============ */
+function finish(){
+  show('done',3); sWin(); say('太厉害啦！你已经是分数大师啦！');
+  confetti();
+}
+$('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('explore',1); renderExplore(4,true); say('我们再玩一次！'); });
+
+/* ---------- 顶部按钮 ---------- */
+$('#startBtn').addEventListener('click',()=>{
+  ac(); sClick(); show('explore',1);
+  renderExplore(4,true);
+  say('一条巧克力，平均分成四份。点一点格子，把它涂上颜色。涂了几份，就是四分之几！');
+});
+$('#muteBtn').addEventListener('click',()=>{
+  muted=!muted; $('#muteBtn').textContent=muted?'🔇':'🔊';
+  if(muted&&'speechSynthesis'in window) speechSynthesis.cancel(); else sClick();
+});
+$('#homeBtn').addEventListener('click',()=>{ sClick(); if('speechSynthesis'in window)speechSynthesis.cancel(); location.href='index.html'; });
+
+function resetAll(){
+  triedActions.clear(); unlocked=false; answered=false; pi=0;
+  toPractice.disabled=true; toPractice.classList.remove('ready'); unlock.textContent='';
+  $('#comparePanel').style.display='none';
+  $('#addPanel').style.display='none';
+}
+
+/* ---------- 彩带 ---------- */
+function confetti(){
+  const cv=$('#confetti'), ctx=cv.getContext('2d');
+  cv.width=innerWidth; cv.height=innerHeight; cv.style.display='block';
+  const colors=['#2563EB','#F97316','#16A34A','#EAB308','#EC4899','#7C3AED'];
+  const P=[];
+  for(let i=0;i<150;i++) P.push({
+    x:innerWidth/2+(Math.random()-0.5)*120, y:innerHeight*0.28,
+    vx:(Math.random()-0.5)*13, vy:Math.random()*-13-3, g:0.32,
+    s:7+Math.random()*9, c:colors[i%colors.length], rot:Math.random()*6, vr:(Math.random()-0.5)*0.4
+  });
+  let t=0;
+  (function anim(){
+    t++; ctx.clearRect(0,0,cv.width,cv.height);
+    P.forEach(p=>{ p.vy+=p.g; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c;
+      ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6); ctx.restore();
+    });
+    if(t<150) requestAnimationFrame(anim); else cv.style.display='none';
+  })();
+}
+
+/* 初始 */
+renderExplore(4,true);
+/* —— 通关记录（本地 localStorage）—— */
+(function(){var ID='jifen';try{var d=document.getElementById('done');if(d){var mark=function(){if(d.classList.contains('on')){try{localStorage.setItem('yswg:done:'+ID,'1');}catch(e){}}};new MutationObserver(mark).observe(d,{attributes:true,attributeFilter:['class']});mark();}}catch(e){}})();
+</script>
+</body>
+</html>

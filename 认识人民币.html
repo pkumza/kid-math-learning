@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>数学王国 · 人民币小课堂</title>
+<style>
+  :root{
+    --dot: clamp(15px, 4.2vw, 30px);
+    --blue:#2563EB; --blue2:#60A5FA;
+    --orange:#EA580C; --orange2:#FB923C;
+    --green:#16A34A; --green2:#4ADE80;
+    --purple:#7C3AED;
+    --ink:#1F2937; --soft:#6B7280;
+    --card:#ffffff;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",
+      "Hiragino Sans GB","Helvetica Neue",sans-serif;
+    color:var(--ink);
+    background:linear-gradient(160deg,#EAF4FF 0%,#FFF6EC 60%,#FDEFF6 100%);
+    min-height:100vh;
+    overflow-x:hidden;
+    user-select:none;
+  }
+  .wrap{max-width:760px; margin:0 auto; padding:10px 14px 40px;}
+
+  /* ---- 顶部 ---- */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 4px 6px;
+  }
+  .brand{display:flex; align-items:center; gap:8px; font-weight:800; font-size:1.15rem;}
+  .brand .fox{font-size:1.6rem;}
+  .brand small{color:var(--soft); font-weight:600; font-size:.78rem;}
+  .tools{display:flex; gap:8px;}
+  .icon-btn{
+    border:none; background:#fff; border-radius:14px; width:44px; height:44px;
+    font-size:1.25rem; cursor:pointer; box-shadow:0 3px 8px rgba(0,0,0,.08);
+    transition:transform .1s;
+  }
+  .icon-btn:active{transform:scale(.92);}
+
+  .steps{display:flex; gap:6px; justify-content:center; margin:4px 0 12px;}
+  .pill{
+    font-size:.82rem; font-weight:700; color:var(--soft);
+    background:#fff; padding:5px 12px; border-radius:999px;
+    box-shadow:0 2px 5px rgba(0,0,0,.05);
+  }
+  .pill.active{color:#fff; background:var(--purple); box-shadow:0 4px 10px rgba(124,58,237,.35);}
+
+  /* ---- 卡片 / 屏幕 ---- */
+  .screen{display:none; animation:pop .35s ease both;}
+  .screen.on{display:block;}
+  @keyframes pop{from{opacity:0; transform:translateY(12px) scale(.98);} to{opacity:1; transform:none;}}
+  .card{
+    background:var(--card); border-radius:26px; padding:22px 18px;
+    box-shadow:0 12px 30px rgba(80,90,130,.12); margin-bottom:16px;
+  }
+  h1{font-size:1.7rem; margin:.1em 0 .2em; text-align:center;}
+  h2{font-size:1.25rem; margin:.1em 0 .5em; text-align:center; color:var(--purple);}
+  .lead{text-align:center; color:var(--soft); font-size:1rem; line-height:1.7; margin:.3em 0 .2em;}
+  .pinyin{display:block; color:var(--soft); font-size:.95rem; letter-spacing:.06em; font-weight:600;}
+
+  /* ---- 按钮 ---- */
+  .big-btn{
+    display:block; width:100%; border:none; cursor:pointer;
+    font-size:1.3rem; font-weight:800; color:#fff;
+    padding:16px; border-radius:20px; margin-top:8px;
+    background:linear-gradient(135deg,#34D399,#10B981);
+    box-shadow:0 8px 18px rgba(16,185,129,.35);
+    transition:transform .12s, box-shadow .12s, filter .2s;
+  }
+  .big-btn.purple{background:linear-gradient(135deg,#A78BFA,#7C3AED); box-shadow:0 8px 18px rgba(124,58,237,.35);}
+  .big-btn.orange{background:linear-gradient(135deg,#FDBA74,#F97316); box-shadow:0 8px 18px rgba(249,115,22,.35);}
+  .big-btn:active{transform:translateY(2px) scale(.99);}
+  .big-btn:disabled{filter:grayscale(.7) opacity(.55); cursor:not-allowed; box-shadow:none;}
+  .big-btn.ready{animation:bounce 1s infinite;}
+  @keyframes bounce{0%,100%{transform:none;}50%{transform:translateY(-5px);}}
+
+  /* ---- 豆豆阵（沿用） ---- */
+  .array-wrap{display:flex; align-items:center; justify-content:center; gap:8px; margin:10px 0 6px;}
+  .rows-label{
+    writing-mode:vertical-rl; text-orientation:upright;
+    font-weight:800; color:var(--soft); font-size:.95rem; letter-spacing:2px;
+  }
+  .array{display:flex; align-items:center; justify-content:center; gap:6px;}
+  .block{display:flex; flex-direction:column; align-items:center; gap:6px;}
+  .block-cap{
+    font-weight:900; font-size:1rem; color:#fff; min-width:30px; text-align:center;
+    padding:2px 10px; border-radius:999px;
+  }
+  .block.blue .block-cap{background:var(--blue);}
+  .block.orange .block-cap{background:var(--orange);}
+  .grid{display:grid; gap:6px; transition:all .25s ease;}
+  .dot{
+    width:var(--dot); height:var(--dot); border-radius:50%;
+    box-shadow:inset 0 -3px 4px rgba(0,0,0,.18), inset 0 2px 3px rgba(255,255,255,.5);
+    animation:dotin .3s ease both;
+  }
+  @keyframes dotin{from{transform:scale(0);}to{transform:scale(1);}}
+  .dot.blue{background:radial-gradient(circle at 35% 30%,var(--blue2),var(--blue));}
+  .dot.orange{background:radial-gradient(circle at 35% 30%,var(--orange2),var(--orange));}
+
+  /* ---- 自绘钞票 ---- */
+  .bill-row{display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:8px 0;}
+  .bill{
+    position:relative; border-radius:12px; cursor:pointer;
+    width:96px; height:54px; color:#fff; font-weight:900;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 5px 12px rgba(0,0,0,.18);
+    border:2px solid rgba(255,255,255,.5);
+    transition:transform .1s, box-shadow .15s;
+    overflow:hidden; flex:0 0 auto;
+  }
+  .bill:active{transform:scale(.93);}
+  .bill::before{
+    content:""; position:absolute; left:6px; top:6px; bottom:6px; width:24px;
+    border-radius:50%; background:rgba(255,255,255,.22);
+  }
+  .bill::after{
+    content:""; position:absolute; right:6px; top:6px; bottom:6px; width:24px;
+    border-radius:50%; background:rgba(255,255,255,.16);
+  }
+  .bill .face{position:relative; z-index:1; font-size:1.15rem; line-height:1; text-align:center;}
+  .bill .face small{display:block; font-size:.62rem; font-weight:700; opacity:.9; margin-top:2px;}
+  .bill.b1{background:linear-gradient(135deg,#4ADE80,#16A34A);}
+  .bill.b5{background:linear-gradient(135deg,#A78BFA,#7C3AED);}
+  .bill.b10{background:linear-gradient(135deg,#FCA5A5,#DC2626);}
+  .bill.small{width:62px; height:36px;}
+  .bill.small .face{font-size:.82rem;}
+  .bill.small .face small{display:none;}
+  .bill.tiny{width:50px; height:30px;}
+  .bill.tiny .face{font-size:.72rem;}
+  .bill.tiny .face small{display:none;}
+
+  /* ---- 钱包 ---- */
+  .wallet{
+    background:#FFFDF5; border:2px dashed #E5C97B; border-radius:18px;
+    padding:12px; margin-top:10px; min-height:78px;
+  }
+  .wallet-title{font-weight:800; color:#92400E; text-align:center; margin-bottom:6px; font-size:.95rem;}
+  .wallet-bills{display:flex; flex-wrap:wrap; gap:6px; justify-content:center; min-height:36px;}
+  .wallet-empty{color:var(--soft); font-weight:700; text-align:center; padding:6px;}
+  .wallet-total{
+    text-align:center; font-size:1.5rem; font-weight:900; color:var(--green); margin-top:8px;
+  }
+  .pick-hint{text-align:center; color:var(--soft); font-weight:700; margin:6px 0 2px;}
+  .row-actions{display:flex; gap:10px; justify-content:center; margin-top:10px; flex-wrap:wrap;}
+  .mini-btn{
+    border:none; cursor:pointer; font-weight:800; font-size:.98rem;
+    padding:9px 16px; border-radius:14px; background:#fff; color:var(--ink);
+    box-shadow:0 4px 10px rgba(0,0,0,.1); border:2px solid #E5E7EB;
+  }
+  .mini-btn:active{transform:scale(.95);}
+  .mini-btn.warm{background:linear-gradient(135deg,#FDE68A,#F59E0B); color:#7c2d12; border:none;}
+
+  /* ---- 买东西演示 ---- */
+  .shop{
+    background:#F8FAFF; border-radius:18px; padding:14px 12px; margin-top:14px;
+    border:2px dashed #DBE3F4; text-align:center;
+  }
+  .shop .item{font-size:2.6rem; margin:2px 0;}
+  .shop .price{font-weight:900; font-size:1.1rem; color:var(--ink);}
+  .shop-pay{display:flex; gap:10px; align-items:center; justify-content:center; flex-wrap:wrap; margin:10px 0;}
+  .change-line{
+    margin-top:8px; font-size:1.25rem; font-weight:900; min-height:1.4em; color:var(--green);
+  }
+
+  /* ---- 算式面板（沿用） ---- */
+  .eq{
+    background:#F8FAFF; border-radius:18px; padding:14px 12px; margin-top:12px; text-align:center;
+    border:2px dashed #DBE3F4;
+  }
+  .eq .line{font-size:1.45rem; font-weight:800; line-height:1.7; letter-spacing:.5px;}
+  .eq .line.small{font-size:1.15rem;}
+  .muted{color:var(--soft);}
+  .bl{color:var(--blue);} .or{color:var(--orange);} .gr{color:var(--green);}
+  .note{
+    margin-top:10px; background:#FFFDF5; border-radius:14px; padding:10px 12px;
+    color:#92400E; font-weight:700; line-height:1.6; font-size:1rem; text-align:center;
+  }
+  .unlock{text-align:center; font-weight:800; color:var(--purple); margin:12px 0 4px; min-height:1.4em;}
+
+  /* ---- 闯关 ---- */
+  .level-tag{text-align:center; color:var(--soft); font-weight:800; margin-bottom:2px;}
+  .q-big{text-align:center; font-size:2rem; font-weight:900; margin:4px 0 2px;}
+  .q-hint{text-align:center; color:var(--orange); font-weight:800; font-size:1.05rem; margin-bottom:6px;}
+  .ask{text-align:center; font-size:1.5rem; font-weight:900; margin:10px 0 6px;}
+  .options{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+  .opt{
+    border:none; cursor:pointer; min-width:92px; font-size:1.4rem; font-weight:900;
+    padding:14px 10px; border-radius:18px; background:#fff; color:var(--ink);
+    box-shadow:0 5px 12px rgba(0,0,0,.1); transition:transform .1s;
+    border:3px solid #E5E7EB;
+  }
+  .opt:active{transform:scale(.95);}
+  .opt.correct{background:var(--green); color:#fff; border-color:var(--green);}
+  .opt.wrong{background:#FCA5A5; border-color:#EF4444; animation:shake .35s;}
+  @keyframes shake{0%,100%{transform:none;}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+  .feedback{text-align:center; font-weight:900; font-size:1.3rem; min-height:1.5em; margin-top:12px;}
+  .stars{font-size:1.6rem; letter-spacing:6px; text-align:center;}
+
+  /* ---- 完成 ---- */
+  .badge{font-size:4.5rem; text-align:center; animation:spin 3s linear infinite;}
+  @keyframes spin{from{transform:rotate(-8deg);}50%{transform:rotate(8deg);}to{transform:rotate(-8deg);}}
+  .trophy-name{text-align:center; font-size:1.5rem; font-weight:900; color:var(--purple); margin:6px 0;}
+
+  details{margin-top:8px; background:#F8FAFF; border-radius:16px; padding:4px 14px;}
+  summary{cursor:pointer; font-weight:800; color:var(--purple); padding:10px 0; list-style:none;}
+  summary::-webkit-details-marker{display:none;}
+  details p{color:#374151; line-height:1.75; font-size:.95rem;}
+  details b{color:var(--ink);}
+
+  #confetti{position:fixed; inset:0; pointer-events:none; display:none; z-index:99;}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="wrap">
+
+  <header>
+    <div class="brand"><span class="fox">🦊</span><div>数学王国<br><small>人民币小课堂</small></div></div>
+    <div class="tools">
+      <button class="icon-btn" id="homeBtn" title="回家">🏠</button>
+      <button class="icon-btn" id="muteBtn" title="声音开关">🔊</button>
+    </div>
+  </header>
+
+  <div class="steps">
+    <span class="pill" data-step="1">① 探索</span>
+    <span class="pill" data-step="2">② 闯关</span>
+    <span class="pill" data-step="3">③ 完成</span>
+  </div>
+
+  <!-- ============ 欢迎 ============ -->
+  <section class="screen on" id="welcome">
+    <div class="card">
+      <div style="font-size:3.4rem;text-align:center">💰🛒</div>
+      <h1>认识人民币</h1>
+      <span class="pinyin">rèn shi rén mín bì · 买东西啦</span>
+      <p class="lead">
+        今天我们认识钱！💴<br>
+        <b class="gr">1 元</b>、<b style="color:var(--purple)">5 元</b>、<b style="color:#DC2626">10 元</b><br>
+        认识了钱，<br>
+        就能自己<b>买东西</b>、算<b>找零</b>啦！
+      </p>
+      <button class="big-btn" id="startBtn">开始探索 →</button>
+
+      <details>
+        <summary>👨‍👩‍👧 给爸爸妈妈的话（点开）</summary>
+        <p>
+          <b>为什么选「认识人民币」？</b> 孩子已会万以内加减、四则运算，钱币正是把数学
+          用在<b>真实生活</b>里的最佳场景。本课<b>只用 1 元、5 元、10 元三种「整元」面额</b>，
+          刻意<b>不引入角和小数</b>，避免超出他当前的数感。<br><br>
+          <b>怎么一起玩：</b> 让他亲手点钞票「放进钱包」，看着总数实时累加，
+          建立<b>「钱可以一张张加起来」</b>的直觉。再引导他用<b>不同组合凑同一个数</b>
+          （7 元 = 5+1+1，10 元 = 5+5 或一张 10），体会钱的灵活。<br><br>
+          <b>可以追问：</b>「买 3 元的铅笔，给一张 5 元，要找回几元？」
+          「凑 8 元你有几种办法？」生活里逛超市时多问问他，钱就真正学会了。
+        </p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ 探索 ============ -->
+  <section class="screen" id="explore">
+    <div class="card">
+      <h2>👛 点钞票，装钱包</h2>
+      <p class="lead" style="margin-top:0">
+        点下面的钞票，把钱<b>放进钱包</b>～<br>看看一共有<b>多少元</b>！
+      </p>
+
+      <div class="pick-hint">👇 点一张钞票，放进钱包</div>
+      <div class="bill-row" id="billPicker">
+        <button class="bill b1"  data-v="1"><span class="face">1<small>元 YUAN</small></span></button>
+        <button class="bill b5"  data-v="5"><span class="face">5<small>元 YUAN</small></span></button>
+        <button class="bill b10" data-v="10"><span class="face">10<small>元 YUAN</small></span></button>
+      </div>
+
+      <div class="wallet">
+        <div class="wallet-title">👛 我的钱包</div>
+        <div class="wallet-bills" id="walletBills"><div class="wallet-empty">还是空的，点钞票放进来吧～</div></div>
+        <div class="wallet-total" id="walletTotal">一共 0 元</div>
+      </div>
+
+      <div class="row-actions">
+        <button class="mini-btn" id="clearWallet">🔄 清空重来</button>
+        <button class="mini-btn warm" id="tip7">🪄 试试凑 7 元</button>
+        <button class="mini-btn warm" id="tip10">🪄 试试凑 10 元</button>
+      </div>
+
+      <div class="note" id="exNote">凑钱小魔法：<b>7 元 = 5 元 + 1 元 + 1 元</b>；<b>10 元 = 5 + 5</b> 或一张 10 元！同一个数，可以有好几种凑法哦～</div>
+
+      <!-- 买东西小演示 -->
+      <div class="shop">
+        <div class="item">✏️</div>
+        <div class="price">一支铅笔 <b>3 元</b></div>
+        <div class="shop-pay">
+          <span style="font-weight:800;color:var(--soft)">我给：</span>
+          <span class="bill b5"><span class="face">5<small>元 YUAN</small></span></span>
+        </div>
+        <button class="mini-btn warm" id="buyBtn">付钱买铅笔 🛒</button>
+        <div class="change-line" id="changeLine"></div>
+      </div>
+
+      <div class="unlock" id="unlock"></div>
+      <button class="big-btn purple" id="toPractice" disabled>去闯关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 闯关 ============ -->
+  <section class="screen" id="practice">
+    <div class="card">
+      <div class="level-tag" id="levelTag">第 1 / 3 关</div>
+      <div class="q-big" id="qBig"></div>
+      <div class="q-hint" id="qHint"></div>
+      <div class="bill-row" id="qBills"></div>
+      <div class="ask" id="ask"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="big-btn" id="nextLevel" style="display:none">下一关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 完成 ============ -->
+  <section class="screen" id="done">
+    <div class="card">
+      <div class="badge">🎖️</div>
+      <h1>太厉害啦！</h1>
+      <div class="trophy-name">🎖️ 购物小能手</div>
+      <p class="lead">
+        你认识了 <b class="gr">1 元</b>、<b style="color:var(--purple)">5 元</b>、<b style="color:#DC2626">10 元</b>！<br>
+        还会<b>凑钱</b>、算<b>总价</b>和<b>找零</b>啦！🛒<br>
+        现在可以自己去买东西咯！💪
+      </p>
+      <p class="lead" style="font-size:.95rem">
+        🌟 考考爸爸妈妈：<b>8 元</b> 有几种凑法？
+      </p>
+      <button class="big-btn orange" id="again">再玩一次 🔁</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+"use strict";
+const $=(s,el=document)=>el.querySelector(s);
+const $$=(s,el=document)=>[...el.querySelectorAll(s)];
+
+/* ---------- 声音 ---------- */
+let muted=false, audioCtx=null;
+function ac(){ if(!audioCtx){ try{audioCtx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return audioCtx; }
+function beep(freq,dur,type,vol,when){
+  if(muted) return; const c=ac(); if(!c) return;
+  const t=c.currentTime+(when||0), o=c.createOscillator(), g=c.createGain();
+  o.type=type||'sine'; o.frequency.value=freq;
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol||0.15,t+0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g).connect(c.destination); o.start(t); o.stop(t+dur+0.02);
+}
+const sClick=()=>beep(680,0.06,'triangle',0.12,0);
+const sCut  =()=>{beep(900,0.05,'square',0.08,0); beep(500,0.07,'triangle',0.1,0.05);};
+const sGood =()=>[523,659,784].forEach((f,i)=>beep(f,0.12,'sine',0.16,i*0.09));
+const sWin  =()=>[523,659,784,1047,1319].forEach((f,i)=>beep(f,0.16,'sine',0.18,i*0.12));
+const sBad  =()=>beep(190,0.2,'sawtooth',0.1,0);
+
+/* ---------- 语音（中文朗读） ---------- */
+let zhVoice=null;
+function pickVoice(){
+  if(!('speechSynthesis'in window)) return;
+  const vs=speechSynthesis.getVoices(); if(!vs||!vs.length) return;
+  const zh=vs.filter(v=>/zh|cmn|chinese|普通话|国语|中文/i.test((v.lang||'')+' '+(v.name||'')));
+  const female=/婷婷|美嘉|思琪|善怡|静|丽|语嫣|晓|Ting-?Ting|Mei-?Jia|Sin-?ji|Yu-?shu|Tian-?Tian|Li-?mu|Han|female|女/i;
+  const male=/男|male|Yu-?Long|Liang|国梁/i;
+  zhVoice = zh.find(v=>female.test(v.name))
+         || zh.find(v=>/zh[-_]?CN/i.test(v.lang)&&!male.test(v.name))
+         || zh.find(v=>!male.test(v.name))
+         || zh[0] || null;
+}
+if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; setTimeout(pickVoice,300); setTimeout(pickVoice,1200); }
+function say(text){
+  if(muted||!('speechSynthesis'in window)) return;
+  try{ if(!zhVoice) pickVoice(); speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang='zh-CN'; if(zhVoice)u.voice=zhVoice; u.rate=0.95; u.pitch=1.1;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ---------- 屏幕切换 ---------- */
+function show(id,step){
+  $$('.screen').forEach(s=>s.classList.remove('on'));
+  $('#'+id).classList.add('on');
+  $$('.pill').forEach(p=>p.classList.toggle('active', +p.dataset.step===step));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ---------- 豆豆阵（保留辅助函数） ---------- */
+function fillGrid(el,rows,cols,cls){
+  el.style.gridTemplateColumns=`repeat(${cols},var(--dot))`;
+  el.style.gridTemplateRows=`repeat(${rows},var(--dot))`;
+  el.innerHTML='';
+  const n=rows*cols;
+  for(let i=0;i<n;i++){ const d=document.createElement('div'); d.className='dot '+cls; el.appendChild(d); }
+}
+
+/* ---------- 画一张小钞票 ---------- */
+function billHTML(v,size){
+  const cls = v===1?'b1':v===5?'b5':'b10';
+  return `<span class="bill ${cls} ${size||''}"><span class="face">${v}<small>元 YUAN</small></span></span>`;
+}
+
+/* ============ 探索 ============ */
+let wallet=[]; let unlocked=false; let buyCount=0;
+const walletBills=$('#walletBills'), walletTotal=$('#walletTotal');
+
+function renderWallet(){
+  if(wallet.length===0){
+    walletBills.innerHTML='<div class="wallet-empty">还是空的，点钞票放进来吧～</div>';
+  }else{
+    walletBills.innerHTML = wallet.map(v=>billHTML(v,'small')).join('');
+  }
+  const sum = wallet.reduce((a,b)=>a+b,0);
+  walletTotal.textContent = `一共 ${sum} 元`;
+  return sum;
+}
+
+function addBill(v){
+  wallet.push(v); sClick();
+  const sum=renderWallet();
+  say(`${v}元，一共 ${sum} 元`);
+}
+
+function checkUnlock(){
+  if(!unlocked && buyCount>=2){
+    unlocked=true;
+    $('#toPractice').disabled=false; $('#toPractice').classList.add('ready');
+    $('#unlock').textContent='🎉 你学会用钱啦！可以去闯关咯！';
+    sWin(); say('太棒了！你学会用钱啦！我们去闯关吧！');
+  }
+}
+
+$$('#billPicker .bill').forEach(b=>{
+  b.addEventListener('click',()=>addBill(+b.dataset.v));
+});
+$('#clearWallet').addEventListener('click',()=>{ sClick(); wallet=[]; renderWallet(); say('清空啦，重新来！'); });
+$('#tip7').addEventListener('click',()=>{
+  sClick(); wallet=[5,1,1]; renderWallet();
+  $('#exNote').innerHTML='看！<b>5 元 + 1 元 + 1 元 = 7 元</b> 🎉 你也可以用别的凑法试试～';
+  say('凑七元！五元，加一元，加一元，一共七元！');
+});
+$('#tip10').addEventListener('click',()=>{
+  sClick(); wallet=[5,5]; renderWallet();
+  $('#exNote').innerHTML='看！<b>5 元 + 5 元 = 10 元</b> 🎉 一张 10 元也正好是 10 元哦！';
+  say('凑十元！五元加五元，一共十元！一张十元也是十元！');
+});
+$('#buyBtn').addEventListener('click',()=>{
+  sGood(); buyCount++;
+  $('#changeLine').innerHTML='给 5 元，铅笔 3 元 → 找回 <b>2 元</b>！😊 (5 − 3 = 2)';
+  say('一支铅笔三元，给五元，找回两元！五减三等于二。');
+  checkUnlock();
+  if(buyCount===1){
+    setTimeout(()=>{ if(!unlocked) say('再买一次试试，就能去闯关啦！'); },1600);
+  }
+});
+$('#toPractice').addEventListener('click',()=>{ sClick(); startPractice(); });
+
+/* ============ 闯关 ============ */
+/* 每关：q(题干HTML)、hint、bills(钞票图HTML)、ask、ans(正确)、opts(全部选项文字)、speak */
+const LEVELS=[
+  {
+    q:'✏️ 铅笔 3 元，给 5 元',
+    hint:'要找回几元呢？✂️',
+    bills: billHTML(5),
+    ask:'5 元 − 3 元 = ?',
+    ans:'2 元',
+    opts:['1 元','2 元','3 元'],
+    speak:'铅笔三元，给五元，找回几元？五减三等于多少？'
+  },
+  {
+    q:'💰 5 元 + 5 元',
+    hint:'两张 5 元合起来是多少？',
+    bills: billHTML(5)+billHTML(5),
+    ask:'5 元 + 5 元 = ?',
+    ans:'10 元',
+    opts:['10 元','15 元','55 元'],
+    speak:'五元加五元，等于多少元？'
+  },
+  {
+    q:'🧩 哪种凑法正好是 7 元？',
+    hint:'选一选，加起来等于 7 元的那个～',
+    bills:'',
+    ask:'下面哪种是 7 元？',
+    ans:'5元 + 1元 + 1元',
+    opts:['5元 + 1元 + 1元','5元 + 5元','10元 + 1元'],
+    speak:'哪种凑法正好是七元？五元加一元加一元，对不对呀？'
+  }
+];
+let pi=0, answered=false;
+function startPractice(){ pi=0; answered=false; show('practice',2); renderLevel(); }
+
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+function renderLevel(){
+  const L=LEVELS[pi];
+  answered=false;
+  $('#levelTag').textContent=`第 ${pi+1} / 3 关`;
+  $('#qBig').textContent=L.q;
+  $('#qHint').textContent=L.hint;
+  $('#qBills').innerHTML=L.bills;
+  $('#ask').textContent=L.ask;
+  $('#feedback').textContent='';
+  $('#nextLevel').style.display='none';
+
+  const opts=shuffle(L.opts.slice());
+  const box=$('#options'); box.innerHTML='';
+  opts.forEach(v=>{
+    const btn=document.createElement('button');
+    btn.className='opt'; btn.textContent=v;
+    btn.addEventListener('click',()=>choose(btn,v,L.ans));
+    box.appendChild(btn);
+  });
+  say(L.speak);
+}
+
+function choose(btn,v,ans){
+  if(answered) return;
+  if(v===ans){
+    answered=true;
+    btn.classList.add('correct'); sGood();
+    $('#feedback').innerHTML='<span class="gr">答对啦！🎉</span><div class="stars">⭐⭐⭐</div>';
+    say('答对啦！你真厉害！');
+    $$('.opt').forEach(o=>o.disabled=true);
+    const last=(pi===LEVELS.length-1);
+    const nb=$('#nextLevel');
+    nb.textContent = last ? '完成啦 🎉' : '下一关 →';
+    nb.style.display='block';
+  }else{
+    btn.classList.add('wrong'); sBad();
+    $('#feedback').innerHTML='<span class="or">再想一想～ 你可以的！</span>';
+    say('再想一想，你可以的！');
+    setTimeout(()=>btn.classList.remove('wrong'),400);
+  }
+}
+
+$('#nextLevel').addEventListener('click',()=>{
+  sClick(); answered=false;
+  if(pi===LEVELS.length-1){ finish(); }
+  else{ pi++; renderLevel(); }
+});
+
+/* ============ 完成 ============ */
+function finish(){
+  show('done',3); sWin(); say('太厉害啦！你已经是购物小能手啦！');
+  confetti();
+}
+$('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('explore',1); say('我们再玩一次！'); });
+
+/* ---------- 顶部按钮 ---------- */
+$('#startBtn').addEventListener('click',()=>{
+  ac(); sClick(); show('explore',1);
+  renderWallet();
+  say('点下面的钞票，把钱放进钱包，看看一共有多少元！');
+});
+$('#muteBtn').addEventListener('click',()=>{
+  muted=!muted; $('#muteBtn').textContent=muted?'🔇':'🔊';
+  if(muted&&'speechSynthesis'in window) speechSynthesis.cancel(); else sClick();
+});
+$('#homeBtn').addEventListener('click',()=>{ sClick(); if('speechSynthesis'in window)speechSynthesis.cancel(); location.href='index.html'; });
+
+function resetAll(){
+  wallet=[]; unlocked=false; buyCount=0; pi=0; answered=false;
+  $('#toPractice').disabled=true; $('#toPractice').classList.remove('ready'); $('#unlock').textContent='';
+  $('#changeLine').textContent='';
+  $('#exNote').innerHTML='凑钱小魔法：<b>7 元 = 5 元 + 1 元 + 1 元</b>；<b>10 元 = 5 + 5</b> 或一张 10 元！同一个数，可以有好几种凑法哦～';
+  renderWallet();
+}
+
+/* ---------- 彩带 ---------- */
+function confetti(){
+  const cv=$('#confetti'), ctx=cv.getContext('2d');
+  cv.width=innerWidth; cv.height=innerHeight; cv.style.display='block';
+  const colors=['#2563EB','#F97316','#16A34A','#EAB308','#EC4899','#7C3AED'];
+  const P=[];
+  for(let i=0;i<150;i++) P.push({
+    x:innerWidth/2+(Math.random()-0.5)*120, y:innerHeight*0.28,
+    vx:(Math.random()-0.5)*13, vy:Math.random()*-13-3, g:0.32,
+    s:7+Math.random()*9, c:colors[i%colors.length], rot:Math.random()*6, vr:(Math.random()-0.5)*0.4
+  });
+  let t=0;
+  (function anim(){
+    t++; ctx.clearRect(0,0,cv.width,cv.height);
+    P.forEach(p=>{ p.vy+=p.g; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c;
+      ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6); ctx.restore();
+    });
+    if(t<150) requestAnimationFrame(anim); else cv.style.display='none';
+  })();
+}
+
+/* 初始 */
+renderWallet();
+/* —— 通关记录（本地 localStorage）—— */
+(function(){var ID='renminbi';try{var d=document.getElementById('done');if(d){var mark=function(){if(d.classList.contains('on')){try{localStorage.setItem('yswg:done:'+ID,'1');}catch(e){}}};new MutationObserver(mark).observe(d,{attributes:true,attributeFilter:['class']});mark();}}catch(e){}})();
+</script>
+</body>
+</html>

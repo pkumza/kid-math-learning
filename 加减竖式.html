@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>加减竖式 · 竖式小课堂</title>
+<style>
+  :root{
+    --dot: clamp(15px, 4.2vw, 30px);
+    --blue:#2563EB; --blue2:#60A5FA;
+    --orange:#EA580C; --orange2:#FB923C;
+    --green:#16A34A; --green2:#4ADE80;
+    --purple:#7C3AED;
+    --ink:#1F2937; --soft:#6B7280;
+    --card:#ffffff;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",
+      "Hiragino Sans GB","Helvetica Neue",sans-serif;
+    color:var(--ink);
+    background:linear-gradient(160deg,#EAF4FF 0%,#FFF6EC 60%,#FDEFF6 100%);
+    min-height:100vh;
+    overflow-x:hidden;
+    user-select:none;
+  }
+  .wrap{max-width:760px; margin:0 auto; padding:10px 14px 40px;}
+
+  /* ---- 顶部 ---- */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 4px 6px;
+  }
+  .brand{display:flex; align-items:center; gap:8px; font-weight:800; font-size:1.15rem;}
+  .brand .fox{font-size:1.6rem;}
+  .brand small{color:var(--soft); font-weight:600; font-size:.78rem;}
+  .tools{display:flex; gap:8px;}
+  .icon-btn{
+    border:none; background:#fff; border-radius:14px; width:44px; height:44px;
+    font-size:1.25rem; cursor:pointer; box-shadow:0 3px 8px rgba(0,0,0,.08);
+    transition:transform .1s;
+  }
+  .icon-btn:active{transform:scale(.92);}
+
+  .steps{display:flex; gap:6px; justify-content:center; margin:4px 0 12px;}
+  .pill{
+    font-size:.82rem; font-weight:700; color:var(--soft);
+    background:#fff; padding:5px 12px; border-radius:999px;
+    box-shadow:0 2px 5px rgba(0,0,0,.05);
+  }
+  .pill.active{color:#fff; background:var(--purple); box-shadow:0 4px 10px rgba(124,58,237,.35);}
+
+  /* ---- 卡片 / 屏幕 ---- */
+  .screen{display:none; animation:pop .35s ease both;}
+  .screen.on{display:block;}
+  @keyframes pop{from{opacity:0; transform:translateY(12px) scale(.98);} to{opacity:1; transform:none;}}
+  .card{
+    background:var(--card); border-radius:26px; padding:22px 18px;
+    box-shadow:0 12px 30px rgba(80,90,130,.12); margin-bottom:16px;
+  }
+  h1{font-size:1.7rem; margin:.1em 0 .2em; text-align:center;}
+  h2{font-size:1.25rem; margin:.1em 0 .5em; text-align:center; color:var(--purple);}
+  .lead{text-align:center; color:var(--soft); font-size:1rem; line-height:1.7; margin:.3em 0 .2em;}
+  .pinyin{display:block; color:var(--soft); font-size:.95rem; letter-spacing:.06em; font-weight:600; text-align:center;}
+
+  /* ---- 按钮 ---- */
+  .big-btn{
+    display:block; width:100%; border:none; cursor:pointer;
+    font-size:1.3rem; font-weight:800; color:#fff;
+    padding:16px; border-radius:20px; margin-top:8px;
+    background:linear-gradient(135deg,#34D399,#10B981);
+    box-shadow:0 8px 18px rgba(16,185,129,.35);
+    transition:transform .12s, box-shadow .12s, filter .2s;
+  }
+  .big-btn.purple{background:linear-gradient(135deg,#A78BFA,#7C3AED); box-shadow:0 8px 18px rgba(124,58,237,.35);}
+  .big-btn.orange{background:linear-gradient(135deg,#FDBA74,#F97316); box-shadow:0 8px 18px rgba(249,115,22,.35);}
+  .big-btn:active{transform:translateY(2px) scale(.99);}
+  .big-btn:disabled{filter:grayscale(.7) opacity(.55); cursor:not-allowed; box-shadow:none;}
+  .big-btn.ready{animation:bounce 1s infinite;}
+  @keyframes bounce{0%,100%{transform:none;}50%{transform:translateY(-5px);}}
+
+  /* ---- 竖式 ---- */
+  .vtoggle{display:flex; gap:10px; justify-content:center; margin:6px 0 12px;}
+  .vtab{
+    border:none; cursor:pointer; font-weight:800; font-size:1rem;
+    padding:9px 16px; border-radius:14px; background:#fff; color:var(--soft);
+    box-shadow:0 3px 8px rgba(0,0,0,.08); border:3px solid #E5E7EB;
+  }
+  .vtab.on{color:#fff; background:var(--blue); border-color:var(--blue);}
+  .vtab.on.sub{background:var(--orange); border-color:var(--orange);}
+  .vtab:active{transform:scale(.96);}
+
+  .vstage{display:flex; justify-content:center; margin:14px 0 6px;}
+  .vsum{
+    display:inline-block; background:#F8FAFF; border-radius:20px;
+    padding:16px 22px 14px; border:2px dashed #DBE3F4; position:relative;
+  }
+  .vgrid{display:grid; grid-template-columns:auto repeat(2,1.5em); justify-items:center;}
+  .vcell{
+    font-size:2.6rem; font-weight:900; line-height:1.15; text-align:center;
+    min-width:1.5em; position:relative;
+  }
+  .vop{font-size:2.2rem; font-weight:900; color:var(--purple); align-self:end; padding-right:6px;}
+  .vline{grid-column:1 / -1; height:4px; background:var(--ink); border-radius:2px; margin:6px 0 4px;}
+  .vtens{color:var(--blue);} .vones{color:var(--orange);}
+  .vmark{ /* 进位小标注 */
+    position:absolute; top:-1.0em; left:50%; transform:translateX(-50%);
+    font-size:1rem; font-weight:900; color:var(--orange);
+    background:#FFF7ED; border:2px solid var(--orange); border-radius:999px;
+    padding:0 7px; white-space:nowrap; animation:dotin .3s ease both;
+  }
+  .vstrike{ /* 退位：划掉旧数字 */
+    color:var(--soft); position:relative;
+  }
+  .vstrike::after{
+    content:""; position:absolute; left:8%; right:8%; top:48%; height:4px;
+    background:var(--orange); border-radius:2px; transform:rotate(-16deg);
+  }
+  .vnew{ /* 退位：十位上方新数字 */
+    position:absolute; top:-0.85em; left:50%; transform:translateX(-50%);
+    font-size:1.2rem; font-weight:900; color:var(--green);
+    animation:dotin .3s ease both;
+  }
+  .vans{color:var(--green);}
+  .vans.show{animation:dotin .35s ease both;}
+  .vhide{visibility:hidden;}
+  @keyframes dotin{from{transform:scale(0);}to{transform:scale(1);}}
+
+  .step-btn{
+    display:block; margin:8px auto 0; border:none; cursor:pointer;
+    background:linear-gradient(135deg,#FDE68A,#F59E0B); color:#7c2d12; font-weight:800;
+    padding:12px 20px; border-radius:16px; font-size:1.05rem; box-shadow:0 5px 12px rgba(245,158,11,.3);
+  }
+  .step-btn:active{transform:scale(.96);}
+  .step-btn:disabled{filter:grayscale(.6) opacity(.6); cursor:not-allowed; box-shadow:none;}
+
+  .note{
+    margin-top:12px; background:#FFFDF5; border-radius:14px; padding:12px 14px;
+    color:#92400E; font-weight:700; line-height:1.6; font-size:1.05rem; text-align:center; min-height:1.5em;
+  }
+  .muted{color:var(--soft);}
+  .bl{color:var(--blue);} .or{color:var(--orange);} .gr{color:var(--green);} .pu{color:var(--purple);}
+  .unlock{text-align:center; font-weight:800; color:var(--purple); margin:14px 0 4px; min-height:1.4em;}
+
+  /* ---- 闯关 ---- */
+  .level-tag{text-align:center; color:var(--soft); font-weight:800; margin-bottom:2px;}
+  .q-hint{text-align:center; color:var(--orange); font-weight:800; font-size:1.05rem; margin:6px 0; min-height:1.3em;}
+  .ask{text-align:center; font-size:1.5rem; font-weight:900; margin:10px 0 6px;}
+  .options{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+  .opt{
+    border:none; cursor:pointer; min-width:92px; font-size:1.7rem; font-weight:900;
+    padding:14px 8px; border-radius:18px; background:#fff; color:var(--ink);
+    box-shadow:0 5px 12px rgba(0,0,0,.1); transition:transform .1s;
+    border:3px solid #E5E7EB;
+  }
+  .opt:active{transform:scale(.95);}
+  .opt.correct{background:var(--green); color:#fff; border-color:var(--green);}
+  .opt.wrong{background:#FCA5A5; border-color:#EF4444; animation:shake .35s;}
+  @keyframes shake{0%,100%{transform:none;}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+  .feedback{text-align:center; font-weight:900; font-size:1.3rem; min-height:1.5em; margin-top:12px;}
+  .stars{font-size:1.6rem; letter-spacing:6px; text-align:center;}
+
+  /* ---- 完成 ---- */
+  .badge{font-size:4.5rem; text-align:center; animation:spin 3s linear infinite;}
+  @keyframes spin{from{transform:rotate(-8deg);}50%{transform:rotate(8deg);}to{transform:rotate(-8deg);}}
+  .trophy-name{text-align:center; font-size:1.5rem; font-weight:900; color:var(--purple); margin:6px 0;}
+
+  details{margin-top:8px; background:#F8FAFF; border-radius:16px; padding:4px 14px;}
+  summary{cursor:pointer; font-weight:800; color:var(--purple); padding:10px 0; list-style:none;}
+  summary::-webkit-details-marker{display:none;}
+  details p{color:#374151; line-height:1.75; font-size:.95rem;}
+  details b{color:var(--ink);}
+
+  #confetti{position:fixed; inset:0; pointer-events:none; display:none; z-index:99;}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="wrap">
+
+  <header>
+    <div class="brand"><span class="fox">🦊</span><div>数学王国<br><small>竖式小课堂</small></div></div>
+    <div class="tools">
+      <button class="icon-btn" id="homeBtn" title="重新开始">🏠</button>
+      <button class="icon-btn" id="muteBtn" title="声音开关">🔊</button>
+    </div>
+  </header>
+
+  <div class="steps">
+    <span class="pill" data-step="1">① 探索</span>
+    <span class="pill" data-step="2">② 闯关</span>
+    <span class="pill" data-step="3">③ 完成</span>
+  </div>
+
+  <!-- ============ 欢迎 ============ -->
+  <section class="screen on" id="welcome">
+    <div class="card">
+      <div style="font-size:3.4rem;text-align:center">➕➖</div>
+      <h1>加减竖式</h1>
+      <span class="pinyin">jiā jiǎn shù shì · 进位与退位</span>
+      <p class="lead">
+        数字大了，<b>竖着写</b>更好算！📝<br>
+        相同数位<b>对齐</b>，从<b class="or">个位</b>开始算～<br>
+        个位<b class="or">满十</b>就往十位<b class="or">「进一」</b>，<br>
+        个位<b class="gr">不够减</b>就向十位<b class="gr">「借一当十」</b>！
+      </p>
+      <button class="big-btn" id="startBtn">开始探索 →</button>
+
+      <details>
+        <summary>👨‍👩‍👧 给爸爸妈妈的话（点开）</summary>
+        <p>
+          <b>为什么学「加减竖式」？</b> 孩子已经会数的组成（235=200+30+5）和位值，
+          也会简单的口算。两位数加减一旦出现「进位」和「退位」，口算就容易出错，
+          <b>竖式</b>正是把「相同数位对齐、从个位算起」变成可靠的笔算流程。<br><br>
+          <b>怎么一起玩：</b> 探索屏里点「一步一步算 ✨」，陪他看清两件事——
+          加法里<b>个位满十，向十位进 1</b>（橙色小标注）；减法里<b>个位不够减，从十位借 1 个十当 10</b>
+          （十位被划掉、个位变大）。可切换加法 47+38、减法 63-28 两道题。<br><br>
+          <b>可以追问：</b>「个位 7 加 8 是 15，满十了吗？进几？」「个位 3 减 8 够不够减？要向谁借？」
+          让他自己说出「进 1」「借 1 当十」，这是日后多位数笔算的根基。
+        </p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ 探索 ============ -->
+  <section class="screen" id="explore">
+    <div class="card">
+      <h2>📝 竖着算一算</h2>
+      <p class="lead" style="margin-top:0">
+        相同数位<b>对齐</b>，从<b class="or">个位</b>开始算！<br>看看<b class="or">进位</b>和<b class="gr">退位</b>的小秘密～
+      </p>
+
+      <div class="vtoggle">
+        <button class="vtab on" id="tabAdd" data-mode="add">➕ 47 + 38</button>
+        <button class="vtab sub" id="tabSub" data-mode="sub">➖ 63 − 28</button>
+      </div>
+
+      <div class="vstage">
+        <div class="vsum">
+          <div class="vgrid">
+            <div></div>
+            <div class="vcell vtens"><span id="cMarkT"></span><span id="cTopT">4</span></div>
+            <div class="vcell vones"><span id="cMarkO"></span><span id="cTopO">7</span></div>
+
+            <div class="vop" id="cOp">+</div>
+            <div class="vcell vtens"><span id="cBotT">3</span></div>
+            <div class="vcell vones"><span id="cBotO">8</span></div>
+
+            <div class="vline"></div>
+
+            <div></div>
+            <div class="vcell vans vhide" id="cAnsT">8</div>
+            <div class="vcell vans vhide" id="cAnsO">5</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="step-btn" id="stepBtn">一步一步算 ✨</button>
+      <div class="note" id="note">点「一步一步算」，先从个位开始！</div>
+
+      <div class="unlock" id="unlock"></div>
+      <button class="big-btn purple" id="toPractice" disabled>去闯关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 闯关 ============ -->
+  <section class="screen" id="practice">
+    <div class="card">
+      <div class="level-tag" id="levelTag">第 1 / 3 关</div>
+      <div class="q-hint" id="qHint"></div>
+
+      <div class="vstage">
+        <div class="vsum">
+          <div class="vgrid">
+            <div></div>
+            <div class="vcell vtens" id="pTopT">4</div>
+            <div class="vcell vones" id="pTopO">7</div>
+
+            <div class="vop" id="pOp">+</div>
+            <div class="vcell vtens" id="pBotT">3</div>
+            <div class="vcell vones" id="pBotO">8</div>
+
+            <div class="vline"></div>
+
+            <div></div>
+            <div class="vcell vans" style="grid-column:2 / -1">?</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ask" id="ask">等于多少呢？ 👇</div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="big-btn" id="nextLevel" style="display:none">下一关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 完成 ============ -->
+  <section class="screen" id="done">
+    <div class="card">
+      <div class="badge">🎖️</div>
+      <h1>太厉害啦！</h1>
+      <div class="trophy-name">🎖️ 竖式小达人</div>
+      <p class="lead">
+        你学会了加减竖式：<br>
+        相同数位<b>对齐</b>，从<b class="or">个位</b>算起！<br>
+        个位<b class="or">满十进一</b> ⬆️，个位<b class="gr">不够借一当十</b> 🔟<br>
+        再大的数你也不怕啦！💪
+      </p>
+      <p class="lead" style="font-size:.95rem">
+        🌟 试试考考爸爸妈妈：<b>75 − 39</b> 个位够减吗？
+      </p>
+      <button class="big-btn orange" id="again">再玩一次 🔁</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+"use strict";
+const $=(s,el=document)=>el.querySelector(s);
+const $$=(s,el=document)=>[...el.querySelectorAll(s)];
+
+/* ---------- 声音 ---------- */
+let muted=false, audioCtx=null;
+function ac(){ if(!audioCtx){ try{audioCtx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return audioCtx; }
+function beep(freq,dur,type,vol,when){
+  if(muted) return; const c=ac(); if(!c) return;
+  const t=c.currentTime+(when||0), o=c.createOscillator(), g=c.createGain();
+  o.type=type||'sine'; o.frequency.value=freq;
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol||0.15,t+0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g).connect(c.destination); o.start(t); o.stop(t+dur+0.02);
+}
+const sClick=()=>beep(680,0.06,'triangle',0.12,0);
+const sCut  =()=>{beep(900,0.05,'square',0.08,0); beep(500,0.07,'triangle',0.1,0.05);};
+const sGood =()=>[523,659,784].forEach((f,i)=>beep(f,0.12,'sine',0.16,i*0.09));
+const sWin  =()=>[523,659,784,1047,1319].forEach((f,i)=>beep(f,0.16,'sine',0.18,i*0.12));
+const sBad  =()=>beep(190,0.2,'sawtooth',0.1,0);
+
+/* ---------- 语音（中文朗读） ---------- */
+let zhVoice=null;
+function pickVoice(){
+  if(!('speechSynthesis'in window)) return;
+  const vs=speechSynthesis.getVoices(); if(!vs||!vs.length) return;
+  const zh=vs.filter(v=>/zh|cmn|chinese|普通话|国语|中文/i.test((v.lang||'')+' '+(v.name||'')));
+  const female=/婷婷|美嘉|思琪|善怡|静|丽|语嫣|晓|Ting-?Ting|Mei-?Jia|Sin-?ji|Yu-?shu|Tian-?Tian|Li-?mu|Han|female|女/i;
+  const male=/男|male|Yu-?Long|Liang|国梁/i;
+  zhVoice = zh.find(v=>female.test(v.name))
+         || zh.find(v=>/zh[-_]?CN/i.test(v.lang)&&!male.test(v.name))
+         || zh.find(v=>!male.test(v.name))
+         || zh[0] || null;
+}
+if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; setTimeout(pickVoice,300); setTimeout(pickVoice,1200); }
+function say(text){
+  if(muted||!('speechSynthesis'in window)) return;
+  try{ if(!zhVoice) pickVoice(); speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang='zh-CN'; if(zhVoice)u.voice=zhVoice; u.rate=0.95; u.pitch=1.1;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ---------- 屏幕切换 ---------- */
+function show(id,step){
+  $$('.screen').forEach(s=>s.classList.remove('on'));
+  $('#'+id).classList.add('on');
+  $$('.pill').forEach(p=>p.classList.toggle('active', +p.dataset.step===step));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ---------- 豆豆阵（保留辅助函数） ---------- */
+function fillGrid(el,rows,cols,cls){
+  el.style.gridTemplateColumns=`repeat(${cols},var(--dot))`;
+  el.style.gridTemplateRows=`repeat(${rows},var(--dot))`;
+  el.innerHTML='';
+  const n=rows*cols;
+  for(let i=0;i<n;i++){ const d=document.createElement('div'); d.className='dot '+cls; el.appendChild(d); }
+}
+
+/* ============ 探索 ============ */
+/* 两道题：加法 47+38（进位），减法 63-28（退位） */
+let mode='add';      // 'add' | 'sub'
+let stepIdx=0;       // 当前演示到第几步
+const seen={add:false, sub:false};
+let unlocked=false;
+
+const cTopT=$('#cTopT'), cTopO=$('#cTopO'), cBotT=$('#cBotT'), cBotO=$('#cBotO');
+const cMarkT=$('#cMarkT'), cMarkO=$('#cMarkO'), cOp=$('#cOp');
+const cAnsT=$('#cAnsT'), cAnsO=$('#cAnsO');
+const note=$('#note'), stepBtn=$('#stepBtn'), unlock=$('#unlock'), toPractice=$('#toPractice');
+
+function resetBoard(){
+  // 复位竖式显示
+  cMarkT.innerHTML=''; cMarkO.innerHTML='';
+  cTopT.className=''; cTopT.textContent=(mode==='add')?'4':'6';
+  cTopO.className=''; cTopO.textContent=(mode==='add')?'7':'3';
+  cBotT.textContent=(mode==='add')?'3':'2';
+  cBotO.textContent=(mode==='add')?'8':'8';
+  cOp.textContent=(mode==='add')?'+':'−';
+  cAnsT.textContent=''; cAnsT.classList.add('vhide'); cAnsT.classList.remove('show');
+  cAnsO.textContent=''; cAnsO.classList.add('vhide'); cAnsO.classList.remove('show');
+  stepBtn.disabled=false;
+  stepBtn.textContent='一步一步算 ✨';
+  stepIdx=0;
+}
+
+function setMode(m,quiet){
+  mode=m;
+  $('#tabAdd').classList.toggle('on', m==='add');
+  $('#tabSub').classList.toggle('on', m==='sub');
+  resetBoard();
+  if(m==='add'){ note.innerHTML='这是 <b class="bl">47 + 38</b>。点「一步一步算」，先从<b class="or">个位</b>开始！'; }
+  else{ note.innerHTML='这是 <b class="bl">63 − 28</b>。点「一步一步算」，先从<b class="or">个位</b>开始！'; }
+  if(!quiet){ sClick(); say(m==='add'?'我们来算 47 加 38。先从个位开始！':'我们来算 63 减 28。先从个位开始！'); }
+}
+
+/* 加法 47+38 的步骤 */
+function addStep(){
+  stepIdx++;
+  if(stepIdx===1){
+    // 个位 7+8=15，写5，进1
+    cAnsO.textContent='5'; cAnsO.classList.remove('vhide'); cAnsO.classList.add('show');
+    cMarkT.innerHTML='<span class="vmark">进1</span>';
+    note.innerHTML='个位：<b class="or">7 + 8 = 15</b>，<b class="or">满十啦！</b>写下 <b class="gr">5</b>，向十位<b class="or">进 1</b> ⬆️';
+    sCut(); say('个位，7 加 8 等于 15。满十啦！写下 5，向十位进 1。');
+  }else if(stepIdx===2){
+    // 十位 4+3+1=8
+    cAnsT.textContent='8'; cAnsT.classList.remove('vhide'); cAnsT.classList.add('show');
+    note.innerHTML='十位：<b class="bl">4 + 3</b> 再加进来的 <b class="or">1</b> = <b class="gr">8</b>。答案是 <b class="gr">85</b>！🎉';
+    sGood(); say('十位，4 加 3，再加上进来的 1，等于 8。答案是 85！');
+    finishDemo();
+  }
+}
+
+/* 减法 63-28 的步骤 */
+function subStep(){
+  stepIdx++;
+  if(stepIdx===1){
+    // 个位 3-8 不够，借1当十
+    cTopT.className='vstrike';                       // 十位 6 划掉
+    cMarkT.innerHTML='<span class="vnew">5</span>';  // 十位变 5
+    cMarkO.innerHTML='<span class="vmark">借1当十</span>';
+    cTopO.textContent='13';                          // 个位变 13
+    note.innerHTML='个位：<b class="or">3 减 8 不够减！</b> 向十位<b class="gr">借 1 当十</b>：十位 6 变 <b class="gr">5</b>，个位变 <b class="gr">13</b> 🔟';
+    sCut(); say('个位，3 减 8 不够减！向十位借 1 当十。十位 6 变成 5，个位变成 13。');
+  }else if(stepIdx===2){
+    // 个位 13-8=5
+    cAnsO.textContent='5'; cAnsO.classList.remove('vhide'); cAnsO.classList.add('show');
+    note.innerHTML='个位：<b class="or">13 − 8 = 5</b>，写下 <b class="gr">5</b> ✅';
+    sCut(); say('现在个位，13 减 8 等于 5，写下 5。');
+  }else if(stepIdx===3){
+    // 十位 5-2=3
+    cAnsT.textContent='3'; cAnsT.classList.remove('vhide'); cAnsT.classList.add('show');
+    note.innerHTML='十位：借走 1 后是 <b class="gr">5</b>，<b class="bl">5 − 2 = 3</b>。答案是 <b class="gr">35</b>！🎉';
+    sGood(); say('十位，借走 1 以后是 5，5 减 2 等于 3。答案是 35！');
+    finishDemo();
+  }
+}
+
+function finishDemo(){
+  stepBtn.disabled=true;
+  stepBtn.textContent='算完啦 ✓';
+  seen[mode]=true;
+  checkUnlock();
+}
+
+function checkUnlock(){
+  if(unlocked) return;
+  if(seen.add && seen.sub){
+    unlocked=true; toPractice.disabled=false; toPractice.classList.add('ready');
+    unlock.textContent='🎉 进位、退位你都看明白啦，去闯关试试！';
+    sWin(); say('太棒了！进位和退位你都看明白啦，去闯关试试吧！');
+  }else{
+    const other = seen.add ? '减法 63 − 28' : '加法 47 + 38';
+    unlock.textContent='👍 不错！再看看「'+other+'」就能去闯关！';
+  }
+}
+
+stepBtn.addEventListener('click',()=>{
+  if(stepBtn.disabled) return;
+  if(mode==='add') addStep(); else subStep();
+});
+$('#tabAdd').addEventListener('click',()=>setMode('add'));
+$('#tabSub').addEventListener('click',()=>setMode('sub'));
+$('#toPractice').addEventListener('click',()=>{ sClick(); startPractice(); });
+
+/* ============ 闯关 ============ */
+const PROB=[
+  { a:47, b:38, op:'+', ans:85, opts:[75,85,815],
+    hint:'47 + 38：个位 7+8 满十进一！ ⬆️',
+    voice:'47 加 38。个位 7 加 8 满十，要进一。等于多少呢？' },
+  { a:63, b:28, op:'−', ans:35, opts:[35,45,41],
+    hint:'63 − 28：个位不够减，借一当十！ 🔟',
+    voice:'63 减 28。个位不够减，向十位借一当十。等于多少呢？' },
+  { a:56, b:27, op:'+', ans:83, opts:[73,83,813],
+    hint:'56 + 27：个位 6+7 满十进一！ ⬆️',
+    voice:'56 加 27。个位 6 加 7 满十，要进一。等于多少呢？' }
+];
+let pi=0;
+function startPractice(){ pi=0; show('practice',2); renderLevel(); }
+
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+function renderLevel(){
+  const P=PROB[pi];
+  $('#levelTag').textContent=`第 ${pi+1} / 3 关`;
+  $('#qHint').textContent=P.hint;
+  $('#pTopT').textContent=Math.floor(P.a/10);
+  $('#pTopO').textContent=P.a%10;
+  $('#pBotT').textContent=Math.floor(P.b/10);
+  $('#pBotO').textContent=P.b%10;
+  $('#pOp').textContent=P.op;
+  $('#feedback').textContent='';
+  $('#nextLevel').style.display='none';
+
+  const opts=shuffle(P.opts.slice());
+  const box=$('#options'); box.innerHTML='';
+  opts.forEach(v=>{
+    const btn=document.createElement('button');
+    btn.className='opt'; btn.textContent=v;
+    btn.addEventListener('click',()=>choose(btn,v,P.ans));
+    box.appendChild(btn);
+  });
+  say(P.voice);
+}
+
+let answered=false;
+function choose(btn,v,ans){
+  if(answered) return;
+  if(v===ans){
+    answered=true;
+    btn.classList.add('correct'); sGood();
+    $('#feedback').innerHTML='<span class="gr">答对啦！🎉</span><div class="stars">⭐⭐⭐</div>';
+    say('答对啦！你真厉害！');
+    $$('.opt').forEach(o=>o.disabled=true);
+    const last=(pi===PROB.length-1);
+    const nb=$('#nextLevel');
+    nb.textContent = last ? '完成啦 🎉' : '下一关 →';
+    nb.style.display='block';
+  }else{
+    btn.classList.add('wrong'); sBad();
+    $('#feedback').innerHTML='<span class="or">再算一算～ 你可以的！</span>';
+    say('再算一算，你可以的！');
+    setTimeout(()=>btn.classList.remove('wrong'),400);
+  }
+}
+
+$('#nextLevel').addEventListener('click',()=>{
+  sClick(); answered=false;
+  if(pi===PROB.length-1){ finish(); }
+  else{ pi++; renderLevel(); }
+});
+
+/* ============ 完成 ============ */
+function finish(){
+  show('done',3); sWin(); say('太厉害啦！你已经是竖式小达人啦！');
+  confetti();
+}
+$('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('explore',1); setMode('add',true); say('我们再玩一次！'); });
+
+/* ---------- 顶部按钮 ---------- */
+$('#startBtn').addEventListener('click',()=>{
+  ac(); sClick(); show('explore',1);
+  setMode('add',true);
+  say('数字大了，竖着写更好算！相同数位对齐，从个位开始算。点一步一步算试试看！');
+});
+$('#muteBtn').addEventListener('click',()=>{
+  muted=!muted; $('#muteBtn').textContent=muted?'🔇':'🔊';
+  if(muted&&'speechSynthesis'in window) speechSynthesis.cancel(); else sClick();
+});
+$('#homeBtn').addEventListener('click',()=>{ sClick(); if('speechSynthesis'in window)speechSynthesis.cancel(); location.href='index.html'; });
+
+function resetAll(){
+  unlocked=false; answered=false; pi=0;
+  seen.add=false; seen.sub=false;
+  toPractice.disabled=true; toPractice.classList.remove('ready'); unlock.textContent='';
+  mode='add'; resetBoard();
+}
+
+/* ---------- 彩带 ---------- */
+function confetti(){
+  const cv=$('#confetti'), ctx=cv.getContext('2d');
+  cv.width=innerWidth; cv.height=innerHeight; cv.style.display='block';
+  const colors=['#2563EB','#F97316','#16A34A','#EAB308','#EC4899','#7C3AED'];
+  const P=[];
+  for(let i=0;i<150;i++) P.push({
+    x:innerWidth/2+(Math.random()-0.5)*120, y:innerHeight*0.28,
+    vx:(Math.random()-0.5)*13, vy:Math.random()*-13-3, g:0.32,
+    s:7+Math.random()*9, c:colors[i%colors.length], rot:Math.random()*6, vr:(Math.random()-0.5)*0.4
+  });
+  let t=0;
+  (function anim(){
+    t++; ctx.clearRect(0,0,cv.width,cv.height);
+    P.forEach(p=>{ p.vy+=p.g; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c;
+      ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6); ctx.restore();
+    });
+    if(t<150) requestAnimationFrame(anim); else cv.style.display='none';
+  })();
+}
+
+/* 初始 */
+setMode('add',true);
+/* —— 通关记录（本地 localStorage）—— */
+(function(){var ID='shushi';try{var d=document.getElementById('done');if(d){var mark=function(){if(d.classList.contains('on')){try{localStorage.setItem('yswg:done:'+ID,'1');}catch(e){}}};new MutationObserver(mark).observe(d,{attributes:true,attributeFilter:['class']});mark();}}catch(e){}})();
+</script>
+</body>
+</html>
