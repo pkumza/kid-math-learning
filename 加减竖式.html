@@ -127,6 +127,21 @@
   .vhide{visibility:hidden;}
   @keyframes dotin{from{transform:scale(0);}to{transform:scale(1);}}
 
+  /* ---- 「你的算法」对照面板 ---- */
+  .myway{
+    margin:12px auto 2px; max-width:340px; background:#F0FDF4; border:2px solid #BBF7D0;
+    border-radius:16px; padding:12px 14px; text-align:center; color:#166534;
+    font-weight:800; line-height:1.9; font-size:1.25rem;
+  }
+  .myway-title{color:#15803d; font-size:.92rem; font-weight:800; margin-bottom:4px;}
+  .myway b{color:#166534;} .myway .gr{color:#16A34A;}
+  .bridge{
+    display:none; margin-top:10px; background:#FFF7ED; border:2px dashed #F59E0B;
+    border-radius:12px; padding:9px 11px; color:#9a3412; font-size:.98rem; font-weight:800; line-height:1.6;
+  }
+  .bridge.show{display:block; animation:dotin .4s ease both;}
+  .bridge b.or{color:var(--orange);} .bridge b.gr{color:var(--green);}
+
   .step-btn{
     display:block; margin:8px auto 0; border:none; cursor:pointer;
     background:linear-gradient(135deg,#FDE68A,#F59E0B); color:#7c2d12; font-weight:800;
@@ -200,16 +215,23 @@
       <h1>加减竖式</h1>
       <span class="pinyin">jiā jiǎn shù shì · 进位与退位</span>
       <p class="lead">
-        数字大了，<b>竖着写</b>更好算！📝<br>
-        相同数位<b>对齐</b>，从<b class="or">个位</b>开始算～<br>
-        个位<b class="or">满十</b>就往十位<b class="or">「进一」</b>，<br>
-        个位<b class="gr">不够减</b>就向十位<b class="gr">「借一当十」</b>！
+        你心算很棒！🎉 数字一大、容易忘，<br>
+        还有个<b>写下来</b>的好办法——<b>竖式</b>！📝<br>
+        两种方法<b class="gr">答案一样</b>，<br>
+        竖式从<b class="or">个位</b>算起：满十<b class="or">进一</b> ⬆️、不够减<b class="gr">借一当十</b> 🔟
       </p>
       <button class="big-btn" id="startBtn">开始探索 →</button>
 
       <details>
         <summary>👨‍👩‍👧 给爸爸妈妈的话（点开）</summary>
         <p>
+          <b>👀 给爸爸妈妈的小提醒（重要）：</b> 如果孩子已经会用自己的方法心算——
+          比如 47+38 先算 <b>47+30=77</b>、再 <b>77+8=85</b>，或 52−35 先 <b>52−30=22</b>、再 <b>22−5=17</b>——
+          <b>这非常棒，请别纠正</b>！这是「从高位起、按位拆分」的心算法，数感很强。
+          竖式不是「更对的方法」，只是把同一件事<b>写下来、数字大时不出错</b>。
+          这一课特意把<b>「你的算法」和「竖式」并排</b>，并点破：他心算里「<b>77 跳到 85</b>」多出的那个十，
+          <b>就是竖式的「进1」</b>；减法里「<b>拆开一个十</b>来减」就是「借1当十」。
+          让他<b>两条腿走路</b>——心算灵活、竖式可靠，遇到三位数（最后一关）就知道竖式真省脑子。<br><br>
           <b>为什么学「加减竖式」？</b> 孩子已经会数的组成（235=200+30+5）和位值，
           也会简单的口算。两位数加减一旦出现「进位」和「退位」，口算就容易出错，
           <b>竖式</b>正是把「相同数位对齐、从个位算起」变成可靠的笔算流程。<br><br>
@@ -226,9 +248,9 @@
   <!-- ============ 探索 ============ -->
   <section class="screen" id="explore">
     <div class="card">
-      <h2>📝 竖着算一算</h2>
+      <h2>🧠 你的算法 ＝ 📝 竖式</h2>
       <p class="lead" style="margin-top:0">
-        相同数位<b>对齐</b>，从<b class="or">个位</b>开始算！<br>看看<b class="or">进位</b>和<b class="gr">退位</b>的小秘密～
+        你心算超棒！竖式只是<b>把它写下来</b> 📝<br>两种方法<b class="gr">答案一样</b>，点「一步一步算」比一比！
       </p>
 
       <div class="vtoggle">
@@ -259,6 +281,12 @@
       <button class="step-btn" id="stepBtn">一步一步算 ✨</button>
       <div class="note" id="note">点「一步一步算」，先从个位开始！</div>
 
+      <div class="myway" id="myway">
+        <div class="myway-title">🧠 这是<b>你的算法</b>（心里从大的算起）</div>
+        <div id="mywaySteps"></div>
+        <div class="bridge" id="bridge"></div>
+      </div>
+
       <div class="unlock" id="unlock"></div>
       <button class="big-btn purple" id="toPractice" disabled>去闯关 →</button>
     </div>
@@ -272,20 +300,7 @@
 
       <div class="vstage">
         <div class="vsum">
-          <div class="vgrid">
-            <div></div>
-            <div class="vcell vtens" id="pTopT">4</div>
-            <div class="vcell vones" id="pTopO">7</div>
-
-            <div class="vop" id="pOp">+</div>
-            <div class="vcell vtens" id="pBotT">3</div>
-            <div class="vcell vones" id="pBotO">8</div>
-
-            <div class="vline"></div>
-
-            <div></div>
-            <div class="vcell vans" style="grid-column:2 / -1">?</div>
-          </div>
+          <div class="vgrid" id="pGrid"></div>
         </div>
       </div>
 
@@ -303,14 +318,14 @@
       <h1>太厉害啦！</h1>
       <div class="trophy-name">🎖️ 竖式小达人</div>
       <p class="lead">
-        你学会了加减竖式：<br>
-        相同数位<b>对齐</b>，从<b class="or">个位</b>算起！<br>
-        个位<b class="or">满十进一</b> ⬆️，个位<b class="gr">不够借一当十</b> 🔟<br>
-        再大的数你也不怕啦！💪
+        现在你有<b>两件法宝</b>：<br>
+        🧠 <b>心算</b>（从大的算起）＋ 📝 <b>竖式</b>（从个位起）<br>
+        它们<b class="gr">答案一样</b>！数字越大，竖式越省脑子 💪
       </p>
       <p class="lead" style="font-size:.95rem">
-        🌟 试试考考爸爸妈妈：<b>75 − 39</b> 个位够减吗？
+        🌟 挑战大数字：<b>367 + 158</b>，用竖式试试看！
       </p>
+      <button class="big-btn" id="nextChapter" onclick="try{speechSynthesis.cancel()}catch(e){};location.href='index.html'">🎉 全部通关！回到地图</button>
       <button class="big-btn orange" id="again">再玩一次 🔁</button>
     </div>
   </section>
@@ -390,6 +405,7 @@ const cTopT=$('#cTopT'), cTopO=$('#cTopO'), cBotT=$('#cBotT'), cBotO=$('#cBotO')
 const cMarkT=$('#cMarkT'), cMarkO=$('#cMarkO'), cOp=$('#cOp');
 const cAnsT=$('#cAnsT'), cAnsO=$('#cAnsO');
 const note=$('#note'), stepBtn=$('#stepBtn'), unlock=$('#unlock'), toPractice=$('#toPractice');
+const mywaySteps=$('#mywaySteps'), bridge=$('#bridge');
 
 function resetBoard(){
   // 复位竖式显示
@@ -411,8 +427,16 @@ function setMode(m,quiet){
   $('#tabAdd').classList.toggle('on', m==='add');
   $('#tabSub').classList.toggle('on', m==='sub');
   resetBoard();
-  if(m==='add'){ note.innerHTML='这是 <b class="bl">47 + 38</b>。点「一步一步算」，先从<b class="or">个位</b>开始！'; }
-  else{ note.innerHTML='这是 <b class="bl">63 − 28</b>。点「一步一步算」，先从<b class="or">个位</b>开始！'; }
+  if(m==='add'){
+    note.innerHTML='这是 <b class="bl">47 + 38</b>。点「一步一步算」，先从<b class="or">个位</b>开始！';
+    mywaySteps.innerHTML='47 + 30 = <b>77</b><br>77 + 8 = <b class="gr">85</b> ✅';
+    bridge.innerHTML='✨ 你心里把 <b>77 跳到 85</b>，多出来的那个十，<br>就是竖式里的「<b class="or">进1</b>」！两种方法一样～';
+  }else{
+    note.innerHTML='这是 <b class="bl">63 − 28</b>。点「一步一步算」，先从<b class="or">个位</b>开始！';
+    mywaySteps.innerHTML='63 − 20 = <b>43</b><br>43 − 8 = <b class="gr">35</b> ✅';
+    bridge.innerHTML='✨ 你心里把 <b>43 拆开一个十</b>来减，<br>就是竖式里的「<b class="gr">借1当十</b>」！两种方法一样～';
+  }
+  bridge.classList.remove('show');
   if(!quiet){ sClick(); say(m==='add'?'我们来算 47 加 38。先从个位开始！':'我们来算 63 减 28。先从个位开始！'); }
 }
 
@@ -463,6 +487,11 @@ function finishDemo(){
   stepBtn.disabled=true;
   stepBtn.textContent='算完啦 ✓';
   seen[mode]=true;
+  bridge.classList.add('show');
+  const msg = (mode==='add')
+    ? '发现没？你心里算的 77 跳到 85，多的那个十，就是竖式里的进1！两种方法一样棒。'
+    : '发现没？你心里把 43 拆开一个十来减，就是竖式里的借1当十！两种方法一样棒。';
+  setTimeout(()=>say(msg), 3000);
   checkUnlock();
 }
 
@@ -494,24 +523,32 @@ const PROB=[
   { a:63, b:28, op:'−', ans:35, opts:[35,45,41],
     hint:'63 − 28：个位不够减，借一当十！ 🔟',
     voice:'63 减 28。个位不够减，向十位借一当十。等于多少呢？' },
-  { a:56, b:27, op:'+', ans:83, opts:[73,83,813],
-    hint:'56 + 27：个位 6+7 满十进一！ ⬆️',
-    voice:'56 加 27。个位 6 加 7 满十，要进一。等于多少呢？' }
+  { a:367, b:158, op:'+', ans:525, opts:[515,525,425],
+    hint:'367 + 158：数字大了，写成竖式最稳！个位、十位都要进一 ⬆️⬆️',
+    voice:'367 加 158。数字变大了，用竖式从个位一步一步算最稳，不会忘。等于多少呢？' }
 ];
 let pi=0;
 function startPractice(){ pi=0; show('practice',2); renderLevel(); }
 
 function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
 
+function digitsOf(n,w){ return String(n).padStart(w,' ').split(''); }
+function digitRow(n,w){
+  return digitsOf(n,w).map((d,i)=>
+    `<div class="vcell ${i===w-1?'vones':'vtens'}">${d===' '?'':d}</div>`).join('');
+}
 function renderLevel(){
   const P=PROB[pi];
-  $('#levelTag').textContent=`第 ${pi+1} / 3 关`;
+  $('#levelTag').textContent=`第 ${pi+1} / ${PROB.length} 关`;
   $('#qHint').textContent=P.hint;
-  $('#pTopT').textContent=Math.floor(P.a/10);
-  $('#pTopO').textContent=P.a%10;
-  $('#pBotT').textContent=Math.floor(P.b/10);
-  $('#pBotO').textContent=P.b%10;
-  $('#pOp').textContent=P.op;
+  const w=Math.max(String(P.a).length, String(P.b).length, String(P.ans).length);
+  const grid=$('#pGrid');
+  grid.style.gridTemplateColumns=`auto repeat(${w},1.5em)`;
+  grid.innerHTML=
+    '<div></div>'+digitRow(P.a,w)+
+    `<div class="vop">${P.op}</div>`+digitRow(P.b,w)+
+    '<div class="vline"></div>'+
+    '<div></div><div class="vcell vans" style="grid-column:2 / -1">?</div>';
   $('#feedback').textContent='';
   $('#nextLevel').style.display='none';
 

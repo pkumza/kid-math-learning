@@ -208,11 +208,11 @@
       <h1>角的认识</h1>
       <span class="pinyin">jiǎo · 张开就成角</span>
       <p class="lead">
-        两条边从<b class="pu">一个点</b>张开，<br>
-        就成了一个「<b class="pu">角</b>」！<br>
-        张得<b class="or">小</b>是<b class="or">锐角</b>，✨<br>
-        <b class="gr">方方正正</b>是<b class="gr">直角</b>，<br>
-        张得<b class="pu">很开</b>是<b class="pu">钝角</b>！
+        两条边从<b class="pu">一个点</b>张开，就成了<b class="pu">角</b>！<br>
+        角有<b>三兄弟</b> 👇<br>
+        🐦 <b class="or">锐角</b>（ruì jiǎo）尖尖的，像小鸟尖嘴<br>
+        📖 <b class="gr">直角</b>（zhí jiǎo）方方的，像书本的角<br>
+        🦛 <b class="pu">钝角</b>（dùn jiǎo）张大大，像河马张嘴
       </p>
       <button class="big-btn" id="startBtn">开始探索 →</button>
 
@@ -225,6 +225,9 @@
           <b>怎么一起玩：</b> 探索屏可以拖动滑块或点 ◀▶ 让角慢慢张开、合拢。
           请他注意：<b>张得尖尖的小的是锐角</b>，<b>方方正正像书角的是直角</b>（顶点会出现一个小方块），
           <b>张得大大的是钝角</b>。把锐角、直角、钝角三种都试出来就能去闯关。<br><br>
+          <b>📣 发音小提醒：</b>「锐(ruì)」「钝(dùn)」这两个字孩子日常很少遇到，<b>概念他其实一看就懂，卡的是字</b>。
+          建议给每个字配一个固定画面帮他记：<b>锐角＝小鸟尖嘴 🐦</b>、<b>钝角＝河马张大嘴 🦛</b>、<b>直角＝书本角 📖</b>，
+          念的时候带上手势（尖尖 / 张大），多念几次，字和意思就对上了。<br><br>
           <b>可以追问：</b>「书本的角、桌子的角是什么角？」（直角）
           「剪刀张大一点是什么角？」「钟表 3 点整的两根针成什么角？」让他用直角去「比一比」生活里的角。
         </p>
@@ -262,9 +265,9 @@
       <button class="magic-btn" id="rightBtn">📏 一下转到直角（90°）</button>
 
       <div class="found">
-        <span class="chip acute" id="chipAcute">锐角 尖尖</span>
-        <span class="chip right"  id="chipRight">直角 方方</span>
-        <span class="chip obtuse" id="chipObtuse">钝角 张开</span>
+        <span class="chip acute" id="chipAcute">🐦 锐角</span>
+        <span class="chip right"  id="chipRight">📖 直角</span>
+        <span class="chip obtuse" id="chipObtuse">🦛 钝角</span>
       </div>
 
       <div class="note" id="note">先转出一个尖尖的小角试试～</div>
@@ -296,13 +299,14 @@
       <h1>太厉害啦！</h1>
       <div class="trophy-name">🎖️ 角的小测量师</div>
       <p class="lead">
-        你认识了三种角：<br>
-        <b class="or">锐角</b>尖尖、<b class="gr">直角</b>方方、<b class="pu">钝角</b>张开！<br>
+        你认识了角的三兄弟：<br>
+        🐦<b class="or">锐角</b>尖尖、📖<b class="gr">直角</b>方方、🦛<b class="pu">钝角</b>张大嘴！<br>
         用<b class="gr">直角</b>一比，就知道是哪种角～📐
       </p>
       <p class="lead" style="font-size:.95rem">
         🌟 找一找：书本的角、桌子的角是什么角？
       </p>
+      <button class="big-btn" id="nextChapter" onclick="try{speechSynthesis.cancel()}catch(e){};location.href='容量.html'">进入下一关 →</button>
       <button class="big-btn orange" id="again">再玩一次 🔁</button>
     </div>
   </section>
@@ -432,9 +436,9 @@ const found=new Set();
 let unlocked=false;
 
 const KIND_INFO={
-  acute :{name:'锐角', cls:'acute',  desc:'比直角小，尖尖的！',     emoji:'✨'},
-  right :{name:'直角', cls:'right',  desc:'方方正正，像书本的角！', emoji:'📏'},
-  obtuse:{name:'钝角', cls:'obtuse', desc:'比直角大，张得很开！',   emoji:'😮'}
+  acute :{name:'锐角', py:'ruì jiǎo', cls:'acute',  desc:'尖尖的，像小鸟尖嘴 🐦',   emoji:'🐦'},
+  right :{name:'直角', py:'zhí jiǎo', cls:'right',  desc:'方方的，像书本的角 📖',   emoji:'📖'},
+  obtuse:{name:'钝角', py:'dùn jiǎo', cls:'obtuse', desc:'张大大，像河马张嘴 🦛',   emoji:'🦛'}
 };
 
 function renderExplore(nd,quiet){
@@ -444,13 +448,14 @@ function renderExplore(nd,quiet){
   const k=kindOf(deg), info=KIND_INFO[k];
   kindBig.textContent=info.name+' '+info.emoji;
   kindBig.className='kind-big '+info.cls;
-  kindDeg.textContent=deg+' 度';
+  kindDeg.textContent=info.py+' · '+deg+' 度';
   kindDesc.textContent=info.desc;
 
   if(!found.has(k)){
     found.add(k);
     chips[k].classList.add('got');
     note.textContent=`找到啦：${info.name}！${info.desc}`;
+    say(`${info.name}！${info.py}。${info.desc}`);
   }else{
     note.textContent=`这是${info.name}～ ${info.desc}`;
   }
@@ -477,16 +482,18 @@ slider.addEventListener('input',()=>renderExplore(+slider.value));
 $('#minus').addEventListener('click',()=>renderExplore(deg-5));
 $('#plus').addEventListener('click',()=>renderExplore(deg+5));
 refChk.addEventListener('change',()=>{ sClick(); renderExplore(deg,true); say('放上直角参照，和它比一比！'); });
-$('#rightBtn').addEventListener('click',()=>{ renderExplore(90); say('这就是直角，方方正正，像书本的角！'); });
+$('#rightBtn').addEventListener('click',()=>{ renderExplore(90); say('这就是直角，zhí jiǎo，方方正正，像书本的角！'); });
 $('#toPractice').addEventListener('click',()=>{ sClick(); startPractice(); });
 
 /* ============ 闯关 ============ */
 const PROB=[
-  {deg:35,  kind:'acute',  q:'这是什么角？',           good:'对啦！它尖尖的、比直角小，是锐角！✨'},
-  {deg:90,  kind:'right',  q:'这是什么角？（看顶点的小方块）', good:'对啦！方方正正，顶点有小方块，是直角！📏'},
-  {deg:130, kind:'obtuse', q:'这是什么角？',           good:'对啦！它张得很开、比直角大，是钝角！😮'}
+  {deg:35,  kind:'acute',  q:'这是什么角？',           good:'对啦！尖尖的像小鸟尖嘴，是锐角，ruì jiǎo！🐦'},
+  {deg:90,  kind:'right',  q:'这是什么角？（看顶点的小方块）', good:'对啦！方方的像书本角，是直角，zhí jiǎo！📖'},
+  {deg:130, kind:'obtuse', q:'这是什么角？',           good:'对啦！张大大像河马张嘴，是钝角，dùn jiǎo！🦛'}
 ];
 const LABELS={acute:'锐角', right:'直角', obtuse:'钝角'};
+const IMG={acute:'🐦', right:'📖', obtuse:'🦛'};
+const PY={acute:'ruì jiǎo', right:'zhí jiǎo', obtuse:'dùn jiǎo'};
 let pi=0, answered=false;
 
 function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
@@ -506,7 +513,8 @@ function renderLevel(){
   const box=$('#options'); box.innerHTML='';
   order.forEach(k=>{
     const btn=document.createElement('button');
-    btn.className='opt'; btn.textContent=LABELS[k];
+    btn.className='opt';
+    btn.innerHTML=`${IMG[k]} ${LABELS[k]}<br><small style="font-weight:700;color:var(--soft);font-size:.62em">${PY[k]}</small>`;
     btn.addEventListener('click',()=>choose(btn,k,p));
     box.appendChild(btn);
   });
