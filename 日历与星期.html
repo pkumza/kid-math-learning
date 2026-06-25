@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>日历与星期 · 日历小课堂</title>
+<style>
+  :root{
+    --dot: clamp(15px, 4.2vw, 30px);
+    --blue:#2563EB; --blue2:#60A5FA;
+    --orange:#EA580C; --orange2:#FB923C;
+    --green:#16A34A; --green2:#4ADE80;
+    --purple:#7C3AED;
+    --ink:#1F2937; --soft:#6B7280;
+    --card:#ffffff;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",
+      "Hiragino Sans GB","Helvetica Neue",sans-serif;
+    color:var(--ink);
+    background:linear-gradient(160deg,#EAF4FF 0%,#FFF6EC 60%,#FDEFF6 100%);
+    min-height:100vh;
+    overflow-x:hidden;
+    user-select:none;
+  }
+  .wrap{max-width:760px; margin:0 auto; padding:10px 14px 40px;}
+
+  /* ---- 顶部 ---- */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 4px 6px;
+  }
+  .brand{display:flex; align-items:center; gap:8px; font-weight:800; font-size:1.15rem;}
+  .brand .fox{font-size:1.6rem;}
+  .brand small{color:var(--soft); font-weight:600; font-size:.78rem;}
+  .tools{display:flex; gap:8px;}
+  .icon-btn{
+    border:none; background:#fff; border-radius:14px; width:44px; height:44px;
+    font-size:1.25rem; cursor:pointer; box-shadow:0 3px 8px rgba(0,0,0,.08);
+    transition:transform .1s;
+  }
+  .icon-btn:active{transform:scale(.92);}
+
+  .steps{display:flex; gap:6px; justify-content:center; margin:4px 0 12px;}
+  .pill{
+    font-size:.82rem; font-weight:700; color:var(--soft);
+    background:#fff; padding:5px 12px; border-radius:999px;
+    box-shadow:0 2px 5px rgba(0,0,0,.05);
+  }
+  .pill.active{color:#fff; background:var(--purple); box-shadow:0 4px 10px rgba(124,58,237,.35);}
+
+  /* ---- 卡片 / 屏幕 ---- */
+  .screen{display:none; animation:pop .35s ease both;}
+  .screen.on{display:block;}
+  @keyframes pop{from{opacity:0; transform:translateY(12px) scale(.98);} to{opacity:1; transform:none;}}
+  .card{
+    background:var(--card); border-radius:26px; padding:22px 18px;
+    box-shadow:0 12px 30px rgba(80,90,130,.12); margin-bottom:16px;
+  }
+  h1{font-size:1.7rem; margin:.1em 0 .2em; text-align:center;}
+  h2{font-size:1.25rem; margin:.1em 0 .5em; text-align:center; color:var(--purple);}
+  .lead{text-align:center; color:var(--soft); font-size:1rem; line-height:1.7; margin:.3em 0 .2em;}
+  .pinyin{display:block; color:var(--soft); font-size:.95rem; letter-spacing:.06em; font-weight:600; text-align:center;}
+
+  /* ---- 按钮 ---- */
+  .big-btn{
+    display:block; width:100%; border:none; cursor:pointer;
+    font-size:1.3rem; font-weight:800; color:#fff;
+    padding:16px; border-radius:20px; margin-top:8px;
+    background:linear-gradient(135deg,#34D399,#10B981);
+    box-shadow:0 8px 18px rgba(16,185,129,.35);
+    transition:transform .12s, box-shadow .12s, filter .2s;
+  }
+  .big-btn.purple{background:linear-gradient(135deg,#A78BFA,#7C3AED); box-shadow:0 8px 18px rgba(124,58,237,.35);}
+  .big-btn.orange{background:linear-gradient(135deg,#FDBA74,#F97316); box-shadow:0 8px 18px rgba(249,115,22,.35);}
+  .big-btn:active{transform:translateY(2px) scale(.99);}
+  .big-btn:disabled{filter:grayscale(.7) opacity(.55); cursor:not-allowed; box-shadow:none;}
+  .big-btn.ready{animation:bounce 1s infinite;}
+  @keyframes bounce{0%,100%{transform:none;}50%{transform:translateY(-5px);}}
+
+  /* ---- 一周七天 ---- */
+  .weekrow{
+    display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:12px 0 4px;
+  }
+  .daychip{
+    border:none; cursor:pointer; font-weight:900; font-size:1.05rem;
+    padding:12px 6px; border-radius:16px; background:#fff; color:var(--ink);
+    box-shadow:0 4px 10px rgba(0,0,0,.08); border:3px solid #E5E7EB;
+    min-width:58px; transition:transform .1s;
+  }
+  .daychip:active{transform:scale(.93);}
+  .daychip.on{color:#fff; background:var(--purple); border-color:var(--purple); box-shadow:0 6px 14px rgba(124,58,237,.35);}
+  .daychip.weekend{color:var(--orange);}
+  .daychip.weekend.on{color:#fff; background:var(--orange); border-color:var(--orange);}
+  .loop-hint{
+    text-align:center; color:var(--purple); font-weight:800; font-size:1.05rem; margin:4px 0 2px;
+  }
+  .loop-arrow{font-size:1.3rem;}
+
+  /* ---- 日历 ---- */
+  .cal{
+    margin:10px auto 4px; max-width:380px; background:#F8FAFF;
+    border:2px solid #DBE3F4; border-radius:20px; padding:12px;
+  }
+  .cal-title{text-align:center; font-weight:900; color:var(--blue); font-size:1.1rem; margin-bottom:8px;}
+  .calgrid{display:grid; grid-template-columns:repeat(7,1fr); gap:5px;}
+  .calhead{
+    text-align:center; font-weight:900; font-size:.95rem; color:var(--soft);
+    padding:4px 0;
+  }
+  .calhead.we{color:var(--orange);}
+  .caldate{
+    border:none; cursor:pointer; aspect-ratio:1/1; border-radius:12px;
+    background:#fff; color:var(--ink); font-weight:800; font-size:1.05rem;
+    box-shadow:0 2px 5px rgba(0,0,0,.06); border:2px solid #EEF2FB;
+    display:flex; align-items:center; justify-content:center; transition:transform .1s;
+  }
+  .caldate.empty{background:transparent; box-shadow:none; border:none; cursor:default;}
+  .caldate.we{color:var(--orange);}
+  .caldate:active{transform:scale(.9);}
+  .caldate.on{color:#fff; background:var(--green); border-color:var(--green); box-shadow:0 5px 12px rgba(22,163,74,.35);}
+  .ask-btn{
+    display:block; margin:10px auto 0; border:none; cursor:pointer;
+    background:linear-gradient(135deg,#FDE68A,#F59E0B); color:#7c2d12; font-weight:800;
+    padding:11px 18px; border-radius:16px; font-size:1.02rem; box-shadow:0 5px 12px rgba(245,158,11,.3);
+  }
+  .ask-btn:active{transform:scale(.96);}
+
+  .note{
+    margin-top:12px; background:#FFFDF5; border-radius:14px; padding:12px 14px;
+    color:#92400E; font-weight:700; line-height:1.6; font-size:1.05rem; text-align:center; min-height:1.5em;
+  }
+  .muted{color:var(--soft);}
+  .bl{color:var(--blue);} .or{color:var(--orange);} .gr{color:var(--green);} .pu{color:var(--purple);}
+  .unlock{text-align:center; font-weight:800; color:var(--purple); margin:14px 0 4px; min-height:1.4em;}
+
+  .part-tag{text-align:center; font-weight:900; color:var(--purple); margin:14px 0 2px; font-size:1.05rem;}
+
+  /* ---- 闯关 ---- */
+  .level-tag{text-align:center; color:var(--soft); font-weight:800; margin-bottom:2px;}
+  .q-hint{text-align:center; color:var(--orange); font-weight:800; font-size:1.05rem; margin:6px 0; min-height:1.3em;}
+  .ask{text-align:center; font-size:1.5rem; font-weight:900; margin:10px 0 6px;}
+  .options{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+  .opt{
+    border:none; cursor:pointer; min-width:92px; font-size:1.7rem; font-weight:900;
+    padding:14px 8px; border-radius:18px; background:#fff; color:var(--ink);
+    box-shadow:0 5px 12px rgba(0,0,0,.1); transition:transform .1s;
+    border:3px solid #E5E7EB;
+  }
+  .opt:active{transform:scale(.95);}
+  .opt.correct{background:var(--green); color:#fff; border-color:var(--green);}
+  .opt.wrong{background:#FCA5A5; border-color:#EF4444; animation:shake .35s;}
+  @keyframes shake{0%,100%{transform:none;}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+  .feedback{text-align:center; font-weight:900; font-size:1.3rem; min-height:1.5em; margin-top:12px;}
+  .stars{font-size:1.6rem; letter-spacing:6px; text-align:center;}
+
+  /* ---- 完成 ---- */
+  .badge{font-size:4.5rem; text-align:center; animation:spin 3s linear infinite;}
+  @keyframes spin{from{transform:rotate(-8deg);}50%{transform:rotate(8deg);}to{transform:rotate(-8deg);}}
+  .trophy-name{text-align:center; font-size:1.5rem; font-weight:900; color:var(--purple); margin:6px 0;}
+
+  details{margin-top:8px; background:#F8FAFF; border-radius:16px; padding:4px 14px;}
+  summary{cursor:pointer; font-weight:800; color:var(--purple); padding:10px 0; list-style:none;}
+  summary::-webkit-details-marker{display:none;}
+  details p{color:#374151; line-height:1.75; font-size:.95rem;}
+  details b{color:var(--ink);}
+
+  #confetti{position:fixed; inset:0; pointer-events:none; display:none; z-index:99;}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="wrap">
+
+  <header>
+    <div class="brand"><span class="fox">🦊</span><div>数学王国<br><small>日历与星期</small></div></div>
+    <div class="tools">
+      <button class="icon-btn" id="homeBtn" title="重新开始">🏠</button>
+      <button class="icon-btn" id="muteBtn" title="声音开关">🔊</button>
+    </div>
+  </header>
+
+  <div class="steps">
+    <span class="pill" data-step="1">① 探索</span>
+    <span class="pill" data-step="2">② 闯关</span>
+    <span class="pill" data-step="3">③ 完成</span>
+  </div>
+
+  <!-- ============ 欢迎 ============ -->
+  <section class="screen on" id="welcome">
+    <div class="card">
+      <div style="font-size:3.6rem;text-align:center">📅</div>
+      <h1>日历与星期</h1>
+      <span class="pinyin">rì lì yǔ xīng qī · 一周七天</span>
+      <p class="lead">
+        一个<b class="pu">星期</b>有 <b class="gr">7 天</b>：<br>
+        周一、周二、周三、周四、周五、周六、周日，<br>
+        然后又回到<b class="pu">周一</b>，一圈一圈<b class="pu">循环</b> 🔁<br>
+        一个<b class="bl">月</b>有 <b>28~31 天</b>，看<b>日历</b>就知道今天是周几啦！
+      </p>
+      <button class="big-btn" id="startBtn">开始探索 →</button>
+
+      <details>
+        <summary>👨‍👩‍👧 给爸爸妈妈的话（点开）</summary>
+        <p>
+          <b>为什么学「日历与星期」？</b> 五岁的孩子对「今天、明天、昨天」已有感觉，
+          但「一个星期有几天、星期是循环的、怎么看日历找日期」是把时间<b>结构化</b>的第一步，
+          也用上了他熟悉的<b>数数</b>和<b>规律</b>。<br><br>
+          <b>怎么一起玩：</b> 探索屏分两部分。先点上面的<b>七个星期</b>小方块——
+          每点一个，会读出「这一天，后面一天是……」，并提示<b>周日之后又回到周一</b>（循环）。
+          再到下面的<b>日历表</b>，点任意一个日期格子，会说出「几号是周几」。
+          这是一张<b>固定的示例月历</b>（1 号是周一），方便反复练习，不会变。<br><br>
+          <b>可以在生活里这样做：</b> 拿出家里真的<b>日历或手机日历</b>，
+          和他一起找「<b>今天是周几</b>」，再一起<b>数到周末</b>（还有几天放假/出去玩）；
+          问问他「<b>明天是周几</b>」「<b>奶奶哪天来</b>」。<br><br>
+          <b>可以追问：</b>「一个星期有几天？」「周三的后面一天是？」「今天周六，明天是周几？」
+          让他自己说出答案，这就是日后看课程表、记日子的基础。
+        </p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ 探索 ============ -->
+  <section class="screen" id="explore">
+    <div class="card">
+      <h2>📅 认识一周和日历</h2>
+
+      <div class="part-tag">第一部分：一周有七天 🔁</div>
+      <div class="loop-hint">点一点每一天，听听它的下一天～</div>
+      <div class="weekrow" id="weekRow"></div>
+      <div class="loop-hint"><span class="loop-arrow">↪️</span> 周日的后面，又回到 <b>周一</b>！</div>
+
+      <div class="part-tag">第二部分：看日历找星期几 🔎</div>
+      <div class="cal">
+        <div class="cal-title">🗓️ 示例月历</div>
+        <div class="calgrid" id="calHead"></div>
+        <div class="calgrid" id="calBody" style="margin-top:5px"></div>
+      </div>
+      <button class="ask-btn" id="askBtn">考考我：15 号是星期几? 🤔</button>
+
+      <div class="note" id="note">先点点上面的星期，再点点下面的日历吧！</div>
+
+      <div class="unlock" id="unlock"></div>
+      <button class="big-btn purple" id="toPractice" disabled>去闯关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 闯关 ============ -->
+  <section class="screen" id="practice">
+    <div class="card">
+      <div class="level-tag" id="levelTag">第 1 / 3 关</div>
+      <div class="q-hint" id="qHint"></div>
+
+      <div class="ask" id="ask"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="big-btn" id="nextLevel" style="display:none">下一关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 完成 ============ -->
+  <section class="screen" id="done">
+    <div class="card">
+      <div class="badge">🎖️</div>
+      <h1>太厉害啦！</h1>
+      <div class="trophy-name">🎖️ 日历小达人</div>
+      <p class="lead">
+        你学会啦：<br>
+        一个星期有 <b class="gr">7 天</b> 🔁，<br>
+        还会<b class="bl">看日历</b>找出今天是<b class="pu">星期几</b>！
+      </p>
+      <p class="lead" style="font-size:1.05rem; color:var(--purple); font-weight:800">
+        🎉 你已经闯完了全部 <b>42 关</b>，太了不起啦！
+      </p>
+      <button class="big-btn" id="nextChapter" onclick="try{speechSynthesis.cancel()}catch(e){};location.href='index.html'">🎉 全部通关！回到地图</button>
+      <button class="big-btn orange" id="again">再玩一次 🔁</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+"use strict";
+const $=(s,el=document)=>el.querySelector(s);
+const $$=(s,el=document)=>[...el.querySelectorAll(s)];
+
+/* ---------- 声音 ---------- */
+let muted=false, audioCtx=null;
+function ac(){ if(!audioCtx){ try{audioCtx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return audioCtx; }
+function beep(freq,dur,type,vol,when){
+  if(muted) return; const c=ac(); if(!c) return;
+  const t=c.currentTime+(when||0), o=c.createOscillator(), g=c.createGain();
+  o.type=type||'sine'; o.frequency.value=freq;
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol||0.15,t+0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g).connect(c.destination); o.start(t); o.stop(t+dur+0.02);
+}
+const sClick=()=>beep(680,0.06,'triangle',0.12,0);
+const sCut  =()=>{beep(900,0.05,'square',0.08,0); beep(500,0.07,'triangle',0.1,0.05);};
+const sGood =()=>[523,659,784].forEach((f,i)=>beep(f,0.12,'sine',0.16,i*0.09));
+const sWin  =()=>[523,659,784,1047,1319].forEach((f,i)=>beep(f,0.16,'sine',0.18,i*0.12));
+const sBad  =()=>beep(190,0.2,'sawtooth',0.1,0);
+
+/* ---------- 语音（中文朗读） ---------- */
+let zhVoice=null;
+function pickVoice(){
+  if(!('speechSynthesis'in window)) return;
+  const vs=speechSynthesis.getVoices(); if(!vs||!vs.length) return;
+  const zh=vs.filter(v=>/zh|cmn|chinese|普通话|国语|中文/i.test((v.lang||'')+' '+(v.name||'')));
+  const female=/婷婷|美嘉|思琪|善怡|静|丽|语嫣|晓|Ting-?Ting|Mei-?Jia|Sin-?ji|Yu-?shu|Tian-?Tian|Li-?mu|Han|female|女/i;
+  const male=/男|male|Yu-?Long|Liang|国梁/i;
+  zhVoice = zh.find(v=>female.test(v.name))
+         || zh.find(v=>/zh[-_]?CN/i.test(v.lang)&&!male.test(v.name))
+         || zh.find(v=>!male.test(v.name))
+         || zh[0] || null;
+}
+if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; setTimeout(pickVoice,300); setTimeout(pickVoice,1200); }
+function say(text){
+  if(muted||!('speechSynthesis'in window)) return;
+  try{ if(!zhVoice) pickVoice(); speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang='zh-CN'; if(zhVoice)u.voice=zhVoice; u.rate=0.95; u.pitch=1.1;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ---------- 屏幕切换 ---------- */
+function show(id,step){
+  $$('.screen').forEach(s=>s.classList.remove('on'));
+  $('#'+id).classList.add('on');
+  $$('.pill').forEach(p=>p.classList.toggle('active', +p.dataset.step===step));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ============ 探索 ============ */
+/* 固定的星期数据（不使用真实 Date，保证每次都一样） */
+const WEEK=['周一','周二','周三','周四','周五','周六','周日'];  // 列 0..6
+const seen={week:false, cal:false};
+let unlocked=false;
+
+const note=$('#note'), unlock=$('#unlock'), toPractice=$('#toPractice');
+
+/* ---- 第一部分：一周七天 ---- */
+function buildWeek(){
+  const row=$('#weekRow'); row.innerHTML='';
+  WEEK.forEach((name,i)=>{
+    const b=document.createElement('button');
+    b.className='daychip'+((i>=5)?' weekend':'');
+    b.textContent=name;
+    b.addEventListener('click',()=>tapDay(i,b));
+    row.appendChild(b);
+  });
+}
+function tapDay(i,b){
+  $$('.daychip').forEach(c=>c.classList.remove('on'));
+  b.classList.add('on');
+  sClick();
+  const next=WEEK[(i+1)%7];
+  if(i===6){
+    note.innerHTML='<b class="pu">周日</b>是一周的最后一天，后面一天又回到 <b class="pu">周一</b>，重新开始！🔁';
+    say('周日，是一周的最后一天。后面一天，又回到周一，重新开始！');
+  }else{
+    note.innerHTML='<b class="pu">'+WEEK[i]+'</b>，后面一天是 <b class="pu">'+next+'</b>。';
+    say(WEEK[i]+'，后面一天是'+next+'。');
+  }
+  seen.week=true; checkUnlock();
+}
+
+/* ---- 第二部分：示例月历（确定性：1 号是周一）---- */
+const CAL_DAYS=30;     // 固定 30 天的月份
+const CAL_START=0;     // 1 号在第 0 列 = 周一
+function weekdayOf(d){ return WEEK[(d-1+CAL_START)%7]; }  // d 是 1..30
+
+function buildCal(){
+  const head=$('#calHead'); head.innerHTML='';
+  ['一','二','三','四','五','六','日'].forEach((t,i)=>{
+    const h=document.createElement('div');
+    h.className='calhead'+((i>=5)?' we':'');
+    h.textContent=t;
+    head.appendChild(h);
+  });
+  const body=$('#calBody'); body.innerHTML='';
+  // 前导空格
+  for(let i=0;i<CAL_START;i++){
+    const e=document.createElement('div'); e.className='caldate empty'; body.appendChild(e);
+  }
+  for(let d=1;d<=CAL_DAYS;d++){
+    const col=(d-1+CAL_START)%7;
+    const b=document.createElement('button');
+    b.className='caldate'+((col>=5)?' we':'');
+    b.textContent=d;
+    b.addEventListener('click',()=>tapDate(d,b));
+    body.appendChild(b);
+  }
+}
+function tapDate(d,b){
+  $$('.caldate').forEach(c=>c.classList.remove('on'));
+  b.classList.add('on');
+  sClick();
+  const wd=weekdayOf(d);
+  note.innerHTML='<b class="gr">'+d+' 号</b> 是 <b class="pu">'+wd+'</b>。';
+  say(d+'号，是'+wd+'。');
+  seen.cal=true; checkUnlock();
+}
+$('#askBtn').addEventListener('click',()=>{
+  sClick();
+  const d=15, wd=weekdayOf(d);
+  $$('.caldate').forEach(c=>{ c.classList.toggle('on', c.textContent===String(d)); });
+  note.innerHTML='数一数～ <b class="gr">15 号</b> 是 <b class="pu">'+wd+'</b>！你找对了吗？😊';
+  say('我们来数一数。15号，是'+wd+'。你找对了吗？');
+  seen.cal=true; checkUnlock();
+});
+
+function checkUnlock(){
+  if(unlocked) return;
+  if(seen.week && seen.cal){
+    unlocked=true; toPractice.disabled=false; toPractice.classList.add('ready');
+    unlock.textContent='🎉 一周七天和日历你都玩明白啦，去闯关试试！';
+    sWin(); say('太棒了！一周七天和看日历你都会啦，去闯关试试吧！');
+  }else if(seen.week){
+    unlock.textContent='👍 不错！再点点下面的「日历」就能去闯关！';
+  }else if(seen.cal){
+    unlock.textContent='👍 不错！再点点上面的「星期」就能去闯关！';
+  }
+}
+
+$('#toPractice').addEventListener('click',()=>{ sClick(); startPractice(); });
+
+/* ============ 闯关 ============ */
+const PROB=[
+  { q:'一个星期有几天?', opts:['7','5','10'], ans:'7',
+    hint:'周一到周日，数一数～',
+    voice:'一个星期有几天呢？从周一数到周日。' },
+  { q:'周三的后一天是?', opts:['周四','周二','周五'], ans:'周四',
+    hint:'一、二、三、四……三的后面是四。',
+    voice:'周三的后一天是星期几呢？一、二、三、四。' },
+  { q:'如果今天是周六，明天是?', opts:['周日','周五','周一'], ans:'周日',
+    hint:'六的后面是日，周六的后面是周日。',
+    voice:'如果今天是周六，那明天是星期几呢？六的后面是日。' }
+];
+let pi=0;
+function startPractice(){ pi=0; show('practice',2); renderLevel(); }
+
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+function renderLevel(){
+  const P=PROB[pi];
+  $('#levelTag').textContent=`第 ${pi+1} / ${PROB.length} 关`;
+  $('#qHint').textContent=P.hint;
+  $('#ask').textContent=P.q;
+  $('#feedback').textContent='';
+  $('#nextLevel').style.display='none';
+
+  const opts=shuffle(P.opts.slice());
+  const box=$('#options'); box.innerHTML='';
+  opts.forEach(v=>{
+    const btn=document.createElement('button');
+    btn.className='opt'; btn.textContent=v;
+    btn.addEventListener('click',()=>choose(btn,v,P.ans));
+    box.appendChild(btn);
+  });
+  say(P.voice);
+}
+
+let answered=false;
+function choose(btn,v,ans){
+  if(answered) return;
+  if(v===ans){
+    answered=true;
+    btn.classList.add('correct'); sGood();
+    $('#feedback').innerHTML='<span class="gr">答对啦！🎉</span><div class="stars">⭐⭐⭐</div>';
+    say('答对啦！你真厉害！');
+    $$('.opt').forEach(o=>o.disabled=true);
+    const last=(pi===PROB.length-1);
+    const nb=$('#nextLevel');
+    nb.textContent = last ? '完成啦 🎉' : '下一关 →';
+    nb.style.display='block';
+  }else{
+    btn.classList.add('wrong'); sBad();
+    $('#feedback').innerHTML='<span class="or">'+PROB[pi].hint+' 再试试！</span>';
+    say('再想一想，'+PROB[pi].hint);
+    setTimeout(()=>btn.classList.remove('wrong'),400);
+  }
+}
+
+$('#nextLevel').addEventListener('click',()=>{
+  sClick(); answered=false;
+  if(pi===PROB.length-1){ finish(); }
+  else{ pi++; renderLevel(); }
+});
+
+/* ============ 完成 ============ */
+function finish(){
+  show('done',3); sWin();
+  say('太厉害啦！你已经是日历小达人啦！而且你闯完了全部四十二关，太了不起啦！');
+  confetti();
+}
+$('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('explore',1); say('我们再玩一次！点点星期，再点点日历吧！'); });
+
+/* ---------- 顶部按钮 ---------- */
+$('#startBtn').addEventListener('click',()=>{
+  ac(); sClick(); show('explore',1);
+  say('一个星期有七天，周一到周日，然后又回到周一。点点上面的星期，再看看下面的日历吧！');
+});
+$('#muteBtn').addEventListener('click',()=>{
+  muted=!muted; $('#muteBtn').textContent=muted?'🔇':'🔊';
+  if(muted&&'speechSynthesis'in window) speechSynthesis.cancel(); else sClick();
+});
+$('#homeBtn').addEventListener('click',()=>{ sClick(); if('speechSynthesis'in window)speechSynthesis.cancel(); location.href='index.html'; });
+
+function resetAll(){
+  unlocked=false; answered=false; pi=0;
+  seen.week=false; seen.cal=false;
+  toPractice.disabled=true; toPractice.classList.remove('ready'); unlock.textContent='';
+  note.innerHTML='先点点上面的星期，再点点下面的日历吧！';
+  $$('.daychip').forEach(c=>c.classList.remove('on'));
+  $$('.caldate').forEach(c=>c.classList.remove('on'));
+}
+
+/* ---------- 彩带 ---------- */
+function confetti(){
+  const cv=$('#confetti'), ctx=cv.getContext('2d');
+  cv.width=innerWidth; cv.height=innerHeight; cv.style.display='block';
+  const colors=['#2563EB','#F97316','#16A34A','#EAB308','#EC4899','#7C3AED'];
+  const P=[];
+  for(let i=0;i<150;i++) P.push({
+    x:innerWidth/2+(Math.random()-0.5)*120, y:innerHeight*0.28,
+    vx:(Math.random()-0.5)*13, vy:Math.random()*-13-3, g:0.32,
+    s:7+Math.random()*9, c:colors[i%colors.length], rot:Math.random()*6, vr:(Math.random()-0.5)*0.4
+  });
+  let t=0;
+  (function anim(){
+    t++; ctx.clearRect(0,0,cv.width,cv.height);
+    P.forEach(p=>{ p.vy+=p.g; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c;
+      ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6); ctx.restore();
+    });
+    if(t<150) requestAnimationFrame(anim); else cv.style.display='none';
+  })();
+}
+
+/* 初始 */
+buildWeek();
+buildCal();
+/* —— 通关记录（本地 localStorage）—— */
+(function(){var ID='rili';try{var d=document.getElementById('done');if(d){var mark=function(){if(d.classList.contains('on')){try{localStorage.setItem('yswg:done:'+ID,'1');}catch(e){}}};new MutationObserver(mark).observe(d,{attributes:true,attributeFilter:['class']});mark();}}catch(e){}})();
+</script>
+</body>
+</html>

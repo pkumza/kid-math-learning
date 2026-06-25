@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>公因数与公倍数 · 数学小课堂</title>
+<style>
+  :root{
+    --dot: clamp(15px, 4.2vw, 30px);
+    --blue:#2563EB; --blue2:#60A5FA;
+    --orange:#EA580C; --orange2:#FB923C;
+    --green:#16A34A; --green2:#4ADE80;
+    --purple:#7C3AED;
+    --ink:#1F2937; --soft:#6B7280;
+    --card:#ffffff;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",
+      "Hiragino Sans GB","Helvetica Neue",sans-serif;
+    color:var(--ink);
+    background:linear-gradient(160deg,#EAF4FF 0%,#FFF6EC 60%,#FDEFF6 100%);
+    min-height:100vh;
+    overflow-x:hidden;
+    user-select:none;
+  }
+  .wrap{max-width:760px; margin:0 auto; padding:10px 14px 40px;}
+
+  /* ---- 顶部 ---- */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 4px 6px;
+  }
+  .brand{display:flex; align-items:center; gap:8px; font-weight:800; font-size:1.15rem;}
+  .brand .fox{font-size:1.6rem;}
+  .brand small{color:var(--soft); font-weight:600; font-size:.78rem;}
+  .tools{display:flex; gap:8px;}
+  .icon-btn{
+    border:none; background:#fff; border-radius:14px; width:44px; height:44px;
+    font-size:1.25rem; cursor:pointer; box-shadow:0 3px 8px rgba(0,0,0,.08);
+    transition:transform .1s;
+  }
+  .icon-btn:active{transform:scale(.92);}
+
+  .steps{display:flex; gap:6px; justify-content:center; margin:4px 0 12px;}
+  .pill{
+    font-size:.82rem; font-weight:700; color:var(--soft);
+    background:#fff; padding:5px 12px; border-radius:999px;
+    box-shadow:0 2px 5px rgba(0,0,0,.05);
+  }
+  .pill.active{color:#fff; background:var(--purple); box-shadow:0 4px 10px rgba(124,58,237,.35);}
+
+  /* ---- 卡片 / 屏幕 ---- */
+  .screen{display:none; animation:pop .35s ease both;}
+  .screen.on{display:block;}
+  @keyframes pop{from{opacity:0; transform:translateY(12px) scale(.98);} to{opacity:1; transform:none;}}
+  .card{
+    background:var(--card); border-radius:26px; padding:22px 18px;
+    box-shadow:0 12px 30px rgba(80,90,130,.12); margin-bottom:16px;
+  }
+  h1{font-size:1.7rem; margin:.1em 0 .2em; text-align:center;}
+  h2{font-size:1.25rem; margin:.1em 0 .5em; text-align:center; color:var(--purple);}
+  .lead{text-align:center; color:var(--soft); font-size:1rem; line-height:1.7; margin:.3em 0 .2em;}
+  .pinyin{display:block; color:var(--soft); font-size:.95rem; letter-spacing:.06em; font-weight:600; text-align:center;}
+
+  /* ---- 按钮 ---- */
+  .big-btn{
+    display:block; width:100%; border:none; cursor:pointer;
+    font-size:1.3rem; font-weight:800; color:#fff;
+    padding:16px; border-radius:20px; margin-top:8px;
+    background:linear-gradient(135deg,#34D399,#10B981);
+    box-shadow:0 8px 18px rgba(16,185,129,.35);
+    transition:transform .12s, box-shadow .12s, filter .2s;
+  }
+  .big-btn.purple{background:linear-gradient(135deg,#A78BFA,#7C3AED); box-shadow:0 8px 18px rgba(124,58,237,.35);}
+  .big-btn.orange{background:linear-gradient(135deg,#FDBA74,#F97316); box-shadow:0 8px 18px rgba(249,115,22,.35);}
+  .big-btn:active{transform:translateY(2px) scale(.99);}
+  .big-btn:disabled{filter:grayscale(.7) opacity(.55); cursor:not-allowed; box-shadow:none;}
+  .big-btn.ready{animation:bounce 1s infinite;}
+  @keyframes bounce{0%,100%{transform:none;}50%{transform:translateY(-5px);}}
+
+  /* ---- 探索：标签切换（沿用 vtab 外观） ---- */
+  .vtoggle{display:flex; gap:10px; justify-content:center; margin:6px 0 12px;}
+  .vtab{
+    border:none; cursor:pointer; font-weight:800; font-size:1rem;
+    padding:9px 16px; border-radius:14px; background:#fff; color:var(--soft);
+    box-shadow:0 3px 8px rgba(0,0,0,.08); border:3px solid #E5E7EB;
+  }
+  .vtab.on{color:#fff; background:var(--blue); border-color:var(--blue);}
+  .vtab.on.sub{background:var(--orange); border-color:var(--orange);}
+  .vtab:active{transform:scale(.96);}
+
+  /* ---- 探索：数字小方块 ---- */
+  .part{display:none;}
+  .part.on{display:block; animation:pop .3s ease both;}
+  .numline{margin:12px 0 6px;}
+  .numline-title{font-weight:800; color:var(--ink); margin-bottom:6px; font-size:1.05rem; text-align:center;}
+  .numline-title .nbig{color:var(--purple); font-size:1.2rem;}
+  .chips{display:flex; flex-wrap:wrap; gap:8px; justify-content:center;}
+  .chip{
+    min-width:2.2em; padding:10px 12px; border-radius:14px;
+    font-size:1.3rem; font-weight:900; text-align:center;
+    background:#F3F4F6; color:var(--ink); border:3px solid #E5E7EB;
+    transition:transform .15s, background .25s, color .25s, border-color .25s;
+  }
+  .chip.hit{
+    background:var(--green); color:#fff; border-color:var(--green);
+    animation:dotin .35s ease both;
+  }
+  @keyframes dotin{from{transform:scale(0);}to{transform:scale(1);}}
+
+  .find-btn{
+    display:block; margin:14px auto 0; border:none; cursor:pointer;
+    background:linear-gradient(135deg,#FDE68A,#F59E0B); color:#7c2d12; font-weight:800;
+    padding:12px 20px; border-radius:16px; font-size:1.05rem; box-shadow:0 5px 12px rgba(245,158,11,.3);
+  }
+  .find-btn:active{transform:scale(.96);}
+  .find-btn:disabled{filter:grayscale(.6) opacity(.6); cursor:not-allowed; box-shadow:none;}
+
+  .note{
+    margin-top:12px; background:#FFFDF5; border-radius:14px; padding:12px 14px;
+    color:#92400E; font-weight:700; line-height:1.6; font-size:1.05rem; text-align:center; min-height:1.5em;
+  }
+  .muted{color:var(--soft);}
+  .bl{color:var(--blue);} .or{color:var(--orange);} .gr{color:var(--green);} .pu{color:var(--purple);}
+  .unlock{text-align:center; font-weight:800; color:var(--purple); margin:14px 0 4px; min-height:1.4em;}
+
+  /* ---- 闯关 ---- */
+  .level-tag{text-align:center; color:var(--soft); font-weight:800; margin-bottom:2px;}
+  .q-hint{text-align:center; color:var(--orange); font-weight:800; font-size:1.05rem; margin:6px 0; min-height:1.3em;}
+  .ask{text-align:center; font-size:1.5rem; font-weight:900; margin:10px 0 6px;}
+  .options{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+  .opt{
+    border:none; cursor:pointer; min-width:92px; font-size:1.7rem; font-weight:900;
+    padding:14px 8px; border-radius:18px; background:#fff; color:var(--ink);
+    box-shadow:0 5px 12px rgba(0,0,0,.1); transition:transform .1s;
+    border:3px solid #E5E7EB;
+  }
+  .opt:active{transform:scale(.95);}
+  .opt.correct{background:var(--green); color:#fff; border-color:var(--green);}
+  .opt.wrong{background:#FCA5A5; border-color:#EF4444; animation:shake .35s;}
+  @keyframes shake{0%,100%{transform:none;}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+  .feedback{text-align:center; font-weight:900; font-size:1.3rem; min-height:1.5em; margin-top:12px;}
+  .stars{font-size:1.6rem; letter-spacing:6px; text-align:center;}
+
+  /* ---- 完成 ---- */
+  .badge{font-size:4.5rem; text-align:center; animation:spin 3s linear infinite;}
+  @keyframes spin{from{transform:rotate(-8deg);}50%{transform:rotate(8deg);}to{transform:rotate(-8deg);}}
+  .trophy-name{text-align:center; font-size:1.5rem; font-weight:900; color:var(--purple); margin:6px 0;}
+
+  details{margin-top:8px; background:#F8FAFF; border-radius:16px; padding:4px 14px;}
+  summary{cursor:pointer; font-weight:800; color:var(--purple); padding:10px 0; list-style:none;}
+  summary::-webkit-details-marker{display:none;}
+  details p{color:#374151; line-height:1.75; font-size:.95rem;}
+  details b{color:var(--ink);}
+
+  #confetti{position:fixed; inset:0; pointer-events:none; display:none; z-index:99;}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="wrap">
+
+  <header>
+    <div class="brand"><span class="fox">🦊</span><div>数学王国<br><small>公因数与公倍数</small></div></div>
+    <div class="tools">
+      <button class="icon-btn" id="homeBtn" title="重新开始">🏠</button>
+      <button class="icon-btn" id="muteBtn" title="声音开关">🔊</button>
+    </div>
+  </header>
+
+  <div class="steps">
+    <span class="pill" data-step="1">① 探索</span>
+    <span class="pill" data-step="2">② 闯关</span>
+    <span class="pill" data-step="3">③ 完成</span>
+  </div>
+
+  <!-- ============ 欢迎 ============ -->
+  <section class="screen on" id="welcome">
+    <div class="card">
+      <div style="font-size:3.4rem;text-align:center">🔗</div>
+      <h1>公因数与公倍数</h1>
+      <span class="pinyin">gōng yīn shù yǔ gōng bèi shù</span>
+      <p class="lead">
+        你已经会找<b class="bl">因数</b>和<b class="or">倍数</b>啦！🎉<br>
+        现在我们让<b>两个数</b>交朋友——<br>
+        两个数都有的因数，叫它们的<b class="gr">公因数</b>（共同的“约数好朋友”）🤝<br>
+        两个数都有的倍数，叫它们的<b class="pu">公倍数</b> 🔗
+      </p>
+      <button class="big-btn" id="startBtn">开始探索 →</button>
+
+      <details>
+        <summary>👨‍👩‍👧 给爸爸妈妈的话（点开）</summary>
+        <p>
+          <b>这一课接着两个旧朋友：</b> 第 25 课的<b>因数</b>（哪些数能整除它）和第 9 课的<b>倍数</b>
+          （它的几倍）。今天只多了一个字——「<b>公</b>」，意思是「<b>共同</b>」。<br><br>
+          <b>公因数：</b> 把两个数各自的因数写出来，<b>两边都出现</b>的那些，就是它们的公因数。
+          例如 12 的因数 1、2、3、4、6、12，8 的因数 1、2、4、8，两边都有的是 <b>1、2、4</b>。<br><br>
+          <b>公倍数：</b> 把两个数各自的倍数写出来，<b>两边都出现</b>的那些就是公倍数；
+          其中<b>最小</b>的那个叫「<b>最小公倍数</b>」。例如 2 和 3，第一个共同的倍数是 <b>6</b>。<br><br>
+          <b>怎么一起玩：</b> 探索屏有两个小游戏——「公因数」和「公倍数」。
+          点「找一找共同的」，屏幕会把<b>两边都有</b>的数字一起变成绿色，让孩子用眼睛看见「共同」。
+          两个小游戏都玩过，就能去闯关。<br><br>
+          <b>可以追问：</b>「这个数字，左边有吗？右边也有吗？两边都有，它就是公的！」
+          帮他把「公」＝「两边都有」牢牢记住。
+        </p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ 探索 ============ -->
+  <section class="screen" id="explore">
+    <div class="card">
+      <h2>🔍 找一找“两边都有的”</h2>
+      <p class="lead" style="margin-top:0">
+        点「<b>找一找共同的</b>」，<b class="gr">两边都有</b>的数字会一起变绿！
+      </p>
+
+      <div class="vtoggle">
+        <button class="vtab on" id="tabFac" data-part="A">🤝 公因数</button>
+        <button class="vtab sub" id="tabMul" data-part="B">🔗 公倍数</button>
+      </div>
+
+      <!-- PART A 公因数：12 和 8 -->
+      <div class="part on" id="partA">
+        <div class="numline">
+          <div class="numline-title"><span class="nbig">12</span> 的因数</div>
+          <div class="chips" id="facA1"></div>
+        </div>
+        <div class="numline">
+          <div class="numline-title"><span class="nbig">8</span> 的因数</div>
+          <div class="chips" id="facA2"></div>
+        </div>
+        <button class="find-btn" id="findA">找一找共同的 🔍</button>
+        <div class="note" id="noteA">看看 12 和 8 的因数，哪些<b class="gr">两边都有</b>呢？点上面的按钮试试！</div>
+      </div>
+
+      <!-- PART B 公倍数：2 和 3 -->
+      <div class="part" id="partB">
+        <div class="numline">
+          <div class="numline-title"><span class="nbig">2</span> 的倍数</div>
+          <div class="chips" id="mulB1"></div>
+        </div>
+        <div class="numline">
+          <div class="numline-title"><span class="nbig">3</span> 的倍数</div>
+          <div class="chips" id="mulB2"></div>
+        </div>
+        <button class="find-btn" id="findB">找一找共同的 🔍</button>
+        <div class="note" id="noteB">看看 2 和 3 的倍数，哪些<b class="gr">两边都有</b>呢？点上面的按钮试试！</div>
+      </div>
+
+      <div class="unlock" id="unlock"></div>
+      <button class="big-btn purple" id="toPractice" disabled>去闯关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 闯关 ============ -->
+  <section class="screen" id="practice">
+    <div class="card">
+      <div class="level-tag" id="levelTag">第 1 / 3 关</div>
+      <div class="q-hint" id="qHint"></div>
+
+      <div class="ask" id="ask"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="big-btn" id="nextLevel" style="display:none">下一关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 完成 ============ -->
+  <section class="screen" id="done">
+    <div class="card">
+      <div class="badge">🎖️</div>
+      <h1>太厉害啦！</h1>
+      <div class="trophy-name">🎖️ 公倍数小达人</div>
+      <p class="lead">
+        现在你会让<b>两个数交朋友</b>啦！🤝<br>
+        🟢 <b class="gr">公因数</b> ＝ 两个数都有的<b>因数</b><br>
+        🔗 <b class="pu">公倍数</b> ＝ 两个数都有的<b>倍数</b><br>
+        最小的那个公倍数，叫<b class="pu">最小公倍数</b>！💪
+      </p>
+      <button class="big-btn" id="nextChapter" onclick="try{speechSynthesis.cancel()}catch(e){};location.href='三位数乘一位数.html'">进入下一关 →</button>
+      <button class="big-btn orange" id="again">再玩一次 🔁</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+"use strict";
+const $=(s,el=document)=>el.querySelector(s);
+const $$=(s,el=document)=>[...el.querySelectorAll(s)];
+
+/* ---------- 声音 ---------- */
+let muted=false, audioCtx=null;
+function ac(){ if(!audioCtx){ try{audioCtx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return audioCtx; }
+function beep(freq,dur,type,vol,when){
+  if(muted) return; const c=ac(); if(!c) return;
+  const t=c.currentTime+(when||0), o=c.createOscillator(), g=c.createGain();
+  o.type=type||'sine'; o.frequency.value=freq;
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol||0.15,t+0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g).connect(c.destination); o.start(t); o.stop(t+dur+0.02);
+}
+const sClick=()=>beep(680,0.06,'triangle',0.12,0);
+const sCut  =()=>{beep(900,0.05,'square',0.08,0); beep(500,0.07,'triangle',0.1,0.05);};
+const sGood =()=>[523,659,784].forEach((f,i)=>beep(f,0.12,'sine',0.16,i*0.09));
+const sWin  =()=>[523,659,784,1047,1319].forEach((f,i)=>beep(f,0.16,'sine',0.18,i*0.12));
+const sBad  =()=>beep(190,0.2,'sawtooth',0.1,0);
+
+/* ---------- 语音（中文朗读） ---------- */
+let zhVoice=null;
+function pickVoice(){
+  if(!('speechSynthesis'in window)) return;
+  const vs=speechSynthesis.getVoices(); if(!vs||!vs.length) return;
+  const zh=vs.filter(v=>/zh|cmn|chinese|普通话|国语|中文/i.test((v.lang||'')+' '+(v.name||'')));
+  const female=/婷婷|美嘉|思琪|善怡|静|丽|语嫣|晓|Ting-?Ting|Mei-?Jia|Sin-?ji|Yu-?shu|Tian-?Tian|Li-?mu|Han|female|女/i;
+  const male=/男|male|Yu-?Long|Liang|国梁/i;
+  zhVoice = zh.find(v=>female.test(v.name))
+         || zh.find(v=>/zh[-_]?CN/i.test(v.lang)&&!male.test(v.name))
+         || zh.find(v=>!male.test(v.name))
+         || zh[0] || null;
+}
+if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; setTimeout(pickVoice,300); setTimeout(pickVoice,1200); }
+function say(text){
+  if(muted||!('speechSynthesis'in window)) return;
+  try{ if(!zhVoice) pickVoice(); speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang='zh-CN'; if(zhVoice)u.voice=zhVoice; u.rate=0.95; u.pitch=1.1;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ---------- 屏幕切换 ---------- */
+function show(id,step){
+  $$('.screen').forEach(s=>s.classList.remove('on'));
+  $('#'+id).classList.add('on');
+  $$('.pill').forEach(p=>p.classList.toggle('active', +p.dataset.step===step));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ============ 探索 ============ */
+/* PART A 公因数：12(1,2,3,4,6,12) 和 8(1,2,4,8)，共同的 1,2,4 */
+/* PART B 公倍数：2(2,4,6,8,10,12) 和 3(3,6,9,12)，共同的 6,12 */
+const seen={A:false, B:false};
+let unlocked=false;
+
+const facA1=[1,2,3,4,6,12], facA2=[1,2,4,8], commonA=[1,2,4];
+const mulB1=[2,4,6,8,10,12], mulB2=[3,6,9,12], commonB=[6,12];
+
+function buildChips(el, nums){
+  el.innerHTML='';
+  nums.forEach(n=>{
+    const c=document.createElement('div');
+    c.className='chip'; c.textContent=n; c.dataset.n=n;
+    el.appendChild(c);
+  });
+}
+function clearHits(el){ $$('.chip',el).forEach(c=>c.classList.remove('hit')); }
+function lightCommon(el, common){
+  $$('.chip',el).forEach(c=>{ if(common.indexOf(+c.dataset.n)>=0) c.classList.add('hit'); });
+}
+
+function resetExplore(){
+  buildChips($('#facA1'), facA1); buildChips($('#facA2'), facA2);
+  buildChips($('#mulB1'), mulB1); buildChips($('#mulB2'), mulB2);
+  $('#findA').disabled=false; $('#findB').disabled=false;
+  $('#noteA').innerHTML='看看 12 和 8 的因数，哪些<b class="gr">两边都有</b>呢？点上面的按钮试试！';
+  $('#noteB').innerHTML='看看 2 和 3 的倍数，哪些<b class="gr">两边都有</b>呢？点上面的按钮试试！';
+}
+
+function setPart(p,quiet){
+  $('#tabFac').classList.toggle('on', p==='A');
+  $('#tabMul').classList.toggle('on', p==='B');
+  $('#partA').classList.toggle('on', p==='A');
+  $('#partB').classList.toggle('on', p==='B');
+  if(!quiet){ sClick(); say(p==='A'?'公因数。看看 12 和 8 的因数，找一找两边都有的。':'公倍数。看看 2 和 3 的倍数，找一找两边都有的。'); }
+}
+
+$('#tabFac').addEventListener('click',()=>setPart('A'));
+$('#tabMul').addEventListener('click',()=>setPart('B'));
+
+$('#findA').addEventListener('click',()=>{
+  if($('#findA').disabled) return;
+  sCut();
+  lightCommon($('#facA1'), commonA); lightCommon($('#facA2'), commonA);
+  $('#findA').disabled=true;
+  $('#noteA').innerHTML='🟢 <b class="gr">1、2、4</b> 在两边都有，它们就是 12 和 8 的<b class="gr">公因数</b>！';
+  say('1、2、4 在两边都有，它们就是 12 和 8 的公因数！');
+  seen.A=true; checkUnlock();
+});
+$('#findB').addEventListener('click',()=>{
+  if($('#findB').disabled) return;
+  sCut();
+  lightCommon($('#mulB1'), commonB); lightCommon($('#mulB2'), commonB);
+  $('#findB').disabled=true;
+  $('#noteB').innerHTML='🟢 <b class="gr">6 和 12</b> 两边都出现，它们是 2 和 3 的<b class="pu">公倍数</b>！<b>6</b> 是最小的，叫<b class="pu">最小公倍数</b>。';
+  say('6 和 12 两边都出现，它们是 2 和 3 的公倍数！6 是最小的，叫最小公倍数。');
+  seen.B=true; checkUnlock();
+});
+
+function checkUnlock(){
+  if(unlocked) return;
+  const toPractice=$('#toPractice'), unlock=$('#unlock');
+  if(seen.A && seen.B){
+    unlocked=true; toPractice.disabled=false; toPractice.classList.add('ready');
+    unlock.textContent='🎉 公因数、公倍数你都找到啦，去闯关试试！';
+    sWin(); say('太棒了！公因数和公倍数你都找到啦，去闯关试试吧！');
+  }else{
+    const other = seen.A ? '公倍数' : '公因数';
+    unlock.textContent='👍 不错！再玩玩「'+other+'」就能去闯关！';
+  }
+}
+
+$('#toPractice').addEventListener('click',()=>{ sClick(); startPractice(); });
+
+/* ============ 闯关 ============ */
+const PROB=[
+  { q:'6 和 9 的公因数，除了 1，还有几？', ans:3, opts:[3,2,4],
+    hint:'6 的因数 1,2,3,6；9 的因数 1,3,9；共同的是 1 和 3。',
+    voice:'6 和 9 的公因数，除了 1，还有几？' },
+  { q:'2 和 3 的最小公倍数是？', ans:6, opts:[6,5,1],
+    hint:'2,4,6… 和 3,6… 第一个共同的是 6。',
+    voice:'2 和 3 的最小公倍数是几？' },
+  { q:'下面哪个是 4 和 6 的公倍数？', ans:12, opts:[12,10,9],
+    hint:'4 的倍数有 12，6 的倍数也有 12。',
+    voice:'下面哪个是 4 和 6 的公倍数？' }
+];
+let pi=0, answered=false;
+function startPractice(){ pi=0; answered=false; show('practice',2); renderLevel(); }
+
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+function renderLevel(){
+  const P=PROB[pi];
+  $('#levelTag').textContent=`第 ${pi+1} / ${PROB.length} 关`;
+  $('#qHint').textContent=P.hint;
+  $('#ask').textContent=P.q;
+  $('#feedback').textContent='';
+  $('#nextLevel').style.display='none';
+
+  const opts=shuffle(P.opts.slice());
+  const box=$('#options'); box.innerHTML='';
+  opts.forEach(v=>{
+    const btn=document.createElement('button');
+    btn.className='opt'; btn.textContent=v;
+    btn.addEventListener('click',()=>choose(btn,v,P.ans));
+    box.appendChild(btn);
+  });
+  say(P.voice);
+}
+
+function choose(btn,v,ans){
+  if(answered) return;
+  if(v===ans){
+    answered=true;
+    btn.classList.add('correct'); sGood();
+    $('#feedback').innerHTML='<span class="gr">答对啦！🎉</span><div class="stars">⭐⭐⭐</div>';
+    say('答对啦！你真厉害！');
+    $$('.opt').forEach(o=>o.disabled=true);
+    const last=(pi===PROB.length-1);
+    const nb=$('#nextLevel');
+    nb.textContent = last ? '完成啦 🎉' : '下一关 →';
+    nb.style.display='block';
+  }else{
+    btn.classList.add('wrong'); sBad();
+    $('#feedback').innerHTML='<span class="or">再想一想～ 看看下面的小提示！</span>';
+    say('再想一想，看看小提示，你可以的！');
+    setTimeout(()=>btn.classList.remove('wrong'),400);
+  }
+}
+
+$('#nextLevel').addEventListener('click',()=>{
+  sClick(); answered=false;
+  if(pi===PROB.length-1){ finish(); }
+  else{ pi++; renderLevel(); }
+});
+
+/* ============ 完成 ============ */
+function finish(){
+  show('done',3); sWin(); say('太厉害啦！你已经是公倍数小达人啦！');
+  confetti();
+}
+$('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('explore',1); setPart('A',true); say('我们再玩一次！'); });
+
+/* ---------- 顶部按钮 ---------- */
+$('#startBtn').addEventListener('click',()=>{
+  ac(); sClick(); show('explore',1);
+  setPart('A',true);
+  say('我们让两个数交朋友！两边都有的因数，叫公因数；两边都有的倍数，叫公倍数。点找一找共同的试试看！');
+});
+$('#muteBtn').addEventListener('click',()=>{
+  muted=!muted; $('#muteBtn').textContent=muted?'🔇':'🔊';
+  if(muted&&'speechSynthesis'in window) speechSynthesis.cancel(); else sClick();
+});
+$('#homeBtn').addEventListener('click',()=>{ sClick(); if('speechSynthesis'in window)speechSynthesis.cancel(); location.href='index.html'; });
+
+function resetAll(){
+  unlocked=false; answered=false; pi=0;
+  seen.A=false; seen.B=false;
+  $('#toPractice').disabled=true; $('#toPractice').classList.remove('ready'); $('#unlock').textContent='';
+  resetExplore();
+}
+
+/* ---------- 彩带 ---------- */
+function confetti(){
+  const cv=$('#confetti'), ctx=cv.getContext('2d');
+  cv.width=innerWidth; cv.height=innerHeight; cv.style.display='block';
+  const colors=['#2563EB','#F97316','#16A34A','#EAB308','#EC4899','#7C3AED'];
+  const P=[];
+  for(let i=0;i<150;i++) P.push({
+    x:innerWidth/2+(Math.random()-0.5)*120, y:innerHeight*0.28,
+    vx:(Math.random()-0.5)*13, vy:Math.random()*-13-3, g:0.32,
+    s:7+Math.random()*9, c:colors[i%colors.length], rot:Math.random()*6, vr:(Math.random()-0.5)*0.4
+  });
+  let t=0;
+  (function anim(){
+    t++; ctx.clearRect(0,0,cv.width,cv.height);
+    P.forEach(p=>{ p.vy+=p.g; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c;
+      ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6); ctx.restore();
+    });
+    if(t<150) requestAnimationFrame(anim); else cv.style.display='none';
+  })();
+}
+
+/* 初始 */
+resetExplore();
+setPart('A',true);
+/* —— 通关记录（本地 localStorage）—— */
+(function(){var ID='gongbei';try{var d=document.getElementById('done');if(d){var mark=function(){if(d.classList.contains('on')){try{localStorage.setItem('yswg:done:'+ID,'1');}catch(e){}}};new MutationObserver(mark).observe(d,{attributes:true,attributeFilter:['class']});mark();}}catch(e){}})();
+</script>
+</body>
+</html>

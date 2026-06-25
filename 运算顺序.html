@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>加减竖式 · 竖式小课堂</title>
+<title>运算顺序 · 运算小课堂</title>
 <style>
   :root{
     --dot: clamp(15px, 4.2vw, 30px);
@@ -80,67 +80,37 @@
   .big-btn.ready{animation:bounce 1s infinite;}
   @keyframes bounce{0%,100%{transform:none;}50%{transform:translateY(-5px);}}
 
-  /* ---- 竖式 ---- */
+  /* ---- 运算顺序：算式展示 ---- */
+  .exprbox{display:flex; justify-content:center; margin:14px 0 6px;}
+  .expr{
+    display:inline-flex; align-items:center; gap:6px; flex-wrap:wrap; justify-content:center;
+    background:#F8FAFF; border-radius:20px;
+    padding:18px 22px; border:2px dashed #DBE3F4;
+  }
+  .tok{
+    font-size:2.4rem; font-weight:900; line-height:1.1; color:var(--ink);
+    padding:2px 4px; border-radius:12px; transition:transform .2s, color .2s, background .2s;
+  }
+  .tok.op{color:var(--purple);}
+  .tok.lift{
+    color:#fff; background:var(--orange);
+    transform:translateY(-10px) scale(1.15);
+    box-shadow:0 8px 16px rgba(234,88,12,.35);
+  }
+  .tok.brk{color:var(--blue);}
+  .tok.brk.lift{background:var(--blue);}
+  .tok.dim{color:var(--soft); opacity:.55;}
+  .tok.done{color:var(--green);}
+
   .vtoggle{display:flex; gap:10px; justify-content:center; margin:6px 0 12px;}
   .vtab{
     border:none; cursor:pointer; font-weight:800; font-size:1rem;
     padding:9px 16px; border-radius:14px; background:#fff; color:var(--soft);
     box-shadow:0 3px 8px rgba(0,0,0,.08); border:3px solid #E5E7EB;
   }
-  .vtab.on{color:#fff; background:var(--blue); border-color:var(--blue);}
-  .vtab.on.sub{background:var(--orange); border-color:var(--orange);}
+  .vtab.on{color:#fff; background:var(--green); border-color:var(--green);}
+  .vtab.on.brk{background:var(--blue); border-color:var(--blue);}
   .vtab:active{transform:scale(.96);}
-
-  .vstage{display:flex; justify-content:center; margin:14px 0 6px;}
-  .vsum{
-    display:inline-block; background:#F8FAFF; border-radius:20px;
-    padding:16px 22px 14px; border:2px dashed #DBE3F4; position:relative;
-  }
-  .vgrid{display:grid; grid-template-columns:auto repeat(2,1.5em); justify-items:center;}
-  .vcell{
-    font-size:2.6rem; font-weight:900; line-height:1.15; text-align:center;
-    min-width:1.5em; position:relative;
-  }
-  .vop{font-size:2.2rem; font-weight:900; color:var(--purple); align-self:end; padding-right:6px;}
-  .vline{grid-column:1 / -1; height:4px; background:var(--ink); border-radius:2px; margin:6px 0 4px;}
-  .vtens{color:var(--blue);} .vones{color:var(--orange);}
-  .vmark{ /* 进位小标注 */
-    position:absolute; top:-1.0em; left:50%; transform:translateX(-50%);
-    font-size:1rem; font-weight:900; color:var(--orange);
-    background:#FFF7ED; border:2px solid var(--orange); border-radius:999px;
-    padding:0 7px; white-space:nowrap; animation:dotin .3s ease both;
-  }
-  .vstrike{ /* 退位：划掉旧数字 */
-    color:var(--soft); position:relative;
-  }
-  .vstrike::after{
-    content:""; position:absolute; left:8%; right:8%; top:48%; height:4px;
-    background:var(--orange); border-radius:2px; transform:rotate(-16deg);
-  }
-  .vnew{ /* 退位：十位上方新数字 */
-    position:absolute; top:-0.85em; left:50%; transform:translateX(-50%);
-    font-size:1.2rem; font-weight:900; color:var(--green);
-    animation:dotin .3s ease both;
-  }
-  .vans{color:var(--green);}
-  .vans.show{animation:dotin .35s ease both;}
-  .vhide{visibility:hidden;}
-  @keyframes dotin{from{transform:scale(0);}to{transform:scale(1);}}
-
-  /* ---- 「你的算法」对照面板 ---- */
-  .myway{
-    margin:12px auto 2px; max-width:340px; background:#F0FDF4; border:2px solid #BBF7D0;
-    border-radius:16px; padding:12px 14px; text-align:center; color:#166534;
-    font-weight:800; line-height:1.9; font-size:1.25rem;
-  }
-  .myway-title{color:#15803d; font-size:.92rem; font-weight:800; margin-bottom:4px;}
-  .myway b{color:#166534;} .myway .gr{color:#16A34A;}
-  .bridge{
-    display:none; margin-top:10px; background:#FFF7ED; border:2px dashed #F59E0B;
-    border-radius:12px; padding:9px 11px; color:#9a3412; font-size:.98rem; font-weight:800; line-height:1.6;
-  }
-  .bridge.show{display:block; animation:dotin .4s ease both;}
-  .bridge b.or{color:var(--orange);} .bridge b.gr{color:var(--green);}
 
   .step-btn{
     display:block; margin:8px auto 0; border:none; cursor:pointer;
@@ -157,6 +127,14 @@
   .muted{color:var(--soft);}
   .bl{color:var(--blue);} .or{color:var(--orange);} .gr{color:var(--green);} .pu{color:var(--purple);}
   .unlock{text-align:center; font-weight:800; color:var(--purple); margin:14px 0 4px; min-height:1.4em;}
+
+  .wrongway{
+    display:none; margin:12px auto 2px; max-width:360px; background:#FEF2F2; border:2px solid #FECACA;
+    border-radius:16px; padding:11px 14px; text-align:center; color:#991B1B;
+    font-weight:800; line-height:1.7; font-size:1.02rem;
+  }
+  .wrongway.show{display:block; animation:dotin .4s ease both;}
+  @keyframes dotin{from{transform:scale(0);}to{transform:scale(1);}}
 
   /* ---- 闯关 ---- */
   .level-tag{text-align:center; color:var(--soft); font-weight:800; margin-bottom:2px;}
@@ -195,7 +173,7 @@
 <div class="wrap">
 
   <header>
-    <div class="brand"><span class="fox">🦊</span><div>数学王国<br><small>竖式小课堂</small></div></div>
+    <div class="brand"><span class="fox">🦊</span><div>数学王国<br><small>运算小课堂</small></div></div>
     <div class="tools">
       <button class="icon-btn" id="homeBtn" title="重新开始">🏠</button>
       <button class="icon-btn" id="muteBtn" title="声音开关">🔊</button>
@@ -211,35 +189,31 @@
   <!-- ============ 欢迎 ============ -->
   <section class="screen on" id="welcome">
     <div class="card">
-      <div style="font-size:3.4rem;text-align:center">➕➖</div>
-      <h1>加减竖式</h1>
-      <span class="pinyin">jiā jiǎn shù shì · 进位与退位</span>
+      <div style="font-size:3.4rem;text-align:center">🔀</div>
+      <h1>运算顺序</h1>
+      <span class="pinyin">yùn suàn shùn xù · 先乘除 后加减</span>
       <p class="lead">
-        你心算很棒！🎉 数字一大、容易忘，<br>
-        还有个<b>写下来</b>的好办法——<b>竖式</b>！📝<br>
-        两种方法<b class="gr">答案一样</b>，<br>
-        竖式从<b class="or">个位</b>算起：满十<b class="or">进一</b> ⬆️、不够减<b class="gr">借一当十</b> 🔟
+        一个算式里，<b>又有 +、又有 ×</b> 的时候，<br>
+        不能从左往右乱算哦！🙅<br>
+        要<b class="or">先算乘除</b> ✖️，<b class="gr">再算加减</b> ➕，<br>
+        如果有<b class="bl">括号（  ）</b>，就<b class="bl">先算括号里</b>的！
       </p>
       <button class="big-btn" id="startBtn">开始探索 →</button>
 
       <details>
         <summary>👨‍👩‍👧 给爸爸妈妈的话（点开）</summary>
         <p>
-          <b>👀 给爸爸妈妈的小提醒（重要）：</b> 如果孩子已经会用自己的方法心算——
-          比如 47+38 先算 <b>47+30=77</b>、再 <b>77+8=85</b>，或 52−35 先 <b>52−30=22</b>、再 <b>22−5=17</b>——
-          <b>这非常棒，请别纠正</b>！这是「从高位起、按位拆分」的心算法，数感很强。
-          竖式不是「更对的方法」，只是把同一件事<b>写下来、数字大时不出错</b>。
-          这一课特意把<b>「你的算法」和「竖式」并排</b>，并点破：他心算里「<b>77 跳到 85</b>」多出的那个十，
-          <b>就是竖式的「进1」</b>；减法里「<b>拆开一个十</b>来减」就是「借1当十」。
-          让他<b>两条腿走路</b>——心算灵活、竖式可靠，遇到三位数（最后一关）就知道竖式真省脑子。<br><br>
-          <b>为什么学「加减竖式」？</b> 孩子已经会数的组成（235=200+30+5）和位值，
-          也会简单的口算。两位数加减一旦出现「进位」和「退位」，口算就容易出错，
-          <b>竖式</b>正是把「相同数位对齐、从个位算起」变成可靠的笔算流程。<br><br>
-          <b>怎么一起玩：</b> 探索屏里点「一步一步算 ✨」，陪他看清两件事——
-          加法里<b>个位满十，向十位进 1</b>（橙色小标注）；减法里<b>个位不够减，从十位借 1 个十当 10</b>
-          （十位被划掉、个位变大）。可切换加法 47+38、减法 63-28 两道题。<br><br>
-          <b>可以追问：</b>「个位 7 加 8 是 15，满十了吗？进几？」「个位 3 减 8 够不够减？要向谁借？」
-          让他自己说出「进 1」「借 1 当十」，这是日后多位数笔算的根基。
+          <b>为什么要学「运算顺序」？</b> 当一个算式里同时出现加减和乘除时，
+          数学家约定了统一的计算顺序：<b>先算乘除、再算加减；有括号先算括号里的</b>。
+          这不是死规定，而是为了让<b>同一个算式只有一个答案</b>，谁来算都一样。
+          比如 2 + 3 × 4，如果从左往右算成 (2+3)×4=20 就错了，正确是先算 3×4=12，再 2+12=<b>14</b>。<br><br>
+          <b>怎么一起玩：</b> 探索屏里点「一步一步算 ✨」，陪他看清——
+          算式里的 <b>×</b> 像「插队的小朋友」，要<b>先算</b>（橙色抬起来的那部分）；
+          再切换到带括号的 <b>(2+3)×4</b>，让他发现：<b>加了括号，答案就从 14 变成 20</b> 了，
+          括号的力量真大！<br><br>
+          <b>可以追问：</b>「这个算式里，哪一步要先算呀？」「为什么要先算乘法？」
+          「加上括号以后，答案变了吗？」让他自己说出「先算乘除、有括号先算括号」，
+          这就是日后所有混合运算的根基。
         </p>
       </details>
     </div>
@@ -248,44 +222,24 @@
   <!-- ============ 探索 ============ -->
   <section class="screen" id="explore">
     <div class="card">
-      <h2>🧠 你的算法 ＝ 📝 竖式</h2>
+      <h2>✖️ 先算乘除，➕ 再算加减</h2>
       <p class="lead" style="margin-top:0">
-        你心算超棒！竖式只是<b>把它写下来</b> 📝<br>两种方法<b class="gr">答案一样</b>，点「一步一步算」比一比！
+        看这个算式，里面又有 + 又有 ×。<br>谁先算？点「一步一步算」看清楚！
       </p>
 
       <div class="vtoggle">
-        <button class="vtab on" id="tabAdd" data-mode="add">➕ 47 + 38</button>
-        <button class="vtab sub" id="tabSub" data-mode="sub">➖ 63 − 28</button>
+        <button class="vtab on" id="tabPlain" data-mode="plain">2 + 3 × 4</button>
+        <button class="vtab brk" id="tabBrk" data-mode="brk">( 2 + 3 ) × 4</button>
       </div>
 
-      <div class="vstage">
-        <div class="vsum">
-          <div class="vgrid">
-            <div></div>
-            <div class="vcell vtens"><span id="cMarkT"></span><span id="cTopT">4</span></div>
-            <div class="vcell vones"><span id="cMarkO"></span><span id="cTopO">7</span></div>
-
-            <div class="vop" id="cOp">+</div>
-            <div class="vcell vtens"><span id="cBotT">3</span></div>
-            <div class="vcell vones"><span id="cBotO">8</span></div>
-
-            <div class="vline"></div>
-
-            <div></div>
-            <div class="vcell vans vhide" id="cAnsT">8</div>
-            <div class="vcell vans vhide" id="cAnsO">5</div>
-          </div>
-        </div>
+      <div class="exprbox">
+        <div class="expr" id="expr"></div>
       </div>
 
       <button class="step-btn" id="stepBtn">一步一步算 ✨</button>
-      <div class="note" id="note">点「一步一步算」，先从个位开始！</div>
+      <div class="note" id="note">点「一步一步算」，看看谁要先算！</div>
 
-      <div class="myway" id="myway">
-        <div class="myway-title">🧠 这是<b>你的算法</b>（心里从大的算起）</div>
-        <div id="mywaySteps"></div>
-        <div class="bridge" id="bridge"></div>
-      </div>
+      <div class="wrongway" id="wrongway"></div>
 
       <div class="unlock" id="unlock"></div>
       <button class="big-btn purple" id="toPractice" disabled>去闯关 →</button>
@@ -298,13 +252,7 @@
       <div class="level-tag" id="levelTag">第 1 / 3 关</div>
       <div class="q-hint" id="qHint"></div>
 
-      <div class="vstage">
-        <div class="vsum">
-          <div class="vgrid" id="pGrid"></div>
-        </div>
-      </div>
-
-      <div class="ask" id="ask">等于多少呢？ 👇</div>
+      <div class="ask" id="ask"></div>
       <div class="options" id="options"></div>
       <div class="feedback" id="feedback"></div>
       <button class="big-btn" id="nextLevel" style="display:none">下一关 →</button>
@@ -316,16 +264,13 @@
     <div class="card">
       <div class="badge">🎖️</div>
       <h1>太厉害啦！</h1>
-      <div class="trophy-name">🎖️ 竖式小达人</div>
+      <div class="trophy-name">🎖️ 运算小达人</div>
       <p class="lead">
-        现在你有<b>两件法宝</b>：<br>
-        🧠 <b>心算</b>（从大的算起）＋ 📝 <b>竖式</b>（从个位起）<br>
-        它们<b class="gr">答案一样</b>！数字越大，竖式越省脑子 💪
+        你记住了运算的<b>大秘密</b>：<br>
+        ✖️ <b class="or">先乘除</b>、➕ <b class="gr">后加减</b>，<br>
+        有<b class="bl">括号</b>就<b class="bl">先算括号</b>！🎉
       </p>
-      <p class="lead" style="font-size:.95rem">
-        🌟 挑战大数字：<b>367 + 158</b>，用竖式试试看！
-      </p>
-      <button class="big-btn" id="nextChapter" onclick="try{speechSynthesis.cancel()}catch(e){};location.href='运算顺序.html'">进入下一关 →</button>
+      <button class="big-btn" id="nextChapter" onclick="try{speechSynthesis.cancel()}catch(e){};location.href='公因数与公倍数.html'">进入下一关 →</button>
       <button class="big-btn orange" id="again">再玩一次 🔁</button>
     </div>
   </section>
@@ -385,100 +330,96 @@ function show(id,step){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-/* ---------- 豆豆阵（保留辅助函数） ---------- */
-function fillGrid(el,rows,cols,cls){
-  el.style.gridTemplateColumns=`repeat(${cols},var(--dot))`;
-  el.style.gridTemplateRows=`repeat(${rows},var(--dot))`;
-  el.innerHTML='';
-  const n=rows*cols;
-  for(let i=0;i<n;i++){ const d=document.createElement('div'); d.className='dot '+cls; el.appendChild(d); }
-}
-
 /* ============ 探索 ============ */
-/* 两道题：加法 47+38（进位），减法 63-28（退位） */
-let mode='add';      // 'add' | 'sub'
-let stepIdx=0;       // 当前演示到第几步
-const seen={add:false, sub:false};
+/* 两个算式：plain = 2 + 3 × 4（先乘后加 = 14），brk = (2+3)×4（先括号 = 20） */
+let mode='plain';     // 'plain' | 'brk'
+let stepIdx=0;        // 当前演示到第几步
+const seen={plain:false, brk:false};
 let unlocked=false;
 
-const cTopT=$('#cTopT'), cTopO=$('#cTopO'), cBotT=$('#cBotT'), cBotO=$('#cBotO');
-const cMarkT=$('#cMarkT'), cMarkO=$('#cMarkO'), cOp=$('#cOp');
-const cAnsT=$('#cAnsT'), cAnsO=$('#cAnsO');
-const note=$('#note'), stepBtn=$('#stepBtn'), unlock=$('#unlock'), toPractice=$('#toPractice');
-const mywaySteps=$('#mywaySteps'), bridge=$('#bridge');
+const exprEl=$('#expr'), note=$('#note'), stepBtn=$('#stepBtn');
+const wrongway=$('#wrongway'), unlock=$('#unlock'), toPractice=$('#toPractice');
+
+/* 渲染算式为一串 token；data-k 标记关键 token */
+function renderExpr(){
+  if(mode==='plain'){
+    exprEl.innerHTML=
+      '<span class="tok" data-k="a">2</span>'+
+      '<span class="tok op" data-k="plus">+</span>'+
+      '<span class="tok" data-k="b">3</span>'+
+      '<span class="tok op" data-k="mul">×</span>'+
+      '<span class="tok" data-k="c">4</span>';
+  }else{
+    exprEl.innerHTML=
+      '<span class="tok brk" data-k="lp">(</span>'+
+      '<span class="tok" data-k="a">2</span>'+
+      '<span class="tok op" data-k="plus">+</span>'+
+      '<span class="tok" data-k="b">3</span>'+
+      '<span class="tok brk" data-k="rp">)</span>'+
+      '<span class="tok op" data-k="mul">×</span>'+
+      '<span class="tok" data-k="c">4</span>';
+  }
+}
+const tk=k=>$('[data-k="'+k+'"]',exprEl);
 
 function resetBoard(){
-  // 复位竖式显示
-  cMarkT.innerHTML=''; cMarkO.innerHTML='';
-  cTopT.className=''; cTopT.textContent=(mode==='add')?'4':'6';
-  cTopO.className=''; cTopO.textContent=(mode==='add')?'7':'3';
-  cBotT.textContent=(mode==='add')?'3':'2';
-  cBotO.textContent=(mode==='add')?'8':'8';
-  cOp.textContent=(mode==='add')?'+':'−';
-  cAnsT.textContent=''; cAnsT.classList.add('vhide'); cAnsT.classList.remove('show');
-  cAnsO.textContent=''; cAnsO.classList.add('vhide'); cAnsO.classList.remove('show');
+  renderExpr();
   stepBtn.disabled=false;
   stepBtn.textContent='一步一步算 ✨';
   stepIdx=0;
+  wrongway.classList.remove('show'); wrongway.innerHTML='';
 }
 
 function setMode(m,quiet){
   mode=m;
-  $('#tabAdd').classList.toggle('on', m==='add');
-  $('#tabSub').classList.toggle('on', m==='sub');
+  $('#tabPlain').classList.toggle('on', m==='plain');
+  $('#tabBrk').classList.toggle('on', m==='brk');
   resetBoard();
-  if(m==='add'){
-    note.innerHTML='这是 <b class="bl">47 + 38</b>。点「一步一步算」，先从<b class="or">个位</b>开始！';
-    mywaySteps.innerHTML='47 + 30 = <b>77</b><br>77 + 8 = <b class="gr">85</b> ✅';
-    bridge.innerHTML='✨ 你心里把 <b>77 跳到 85</b>，多出来的那个十，<br>就是竖式里的「<b class="or">进1</b>」！两种方法一样～';
+  if(m==='plain'){
+    note.innerHTML='这是 <b class="bl">2 + 3 × 4</b>。又有 +、又有 ×，<b class="or">谁先算</b>呢？';
   }else{
-    note.innerHTML='这是 <b class="bl">63 − 28</b>。点「一步一步算」，先从<b class="or">个位</b>开始！';
-    mywaySteps.innerHTML='63 − 20 = <b>43</b><br>43 − 8 = <b class="gr">35</b> ✅';
-    bridge.innerHTML='✨ 你心里把 <b>43 拆开一个十</b>来减，<br>就是竖式里的「<b class="gr">借1当十</b>」！两种方法一样～';
+    note.innerHTML='这是 <b class="bl">( 2 + 3 ) × 4</b>。有<b class="bl">括号</b>啦！要<b class="bl">先算括号里</b>哦。';
   }
-  bridge.classList.remove('show');
-  if(!quiet){ sClick(); say(m==='add'?'我们来算 47 加 38。先从个位开始！':'我们来算 63 减 28。先从个位开始！'); }
+  if(!quiet){ sClick(); say(m==='plain'?'看这个算式，2 加 3 乘 4。又有加、又有乘，谁先算呢？':'这个算式有括号啦，2 加 3 外面有括号。有括号，要先算括号里面哦。'); }
 }
 
-/* 加法 47+38 的步骤 */
-function addStep(){
+/* plain: 2 + 3 × 4 步骤 */
+function plainStep(){
   stepIdx++;
   if(stepIdx===1){
-    // 个位 7+8=15，写5，进1
-    cAnsO.textContent='5'; cAnsO.classList.remove('vhide'); cAnsO.classList.add('show');
-    cMarkT.innerHTML='<span class="vmark">进1</span>';
-    note.innerHTML='个位：<b class="or">7 + 8 = 15</b>，<b class="or">满十啦！</b>写下 <b class="gr">5</b>，向十位<b class="or">进 1</b> ⬆️';
-    sCut(); say('个位，7 加 8 等于 15。满十啦！写下 5，向十位进 1。');
+    // 抬起 3 × 4，先算乘法
+    tk('b').classList.add('lift'); tk('mul').classList.add('lift'); tk('c').classList.add('lift');
+    tk('a').classList.add('dim'); tk('plus').classList.add('dim');
+    note.innerHTML='看！<b class="or">乘法要先算</b> ✖️：先算 <b class="or">3 × 4 = 12</b>。';
+    sCut(); say('先算乘法。3 乘 4 等于 12。');
   }else if(stepIdx===2){
-    // 十位 4+3+1=8
-    cAnsT.textContent='8'; cAnsT.classList.remove('vhide'); cAnsT.classList.add('show');
-    note.innerHTML='十位：<b class="bl">4 + 3</b> 再加进来的 <b class="or">1</b> = <b class="gr">8</b>。答案是 <b class="gr">85</b>！🎉';
-    sGood(); say('十位，4 加 3，再加上进来的 1，等于 8。答案是 85！');
+    // 把 3 × 4 合成 12
+    tk('b').outerHTML=''; tk('mul').outerHTML='';
+    const cTok=tk('c'); cTok.textContent='12'; cTok.className='tok done';
+    tk('a').classList.remove('dim'); tk('plus').classList.remove('dim');
+    note.innerHTML='现在变成 <b class="gr">2 + 12</b>，再算加法：<b class="gr">2 + 12 = 14</b>！🎉';
+    sGood(); say('现在变成 2 加 12，再算加法，2 加 12 等于 14！');
     finishDemo();
   }
 }
 
-/* 减法 63-28 的步骤 */
-function subStep(){
+/* brk: (2+3)×4 步骤 */
+function brkStep(){
   stepIdx++;
   if(stepIdx===1){
-    // 个位 3-8 不够，借1当十
-    cTopT.className='vstrike';                       // 十位 6 划掉
-    cMarkT.innerHTML='<span class="vnew">5</span>';  // 十位变 5
-    cMarkO.innerHTML='<span class="vmark">借1当十</span>';
-    cTopO.textContent='13';                          // 个位变 13
-    note.innerHTML='个位：<b class="or">3 减 8 不够减！</b> 向十位<b class="gr">借 1 当十</b>：十位 6 变 <b class="gr">5</b>，个位变 <b class="gr">13</b> 🔟';
-    sCut(); say('个位，3 减 8 不够减！向十位借 1 当十。十位 6 变成 5，个位变成 13。');
+    // 抬起括号里的 2 + 3
+    tk('lp').classList.add('lift'); tk('a').classList.add('lift');
+    tk('plus').classList.add('lift'); tk('b').classList.add('lift'); tk('rp').classList.add('lift');
+    tk('mul').classList.add('dim'); tk('c').classList.add('dim');
+    note.innerHTML='有<b class="bl">括号</b>，<b class="bl">先算括号里</b>：<b class="or">2 + 3 = 5</b>。';
+    sCut(); say('有括号，先算括号里面。2 加 3 等于 5。');
   }else if(stepIdx===2){
-    // 个位 13-8=5
-    cAnsO.textContent='5'; cAnsO.classList.remove('vhide'); cAnsO.classList.add('show');
-    note.innerHTML='个位：<b class="or">13 − 8 = 5</b>，写下 <b class="gr">5</b> ✅';
-    sCut(); say('现在个位，13 减 8 等于 5，写下 5。');
-  }else if(stepIdx===3){
-    // 十位 5-2=3
-    cAnsT.textContent='3'; cAnsT.classList.remove('vhide'); cAnsT.classList.add('show');
-    note.innerHTML='十位：借走 1 后是 <b class="gr">5</b>，<b class="bl">5 − 2 = 3</b>。答案是 <b class="gr">35</b>！🎉';
-    sGood(); say('十位，借走 1 以后是 5，5 减 2 等于 3。答案是 35！');
+    // 括号合成 5，再 5 × 4
+    tk('lp').outerHTML=''; tk('plus').outerHTML=''; tk('b').outerHTML=''; tk('rp').outerHTML='';
+    const aTok=tk('a'); aTok.textContent='5'; aTok.className='tok done';
+    tk('mul').classList.remove('dim'); tk('c').classList.remove('dim');
+    note.innerHTML='现在变成 <b class="gr">5 × 4</b>，再算乘法：<b class="gr">5 × 4 = 20</b>！🎉';
+    sGood(); say('现在变成 5 乘 4，再算乘法，5 乘 4 等于 20！');
     finishDemo();
   }
 }
@@ -487,68 +428,59 @@ function finishDemo(){
   stepBtn.disabled=true;
   stepBtn.textContent='算完啦 ✓';
   seen[mode]=true;
-  bridge.classList.add('show');
-  const msg = (mode==='add')
-    ? '发现没？你心里算的 77 跳到 85，多的那个十，就是竖式里的进1！两种方法一样棒。'
-    : '发现没？你心里把 43 拆开一个十来减，就是竖式里的借1当十！两种方法一样棒。';
-  setTimeout(()=>say(msg), 3000);
+  wrongway.classList.add('show');
+  if(mode==='plain'){
+    wrongway.innerHTML='🙅 如果从左往右乱算：2 + 3 = 5，5 × 4 = <b>20</b>，<br>就<b>错</b>啦！正确答案是 <b class="gr">14</b>。要先算乘法哦！';
+    setTimeout(()=>say('要记住，不能从左往右乱算。一定要先算乘法。'), 2600);
+  }else{
+    wrongway.innerHTML='✨ 没有括号时 2 + 3 × 4 = <b>14</b>，<br>加了<b>括号</b> (2+3)×4 = <b class="gr">20</b>，<br>答案变啦！括号的力量真大！';
+    setTimeout(()=>say('发现没有？加了括号，答案就从 14 变成 20，括号的力量真大！'), 2600);
+  }
   checkUnlock();
 }
 
 function checkUnlock(){
   if(unlocked) return;
-  if(seen.add && seen.sub){
+  if(seen.plain && seen.brk){
     unlocked=true; toPractice.disabled=false; toPractice.classList.add('ready');
-    unlock.textContent='🎉 进位、退位你都看明白啦，去闯关试试！';
-    sWin(); say('太棒了！进位和退位你都看明白啦，去闯关试试吧！');
+    unlock.textContent='🎉 先乘除、后加减，有括号先算括号，你都看明白啦！';
+    sWin(); say('太棒了！先乘除、后加减，有括号先算括号，你都看明白啦，去闯关试试吧！');
   }else{
-    const other = seen.add ? '减法 63 − 28' : '加法 47 + 38';
+    const other = seen.plain ? '带括号的 ( 2 + 3 ) × 4' : '没括号的 2 + 3 × 4';
     unlock.textContent='👍 不错！再看看「'+other+'」就能去闯关！';
   }
 }
 
 stepBtn.addEventListener('click',()=>{
   if(stepBtn.disabled) return;
-  if(mode==='add') addStep(); else subStep();
+  if(mode==='plain') plainStep(); else brkStep();
 });
-$('#tabAdd').addEventListener('click',()=>setMode('add'));
-$('#tabSub').addEventListener('click',()=>setMode('sub'));
+$('#tabPlain').addEventListener('click',()=>setMode('plain'));
+$('#tabBrk').addEventListener('click',()=>setMode('brk'));
 $('#toPractice').addEventListener('click',()=>{ sClick(); startPractice(); });
 
 /* ============ 闯关 ============ */
 const PROB=[
-  { a:47, b:38, op:'+', ans:85, opts:[75,85,815],
-    hint:'47 + 38：个位 7+8 满十进一！ ⬆️',
-    voice:'47 加 38。个位 7 加 8 满十，要进一。等于多少呢？' },
-  { a:63, b:28, op:'−', ans:35, opts:[35,45,41],
-    hint:'63 − 28：个位不够减，借一当十！ 🔟',
-    voice:'63 减 28。个位不够减，向十位借一当十。等于多少呢？' },
-  { a:367, b:158, op:'+', ans:525, opts:[515,525,425],
-    hint:'367 + 158：数字大了，写成竖式最稳！个位、十位都要进一 ⬆️⬆️',
-    voice:'367 加 158。数字变大了，用竖式从个位一步一步算最稳，不会忘。等于多少呢？' }
+  { q:'2 + 3 × 4 = ?', ans:14, opts:[14,20,24],
+    hint:'先算 3×4=12，再 2+12。 ✖️➕',
+    voice:'2 加 3 乘 4，等于多少呢？记住，先算乘法哦。' },
+  { q:'( 2 + 3 ) × 4 = ?', ans:20, opts:[20,14,11],
+    hint:'有括号先算括号 2+3=5，再 ×4。 🔵',
+    voice:'括号里 2 加 3，再乘 4，等于多少呢？有括号要先算括号哦。' },
+  { q:'10 − 2 × 3 = ?', ans:4, opts:[4,24,8],
+    hint:'先算 2×3=6，再 10−6。 ✖️➖',
+    voice:'10 减 2 乘 3，等于多少呢？先算乘法，再算减法哦。' }
 ];
 let pi=0;
 function startPractice(){ pi=0; show('practice',2); renderLevel(); }
 
 function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
 
-function digitsOf(n,w){ return String(n).padStart(w,' ').split(''); }
-function digitRow(n,w){
-  return digitsOf(n,w).map((d,i)=>
-    `<div class="vcell ${i===w-1?'vones':'vtens'}">${d===' '?'':d}</div>`).join('');
-}
 function renderLevel(){
   const P=PROB[pi];
   $('#levelTag').textContent=`第 ${pi+1} / ${PROB.length} 关`;
   $('#qHint').textContent=P.hint;
-  const w=Math.max(String(P.a).length, String(P.b).length, String(P.ans).length);
-  const grid=$('#pGrid');
-  grid.style.gridTemplateColumns=`auto repeat(${w},1.5em)`;
-  grid.innerHTML=
-    '<div></div>'+digitRow(P.a,w)+
-    `<div class="vop">${P.op}</div>`+digitRow(P.b,w)+
-    '<div class="vline"></div>'+
-    '<div></div><div class="vcell vans" style="grid-column:2 / -1">?</div>';
+  $('#ask').textContent=P.q;
   $('#feedback').textContent='';
   $('#nextLevel').style.display='none';
 
@@ -578,8 +510,8 @@ function choose(btn,v,ans){
     nb.style.display='block';
   }else{
     btn.classList.add('wrong'); sBad();
-    $('#feedback').innerHTML='<span class="or">再算一算～ 你可以的！</span>';
-    say('再算一算，你可以的！');
+    $('#feedback').innerHTML='<span class="or">再想想，先算乘除哦～</span>';
+    say('再想想，先算乘除哦。');
     setTimeout(()=>btn.classList.remove('wrong'),400);
   }
 }
@@ -592,16 +524,16 @@ $('#nextLevel').addEventListener('click',()=>{
 
 /* ============ 完成 ============ */
 function finish(){
-  show('done',3); sWin(); say('太厉害啦！你已经是竖式小达人啦！');
+  show('done',3); sWin(); say('太厉害啦！你已经是运算小达人啦！先乘除、后加减，有括号先算括号！');
   confetti();
 }
-$('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('explore',1); setMode('add',true); say('我们再玩一次！'); });
+$('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('explore',1); setMode('plain',true); say('我们再玩一次！'); });
 
 /* ---------- 顶部按钮 ---------- */
 $('#startBtn').addEventListener('click',()=>{
   ac(); sClick(); show('explore',1);
-  setMode('add',true);
-  say('数字大了，竖着写更好算！相同数位对齐，从个位开始算。点一步一步算试试看！');
+  setMode('plain',true);
+  say('一个算式里又有加又有乘的时候，要先算乘除、再算加减。点一步一步算试试看！');
 });
 $('#muteBtn').addEventListener('click',()=>{
   muted=!muted; $('#muteBtn').textContent=muted?'🔇':'🔊';
@@ -611,9 +543,9 @@ $('#homeBtn').addEventListener('click',()=>{ sClick(); if('speechSynthesis'in wi
 
 function resetAll(){
   unlocked=false; answered=false; pi=0;
-  seen.add=false; seen.sub=false;
+  seen.plain=false; seen.brk=false;
   toPractice.disabled=true; toPractice.classList.remove('ready'); unlock.textContent='';
-  mode='add'; resetBoard();
+  mode='plain'; resetBoard();
 }
 
 /* ---------- 彩带 ---------- */
@@ -639,9 +571,9 @@ function confetti(){
 }
 
 /* 初始 */
-setMode('add',true);
+setMode('plain',true);
 /* —— 通关记录（本地 localStorage）—— */
-(function(){var ID='shushi';try{var d=document.getElementById('done');if(d){var mark=function(){if(d.classList.contains('on')){try{localStorage.setItem('yswg:done:'+ID,'1');}catch(e){}}};new MutationObserver(mark).observe(d,{attributes:true,attributeFilter:['class']});mark();}}catch(e){}})();
+(function(){var ID='yunsuan';try{var d=document.getElementById('done');if(d){var mark=function(){if(d.classList.contains('on')){try{localStorage.setItem('yswg:done:'+ID,'1');}catch(e){}}};new MutationObserver(mark).observe(d,{attributes:true,attributeFilter:['class']});mark();}}catch(e){}})();
 </script>
 </body>
 </html>

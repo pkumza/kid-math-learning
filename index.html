@@ -131,7 +131,7 @@
   <div class="progress-card">
     <div class="progress-top">
       <span class="progress-label">🏆 闯关进度</span>
-      <span class="progress-count"><b id="doneCount">0</b> / <b id="totalCount">36</b> 关</span>
+      <span class="progress-count"><b id="doneCount">0</b> / <b id="totalCount">42</b> 关</span>
       <button id="resetBtn" class="reset-btn">重置进度</button>
     </div>
     <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
@@ -188,6 +188,13 @@
         <div class="desc">横竖各切一刀，23×14 分成四块加起来！</div></div>
       <span class="go">→</span>
     </a>
+    <a class="stop mul" href="三位数乘一位数.html" data-id="sanwei">
+      <span class="visited-star">⭐</span>
+      <div class="num">39</div><span class="emoji">🔢</span>
+      <div class="body"><div class="title">三位数乘一位数 <span class="tag js-status">新</span></div>
+        <div class="desc">213×3：把百、十、个拆开分别乘，再加起来！</div></div>
+      <span class="go">→</span>
+    </a>
   </div>
 
   <!-- 除法王国 -->
@@ -205,6 +212,13 @@
       <div class="num">5</div><span class="emoji">🕵️</span>
       <div class="body"><div class="title">有余数的除法 <span class="tag js-status">新</span></div>
         <div class="desc">分不完怎么办？剩下的叫「余数」，来当小侦探！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop div" href="除法竖式.html" data-id="chushu">
+      <span class="visited-star">⭐</span>
+      <div class="num">40</div><span class="emoji">➗</span>
+      <div class="body"><div class="title">除法竖式 <span class="tag js-status">新</span></div>
+        <div class="desc">69÷3 怎么竖着算？从高位开始，一位一位地除！</div></div>
       <span class="go">→</span>
     </a>
   </div>
@@ -301,6 +315,20 @@
         <div class="desc">满十进一、不够借一当十，竖着算更轻松！</div></div>
       <span class="go">→</span>
     </a>
+    <a class="stop nums" href="运算顺序.html" data-id="yunsuan">
+      <span class="visited-star">⭐</span>
+      <div class="num">37</div><span class="emoji">🔀</span>
+      <div class="body"><div class="title">运算顺序 <span class="tag js-status">新</span></div>
+        <div class="desc">2+3×4 先算谁？先乘除后加减，有括号先算括号！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop nums" href="公因数与公倍数.html" data-id="gongbei">
+      <span class="visited-star">⭐</span>
+      <div class="num">38</div><span class="emoji">🔗</span>
+      <div class="body"><div class="title">公因数与公倍数 <span class="tag js-status">新</span></div>
+        <div class="desc">两个数共同的因数、共同的倍数，找出它们的「好朋友」！</div></div>
+      <span class="go">→</span>
+    </a>
   </div>
 
   <!-- 图形与生活 -->
@@ -346,6 +374,13 @@
       <div class="num">35</div><span class="emoji">👁️</span>
       <div class="body"><div class="title">数图形 <span class="tag js-status">新</span></div>
         <div class="desc">一个图里藏着几个三角形？火眼金睛数一数！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop life" href="方向与位置.html" data-id="fangwei">
+      <span class="visited-star">⭐</span>
+      <div class="num">41</div><span class="emoji">🧭</span>
+      <div class="body"><div class="title">方向与位置 <span class="tag js-status">新</span></div>
+        <div class="desc">上北下南、左西右东，太阳从东边升起！</div></div>
       <span class="go">→</span>
     </a>
   </div>
@@ -442,6 +477,13 @@
         <div class="desc">下午 3 点 = 15 时，一天有 24 小时！</div></div>
       <span class="go">→</span>
     </a>
+    <a class="stop shop" href="日历与星期.html" data-id="rili">
+      <span class="visited-star">⭐</span>
+      <div class="num">42</div><span class="emoji">📅</span>
+      <div class="body"><div class="title">日历与星期 <span class="tag js-status">新</span></div>
+        <div class="desc">一周 7 天，看日历找星期几，明天是周几？</div></div>
+      <span class="go">→</span>
+    </a>
   </div>
   </div><!-- /mapBody -->
 
@@ -476,13 +518,13 @@
 <script>
 "use strict";
 /* 通关进度（存在浏览器本地 localStorage；通关一节课会自动点亮） */
-const LESSON_IDS=['fenpei','jiehe','liangwei','chufa','yushu','fenshu','qiou','guilv','beishu','weizhi','duicheng','shijian','liangwei2','jifen','renminbi','pingfang','tongji','liti','zhishu','changdu','mianji','zhouchang','jishi','kenengxing','yinshu','dashu','zhongliang','shijianjisuan','xuanzhuan','gengkeneng','jiao','rongliang','sanjiaoxing','ershisi','shutuxing','shushi'];
+const LESSON_IDS=['fenpei','jiehe','liangwei','chufa','yushu','fenshu','qiou','guilv','beishu','weizhi','duicheng','shijian','liangwei2','jifen','renminbi','pingfang','tongji','liti','zhishu','changdu','mianji','zhouchang','jishi','kenengxing','yinshu','dashu','zhongliang','shijianjisuan','xuanzhuan','gengkeneng','jiao','rongliang','sanjiaoxing','ershisi','shutuxing','shushi','yunsuan','gongbei','sanwei','chushu','fangwei','rili'];
 function isDone(id){ try{ return localStorage.getItem('yswg:done:'+id)==='1'; }catch(e){ return false; } }
-/* 首次打开：默认把前 30 关设为已完成（只跑一次；之后可用重置按钮清空） */
+/* 首次打开：默认把前 36 关设为已完成（只跑一次；之后可用重置按钮清空） */
 (function seedDone(){ try{
-  if(localStorage.getItem('yswg:seeded30')==='v2') return;
-  LESSON_IDS.slice(0,30).forEach(id=>localStorage.setItem('yswg:done:'+id,'1'));
-  localStorage.setItem('yswg:seeded30','v2');
+  if(localStorage.getItem('yswg:seeded30')==='v3') return;
+  LESSON_IDS.slice(0,36).forEach(id=>localStorage.setItem('yswg:done:'+id,'1'));
+  localStorage.setItem('yswg:seeded30','v3');
 }catch(e){} })();
 function renderProgress(){
   let done=0;

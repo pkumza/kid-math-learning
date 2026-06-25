@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>除法竖式 · 除法小课堂</title>
+<style>
+  :root{
+    --dot: clamp(15px, 4.2vw, 30px);
+    --blue:#2563EB; --blue2:#60A5FA;
+    --orange:#EA580C; --orange2:#FB923C;
+    --green:#16A34A; --green2:#4ADE80;
+    --purple:#7C3AED;
+    --ink:#1F2937; --soft:#6B7280;
+    --card:#ffffff;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",
+      "Hiragino Sans GB","Helvetica Neue",sans-serif;
+    color:var(--ink);
+    background:linear-gradient(160deg,#EAF4FF 0%,#FFF6EC 60%,#FDEFF6 100%);
+    min-height:100vh;
+    overflow-x:hidden;
+    user-select:none;
+  }
+  .wrap{max-width:760px; margin:0 auto; padding:10px 14px 40px;}
+
+  /* ---- 顶部 ---- */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 4px 6px;
+  }
+  .brand{display:flex; align-items:center; gap:8px; font-weight:800; font-size:1.15rem;}
+  .brand .fox{font-size:1.6rem;}
+  .brand small{color:var(--soft); font-weight:600; font-size:.78rem;}
+  .tools{display:flex; gap:8px;}
+  .icon-btn{
+    border:none; background:#fff; border-radius:14px; width:44px; height:44px;
+    font-size:1.25rem; cursor:pointer; box-shadow:0 3px 8px rgba(0,0,0,.08);
+    transition:transform .1s;
+  }
+  .icon-btn:active{transform:scale(.92);}
+
+  .steps{display:flex; gap:6px; justify-content:center; margin:4px 0 12px;}
+  .pill{
+    font-size:.82rem; font-weight:700; color:var(--soft);
+    background:#fff; padding:5px 12px; border-radius:999px;
+    box-shadow:0 2px 5px rgba(0,0,0,.05);
+  }
+  .pill.active{color:#fff; background:var(--purple); box-shadow:0 4px 10px rgba(124,58,237,.35);}
+
+  /* ---- 卡片 / 屏幕 ---- */
+  .screen{display:none; animation:pop .35s ease both;}
+  .screen.on{display:block;}
+  @keyframes pop{from{opacity:0; transform:translateY(12px) scale(.98);} to{opacity:1; transform:none;}}
+  .card{
+    background:var(--card); border-radius:26px; padding:22px 18px;
+    box-shadow:0 12px 30px rgba(80,90,130,.12); margin-bottom:16px;
+  }
+  h1{font-size:1.7rem; margin:.1em 0 .2em; text-align:center;}
+  h2{font-size:1.25rem; margin:.1em 0 .5em; text-align:center; color:var(--purple);}
+  .lead{text-align:center; color:var(--soft); font-size:1rem; line-height:1.7; margin:.3em 0 .2em;}
+  .pinyin{display:block; color:var(--soft); font-size:.95rem; letter-spacing:.06em; font-weight:600; text-align:center;}
+
+  /* ---- 按钮 ---- */
+  .big-btn{
+    display:block; width:100%; border:none; cursor:pointer;
+    font-size:1.3rem; font-weight:800; color:#fff;
+    padding:16px; border-radius:20px; margin-top:8px;
+    background:linear-gradient(135deg,#34D399,#10B981);
+    box-shadow:0 8px 18px rgba(16,185,129,.35);
+    transition:transform .12s, box-shadow .12s, filter .2s;
+  }
+  .big-btn.purple{background:linear-gradient(135deg,#A78BFA,#7C3AED); box-shadow:0 8px 18px rgba(124,58,237,.35);}
+  .big-btn.orange{background:linear-gradient(135deg,#FDBA74,#F97316); box-shadow:0 8px 18px rgba(249,115,22,.35);}
+  .big-btn:active{transform:translateY(2px) scale(.99);}
+  .big-btn:disabled{filter:grayscale(.7) opacity(.55); cursor:not-allowed; box-shadow:none;}
+  .big-btn.ready{animation:bounce 1s infinite;}
+  @keyframes bounce{0%,100%{transform:none;}50%{transform:translateY(-5px);}}
+
+  /* ---- 除法竖式（厂字形） ---- */
+  .vstage{display:flex; justify-content:center; margin:14px 0 6px;}
+  .vsum{
+    display:inline-block; background:#F8FAFF; border-radius:20px;
+    padding:20px 26px 18px; border:2px dashed #DBE3F4; position:relative;
+  }
+  /* 除法竖式布局：商在上，被除数在厂内，除数在厂左 */
+  .dgrid{
+    display:grid;
+    grid-template-columns:auto 1.5em 1.5em;  /* 除数列 + 两位被除数 */
+    justify-items:center; align-items:end;
+    row-gap:2px;
+  }
+  .dcell{
+    font-size:2.6rem; font-weight:900; line-height:1.1; text-align:center;
+    min-width:1.5em;
+  }
+  .ddivisor{color:var(--purple); padding-right:10px;}
+  .dquo{color:var(--green);}                 /* 商 */
+  .dtens{color:var(--blue);} .dones{color:var(--orange);}  /* 被除数 */
+  .dhide{visibility:hidden;}
+  .dshow{animation:dotin .35s ease both;}
+  @keyframes dotin{from{transform:scale(0);}to{transform:scale(1);}}
+
+  /* 厂字形的两条线：横线盖在被除数上方，竖线在除数与被除数之间 */
+  .dbracket{
+    grid-column:2 / 4;        /* 横线盖住两位被除数 */
+    grid-row:2;               /* 位于商(行1)与被除数(行3)之间 */
+    height:4px; background:var(--ink); border-radius:2px;
+    align-self:center; width:100%;
+  }
+  .dvbar{
+    grid-column:1; grid-row:2 / 4;   /* 竖线在除数右侧、从横线往下 */
+    width:4px; background:var(--ink); border-radius:2px;
+    justify-self:end; align-self:stretch; margin-right:0;
+  }
+  /* 让商行与被除数行的两位列对齐：商也占第2、3列 */
+  .dq-tens{grid-column:2; grid-row:1;}
+  .dq-ones{grid-column:3; grid-row:1;}
+  .dd-divisor{grid-column:1; grid-row:3;}
+  .dd-tens{grid-column:2; grid-row:3;}
+  .dd-ones{grid-column:3; grid-row:3;}
+
+  .step-btn{
+    display:block; margin:8px auto 0; border:none; cursor:pointer;
+    background:linear-gradient(135deg,#FDE68A,#F59E0B); color:#7c2d12; font-weight:800;
+    padding:12px 20px; border-radius:16px; font-size:1.05rem; box-shadow:0 5px 12px rgba(245,158,11,.3);
+  }
+  .step-btn:active{transform:scale(.96);}
+  .step-btn:disabled{filter:grayscale(.6) opacity(.6); cursor:not-allowed; box-shadow:none;}
+
+  .note{
+    margin-top:12px; background:#FFFDF5; border-radius:14px; padding:12px 14px;
+    color:#92400E; font-weight:700; line-height:1.6; font-size:1.05rem; text-align:center; min-height:1.5em;
+  }
+  .muted{color:var(--soft);}
+  .bl{color:var(--blue);} .or{color:var(--orange);} .gr{color:var(--green);} .pu{color:var(--purple);}
+  .unlock{text-align:center; font-weight:800; color:var(--purple); margin:14px 0 4px; min-height:1.4em;}
+
+  /* ---- 闯关 ---- */
+  .level-tag{text-align:center; color:var(--soft); font-weight:800; margin-bottom:2px;}
+  .q-hint{text-align:center; color:var(--orange); font-weight:800; font-size:1.05rem; margin:6px 0; min-height:1.3em;}
+  .ask{text-align:center; font-size:1.5rem; font-weight:900; margin:10px 0 6px;}
+  .options{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+  .opt{
+    border:none; cursor:pointer; min-width:92px; font-size:1.7rem; font-weight:900;
+    padding:14px 8px; border-radius:18px; background:#fff; color:var(--ink);
+    box-shadow:0 5px 12px rgba(0,0,0,.1); transition:transform .1s;
+    border:3px solid #E5E7EB;
+  }
+  .opt:active{transform:scale(.95);}
+  .opt.correct{background:var(--green); color:#fff; border-color:var(--green);}
+  .opt.wrong{background:#FCA5A5; border-color:#EF4444; animation:shake .35s;}
+  @keyframes shake{0%,100%{transform:none;}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+  .feedback{text-align:center; font-weight:900; font-size:1.3rem; min-height:1.5em; margin-top:12px;}
+  .stars{font-size:1.6rem; letter-spacing:6px; text-align:center;}
+
+  /* ---- 完成 ---- */
+  .badge{font-size:4.5rem; text-align:center; animation:spin 3s linear infinite;}
+  @keyframes spin{from{transform:rotate(-8deg);}50%{transform:rotate(8deg);}to{transform:rotate(-8deg);}}
+  .trophy-name{text-align:center; font-size:1.5rem; font-weight:900; color:var(--purple); margin:6px 0;}
+
+  details{margin-top:8px; background:#F8FAFF; border-radius:16px; padding:4px 14px;}
+  summary{cursor:pointer; font-weight:800; color:var(--purple); padding:10px 0; list-style:none;}
+  summary::-webkit-details-marker{display:none;}
+  details p{color:#374151; line-height:1.75; font-size:.95rem;}
+  details b{color:var(--ink);}
+
+  #confetti{position:fixed; inset:0; pointer-events:none; display:none; z-index:99;}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="wrap">
+
+  <header>
+    <div class="brand"><span class="fox">🦊</span><div>数学王国<br><small>除法竖式</small></div></div>
+    <div class="tools">
+      <button class="icon-btn" id="homeBtn" title="重新开始">🏠</button>
+      <button class="icon-btn" id="muteBtn" title="声音开关">🔊</button>
+    </div>
+  </header>
+
+  <div class="steps">
+    <span class="pill" data-step="1">① 探索</span>
+    <span class="pill" data-step="2">② 闯关</span>
+    <span class="pill" data-step="3">③ 完成</span>
+  </div>
+
+  <!-- ============ 欢迎 ============ -->
+  <section class="screen on" id="welcome">
+    <div class="card">
+      <div style="font-size:3.4rem;text-align:center">➗</div>
+      <h1>除法竖式</h1>
+      <span class="pinyin">chú fǎ shù shì · 从最高位除起</span>
+      <p class="lead">
+        除法也能<b>竖着算</b>！📝<br>
+        从<b class="bl">最高位</b>开始，一位一位地除。<br>
+        例：<b>69 ÷ 3</b>，先用十位 <b class="bl">6 ÷ 3 = 2</b>，<br>
+        再个位 <b class="or">9 ÷ 3 = 3</b>，合起来就是 <b class="gr">23</b>！🎉
+      </p>
+      <button class="big-btn" id="startBtn">开始探索 →</button>
+
+      <details>
+        <summary>👨‍👩‍👧 给爸爸妈妈的话（点开）</summary>
+        <p>
+          <b>这一课接着「除法」和「乘法口诀」往前走。</b> 孩子在「除法」一课里已经懂了
+          除法就是<b>平均分</b>（第四章），也背过<b>乘法口诀</b>——口诀正是除法的好帮手：
+          算 6÷3 时，心里想「三<b>二</b>得六」，商就是 2。这一课只做一件新事：
+          把这种「一位一位地分」<b>写成竖式（厂字形）</b>，让数字大了也不出错。<br><br>
+          <b>竖式怎么读：</b> 除数写在「厂」字左边，被除数写在「厂」里面，
+          算出来的<b>商</b>写在「厂」上面，而且要<b>对齐</b>——十位的商写在十位上方，
+          个位的商写在个位上方。和加减竖式从个位起<b>不同</b>，除法是<b>从最高位（左边）起</b>。<br><br>
+          <b>怎么一起玩：</b> 探索屏点「一步一步算 ✨」，陪他看 69÷3：
+          先十位 <b>6÷3=2</b>（2 写在 6 上面），再个位 <b>9÷3=3</b>（3 写在 9 上面），
+          读出来就是 23。可以追问：「十位的 6 分成 3 份，每份几个？」「个位的 9 呢？」<br><br>
+          <b>本课只用「正好分完、每一位都能整除」的干净例子</b>（没有余数、不用借位），
+          让孩子先把<b>竖式的样子和顺序</b>建立起来，余数留到以后再说。
+        </p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ 探索 ============ -->
+  <section class="screen" id="explore">
+    <div class="card">
+      <h2>📝 除法竖式：69 ÷ 3</h2>
+      <p class="lead" style="margin-top:0">
+        除数在<b class="pu">左边</b>，被除数在<b>「厂」里面</b>，<br>
+        商写在<b class="gr">上面</b>——从<b class="bl">十位</b>开始，一位一位地除！
+      </p>
+
+      <div class="vstage">
+        <div class="vsum">
+          <div class="dgrid">
+            <!-- 商（行1，对齐被除数两位） -->
+            <div class="dcell dquo dq-tens dhide" id="qTens">2</div>
+            <div class="dcell dquo dq-ones dhide" id="qOnes">3</div>
+            <!-- 厂字形：横线 + 竖线 -->
+            <div class="dbracket"></div>
+            <div class="dvbar"></div>
+            <!-- 除数（左）＋ 被除数（厂内，行3） -->
+            <div class="dcell ddivisor dd-divisor">3</div>
+            <div class="dcell dtens dd-tens">6</div>
+            <div class="dcell dones dd-ones">9</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="step-btn" id="stepBtn">一步一步算 ✨</button>
+      <div class="note" id="note">点「一步一步算」，先从<b class="bl">十位</b>开始！</div>
+
+      <div class="unlock" id="unlock"></div>
+      <button class="big-btn purple" id="toPractice" disabled>去闯关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 闯关 ============ -->
+  <section class="screen" id="practice">
+    <div class="card">
+      <div class="level-tag" id="levelTag">第 1 / 3 关</div>
+      <div class="q-hint" id="qHint"></div>
+
+      <div class="vstage">
+        <div class="vsum">
+          <div class="dgrid" id="pGridDiv"></div>
+        </div>
+      </div>
+
+      <div class="ask" id="ask">商是多少呢？ 👇</div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="big-btn" id="nextLevel" style="display:none">下一关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 完成 ============ -->
+  <section class="screen" id="done">
+    <div class="card">
+      <div class="badge">🎖️</div>
+      <h1>太厉害啦！</h1>
+      <div class="trophy-name">🎖️ 除法小达人</div>
+      <p class="lead">
+        你学会用<b>竖式</b>做除法啦！📝<br>
+        从<b class="bl">高位</b>开始，<b>一位一位地除</b>！<br>
+        数字越大，竖式越好用 💪
+      </p>
+      <button class="big-btn" id="nextChapter" onclick="try{speechSynthesis.cancel()}catch(e){};location.href='方向与位置.html'">进入下一关 →</button>
+      <button class="big-btn orange" id="again">再玩一次 🔁</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+"use strict";
+const $=(s,el=document)=>el.querySelector(s);
+const $$=(s,el=document)=>[...el.querySelectorAll(s)];
+
+/* ---------- 声音 ---------- */
+let muted=false, audioCtx=null;
+function ac(){ if(!audioCtx){ try{audioCtx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return audioCtx; }
+function beep(freq,dur,type,vol,when){
+  if(muted) return; const c=ac(); if(!c) return;
+  const t=c.currentTime+(when||0), o=c.createOscillator(), g=c.createGain();
+  o.type=type||'sine'; o.frequency.value=freq;
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol||0.15,t+0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g).connect(c.destination); o.start(t); o.stop(t+dur+0.02);
+}
+const sClick=()=>beep(680,0.06,'triangle',0.12,0);
+const sCut  =()=>{beep(900,0.05,'square',0.08,0); beep(500,0.07,'triangle',0.1,0.05);};
+const sGood =()=>[523,659,784].forEach((f,i)=>beep(f,0.12,'sine',0.16,i*0.09));
+const sWin  =()=>[523,659,784,1047,1319].forEach((f,i)=>beep(f,0.16,'sine',0.18,i*0.12));
+const sBad  =()=>beep(190,0.2,'sawtooth',0.1,0);
+
+/* ---------- 语音（中文朗读） ---------- */
+let zhVoice=null;
+function pickVoice(){
+  if(!('speechSynthesis'in window)) return;
+  const vs=speechSynthesis.getVoices(); if(!vs||!vs.length) return;
+  const zh=vs.filter(v=>/zh|cmn|chinese|普通话|国语|中文/i.test((v.lang||'')+' '+(v.name||'')));
+  const female=/婷婷|美嘉|思琪|善怡|静|丽|语嫣|晓|Ting-?Ting|Mei-?Jia|Sin-?ji|Yu-?shu|Tian-?Tian|Li-?mu|Han|female|女/i;
+  const male=/男|male|Yu-?Long|Liang|国梁/i;
+  zhVoice = zh.find(v=>female.test(v.name))
+         || zh.find(v=>/zh[-_]?CN/i.test(v.lang)&&!male.test(v.name))
+         || zh.find(v=>!male.test(v.name))
+         || zh[0] || null;
+}
+if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; setTimeout(pickVoice,300); setTimeout(pickVoice,1200); }
+function say(text){
+  if(muted||!('speechSynthesis'in window)) return;
+  try{ if(!zhVoice) pickVoice(); speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang='zh-CN'; if(zhVoice)u.voice=zhVoice; u.rate=0.95; u.pitch=1.1;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ---------- 屏幕切换 ---------- */
+function show(id,step){
+  $$('.screen').forEach(s=>s.classList.remove('on'));
+  $('#'+id).classList.add('on');
+  $$('.pill').forEach(p=>p.classList.toggle('active', +p.dataset.step===step));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ============ 探索：69 ÷ 3 = 23 ============ */
+let stepIdx=0, demoSeen=false, unlocked=false;
+const qTens=$('#qTens'), qOnes=$('#qOnes');
+const note=$('#note'), stepBtn=$('#stepBtn'), unlock=$('#unlock'), toPractice=$('#toPractice');
+
+function resetDemo(){
+  qTens.classList.add('dhide'); qTens.classList.remove('dshow');
+  qOnes.classList.add('dhide'); qOnes.classList.remove('dshow');
+  stepBtn.disabled=false; stepBtn.textContent='一步一步算 ✨';
+  note.innerHTML='点「一步一步算」，先从<b class="bl">十位</b>开始！';
+  stepIdx=0;
+}
+
+function demoStep(){
+  stepIdx++;
+  if(stepIdx===1){
+    // 十位 6÷3=2，写在 6 上面
+    qTens.classList.remove('dhide'); qTens.classList.add('dshow');
+    note.innerHTML='十位：<b class="bl">6 ÷ 3 = 2</b>，把 <b class="gr">2</b> 写在 <b class="bl">6</b> 的上面 ⬆️';
+    sCut(); say('十位，6 除以 3 等于 2，写在十位上面。');
+  }else if(stepIdx===2){
+    // 个位 9÷3=3，写在 9 上面
+    qOnes.classList.remove('dhide'); qOnes.classList.add('dshow');
+    note.innerHTML='个位：<b class="or">9 ÷ 3 = 3</b>，把 <b class="gr">3</b> 写在 <b class="or">9</b> 的上面。商就是 <b class="gr">23</b>！🎉';
+    sGood(); say('个位，9 除以 3 等于 3，写在个位上面。商就是 23！');
+    finishDemo();
+  }
+}
+
+function finishDemo(){
+  stepBtn.disabled=true; stepBtn.textContent='算完啦 ✓';
+  demoSeen=true;
+  setTimeout(()=>say('看，从高位开始，一位一位地除，69 除以 3 就等于 23。去闯关试试吧！'), 3200);
+  checkUnlock();
+}
+
+function checkUnlock(){
+  if(unlocked) return;
+  if(demoSeen){
+    unlocked=true; toPractice.disabled=false; toPractice.classList.add('ready');
+    unlock.textContent='🎉 你看明白除法竖式啦，去闯关试试！';
+    sWin();
+  }
+}
+
+stepBtn.addEventListener('click',()=>{ if(!stepBtn.disabled) demoStep(); });
+$('#toPractice').addEventListener('click',()=>{ sClick(); startPractice(); });
+
+/* ============ 闯关 ============ */
+const PROB=[
+  { a:69, b:3, ans:23, opts:[23,32,13],
+    hint:'十位 6÷3=2，个位 9÷3=3。',
+    voice:'69 除以 3。十位 6 除以 3，个位 9 除以 3。商是多少呢？' },
+  { a:84, b:4, ans:21, opts:[21,12,22],
+    hint:'十位 8÷4=2，个位 4÷4=1。',
+    voice:'84 除以 4。十位 8 除以 4，个位 4 除以 4。商是多少呢？' },
+  { a:96, b:3, ans:32, opts:[32,23,33],
+    hint:'十位 9÷3=3，个位 6÷3=2。',
+    voice:'96 除以 3。十位 9 除以 3，个位 6 除以 3。商是多少呢？' }
+];
+let pi=0;
+function startPractice(){ pi=0; show('practice',2); renderLevel(); }
+
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+/* 渲染除法竖式（厂字形，商位用 ? 占位） */
+function renderDivGrid(a,b){
+  const t=Math.floor(a/10), o=a%10;
+  return ''+
+    '<div class="dcell dquo dq-tens">?</div>'+
+    '<div class="dcell dquo dq-ones">?</div>'+
+    '<div class="dbracket"></div>'+
+    '<div class="dvbar"></div>'+
+    '<div class="dcell ddivisor dd-divisor">'+b+'</div>'+
+    '<div class="dcell dtens dd-tens">'+t+'</div>'+
+    '<div class="dcell dones dd-ones">'+o+'</div>';
+}
+
+function renderLevel(){
+  const P=PROB[pi];
+  $('#levelTag').textContent=`第 ${pi+1} / ${PROB.length} 关`;
+  $('#qHint').textContent=P.hint;
+  $('#pGridDiv').innerHTML=renderDivGrid(P.a,P.b);
+  $('#feedback').textContent='';
+  $('#nextLevel').style.display='none';
+
+  const opts=shuffle(P.opts.slice());
+  const box=$('#options'); box.innerHTML='';
+  opts.forEach(v=>{
+    const btn=document.createElement('button');
+    btn.className='opt'; btn.textContent=v;
+    btn.addEventListener('click',()=>choose(btn,v,P.ans));
+    box.appendChild(btn);
+  });
+  say(P.voice);
+}
+
+let answered=false;
+function choose(btn,v,ans){
+  if(answered) return;
+  if(v===ans){
+    answered=true;
+    btn.classList.add('correct'); sGood();
+    $('#feedback').innerHTML='<span class="gr">答对啦！🎉</span><div class="stars">⭐⭐⭐</div>';
+    say('答对啦！你真厉害！');
+    $$('.opt').forEach(o=>o.disabled=true);
+    const last=(pi===PROB.length-1);
+    const nb=$('#nextLevel');
+    nb.textContent = last ? '完成啦 🎉' : '下一关 →';
+    nb.style.display='block';
+  }else{
+    btn.classList.add('wrong'); sBad();
+    $('#feedback').innerHTML='<span class="or">再算一算～ '+PROB[pi].hint+'</span>';
+    say('再算一算，你可以的！');
+    setTimeout(()=>btn.classList.remove('wrong'),400);
+  }
+}
+
+$('#nextLevel').addEventListener('click',()=>{
+  sClick(); answered=false;
+  if(pi===PROB.length-1){ finish(); }
+  else{ pi++; renderLevel(); }
+});
+
+/* ============ 完成 ============ */
+function finish(){
+  show('done',3); sWin(); say('太厉害啦！你已经是除法小达人啦！');
+  confetti();
+}
+$('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('explore',1); say('我们再玩一次！点一步一步算试试看。'); });
+
+/* ---------- 顶部按钮 ---------- */
+$('#startBtn').addEventListener('click',()=>{
+  ac(); sClick(); show('explore',1); resetDemo();
+  say('除法也能竖着算！从最高位开始，一位一位地除。点一步一步算试试看！');
+});
+$('#muteBtn').addEventListener('click',()=>{
+  muted=!muted; $('#muteBtn').textContent=muted?'🔇':'🔊';
+  if(muted&&'speechSynthesis'in window) speechSynthesis.cancel(); else sClick();
+});
+$('#homeBtn').addEventListener('click',()=>{ sClick(); if('speechSynthesis'in window)speechSynthesis.cancel(); location.href='index.html'; });
+
+function resetAll(){
+  unlocked=false; answered=false; pi=0; demoSeen=false;
+  toPractice.disabled=true; toPractice.classList.remove('ready'); unlock.textContent='';
+  resetDemo();
+}
+
+/* ---------- 彩带 ---------- */
+function confetti(){
+  const cv=$('#confetti'), ctx=cv.getContext('2d');
+  cv.width=innerWidth; cv.height=innerHeight; cv.style.display='block';
+  const colors=['#2563EB','#F97316','#16A34A','#EAB308','#EC4899','#7C3AED'];
+  const P=[];
+  for(let i=0;i<150;i++) P.push({
+    x:innerWidth/2+(Math.random()-0.5)*120, y:innerHeight*0.28,
+    vx:(Math.random()-0.5)*13, vy:Math.random()*-13-3, g:0.32,
+    s:7+Math.random()*9, c:colors[i%colors.length], rot:Math.random()*6, vr:(Math.random()-0.5)*0.4
+  });
+  let t=0;
+  (function anim(){
+    t++; ctx.clearRect(0,0,cv.width,cv.height);
+    P.forEach(p=>{ p.vy+=p.g; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c;
+      ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6); ctx.restore();
+    });
+    if(t<150) requestAnimationFrame(anim); else cv.style.display='none';
+  })();
+}
+
+/* 初始 */
+resetDemo();
+/* —— 通关记录（本地 localStorage）—— */
+(function(){var ID='chushu';try{var d=document.getElementById('done');if(d){var mark=function(){if(d.classList.contains('on')){try{localStorage.setItem('yswg:done:'+ID,'1');}catch(e){}}};new MutationObserver(mark).observe(d,{attributes:true,attributeFilter:['class']});mark();}}catch(e){}})();
+</script>
+</body>
+</html>
