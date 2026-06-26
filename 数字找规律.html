@@ -331,7 +331,7 @@ if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pic
 function say(text){
   if(muted||!('speechSynthesis'in window)) return;
   try{ if(!zhVoice) pickVoice(); speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(text);
+    const u=new SpeechSynthesisUtterance(text+'　。');
     u.lang='zh-CN'; if(zhVoice)u.voice=zhVoice; u.rate=0.95; u.pitch=1.1;
     speechSynthesis.speak(u);
   }catch(e){}
