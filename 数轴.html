@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>日历与星期 · 日历小课堂</title>
+<title>数轴 · 数学小课堂</title>
 <style>
   :root{
     --dot: clamp(15px, 4.2vw, 30px);
@@ -80,53 +80,38 @@
   .big-btn.ready{animation:bounce 1s infinite;}
   @keyframes bounce{0%,100%{transform:none;}50%{transform:translateY(-5px);}}
 
-  /* ---- 一周七天 ---- */
-  .weekrow{
-    display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:12px 0 4px;
+  /* ---- 数轴：探索 ---- */
+  .nlbox{margin:14px 0 6px;}
+  .nlsvg{display:block; width:100%; height:auto;}
+  .nl-val{text-align:center; font-size:2.8rem; font-weight:900; color:var(--purple); line-height:1.1; margin:6px 0 2px;}
+  .nl-ctrl{display:flex; gap:12px; justify-content:center; align-items:center; margin:8px 0 4px;}
+  .nl-arrow{
+    border:none; cursor:pointer; font-size:1.5rem; font-weight:900;
+    width:54px; height:54px; border-radius:16px; color:#fff;
+    background:linear-gradient(135deg,#A78BFA,#7C3AED);
+    box-shadow:0 5px 12px rgba(124,58,237,.3);
   }
-  .daychip{
-    border:none; cursor:pointer; font-weight:900; font-size:1.05rem;
-    padding:12px 6px; border-radius:16px; background:#fff; color:var(--ink);
-    box-shadow:0 4px 10px rgba(0,0,0,.08); border:3px solid #E5E7EB;
-    min-width:58px; transition:transform .1s;
+  .nl-arrow:active{transform:scale(.94);}
+  .nl-slider{flex:1; max-width:360px;}
+  input[type=range]{
+    -webkit-appearance:none; appearance:none; width:100%; height:14px;
+    border-radius:999px; background:#E9D5FF; outline:none;
   }
-  .daychip:active{transform:scale(.93);}
-  .daychip.on{color:#fff; background:var(--purple); border-color:var(--purple); box-shadow:0 6px 14px rgba(124,58,237,.35);}
-  .daychip.weekend{color:var(--orange);}
-  .daychip.weekend.on{color:#fff; background:var(--orange); border-color:var(--orange);}
-  .loop-hint{
-    text-align:center; color:var(--purple); font-weight:800; font-size:1.05rem; margin:4px 0 2px;
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; appearance:none; width:30px; height:30px; border-radius:50%;
+    background:linear-gradient(135deg,#A78BFA,#7C3AED); cursor:pointer; box-shadow:0 3px 8px rgba(124,58,237,.4);
   }
-  .loop-arrow{font-size:1.3rem;}
-
-  /* ---- 日历 ---- */
-  .cal{
-    margin:10px auto 4px; max-width:380px; background:#F8FAFF;
-    border:2px solid #DBE3F4; border-radius:20px; padding:12px;
+  input[type=range]::-moz-range-thumb{
+    width:30px; height:30px; border:none; border-radius:50%;
+    background:#7C3AED; cursor:pointer; box-shadow:0 3px 8px rgba(124,58,237,.4);
   }
-  .cal-title{text-align:center; font-weight:900; color:var(--blue); font-size:1.1rem; margin-bottom:8px;}
-  .calgrid{display:grid; grid-template-columns:repeat(7,1fr); gap:5px;}
-  .calhead{
-    text-align:center; font-weight:900; font-size:.95rem; color:var(--soft);
-    padding:4px 0;
-  }
-  .calhead.we{color:var(--orange);}
-  .caldate{
-    border:none; cursor:pointer; aspect-ratio:1/1; border-radius:12px;
-    background:#fff; color:var(--ink); font-weight:800; font-size:1.05rem;
-    box-shadow:0 2px 5px rgba(0,0,0,.06); border:2px solid #EEF2FB;
-    display:flex; align-items:center; justify-content:center; transition:transform .1s;
-  }
-  .caldate.empty{background:transparent; box-shadow:none; border:none; cursor:default;}
-  .caldate.we{color:var(--orange);}
-  .caldate:active{transform:scale(.9);}
-  .caldate.on{color:#fff; background:var(--green); border-color:var(--green); box-shadow:0 5px 12px rgba(22,163,74,.35);}
-  .ask-btn{
-    display:block; margin:10px auto 0; border:none; cursor:pointer;
+  .step-btn{
+    display:block; margin:8px auto 0; border:none; cursor:pointer;
     background:linear-gradient(135deg,#FDE68A,#F59E0B); color:#7c2d12; font-weight:800;
-    padding:11px 18px; border-radius:16px; font-size:1.02rem; box-shadow:0 5px 12px rgba(245,158,11,.3);
+    padding:12px 20px; border-radius:16px; font-size:1.05rem; box-shadow:0 5px 12px rgba(245,158,11,.3);
   }
-  .ask-btn:active{transform:scale(.96);}
+  .step-btn:active{transform:scale(.96);}
+  .step-btn:disabled{filter:grayscale(.6) opacity(.6); cursor:not-allowed; box-shadow:none;}
 
   .note{
     margin-top:12px; background:#FFFDF5; border-radius:14px; padding:12px 14px;
@@ -136,9 +121,10 @@
   .bl{color:var(--blue);} .or{color:var(--orange);} .gr{color:var(--green);} .pu{color:var(--purple);}
   .unlock{text-align:center; font-weight:800; color:var(--purple); margin:14px 0 4px; min-height:1.4em;}
 
-  .part-tag{text-align:center; font-weight:900; color:var(--purple); margin:14px 0 2px; font-size:1.05rem;}
-
   /* ---- 闯关 ---- */
+  .card.chal-mode{border:3px solid #F59E0B; box-shadow:0 12px 30px rgba(245,158,11,.28);}
+  .chal-banner{display:none; text-align:center; font-weight:900; color:#B45309; background:#FFF7ED; border:2px dashed #F59E0B; border-radius:14px; padding:9px 12px; margin-bottom:10px; font-size:1.02rem;}
+  .card.chal-mode .chal-banner{display:block;}
   .level-tag{text-align:center; color:var(--soft); font-weight:800; margin-bottom:2px;}
   .q-hint{text-align:center; color:var(--orange); font-weight:800; font-size:1.05rem; margin:6px 0; min-height:1.3em;}
   .ask{text-align:center; font-size:1.5rem; font-weight:900; margin:10px 0 6px;}
@@ -155,11 +141,6 @@
   @keyframes shake{0%,100%{transform:none;}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
   .feedback{text-align:center; font-weight:900; font-size:1.3rem; min-height:1.5em; margin-top:12px;}
   .stars{font-size:1.6rem; letter-spacing:6px; text-align:center;}
-
-  /* ---- 挑战 ---- */
-  .card.chal-mode{border:3px solid #F59E0B; box-shadow:0 12px 30px rgba(245,158,11,.28);}
-  .chal-banner{display:none; text-align:center; font-weight:900; color:#B45309; background:#FFF7ED; border:2px dashed #F59E0B; border-radius:14px; padding:9px 12px; margin-bottom:10px; font-size:1.02rem;}
-  .card.chal-mode .chal-banner{display:block;}
 
   /* ---- 完成 ---- */
   .badge{font-size:4.5rem; text-align:center; animation:spin 3s linear infinite;}
@@ -185,7 +166,7 @@
 <div class="wrap">
 
   <header>
-    <div class="brand"><span class="fox">🦊</span><div>数学王国<br><small>日历与星期</small></div></div>
+    <div class="brand"><span class="fox">🦊</span><div>数学王国<br><small>数轴</small></div></div>
     <div class="tools">
       <button class="icon-btn" id="homeBtn" title="重新开始">🏠</button>
       <button class="icon-btn" id="muteBtn" title="声音开关">🔊</button>
@@ -202,32 +183,30 @@
   <!-- ============ 欢迎 ============ -->
   <section class="screen on" id="welcome">
     <div class="card">
-      <div style="font-size:3.6rem;text-align:center">📅</div>
-      <h1>日历与星期</h1>
-      <span class="pinyin">rì lì yǔ xīng qī · 一周七天</span>
+      <div style="font-size:3.4rem;text-align:center">📏</div>
+      <h1>数轴</h1>
+      <span class="pinyin">shù zhóu · 一条会数数的线</span>
       <p class="lead">
-        一个<b class="pu">星期</b>有 <b class="gr">7 天</b>：<br>
-        周一、周二、周三、周四、周五、周六、周日，<br>
-        然后又回到<b class="pu">周一</b>，一圈一圈<b class="pu">循环</b> 🔁<br>
-        一个<b class="bl">月</b>有 <b>28~31 天</b>，看<b>日历</b>就知道今天是周几啦！
+        数轴是一条<b class="pu">带箭头的线</b>，<br>
+        <b class="gr">0</b> 在起点，<b class="or">越往右数越大</b> →<br>
+        线上不光能放 <b>1、2、3</b>，<br>
+        还能放 <b class="bl">1/2</b>、<b class="bl">0.5</b> 这样的数哦！
       </p>
       <button class="big-btn" id="startBtn">开始探索 →</button>
 
       <details>
         <summary>👨‍👩‍👧 给爸爸妈妈的话（点开）</summary>
         <p>
-          <b>为什么学「日历与星期」？</b> 五岁的孩子对「今天、明天、昨天」已有感觉，
-          但「一个星期有几天、星期是循环的、怎么看日历找日期」是把时间<b>结构化</b>的第一步，
-          也用上了他熟悉的<b>数数</b>和<b>规律</b>。<br><br>
-          <b>怎么一起玩：</b> 探索屏分两部分。先点上面的<b>七个星期</b>小方块——
-          每点一个，会读出「这一天，后面一天是……」，并提示<b>周日之后又回到周一</b>（循环）。
-          再到下面的<b>日历表</b>，点任意一个日期格子，会说出「几号是周几」。
-          这是一张<b>固定的示例月历</b>（1 号是周一），方便反复练习，不会变。<br><br>
-          <b>可以在生活里这样做：</b> 拿出家里真的<b>日历或手机日历</b>，
-          和他一起找「<b>今天是周几</b>」，再一起<b>数到周末</b>（还有几天放假/出去玩）；
-          问问他「<b>明天是周几</b>」「<b>奶奶哪天来</b>」。<br><br>
-          <b>可以追问：</b>「一个星期有几天？」「周三的后面一天是？」「今天周六，明天是周几？」
-          让他自己说出答案，这就是日后看课程表、记日子的基础。
+          <b>为什么要学「数轴」？</b> 数轴把抽象的数变成了一条可以「看得见、摸得着」的线，
+          是培养<b>数感</b>最好的工具。0 在起点，往右越来越大，每个数都有自己固定的位置。
+          它还能把孩子已经会的<b>分数（1/2）和小数（0.5、1.5）</b>都安放在 1、2、3 之间，
+          让他直观感受到：<b>分数、小数也是数，也住在数轴上</b>，只是在整数的「中间」。<br><br>
+          <b>怎么一起玩：</b> 探索屏里有一条 0 到 10 的数轴，拖动<b>滑块</b>或点 <b>◀ ▶</b>，
+          让小箭头在数轴上走一走，边走边读出现在停在几。再点「<b>看看 1/2 和 1.5 在哪</b>」，
+          一起找出 1/2 在 0 和 1 中间、1.5 在 1 和 2 中间。<br><br>
+          <b>可以追问：</b>「3 和 7 谁在右边，谁更大呀？」「0 和 10 正中间是几？」
+          「1/2 应该放在哪两个数中间？」让他自己用「越往右越大」「在中间」来说理由，
+          这就是以后比大小、加减、负数和坐标的根基。
         </p>
       </details>
     </div>
@@ -236,22 +215,43 @@
   <!-- ============ 探索 ============ -->
   <section class="screen" id="explore">
     <div class="card">
-      <h2>📅 认识一周和日历</h2>
+      <h2>📏 在数轴上走一走</h2>
+      <p class="lead" style="margin-top:0">
+        拖滑块或点 ◀ ▶，让小箭头在数轴上走。<br>看看它停在几，越往右是不是越大？
+      </p>
 
-      <div class="part-tag">第一部分：一周有七天 🔁</div>
-      <div class="loop-hint">点一点每一天，听听它的下一天～</div>
-      <div class="weekrow" id="weekRow"></div>
-      <div class="loop-hint"><span class="loop-arrow">↪️</span> 周日的后面，又回到 <b>周一</b>！</div>
+      <div class="nl-val" id="nlVal">0</div>
 
-      <div class="part-tag">第二部分：看日历找星期几 🔎</div>
-      <div class="cal">
-        <div class="cal-title">🗓️ 示例月历</div>
-        <div class="calgrid" id="calHead"></div>
-        <div class="calgrid" id="calBody" style="margin-top:5px"></div>
+      <div class="nlbox">
+        <svg class="nlsvg" id="nlsvg" viewBox="0 0 660 150" xmlns="http://www.w3.org/2000/svg" aria-label="数轴">
+          <!-- 主轴线 + 箭头 -->
+          <defs>
+            <marker id="arrow" markerWidth="12" markerHeight="12" refX="8" refY="5" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="#7C3AED"></path>
+            </marker>
+          </defs>
+          <line x1="30" y1="92" x2="640" y2="92" stroke="#7C3AED" stroke-width="4" marker-end="url(#arrow)"></line>
+          <!-- 刻度 + 标签（由脚本生成） -->
+          <g id="ticks"></g>
+          <!-- 分数/小数标记（由脚本生成） -->
+          <g id="fracMarks"></g>
+          <!-- 可移动指针 -->
+          <g id="pointer">
+            <polygon points="0,48 -11,26 11,26" fill="#EA580C"></polygon>
+            <line x1="0" y1="48" x2="0" y2="92" stroke="#EA580C" stroke-width="4"></line>
+            <circle cx="0" cy="92" r="7" fill="#EA580C"></circle>
+          </g>
+        </svg>
       </div>
-      <button class="ask-btn" id="askBtn">考考我：15 号是星期几? 🤔</button>
 
-      <div class="note" id="note">先点点上面的星期，再点点下面的日历吧！</div>
+      <div class="nl-ctrl">
+        <button class="nl-arrow" id="nlMinus" aria-label="向左">◀</button>
+        <input class="nl-slider" id="nlSlider" type="range" min="0" max="10" step="1" value="0" aria-label="数轴滑块">
+        <button class="nl-arrow" id="nlPlus" aria-label="向右">▶</button>
+      </div>
+
+      <button class="step-btn" id="fracBtn">看看 1/2 和 1.5 在哪 ✨</button>
+      <div class="note" id="note">拖一拖滑块，让小箭头走起来！它停在几呀？</div>
 
       <div class="unlock" id="unlock"></div>
       <button class="big-btn purple" id="toPractice" disabled>去闯关 →</button>
@@ -261,7 +261,7 @@
   <!-- ============ 闯关 ============ -->
   <section class="screen" id="practice">
     <div class="card">
-      <div class="chal-banner">🌟 挑战题来了！要数一数星期，加油！</div>
+      <div class="chal-banner">🌟 挑战题来了！更难一点，加油！</div>
       <div class="level-tag" id="levelTag">第 1 / 5 关</div>
       <div class="q-hint" id="qHint"></div>
 
@@ -277,16 +277,13 @@
     <div class="card">
       <div class="badge">🎖️</div>
       <h1>太厉害啦！</h1>
-      <div class="trophy-name">🎖️ 日历小达人</div>
+      <div class="trophy-name">🎖️ 数轴小达人</div>
       <p class="lead">
-        你学会啦：<br>
-        一个星期有 <b class="gr">7 天</b> 🔁，<br>
-        还会<b class="bl">看日历</b>找出今天是<b class="pu">星期几</b>！
+        你认识了<b class="pu">数轴</b>这条神奇的线：<br>
+        <b class="gr">0</b> 在起点、<b class="or">越往右越大</b> →，<br>
+        <b class="bl">1/2、1.5</b> 都住在整数中间！🎉
       </p>
-      <p class="lead" style="font-size:1.05rem; color:var(--purple); font-weight:800">
-        🎉 你已经闯完了全部 <b>42 关</b>，太了不起啦！
-      </p>
-      <button class="big-btn" id="nextChapter" onclick="try{speechSynthesis.cancel()}catch(e){};location.href='数轴.html'">进入下一关 →</button>
+      <button class="big-btn" id="nextChapter" onclick="try{speechSynthesis.cancel()}catch(e){};location.href='年月日.html'">进入下一关 →</button>
       <button class="big-btn orange" id="again">再玩一次 🔁</button>
     </div>
   </section>
@@ -346,134 +343,138 @@ function show(id,step){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-/* ============ 探索 ============ */
-/* 固定的星期数据（不使用真实 Date，保证每次都一样） */
-const WEEK=['周一','周二','周三','周四','周五','周六','周日'];  // 列 0..6
-const seen={week:false, cal:false};
+/* ============ 探索：数轴 ============ */
+/* 0–10 数轴。x 坐标：x0=30 对应 0，每格 61px，到 x=640 对应 10。 */
+const X0=30, STEP=61;                 // 30 + 10*61 = 640
+const xOf = v => X0 + v*STEP;         // 数值 -> x 坐标
+const ticksEl=$('#ticks'), fracEl=$('#fracMarks'), pointer=$('#pointer');
+const nlVal=$('#nlVal'), nlSlider=$('#nlSlider'), note=$('#note');
+let curVal=0;                          // 当前指针所在整数 0–10
+let moved=false;                       // 滑块是否动过
+let fracShown=false;                   // 是否点过「看 1/2 / 1.5」
 let unlocked=false;
 
-const note=$('#note'), unlock=$('#unlock'), toPractice=$('#toPractice');
+const SVGNS='http://www.w3.org/2000/svg';
+function mk(tag,attrs){ const e=document.createElementNS(SVGNS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); return e; }
 
-/* ---- 第一部分：一周七天 ---- */
-function buildWeek(){
-  const row=$('#weekRow'); row.innerHTML='';
-  WEEK.forEach((name,i)=>{
-    const b=document.createElement('button');
-    b.className='daychip'+((i>=5)?' weekend':'');
-    b.textContent=name;
-    b.addEventListener('click',()=>tapDay(i,b));
-    row.appendChild(b);
+/* 画刻度 + 标签 */
+function drawTicks(){
+  ticksEl.innerHTML='';
+  for(let v=0;v<=10;v++){
+    const x=xOf(v);
+    ticksEl.appendChild(mk('line',{x1:x,y1:84,x2:x,y2:100,stroke:'#7C3AED','stroke-width':3}));
+    const t=mk('text',{x:x,y:122,'text-anchor':'middle','font-size':18,'font-weight':800,fill:'#1F2937'});
+    t.textContent=v;
+    ticksEl.appendChild(t);
+  }
+  // 起点 0 高亮成绿色
+  const zero=ticksEl.querySelector('text');
+  if(zero) zero.setAttribute('fill','#16A34A');
+}
+
+function movePointer(){
+  pointer.setAttribute('transform','translate('+xOf(curVal)+',0)');
+  nlVal.textContent=curVal;
+  nlSlider.value=curVal;
+}
+
+function setVal(v,fromUser){
+  v=Math.max(0,Math.min(10,Math.round(v)));
+  curVal=v; movePointer();
+  if(fromUser){
+    moved=true;
+    sClick();
+    note.innerHTML='小箭头停在 <b class="pu">'+v+'</b>！'+(v>=5?'已经走过一半啦～':'再往右走走看～');
+    // 偶尔朗读当前数（不要太吵）
+    if(v===0||v===5||v===10||Math.random()<0.34) say('现在停在 '+v+'。');
+    checkUnlock();
+  }
+}
+
+/* 标记 1/2 和 1.5 */
+function markFracs(){
+  if(fracShown){ sClick(); return; }
+  fracShown=true; sCut();
+  fracEl.innerHTML='';
+  const marks=[
+    {v:0.5, label:'½', color:'#2563EB', up:true},
+    {v:1.5, label:'1.5', color:'#EA580C', up:false}
+  ];
+  marks.forEach(m=>{
+    const x=xOf(m.v);
+    // 点
+    fracEl.appendChild(mk('circle',{cx:x,cy:92,r:6,fill:m.color}));
+    // 引线
+    const y2 = m.up? 40 : 144;
+    fracEl.appendChild(mk('line',{x1:x,y1:92,x2:x,y2:m.up?52:132,stroke:m.color,'stroke-width':2,'stroke-dasharray':'3 3'}));
+    const t=mk('text',{x:x,y:y2,'text-anchor':'middle','font-size':17,'font-weight':900,fill:m.color});
+    t.textContent=m.label;
+    fracEl.appendChild(t);
   });
+  note.innerHTML='看！<b class="bl">1/2</b> 在 <b>0</b> 和 <b>1</b> 中间，<b class="or">1.5</b> 在 <b>1</b> 和 <b>2</b> 中间。它们也住在数轴上哦！';
+  say('看，二分之一在 0 和 1 中间，1.5 在 1 和 2 中间。分数和小数也住在数轴上哦！');
+  $('#fracBtn').disabled=true;
+  $('#fracBtn').textContent='找到啦 ✓';
+  checkUnlock();
 }
-function tapDay(i,b){
-  $$('.daychip').forEach(c=>c.classList.remove('on'));
-  b.classList.add('on');
-  sClick();
-  const next=WEEK[(i+1)%7];
-  if(i===6){
-    note.innerHTML='<b class="pu">周日</b>是一周的最后一天，后面一天又回到 <b class="pu">周一</b>，重新开始！🔁';
-    say('周日，是一周的最后一天。后面一天，又回到周一，重新开始！');
-  }else{
-    note.innerHTML='<b class="pu">'+WEEK[i]+'</b>，后面一天是 <b class="pu">'+next+'</b>。';
-    say(WEEK[i]+'，后面一天是'+next+'。');
-  }
-  seen.week=true; checkUnlock();
-}
-
-/* ---- 第二部分：示例月历（确定性：1 号是周一）---- */
-const CAL_DAYS=30;     // 固定 30 天的月份
-const CAL_START=0;     // 1 号在第 0 列 = 周一
-function weekdayOf(d){ return WEEK[(d-1+CAL_START)%7]; }  // d 是 1..30
-
-function buildCal(){
-  const head=$('#calHead'); head.innerHTML='';
-  ['一','二','三','四','五','六','日'].forEach((t,i)=>{
-    const h=document.createElement('div');
-    h.className='calhead'+((i>=5)?' we':'');
-    h.textContent=t;
-    head.appendChild(h);
-  });
-  const body=$('#calBody'); body.innerHTML='';
-  // 前导空格
-  for(let i=0;i<CAL_START;i++){
-    const e=document.createElement('div'); e.className='caldate empty'; body.appendChild(e);
-  }
-  for(let d=1;d<=CAL_DAYS;d++){
-    const col=(d-1+CAL_START)%7;
-    const b=document.createElement('button');
-    b.className='caldate'+((col>=5)?' we':'');
-    b.textContent=d;
-    b.addEventListener('click',()=>tapDate(d,b));
-    body.appendChild(b);
-  }
-}
-function tapDate(d,b){
-  $$('.caldate').forEach(c=>c.classList.remove('on'));
-  b.classList.add('on');
-  sClick();
-  const wd=weekdayOf(d);
-  note.innerHTML='<b class="gr">'+d+' 号</b> 是 <b class="pu">'+wd+'</b>。';
-  say(d+'号，是'+wd+'。');
-  seen.cal=true; checkUnlock();
-}
-$('#askBtn').addEventListener('click',()=>{
-  sClick();
-  const d=15, wd=weekdayOf(d);
-  $$('.caldate').forEach(c=>{ c.classList.toggle('on', c.textContent===String(d)); });
-  note.innerHTML='数一数～ <b class="gr">15 号</b> 是 <b class="pu">'+wd+'</b>！你找对了吗？😊';
-  say('我们来数一数。15号，是'+wd+'。你找对了吗？');
-  seen.cal=true; checkUnlock();
-});
 
 function checkUnlock(){
   if(unlocked) return;
-  if(seen.week && seen.cal){
-    unlocked=true; toPractice.disabled=false; toPractice.classList.add('ready');
-    unlock.textContent='🎉 一周七天和日历你都玩明白啦，去闯关试试！';
-    sWin(); say('太棒了！一周七天和看日历你都会啦，去闯关试试吧！');
-  }else if(seen.week){
-    unlock.textContent='👍 不错！再点点下面的「日历」就能去闯关！';
-  }else if(seen.cal){
-    unlock.textContent='👍 不错！再点点上面的「星期」就能去闯关！';
+  if(moved && fracShown){
+    unlocked=true;
+    const tp=$('#toPractice');
+    tp.disabled=false; tp.classList.add('ready');
+    $('#unlock').textContent='🎉 数轴上越往右越大，分数小数也有自己的位置，你都看明白啦！';
+    sWin(); say('太棒了！数轴上越往右越大，分数和小数也有自己的位置，去闯关试试吧！');
+  }else if(!unlocked){
+    $('#unlock').textContent = !moved
+      ? '👍 先拖一拖滑块，让小箭头走一走！'
+      : '👍 再点「看看 1/2 和 1.5 在哪」就能去闯关！';
   }
 }
 
+nlSlider.addEventListener('input',e=>setVal(+e.target.value,true));
+$('#nlMinus').addEventListener('click',()=>setVal(curVal-1,true));
+$('#nlPlus').addEventListener('click',()=>setVal(curVal+1,true));
+$('#fracBtn').addEventListener('click',markFracs);
 $('#toPractice').addEventListener('click',()=>{ sClick(); startPractice(); });
 
 /* ============ 闯关 + 挑战 ============ */
 const BASIC=[
-  { q:'一个星期有几天?', opts:['7','5','10'], ans:'7',
-    hint:'周一到周日，一共 7 天。',
-    voice:'一个星期有几天呢？从周一数到周日。' },
-  { q:'周三的后一天是?', opts:['周四','周二','周五'], ans:'周四',
-    hint:'一、二、三、四…三的后面是四。',
-    voice:'周三的后一天是星期几呢？一、二、三、四。' },
-  { q:'今天是周六，明天是?', opts:['周日','周五','周一'], ans:'周日',
-    hint:'六的后面是日。',
-    voice:'今天是周六，那明天是星期几呢？六的后面是日。' },
-  { q:'周一的前一天是?', opts:['周日','周二','周六'], ans:'周日',
-    hint:'一星期循环，周一前面是上一周的周日。',
-    voice:'周一的前一天是星期几呢？一星期是循环的哦。' },
-  { q:'一个星期里，周末是哪两天?', opts:['周六和周日','周一和周二','周五和周六'], ans:'周六和周日',
-    hint:'周末就是周六和周日。',
-    voice:'一个星期里，周末是哪两天呢？' }
+  { q:'数轴上，3 和 7 哪个更大？', ans:'7', opts:['7','3','一样大'],
+    hint:'越往右越大，7 在 3 右边。 →',
+    voice:'数轴上，3 和 7 哪个更大呢？越往右越大，7 在 3 的右边。' },
+  { q:'数轴上 0 和 10 正中间是几？', ans:'5', opts:['5','1','10'],
+    hint:'一半的位置。 ⬅️➡️',
+    voice:'数轴上，0 和 10 正中间是几呢？就是一半的位置。' },
+  { q:'数轴上 2 的右边一格是几？', ans:'3', opts:['3','1','4'],
+    hint:'往右一格加 1。 ➡️',
+    voice:'数轴上，2 的右边一格是几呢？往右一格就加 1。' },
+  { q:'数轴上 1/2 在哪两个数中间？', ans:'0和1', opts:['0和1','1和2','2和3'],
+    hint:'1/2 比 1 小，在 0 和 1 之间。',
+    voice:'数轴上，二分之一在哪两个数中间呢？二分之一比 1 小，在 0 和 1 之间。' },
+  { q:'数轴上 1.5 在哪两个数中间？', ans:'1和2', opts:['1和2','0和1','2和3'],
+    hint:'1.5 比 1 大、比 2 小。',
+    voice:'数轴上，1.5 在哪两个数中间呢？1.5 比 1 大、比 2 小。' }
 ];
 const CHAL=[
-  { q:'1 号是周一，那么 8 号是星期几?', opts:['周一','周二','周日'], ans:'周一',
-    hint:'8 = 1 + 7，过了一整周，还是周一。',
-    voice:'一号是周一，那么八号是星期几呢？八等于一加七哦。' },
-  { q:'今天是周四，3 天后是星期几?', opts:['周日','周六','周一'], ans:'周日',
-    hint:'四→五→六→日，数 3 天。',
-    voice:'今天是周四，三天以后是星期几呢？我们一天一天数。' },
-  { q:'1 号是周一，本月第一个周日是几号?', opts:['7号','6号','8号'], ans:'7号',
-    hint:'周一1、周二2…周日就是 7 号。',
-    voice:'一号是周一，这个月第一个周日是几号呢？数一数。' }
+  { q:'把 0.5、1、1/4 从小到大排，最小的是？', ans:'1/4', opts:['1/4','0.5','1'],
+    hint:'1/4=0.25，最小。',
+    voice:'把 0.5、1、四分之一从小到大排，最小的是哪个呢？四分之一等于 0.25，最小。' },
+  { q:'数轴上，比 0 小 1 的数是？（0 的左边一格）', ans:'-1', opts:['-1','1','0'],
+    hint:'0 左边是比 0 还小的数，记作 −1。',
+    voice:'数轴上，比 0 小 1 的数是几呢？就是 0 的左边一格。0 左边是比 0 还小的数，记作负 1。' },
+  { q:'数轴上 7 和 4 相差几格？', ans:'3', opts:['3','11','4'],
+    hint:'7−4=3。',
+    voice:'数轴上，7 和 4 相差几格呢？7 减 4 等于 3。' }
 ];
-let phase='basic', pi=0;
+let phase='basic';   // 'basic' | 'chal'
+let pi=0;
 function startPractice(){
   phase='basic'; pi=0;
   $('#practice .card').classList.remove('chal-mode');
-  show('practice',2); renderLevel();
+  show('practice',2);
+  renderLevel();
 }
 
 function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
@@ -495,13 +496,13 @@ function renderLevel(){
     btn.addEventListener('click',()=>choose(btn,v,P.ans));
     box.appendChild(btn);
   });
+  answered=false;
   say(P.voice);
 }
 
 let answered=false;
 function choose(btn,v,ans){
   if(answered) return;
-  const arr = phase==='basic' ? BASIC : CHAL;
   if(v===ans){
     answered=true;
     btn.classList.add('correct'); sGood();
@@ -509,44 +510,45 @@ function choose(btn,v,ans){
     say('答对啦！你真厉害！');
     $$('.opt').forEach(o=>o.disabled=true);
     const nb=$('#nextLevel');
-    if(phase==='basic') nb.textContent = (pi<4) ? '下一关 →' : '进入挑战 🌟';
-    else                nb.textContent = (pi<2) ? '下一挑战 →' : '完成啦 🎉';
+    if(phase==='basic') nb.textContent = pi<4 ? '下一关 →' : '进入挑战 🌟';
+    else                nb.textContent = pi<2 ? '下一挑战 →' : '完成啦 🎉';
     nb.style.display='block';
   }else{
     btn.classList.add('wrong'); sBad();
-    $('#feedback').innerHTML='<span class="or">'+arr[pi].hint+' 再试试！</span>';
-    say('再想一想，'+arr[pi].hint);
+    $('#feedback').innerHTML='<span class="or">再想想，看看数轴上谁在右边～</span>';
+    say('再想想，看看数轴上谁在右边。');
     setTimeout(()=>btn.classList.remove('wrong'),400);
   }
 }
 
 $('#nextLevel').addEventListener('click',()=>{
   sClick(); answered=false;
-  if(phase==='basic'){
-    if(pi===4){
-      phase='chal'; pi=0;
-      $('#practice .card').classList.add('chal-mode');
-      show('practice',3); renderLevel();
-      say('闯关成功！挑战时间到，要数一数星期哦！');
-    }else{ pi++; renderLevel(); }
+  if(phase==='basic' && pi===4){
+    phase='chal'; pi=0;
+    $('#practice .card').classList.add('chal-mode');
+    show('practice',3);
+    renderLevel();
+    say('闯关成功！挑战时间到，这些题更难一点哦！');
+  }else if(phase==='basic'){
+    pi++; renderLevel();
+  }else if(phase==='chal' && pi===2){
+    finish();
   }else{
-    if(pi===2){ finish(); }
-    else{ pi++; renderLevel(); }
+    pi++; renderLevel();
   }
 });
 
 /* ============ 完成 ============ */
 function finish(){
-  show('done',4); sWin();
-  say('太厉害啦！你已经是日历小达人啦！而且你闯完了全部四十二关，太了不起啦！');
+  show('done',4); sWin(); say('太厉害啦！你已经是数轴小达人啦！0 在起点，越往右越大，分数小数都住在数轴上！');
   confetti();
 }
-$('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('explore',1); say('我们再玩一次！点点星期，再点点日历吧！'); });
+$('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('explore',1); say('我们再玩一次！拖一拖滑块，让小箭头走起来！'); });
 
 /* ---------- 顶部按钮 ---------- */
 $('#startBtn').addEventListener('click',()=>{
   ac(); sClick(); show('explore',1);
-  say('一个星期有七天，周一到周日，然后又回到周一。点点上面的星期，再看看下面的日历吧！');
+  say('数轴是一条带箭头的线，0 在起点，越往右数越大。拖一拖滑块，让小箭头在数轴上走一走吧！');
 });
 $('#muteBtn').addEventListener('click',()=>{
   muted=!muted; $('#muteBtn').textContent=muted?'🔇':'🔊';
@@ -556,12 +558,13 @@ $('#homeBtn').addEventListener('click',()=>{ sClick(); if('speechSynthesis'in wi
 
 function resetAll(){
   unlocked=false; answered=false; phase='basic'; pi=0;
+  moved=false; fracShown=false; curVal=0;
   $('#practice .card').classList.remove('chal-mode');
-  seen.week=false; seen.cal=false;
-  toPractice.disabled=true; toPractice.classList.remove('ready'); unlock.textContent='';
-  note.innerHTML='先点点上面的星期，再点点下面的日历吧！';
-  $$('.daychip').forEach(c=>c.classList.remove('on'));
-  $$('.caldate').forEach(c=>c.classList.remove('on'));
+  $('#toPractice').disabled=true; $('#toPractice').classList.remove('ready'); $('#unlock').textContent='';
+  fracEl.innerHTML='';
+  $('#fracBtn').disabled=false; $('#fracBtn').textContent='看看 1/2 和 1.5 在哪 ✨';
+  note.innerHTML='拖一拖滑块，让小箭头走起来！它停在几呀？';
+  movePointer();
 }
 
 /* ---------- 彩带 ---------- */
@@ -587,8 +590,8 @@ function confetti(){
 }
 
 /* 初始 */
-buildWeek();
-buildCal();
+drawTicks();
+movePointer();
 /* —— 通关记录（本地 localStorage）—— */
 /* —— 步骤 tab 可点击：已到达的阶段可回看，不能跳到未解锁阶段 —— */
 (function(){
@@ -613,7 +616,7 @@ buildCal();
   pills.forEach(function(p){ p.addEventListener('click',function(){ go(+p.dataset.step); }); });
   sync();
 })();
-(function(){var ID='rili';try{var d=document.getElementById('done');if(d){var mark=function(){if(d.classList.contains('on')){try{localStorage.setItem('yswg:done:'+ID,'1');}catch(e){}}};new MutationObserver(mark).observe(d,{attributes:true,attributeFilter:['class']});mark();}}catch(e){}})();
+(function(){var ID='shuzhou';try{var d=document.getElementById('done');if(d){var mark=function(){if(d.classList.contains('on')){try{localStorage.setItem('yswg:done:'+ID,'1');}catch(e){}}};new MutationObserver(mark).observe(d,{attributes:true,attributeFilter:['class']});mark();}}catch(e){}})();
 </script>
 </body>
 </html>

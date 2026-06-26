@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>日历与星期 · 日历小课堂</title>
+<title>年月日 · 数学小课堂</title>
 <style>
   :root{
     --dot: clamp(15px, 4.2vw, 30px);
@@ -80,53 +80,46 @@
   .big-btn.ready{animation:bounce 1s infinite;}
   @keyframes bounce{0%,100%{transform:none;}50%{transform:translateY(-5px);}}
 
-  /* ---- 一周七天 ---- */
-  .weekrow{
-    display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:12px 0 4px;
+  /* ---- 年月日：月份格子展示 ---- */
+  .monthgrid{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:10px;
+    margin:14px 0 6px;
   }
-  .daychip{
-    border:none; cursor:pointer; font-weight:900; font-size:1.05rem;
-    padding:12px 6px; border-radius:16px; background:#fff; color:var(--ink);
-    box-shadow:0 4px 10px rgba(0,0,0,.08); border:3px solid #E5E7EB;
-    min-width:58px; transition:transform .1s;
+  .mcell{
+    border:none; cursor:pointer; border-radius:16px; padding:12px 4px 10px;
+    background:#fff; box-shadow:0 4px 10px rgba(0,0,0,.08);
+    border:3px solid #E5E7EB; transition:transform .12s, box-shadow .12s;
+    text-align:center; line-height:1.2;
   }
-  .daychip:active{transform:scale(.93);}
-  .daychip.on{color:#fff; background:var(--purple); border-color:var(--purple); box-shadow:0 6px 14px rgba(124,58,237,.35);}
-  .daychip.weekend{color:var(--orange);}
-  .daychip.weekend.on{color:#fff; background:var(--orange); border-color:var(--orange);}
-  .loop-hint{
-    text-align:center; color:var(--purple); font-weight:800; font-size:1.05rem; margin:4px 0 2px;
-  }
-  .loop-arrow{font-size:1.3rem;}
+  .mcell:active{transform:scale(.95);}
+  .mcell .mname{font-size:1.2rem; font-weight:900; color:var(--ink);}
+  .mcell .mday{display:block; font-size:.78rem; font-weight:800; color:var(--soft); margin-top:3px;}
+  /* 大月（31天）=红；小月（30天）=蓝；二月=灰 */
+  .mcell.big{border-color:#FCA5A5; background:#FEF2F2;}
+  .mcell.big .mname{color:#DC2626;}
+  .mcell.small{border-color:#93C5FD; background:#EFF6FF;}
+  .mcell.small .mname{color:#2563EB;}
+  .mcell.feb{border-color:#D1D5DB; background:#F3F4F6;}
+  .mcell.feb .mname{color:#6B7280;}
+  .mcell.sel{transform:translateY(-3px) scale(1.04); box-shadow:0 9px 18px rgba(124,58,237,.28); outline:3px solid var(--purple);}
 
-  /* ---- 日历 ---- */
-  .cal{
-    margin:10px auto 4px; max-width:380px; background:#F8FAFF;
-    border:2px solid #DBE3F4; border-radius:20px; padding:12px;
-  }
-  .cal-title{text-align:center; font-weight:900; color:var(--blue); font-size:1.1rem; margin-bottom:8px;}
-  .calgrid{display:grid; grid-template-columns:repeat(7,1fr); gap:5px;}
-  .calhead{
-    text-align:center; font-weight:900; font-size:.95rem; color:var(--soft);
-    padding:4px 0;
-  }
-  .calhead.we{color:var(--orange);}
-  .caldate{
-    border:none; cursor:pointer; aspect-ratio:1/1; border-radius:12px;
-    background:#fff; color:var(--ink); font-weight:800; font-size:1.05rem;
-    box-shadow:0 2px 5px rgba(0,0,0,.06); border:2px solid #EEF2FB;
-    display:flex; align-items:center; justify-content:center; transition:transform .1s;
-  }
-  .caldate.empty{background:transparent; box-shadow:none; border:none; cursor:default;}
-  .caldate.we{color:var(--orange);}
-  .caldate:active{transform:scale(.9);}
-  .caldate.on{color:#fff; background:var(--green); border-color:var(--green); box-shadow:0 5px 12px rgba(22,163,74,.35);}
-  .ask-btn{
-    display:block; margin:10px auto 0; border:none; cursor:pointer;
+  .legend{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:8px 0 4px;}
+  .lg{font-size:.92rem; font-weight:800; padding:6px 12px; border-radius:999px; border:2px solid;}
+  .lg.big{color:#DC2626; background:#FEF2F2; border-color:#FCA5A5;}
+  .lg.small{color:#2563EB; background:#EFF6FF; border-color:#93C5FD;}
+  .lg.feb{color:#6B7280; background:#F3F4F6; border-color:#D1D5DB;}
+
+  /* 拳头记月法 SVG */
+  .fistwrap{margin:12px auto 4px; max-width:420px; text-align:center;}
+  .fisttip{font-size:.92rem; font-weight:800; color:var(--purple); margin:4px 0 6px;}
+
+  .step-btn{
+    display:block; margin:8px auto 0; border:none; cursor:pointer;
     background:linear-gradient(135deg,#FDE68A,#F59E0B); color:#7c2d12; font-weight:800;
-    padding:11px 18px; border-radius:16px; font-size:1.02rem; box-shadow:0 5px 12px rgba(245,158,11,.3);
+    padding:12px 20px; border-radius:16px; font-size:1.05rem; box-shadow:0 5px 12px rgba(245,158,11,.3);
   }
-  .ask-btn:active{transform:scale(.96);}
+  .step-btn:active{transform:scale(.96);}
+  .step-btn:disabled{filter:grayscale(.6) opacity(.6); cursor:not-allowed; box-shadow:none;}
 
   .note{
     margin-top:12px; background:#FFFDF5; border-radius:14px; padding:12px 14px;
@@ -134,11 +127,21 @@
   }
   .muted{color:var(--soft);}
   .bl{color:var(--blue);} .or{color:var(--orange);} .gr{color:var(--green);} .pu{color:var(--purple);}
+  .rd{color:#DC2626;}
   .unlock{text-align:center; font-weight:800; color:var(--purple); margin:14px 0 4px; min-height:1.4em;}
 
-  .part-tag{text-align:center; font-weight:900; color:var(--purple); margin:14px 0 2px; font-size:1.05rem;}
+  .yearfact{
+    display:none; margin:12px auto 2px; max-width:380px; background:#F0FDF4; border:2px solid #BBF7D0;
+    border-radius:16px; padding:11px 14px; text-align:center; color:#166534;
+    font-weight:800; line-height:1.7; font-size:1.02rem;
+  }
+  .yearfact.show{display:block; animation:dotin .4s ease both;}
+  @keyframes dotin{from{transform:scale(0);}to{transform:scale(1);}}
 
   /* ---- 闯关 ---- */
+  .card.chal-mode{border:3px solid #F59E0B; box-shadow:0 12px 30px rgba(245,158,11,.28);}
+  .chal-banner{display:none; text-align:center; font-weight:900; color:#B45309; background:#FFF7ED; border:2px dashed #F59E0B; border-radius:14px; padding:9px 12px; margin-bottom:10px; font-size:1.02rem;}
+  .card.chal-mode .chal-banner{display:block;}
   .level-tag{text-align:center; color:var(--soft); font-weight:800; margin-bottom:2px;}
   .q-hint{text-align:center; color:var(--orange); font-weight:800; font-size:1.05rem; margin:6px 0; min-height:1.3em;}
   .ask{text-align:center; font-size:1.5rem; font-weight:900; margin:10px 0 6px;}
@@ -155,11 +158,6 @@
   @keyframes shake{0%,100%{transform:none;}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
   .feedback{text-align:center; font-weight:900; font-size:1.3rem; min-height:1.5em; margin-top:12px;}
   .stars{font-size:1.6rem; letter-spacing:6px; text-align:center;}
-
-  /* ---- 挑战 ---- */
-  .card.chal-mode{border:3px solid #F59E0B; box-shadow:0 12px 30px rgba(245,158,11,.28);}
-  .chal-banner{display:none; text-align:center; font-weight:900; color:#B45309; background:#FFF7ED; border:2px dashed #F59E0B; border-radius:14px; padding:9px 12px; margin-bottom:10px; font-size:1.02rem;}
-  .card.chal-mode .chal-banner{display:block;}
 
   /* ---- 完成 ---- */
   .badge{font-size:4.5rem; text-align:center; animation:spin 3s linear infinite;}
@@ -185,7 +183,7 @@
 <div class="wrap">
 
   <header>
-    <div class="brand"><span class="fox">🦊</span><div>数学王国<br><small>日历与星期</small></div></div>
+    <div class="brand"><span class="fox">🦊</span><div>数学王国<br><small>年月日</small></div></div>
     <div class="tools">
       <button class="icon-btn" id="homeBtn" title="重新开始">🏠</button>
       <button class="icon-btn" id="muteBtn" title="声音开关">🔊</button>
@@ -202,32 +200,31 @@
   <!-- ============ 欢迎 ============ -->
   <section class="screen on" id="welcome">
     <div class="card">
-      <div style="font-size:3.6rem;text-align:center">📅</div>
-      <h1>日历与星期</h1>
-      <span class="pinyin">rì lì yǔ xīng qī · 一周七天</span>
+      <div style="font-size:3.4rem;text-align:center">📆</div>
+      <h1>年、月、日</h1>
+      <span class="pinyin">nián yuè rì · 一年有 12 个月</span>
       <p class="lead">
-        一个<b class="pu">星期</b>有 <b class="gr">7 天</b>：<br>
-        周一、周二、周三、周四、周五、周六、周日，<br>
-        然后又回到<b class="pu">周一</b>，一圈一圈<b class="pu">循环</b> 🔁<br>
-        一个<b class="bl">月</b>有 <b>28~31 天</b>，看<b>日历</b>就知道今天是周几啦！
+        一年有 <b class="pu">12 个月</b> 🗓️<br>
+        有的月有 <b class="rd">31 天（大月）</b>，<br>
+        有的月有 <b class="bl">30 天（小月）</b>，<br>
+        <b class="muted">二月</b> 最特别，只有 <b>28 天</b>（闰年 29 天）！
       </p>
       <button class="big-btn" id="startBtn">开始探索 →</button>
 
       <details>
         <summary>👨‍👩‍👧 给爸爸妈妈的话（点开）</summary>
         <p>
-          <b>为什么学「日历与星期」？</b> 五岁的孩子对「今天、明天、昨天」已有感觉，
-          但「一个星期有几天、星期是循环的、怎么看日历找日期」是把时间<b>结构化</b>的第一步，
-          也用上了他熟悉的<b>数数</b>和<b>规律</b>。<br><br>
-          <b>怎么一起玩：</b> 探索屏分两部分。先点上面的<b>七个星期</b>小方块——
-          每点一个，会读出「这一天，后面一天是……」，并提示<b>周日之后又回到周一</b>（循环）。
-          再到下面的<b>日历表</b>，点任意一个日期格子，会说出「几号是周几」。
-          这是一张<b>固定的示例月历</b>（1 号是周一），方便反复练习，不会变。<br><br>
-          <b>可以在生活里这样做：</b> 拿出家里真的<b>日历或手机日历</b>，
-          和他一起找「<b>今天是周几</b>」，再一起<b>数到周末</b>（还有几天放假/出去玩）；
-          问问他「<b>明天是周几</b>」「<b>奶奶哪天来</b>」。<br><br>
-          <b>可以追问：</b>「一个星期有几天？」「周三的后面一天是？」「今天周六，明天是周几？」
-          让他自己说出答案，这就是日后看课程表、记日子的基础。
+          <b>这一关学什么？</b> 认识「年、月、日」：一年有 <b>12 个月</b>，大约 <b>365 天</b>。
+          月份分三类——<b>大月 31 天</b>（1、3、5、7、8、10、12 月，共 7 个）、
+          <b>小月 30 天</b>（4、6、9、11 月，共 4 个）、<b>二月最短</b>（平年 28 天、闰年 29 天）。<br><br>
+          <b>拳头记月法：</b> 握紧一只拳头，从食指的指关节（凸起）开始数 1 月，
+          指缝（凹下去）数 2 月，再凸起的关节数 3 月……<b>凸起的是大月（31 天），凹下去的是小月</b>。
+          数到小指关节是 7 月，再从食指关节重新数 8 月，正好 8 月也是大月，很好记！<br><br>
+          <b>和前面的关卡接上：</b> 第 42 关我们玩过「看日历」，这一关把日历背后的规律讲清楚——
+          为什么每个月天数不一样、二月为什么这么短。<br><br>
+          <b>怎么一起玩：</b> 探索屏里让他一个一个点月份，听一听每个月几天；
+          红色=大月、蓝色=小月、灰色=二月。多点几个月就能去闯关。
+          可以追问：「8 月是大月还是小月呀？」「二月有几天？」「一年一共有几个月？」
         </p>
       </details>
     </div>
@@ -236,22 +233,64 @@
   <!-- ============ 探索 ============ -->
   <section class="screen" id="explore">
     <div class="card">
-      <h2>📅 认识一周和日历</h2>
+      <h2>🗓️ 一年 12 个月，每个月几天？</h2>
+      <p class="lead" style="margin-top:0">
+        点一点每个月，听听它有多少天！<br>
+        <b class="rd">红色 = 大月</b>、<b class="bl">蓝色 = 小月</b>、<b class="muted">灰色 = 二月</b>。
+      </p>
 
-      <div class="part-tag">第一部分：一周有七天 🔁</div>
-      <div class="loop-hint">点一点每一天，听听它的下一天～</div>
-      <div class="weekrow" id="weekRow"></div>
-      <div class="loop-hint"><span class="loop-arrow">↪️</span> 周日的后面，又回到 <b>周一</b>！</div>
-
-      <div class="part-tag">第二部分：看日历找星期几 🔎</div>
-      <div class="cal">
-        <div class="cal-title">🗓️ 示例月历</div>
-        <div class="calgrid" id="calHead"></div>
-        <div class="calgrid" id="calBody" style="margin-top:5px"></div>
+      <div class="legend">
+        <span class="lg big">🔴 大月 31 天</span>
+        <span class="lg small">🔵 小月 30 天</span>
+        <span class="lg feb">⚪ 二月 28 天</span>
       </div>
-      <button class="ask-btn" id="askBtn">考考我：15 号是星期几? 🤔</button>
 
-      <div class="note" id="note">先点点上面的星期，再点点下面的日历吧！</div>
+      <div class="monthgrid" id="monthgrid"></div>
+
+      <div class="fistwrap">
+        <div class="fisttip">✊ 拳头记月法：凸起的关节是<b class="rd">大月</b>，凹下去的是<b class="bl">小月</b></div>
+        <svg viewBox="0 0 420 96" width="100%" xmlns="http://www.w3.org/2000/svg" aria-label="拳头记月法">
+          <!-- 关节凸起=大月(红)，指缝凹陷=小月(蓝) -->
+          <!-- 1月 大 -->
+          <path d="M10 70 Q30 30 50 70 Z" fill="#FECACA" stroke="#DC2626" stroke-width="2"/>
+          <text x="30" y="64" text-anchor="middle" font-size="13" font-weight="800" fill="#DC2626">1</text>
+          <!-- 2月 缝(二月) -->
+          <text x="60" y="78" text-anchor="middle" font-size="12" font-weight="800" fill="#6B7280">2</text>
+          <!-- 3月 大 -->
+          <path d="M70 70 Q90 30 110 70 Z" fill="#FECACA" stroke="#DC2626" stroke-width="2"/>
+          <text x="90" y="64" text-anchor="middle" font-size="13" font-weight="800" fill="#DC2626">3</text>
+          <!-- 4月 缝 -->
+          <text x="120" y="78" text-anchor="middle" font-size="12" font-weight="800" fill="#2563EB">4</text>
+          <!-- 5月 大 -->
+          <path d="M130 70 Q150 30 170 70 Z" fill="#FECACA" stroke="#DC2626" stroke-width="2"/>
+          <text x="150" y="64" text-anchor="middle" font-size="13" font-weight="800" fill="#DC2626">5</text>
+          <!-- 6月 缝 -->
+          <text x="180" y="78" text-anchor="middle" font-size="12" font-weight="800" fill="#2563EB">6</text>
+          <!-- 7月 大 -->
+          <path d="M190 70 Q210 30 230 70 Z" fill="#FECACA" stroke="#DC2626" stroke-width="2"/>
+          <text x="210" y="64" text-anchor="middle" font-size="13" font-weight="800" fill="#DC2626">7</text>
+          <!-- 折返竖线 -->
+          <line x1="244" y1="20" x2="244" y2="80" stroke="#C4B5FD" stroke-width="2" stroke-dasharray="4 4"/>
+          <text x="244" y="14" text-anchor="middle" font-size="10" font-weight="800" fill="#7C3AED">再数一遍</text>
+          <!-- 8月 大 -->
+          <path d="M258 70 Q278 30 298 70 Z" fill="#FECACA" stroke="#DC2626" stroke-width="2"/>
+          <text x="278" y="64" text-anchor="middle" font-size="13" font-weight="800" fill="#DC2626">8</text>
+          <!-- 9月 缝 -->
+          <text x="308" y="78" text-anchor="middle" font-size="12" font-weight="800" fill="#2563EB">9</text>
+          <!-- 10月 大 -->
+          <path d="M318 70 Q336 30 354 70 Z" fill="#FECACA" stroke="#DC2626" stroke-width="2"/>
+          <text x="336" y="64" text-anchor="middle" font-size="12" font-weight="800" fill="#DC2626">10</text>
+          <!-- 11月 缝 -->
+          <text x="366" y="78" text-anchor="middle" font-size="11" font-weight="800" fill="#2563EB">11</text>
+          <!-- 12月 大 -->
+          <path d="M376 70 Q394 30 412 70 Z" fill="#FECACA" stroke="#DC2626" stroke-width="2"/>
+          <text x="394" y="64" text-anchor="middle" font-size="12" font-weight="800" fill="#DC2626">12</text>
+        </svg>
+      </div>
+
+      <div class="note" id="note">点一点上面的月份，看看它有几天！👆</div>
+
+      <div class="yearfact" id="yearfact"></div>
 
       <div class="unlock" id="unlock"></div>
       <button class="big-btn purple" id="toPractice" disabled>去闯关 →</button>
@@ -261,7 +300,7 @@
   <!-- ============ 闯关 ============ -->
   <section class="screen" id="practice">
     <div class="card">
-      <div class="chal-banner">🌟 挑战题来了！要数一数星期，加油！</div>
+      <div class="chal-banner">🌟 挑战题来了！更难一点，加油！</div>
       <div class="level-tag" id="levelTag">第 1 / 5 关</div>
       <div class="q-hint" id="qHint"></div>
 
@@ -279,14 +318,12 @@
       <h1>太厉害啦！</h1>
       <div class="trophy-name">🎖️ 日历小达人</div>
       <p class="lead">
-        你学会啦：<br>
-        一个星期有 <b class="gr">7 天</b> 🔁，<br>
-        还会<b class="bl">看日历</b>找出今天是<b class="pu">星期几</b>！
+        你认识了<b class="pu">年、月、日</b>：<br>
+        一年有 <b class="pu">12 个月</b>、大约 <b class="gr">365 天</b>，<br>
+        <b class="rd">大月 31 天</b>、<b class="bl">小月 30 天</b>，<br>
+        <b class="muted">二月</b>最短，只有 <b>28 天</b>（闰年 29 天）！🎉
       </p>
-      <p class="lead" style="font-size:1.05rem; color:var(--purple); font-weight:800">
-        🎉 你已经闯完了全部 <b>42 关</b>，太了不起啦！
-      </p>
-      <button class="big-btn" id="nextChapter" onclick="try{speechSynthesis.cancel()}catch(e){};location.href='数轴.html'">进入下一关 →</button>
+      <button class="big-btn" id="nextChapter" onclick="try{speechSynthesis.cancel()}catch(e){};location.href='平均数.html'">进入下一关 →</button>
       <button class="big-btn orange" id="again">再玩一次 🔁</button>
     </div>
   </section>
@@ -347,94 +384,70 @@ function show(id,step){
 }
 
 /* ============ 探索 ============ */
-/* 固定的星期数据（不使用真实 Date，保证每次都一样） */
-const WEEK=['周一','周二','周三','周四','周五','周六','周日'];  // 列 0..6
-const seen={week:false, cal:false};
+/* 12 个月：type = 'big'(31天) | 'small'(30天) | 'feb'(28天) */
+const MONTHS=[
+  {m:1,  days:31, type:'big'},
+  {m:2,  days:28, type:'feb'},
+  {m:3,  days:31, type:'big'},
+  {m:4,  days:30, type:'small'},
+  {m:5,  days:31, type:'big'},
+  {m:6,  days:30, type:'small'},
+  {m:7,  days:31, type:'big'},
+  {m:8,  days:31, type:'big'},
+  {m:9,  days:30, type:'small'},
+  {m:10, days:31, type:'big'},
+  {m:11, days:30, type:'small'},
+  {m:12, days:31, type:'big'}
+];
+const seenMonths=new Set();
 let unlocked=false;
+const NEED=4;  /* 至少点 4 个月才能去闯关 */
 
-const note=$('#note'), unlock=$('#unlock'), toPractice=$('#toPractice');
+const grid=$('#monthgrid'), note=$('#note');
+const yearfact=$('#yearfact'), unlock=$('#unlock'), toPractice=$('#toPractice');
 
-/* ---- 第一部分：一周七天 ---- */
-function buildWeek(){
-  const row=$('#weekRow'); row.innerHTML='';
-  WEEK.forEach((name,i)=>{
+function buildGrid(){
+  grid.innerHTML='';
+  MONTHS.forEach(M=>{
     const b=document.createElement('button');
-    b.className='daychip'+((i>=5)?' weekend':'');
-    b.textContent=name;
-    b.addEventListener('click',()=>tapDay(i,b));
-    row.appendChild(b);
+    b.className='mcell '+M.type;
+    b.dataset.m=M.m;
+    b.innerHTML='<span class="mname">'+M.m+'月</span><span class="mday">'+M.days+'天</span>';
+    b.addEventListener('click',()=>tapMonth(b,M));
+    grid.appendChild(b);
   });
 }
-function tapDay(i,b){
-  $$('.daychip').forEach(c=>c.classList.remove('on'));
-  b.classList.add('on');
+
+function tapMonth(b,M){
   sClick();
-  const next=WEEK[(i+1)%7];
-  if(i===6){
-    note.innerHTML='<b class="pu">周日</b>是一周的最后一天，后面一天又回到 <b class="pu">周一</b>，重新开始！🔁';
-    say('周日，是一周的最后一天。后面一天，又回到周一，重新开始！');
+  $$('.mcell',grid).forEach(c=>c.classList.remove('sel'));
+  b.classList.add('sel');
+  const label = M.type==='big' ? '大月' : (M.type==='small' ? '小月' : '二月');
+  if(M.type==='feb'){
+    note.innerHTML='<b class="muted">2月</b> 最特别！平年只有 <b>28 天</b>，闰年有 <b>29 天</b>。';
+    say('2 月，最特别。平年 28 天，闰年 29 天。');
+  }else if(M.type==='big'){
+    note.innerHTML='<b class="rd">'+M.m+'月</b> 是<b class="rd">大月</b>，有 <b class="rd">31 天</b>！🔴';
+    say(M.m+'月，大月，31天。');
   }else{
-    note.innerHTML='<b class="pu">'+WEEK[i]+'</b>，后面一天是 <b class="pu">'+next+'</b>。';
-    say(WEEK[i]+'，后面一天是'+next+'。');
+    note.innerHTML='<b class="bl">'+M.m+'月</b> 是<b class="bl">小月</b>，有 <b class="bl">30 天</b>！🔵';
+    say(M.m+'月，小月，30天。');
   }
-  seen.week=true; checkUnlock();
+  seenMonths.add(M.m);
+  checkUnlock();
 }
-
-/* ---- 第二部分：示例月历（确定性：1 号是周一）---- */
-const CAL_DAYS=30;     // 固定 30 天的月份
-const CAL_START=0;     // 1 号在第 0 列 = 周一
-function weekdayOf(d){ return WEEK[(d-1+CAL_START)%7]; }  // d 是 1..30
-
-function buildCal(){
-  const head=$('#calHead'); head.innerHTML='';
-  ['一','二','三','四','五','六','日'].forEach((t,i)=>{
-    const h=document.createElement('div');
-    h.className='calhead'+((i>=5)?' we':'');
-    h.textContent=t;
-    head.appendChild(h);
-  });
-  const body=$('#calBody'); body.innerHTML='';
-  // 前导空格
-  for(let i=0;i<CAL_START;i++){
-    const e=document.createElement('div'); e.className='caldate empty'; body.appendChild(e);
-  }
-  for(let d=1;d<=CAL_DAYS;d++){
-    const col=(d-1+CAL_START)%7;
-    const b=document.createElement('button');
-    b.className='caldate'+((col>=5)?' we':'');
-    b.textContent=d;
-    b.addEventListener('click',()=>tapDate(d,b));
-    body.appendChild(b);
-  }
-}
-function tapDate(d,b){
-  $$('.caldate').forEach(c=>c.classList.remove('on'));
-  b.classList.add('on');
-  sClick();
-  const wd=weekdayOf(d);
-  note.innerHTML='<b class="gr">'+d+' 号</b> 是 <b class="pu">'+wd+'</b>。';
-  say(d+'号，是'+wd+'。');
-  seen.cal=true; checkUnlock();
-}
-$('#askBtn').addEventListener('click',()=>{
-  sClick();
-  const d=15, wd=weekdayOf(d);
-  $$('.caldate').forEach(c=>{ c.classList.toggle('on', c.textContent===String(d)); });
-  note.innerHTML='数一数～ <b class="gr">15 号</b> 是 <b class="pu">'+wd+'</b>！你找对了吗？😊';
-  say('我们来数一数。15号，是'+wd+'。你找对了吗？');
-  seen.cal=true; checkUnlock();
-});
 
 function checkUnlock(){
-  if(unlocked) return;
-  if(seen.week && seen.cal){
+  if(unlocked){ return; }
+  const n=seenMonths.size;
+  if(n>=NEED){
     unlocked=true; toPractice.disabled=false; toPractice.classList.add('ready');
-    unlock.textContent='🎉 一周七天和日历你都玩明白啦，去闯关试试！';
-    sWin(); say('太棒了！一周七天和看日历你都会啦，去闯关试试吧！');
-  }else if(seen.week){
-    unlock.textContent='👍 不错！再点点下面的「日历」就能去闯关！';
-  }else if(seen.cal){
-    unlock.textContent='👍 不错！再点点上面的「星期」就能去闯关！';
+    yearfact.classList.add('show');
+    yearfact.innerHTML='🗓️ 把 12 个月的天数加起来，<br>一年大约有 <b class="gr">365 天</b>！';
+    unlock.textContent='🎉 你已经认识了大月、小月和二月，去闯关试试吧！';
+    sWin(); say('太棒了！一年有 12 个月，把每个月的天数加起来，一年大约 365 天。去闯关试试吧！');
+  }else{
+    unlock.textContent='👍 再点一点别的月份（还差 '+(NEED-n)+' 个）就能去闯关！';
   }
 }
 
@@ -442,38 +455,40 @@ $('#toPractice').addEventListener('click',()=>{ sClick(); startPractice(); });
 
 /* ============ 闯关 + 挑战 ============ */
 const BASIC=[
-  { q:'一个星期有几天?', opts:['7','5','10'], ans:'7',
-    hint:'周一到周日，一共 7 天。',
-    voice:'一个星期有几天呢？从周一数到周日。' },
-  { q:'周三的后一天是?', opts:['周四','周二','周五'], ans:'周四',
-    hint:'一、二、三、四…三的后面是四。',
-    voice:'周三的后一天是星期几呢？一、二、三、四。' },
-  { q:'今天是周六，明天是?', opts:['周日','周五','周一'], ans:'周日',
-    hint:'六的后面是日。',
-    voice:'今天是周六，那明天是星期几呢？六的后面是日。' },
-  { q:'周一的前一天是?', opts:['周日','周二','周六'], ans:'周日',
-    hint:'一星期循环，周一前面是上一周的周日。',
-    voice:'周一的前一天是星期几呢？一星期是循环的哦。' },
-  { q:'一个星期里，周末是哪两天?', opts:['周六和周日','周一和周二','周五和周六'], ans:'周六和周日',
-    hint:'周末就是周六和周日。',
-    voice:'一个星期里，周末是哪两天呢？' }
+  { q:'一年有几个月?', ans:12, opts:[12,10,7],
+    hint:'从 1 月到 12 月，一共 12 个月。 🗓️',
+    voice:'一年有几个月呢？从 1 月数到 12 月，一共 12 个月。' },
+  { q:'一年大约有几天?', ans:365, opts:[365,100,50],
+    hint:'一年大约 365 天。 ☀️',
+    voice:'一年大约有几天呢？一年大约有 365 天。' },
+  { q:'下面哪个月有 31 天?', ans:'1月', opts:['1月','4月','2月'],
+    hint:'1月是大月，有 31 天。 🔴',
+    voice:'下面哪个月有 31 天呢？1月是大月，有 31 天。' },
+  { q:'2月一般有几天?', ans:28, opts:[28,30,31],
+    hint:'二月最短，平年 28 天。 ⚪',
+    voice:'2月一般有几天呢？二月最短，平年 28 天。' },
+  { q:'大月有几天?', ans:31, opts:[31,30,28],
+    hint:'大月有 31 天。 🔴',
+    voice:'大月有几天呢？大月有 31 天。' }
 ];
 const CHAL=[
-  { q:'1 号是周一，那么 8 号是星期几?', opts:['周一','周二','周日'], ans:'周一',
-    hint:'8 = 1 + 7，过了一整周，还是周一。',
-    voice:'一号是周一，那么八号是星期几呢？八等于一加七哦。' },
-  { q:'今天是周四，3 天后是星期几?', opts:['周日','周六','周一'], ans:'周日',
-    hint:'四→五→六→日，数 3 天。',
-    voice:'今天是周四，三天以后是星期几呢？我们一天一天数。' },
-  { q:'1 号是周一，本月第一个周日是几号?', opts:['7号','6号','8号'], ans:'7号',
-    hint:'周一1、周二2…周日就是 7 号。',
-    voice:'一号是周一，这个月第一个周日是几号呢？数一数。' }
+  { q:'4月有30天，4月30日的后一天是?', ans:'5月1日', opts:['5月1日','4月31日','5月2日'],
+    hint:'4月没有 31 日，过完 30 日就到 5 月 1 日。 📆',
+    voice:'4月有 30 天，4月 30 日的后一天是哪天呢？4月没有 31 日，过完 30 日就到 5 月 1 日。' },
+  { q:'闰年的 2 月有几天?', ans:29, opts:[29,28,30],
+    hint:'闰年二月多一天，29 天。 ✨',
+    voice:'闰年的 2 月有几天呢？闰年二月多一天，有 29 天。' },
+  { q:'1、3、5、7、8、10、12 月都是大月，一共几个大月?', ans:7, opts:[7,6,12],
+    hint:'数一数：七个大月。 🔴',
+    voice:'1、3、5、7、8、10、12 月都是大月，一共有几个大月呢？数一数，七个大月。' }
 ];
-let phase='basic', pi=0;
+let phase='basic';   // 'basic' | 'chal'
+let pi=0;
 function startPractice(){
   phase='basic'; pi=0;
   $('#practice .card').classList.remove('chal-mode');
-  show('practice',2); renderLevel();
+  show('practice',2);
+  renderLevel();
 }
 
 function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
@@ -501,7 +516,6 @@ function renderLevel(){
 let answered=false;
 function choose(btn,v,ans){
   if(answered) return;
-  const arr = phase==='basic' ? BASIC : CHAL;
   if(v===ans){
     answered=true;
     btn.classList.add('correct'); sGood();
@@ -509,44 +523,45 @@ function choose(btn,v,ans){
     say('答对啦！你真厉害！');
     $$('.opt').forEach(o=>o.disabled=true);
     const nb=$('#nextLevel');
-    if(phase==='basic') nb.textContent = (pi<4) ? '下一关 →' : '进入挑战 🌟';
-    else                nb.textContent = (pi<2) ? '下一挑战 →' : '完成啦 🎉';
+    if(phase==='basic') nb.textContent = pi<4 ? '下一关 →' : '进入挑战 🌟';
+    else                nb.textContent = pi<2 ? '下一挑战 →' : '完成啦 🎉';
     nb.style.display='block';
   }else{
     btn.classList.add('wrong'); sBad();
-    $('#feedback').innerHTML='<span class="or">'+arr[pi].hint+' 再试试！</span>';
-    say('再想一想，'+arr[pi].hint);
+    $('#feedback').innerHTML='<span class="or">再想想哦～</span>';
+    say('再想想哦。');
     setTimeout(()=>btn.classList.remove('wrong'),400);
   }
 }
 
 $('#nextLevel').addEventListener('click',()=>{
   sClick(); answered=false;
-  if(phase==='basic'){
-    if(pi===4){
-      phase='chal'; pi=0;
-      $('#practice .card').classList.add('chal-mode');
-      show('practice',3); renderLevel();
-      say('闯关成功！挑战时间到，要数一数星期哦！');
-    }else{ pi++; renderLevel(); }
+  if(phase==='basic' && pi===4){
+    phase='chal'; pi=0;
+    $('#practice .card').classList.add('chal-mode');
+    show('practice',3);
+    renderLevel();
+    say('闯关成功！挑战时间到，这些题更难一点哦！');
+  }else if(phase==='basic'){
+    pi++; renderLevel();
+  }else if(phase==='chal' && pi===2){
+    finish();
   }else{
-    if(pi===2){ finish(); }
-    else{ pi++; renderLevel(); }
+    pi++; renderLevel();
   }
 });
 
 /* ============ 完成 ============ */
 function finish(){
-  show('done',4); sWin();
-  say('太厉害啦！你已经是日历小达人啦！而且你闯完了全部四十二关，太了不起啦！');
+  show('done',4); sWin(); say('太厉害啦！你已经是日历小达人啦！一年有 12 个月，大月 31 天，小月 30 天，二月最短！');
   confetti();
 }
-$('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('explore',1); say('我们再玩一次！点点星期，再点点日历吧！'); });
+$('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('explore',1); say('我们再玩一次！点一点每个月看看吧。'); });
 
 /* ---------- 顶部按钮 ---------- */
 $('#startBtn').addEventListener('click',()=>{
   ac(); sClick(); show('explore',1);
-  say('一个星期有七天，周一到周日，然后又回到周一。点点上面的星期，再看看下面的日历吧！');
+  say('一年有 12 个月。点一点每个月，看看每个月有几天吧！');
 });
 $('#muteBtn').addEventListener('click',()=>{
   muted=!muted; $('#muteBtn').textContent=muted?'🔇':'🔊';
@@ -556,12 +571,12 @@ $('#homeBtn').addEventListener('click',()=>{ sClick(); if('speechSynthesis'in wi
 
 function resetAll(){
   unlocked=false; answered=false; phase='basic'; pi=0;
+  seenMonths.clear();
   $('#practice .card').classList.remove('chal-mode');
-  seen.week=false; seen.cal=false;
   toPractice.disabled=true; toPractice.classList.remove('ready'); unlock.textContent='';
-  note.innerHTML='先点点上面的星期，再点点下面的日历吧！';
-  $$('.daychip').forEach(c=>c.classList.remove('on'));
-  $$('.caldate').forEach(c=>c.classList.remove('on'));
+  yearfact.classList.remove('show'); yearfact.innerHTML='';
+  note.innerHTML='点一点上面的月份，看看它有几天！👆';
+  $$('.mcell',grid).forEach(c=>c.classList.remove('sel'));
 }
 
 /* ---------- 彩带 ---------- */
@@ -587,9 +602,7 @@ function confetti(){
 }
 
 /* 初始 */
-buildWeek();
-buildCal();
-/* —— 通关记录（本地 localStorage）—— */
+buildGrid();
 /* —— 步骤 tab 可点击：已到达的阶段可回看，不能跳到未解锁阶段 —— */
 (function(){
   if(typeof show!=='function') return;
@@ -613,7 +626,7 @@ buildCal();
   pills.forEach(function(p){ p.addEventListener('click',function(){ go(+p.dataset.step); }); });
   sync();
 })();
-(function(){var ID='rili';try{var d=document.getElementById('done');if(d){var mark=function(){if(d.classList.contains('on')){try{localStorage.setItem('yswg:done:'+ID,'1');}catch(e){}}};new MutationObserver(mark).observe(d,{attributes:true,attributeFilter:['class']});mark();}}catch(e){}})();
+(function(){var ID='nianyueri';try{var d=document.getElementById('done');if(d){var mark=function(){if(d.classList.contains('on')){try{localStorage.setItem('yswg:done:'+ID,'1');}catch(e){}}};new MutationObserver(mark).observe(d,{attributes:true,attributeFilter:['class']});mark();}}catch(e){}})();
 </script>
 </body>
 </html>

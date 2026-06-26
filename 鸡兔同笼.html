@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>日历与星期 · 日历小课堂</title>
+<title>鸡兔同笼 · 数学小课堂</title>
 <style>
   :root{
     --dot: clamp(15px, 4.2vw, 30px);
@@ -80,53 +80,56 @@
   .big-btn.ready{animation:bounce 1s infinite;}
   @keyframes bounce{0%,100%{transform:none;}50%{transform:translateY(-5px);}}
 
-  /* ---- 一周七天 ---- */
-  .weekrow{
-    display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:12px 0 4px;
+  /* ---- 鸡兔同笼：动物模型 ---- */
+  .target-card{
+    display:flex; align-items:center; justify-content:center; gap:18px; flex-wrap:wrap;
+    background:#F8FAFF; border-radius:20px; padding:14px 16px; border:2px dashed #DBE3F4;
+    margin:10px 0 8px; font-weight:900; font-size:1.25rem;
   }
-  .daychip{
-    border:none; cursor:pointer; font-weight:900; font-size:1.05rem;
-    padding:12px 6px; border-radius:16px; background:#fff; color:var(--ink);
-    box-shadow:0 4px 10px rgba(0,0,0,.08); border:3px solid #E5E7EB;
-    min-width:58px; transition:transform .1s;
-  }
-  .daychip:active{transform:scale(.93);}
-  .daychip.on{color:#fff; background:var(--purple); border-color:var(--purple); box-shadow:0 6px 14px rgba(124,58,237,.35);}
-  .daychip.weekend{color:var(--orange);}
-  .daychip.weekend.on{color:#fff; background:var(--orange); border-color:var(--orange);}
-  .loop-hint{
-    text-align:center; color:var(--purple); font-weight:800; font-size:1.05rem; margin:4px 0 2px;
-  }
-  .loop-arrow{font-size:1.3rem;}
+  .target-card .t{color:var(--purple);}
+  .target-card .legs{color:var(--orange);}
 
-  /* ---- 日历 ---- */
-  .cal{
-    margin:10px auto 4px; max-width:380px; background:#F8FAFF;
-    border:2px solid #DBE3F4; border-radius:20px; padding:12px;
+  .cage{
+    display:flex; justify-content:center; align-items:flex-end; gap:10px; flex-wrap:wrap;
+    min-height:120px; margin:8px 0 4px;
+    background:repeating-linear-gradient(0deg,#FFFDF5,#FFFDF5 14px,#FFF6E0 14px,#FFF6E0 16px);
+    border:3px solid #F6D58A; border-radius:18px; padding:14px 10px 10px;
   }
-  .cal-title{text-align:center; font-weight:900; color:var(--blue); font-size:1.1rem; margin-bottom:8px;}
-  .calgrid{display:grid; grid-template-columns:repeat(7,1fr); gap:5px;}
-  .calhead{
-    text-align:center; font-weight:900; font-size:.95rem; color:var(--soft);
-    padding:4px 0;
+  .animal{display:flex; flex-direction:column; align-items:center; gap:2px; transition:transform .2s;}
+  .animal .face{font-size:2.5rem; line-height:1;}
+  .animal .legs-row{display:flex; gap:3px; margin-top:1px;}
+  .animal .leg{
+    width:6px; height:18px; border-radius:0 0 4px 4px;
+    background:#C2772A;
   }
-  .calhead.we{color:var(--orange);}
-  .caldate{
-    border:none; cursor:pointer; aspect-ratio:1/1; border-radius:12px;
-    background:#fff; color:var(--ink); font-weight:800; font-size:1.05rem;
-    box-shadow:0 2px 5px rgba(0,0,0,.06); border:2px solid #EEF2FB;
-    display:flex; align-items:center; justify-content:center; transition:transform .1s;
+  .animal.rabbit .leg{background:#9B6B3A;}
+  .animal.pop{animation:legpop .35s ease both;}
+  @keyframes legpop{0%{transform:translateY(-8px) scale(1.12);}100%{transform:none;}}
+
+  .legcount{
+    text-align:center; font-weight:900; font-size:1.35rem; margin:8px 0 4px; min-height:1.5em;
   }
-  .caldate.empty{background:transparent; box-shadow:none; border:none; cursor:default;}
-  .caldate.we{color:var(--orange);}
-  .caldate:active{transform:scale(.9);}
-  .caldate.on{color:#fff; background:var(--green); border-color:var(--green); box-shadow:0 5px 12px rgba(22,163,74,.35);}
-  .ask-btn{
-    display:block; margin:10px auto 0; border:none; cursor:pointer;
-    background:linear-gradient(135deg,#FDE68A,#F59E0B); color:#7c2d12; font-weight:800;
-    padding:11px 18px; border-radius:16px; font-size:1.02rem; box-shadow:0 5px 12px rgba(245,158,11,.3);
+  .legcount .now{color:var(--blue);}
+  .legcount .goal{color:var(--orange);}
+  .legcount.hit{color:var(--green);}
+
+  .slider-row{display:flex; align-items:center; gap:12px; justify-content:center; margin:10px 0 4px;}
+  .slider-row .lab{font-weight:900; font-size:1.05rem; color:var(--purple);}
+  .rabnum{
+    display:inline-flex; align-items:center; justify-content:center;
+    min-width:46px; height:46px; border-radius:14px; background:var(--purple); color:#fff;
+    font-size:1.5rem; font-weight:900;
   }
-  .ask-btn:active{transform:scale(.96);}
+  .rab-btns{display:flex; gap:10px; justify-content:center; margin:8px 0 2px;}
+  .rab-btns button{
+    border:none; cursor:pointer; width:58px; height:54px; border-radius:16px;
+    font-size:1.7rem; font-weight:900; color:#fff;
+    box-shadow:0 5px 12px rgba(0,0,0,.12); transition:transform .1s;
+  }
+  .rab-btns button:active{transform:scale(.93);}
+  .rab-btns .minus{background:linear-gradient(135deg,#FDBA74,#F97316);}
+  .rab-btns .plus{background:linear-gradient(135deg,#A78BFA,#7C3AED);}
+  .rab-btns button:disabled{filter:grayscale(.6) opacity(.5); cursor:not-allowed; box-shadow:none;}
 
   .note{
     margin-top:12px; background:#FFFDF5; border-radius:14px; padding:12px 14px;
@@ -136,9 +139,18 @@
   .bl{color:var(--blue);} .or{color:var(--orange);} .gr{color:var(--green);} .pu{color:var(--purple);}
   .unlock{text-align:center; font-weight:800; color:var(--purple); margin:14px 0 4px; min-height:1.4em;}
 
-  .part-tag{text-align:center; font-weight:900; color:var(--purple); margin:14px 0 2px; font-size:1.05rem;}
+  .wrongway{
+    display:none; margin:12px auto 2px; max-width:380px; background:#F0FDF4; border:2px solid #BBF7D0;
+    border-radius:16px; padding:11px 14px; text-align:center; color:#166534;
+    font-weight:800; line-height:1.7; font-size:1.02rem;
+  }
+  .wrongway.show{display:block; animation:dotin .4s ease both;}
+  @keyframes dotin{from{transform:scale(0);}to{transform:scale(1);}}
 
   /* ---- 闯关 ---- */
+  .card.chal-mode{border:3px solid #F59E0B; box-shadow:0 12px 30px rgba(245,158,11,.28);}
+  .chal-banner{display:none; text-align:center; font-weight:900; color:#B45309; background:#FFF7ED; border:2px dashed #F59E0B; border-radius:14px; padding:9px 12px; margin-bottom:10px; font-size:1.02rem;}
+  .card.chal-mode .chal-banner{display:block;}
   .level-tag{text-align:center; color:var(--soft); font-weight:800; margin-bottom:2px;}
   .q-hint{text-align:center; color:var(--orange); font-weight:800; font-size:1.05rem; margin:6px 0; min-height:1.3em;}
   .ask{text-align:center; font-size:1.5rem; font-weight:900; margin:10px 0 6px;}
@@ -155,11 +167,6 @@
   @keyframes shake{0%,100%{transform:none;}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
   .feedback{text-align:center; font-weight:900; font-size:1.3rem; min-height:1.5em; margin-top:12px;}
   .stars{font-size:1.6rem; letter-spacing:6px; text-align:center;}
-
-  /* ---- 挑战 ---- */
-  .card.chal-mode{border:3px solid #F59E0B; box-shadow:0 12px 30px rgba(245,158,11,.28);}
-  .chal-banner{display:none; text-align:center; font-weight:900; color:#B45309; background:#FFF7ED; border:2px dashed #F59E0B; border-radius:14px; padding:9px 12px; margin-bottom:10px; font-size:1.02rem;}
-  .card.chal-mode .chal-banner{display:block;}
 
   /* ---- 完成 ---- */
   .badge{font-size:4.5rem; text-align:center; animation:spin 3s linear infinite;}
@@ -185,7 +192,7 @@
 <div class="wrap">
 
   <header>
-    <div class="brand"><span class="fox">🦊</span><div>数学王国<br><small>日历与星期</small></div></div>
+    <div class="brand"><span class="fox">🦊</span><div>数学王国<br><small>鸡兔同笼</small></div></div>
     <div class="tools">
       <button class="icon-btn" id="homeBtn" title="重新开始">🏠</button>
       <button class="icon-btn" id="muteBtn" title="声音开关">🔊</button>
@@ -202,32 +209,36 @@
   <!-- ============ 欢迎 ============ -->
   <section class="screen on" id="welcome">
     <div class="card">
-      <div style="font-size:3.6rem;text-align:center">📅</div>
-      <h1>日历与星期</h1>
-      <span class="pinyin">rì lì yǔ xīng qī · 一周七天</span>
+      <div style="font-size:3.4rem;text-align:center">🐔🐰</div>
+      <h1>🏆 困难关：挑战大 Boss！</h1>
+      <span class="pinyin">jī tù tóng lóng · 鸡兔同笼</span>
       <p class="lead">
-        一个<b class="pu">星期</b>有 <b class="gr">7 天</b>：<br>
-        周一、周二、周三、周四、周五、周六、周日，<br>
-        然后又回到<b class="pu">周一</b>，一圈一圈<b class="pu">循环</b> 🔁<br>
-        一个<b class="bl">月</b>有 <b>28~31 天</b>，看<b>日历</b>就知道今天是周几啦！
+        一个笼子里关着 <b class="or">🐔 鸡</b> 和 <b class="pu">🐰 兔</b>。<br>
+        🐔 鸡有 <b class="or">2 只脚</b>，🐰 兔有 <b class="pu">4 只脚</b>。<br>
+        只知道<b>一共几个头</b>、<b>一共几只脚</b>，<br>
+        就能算出<b class="or">几只鸡</b>、<b class="pu">几只兔</b>！
+      </p>
+      <p class="lead" style="margin-top:2px">
+        秘密武器叫「<b class="gr">抬脚法</b>」：先<b>假设全是鸡</b>（每个头算 2 只脚），<br>
+        多出来的脚，都是<b class="pu">兔子</b>的——每只兔比鸡<b>多 2 只脚</b> 🦵
       </p>
       <button class="big-btn" id="startBtn">开始探索 →</button>
 
       <details>
         <summary>👨‍👩‍👧 给爸爸妈妈的话（点开）</summary>
         <p>
-          <b>为什么学「日历与星期」？</b> 五岁的孩子对「今天、明天、昨天」已有感觉，
-          但「一个星期有几天、星期是循环的、怎么看日历找日期」是把时间<b>结构化</b>的第一步，
-          也用上了他熟悉的<b>数数</b>和<b>规律</b>。<br><br>
-          <b>怎么一起玩：</b> 探索屏分两部分。先点上面的<b>七个星期</b>小方块——
-          每点一个，会读出「这一天，后面一天是……」，并提示<b>周日之后又回到周一</b>（循环）。
-          再到下面的<b>日历表</b>，点任意一个日期格子，会说出「几号是周几」。
-          这是一张<b>固定的示例月历</b>（1 号是周一），方便反复练习，不会变。<br><br>
-          <b>可以在生活里这样做：</b> 拿出家里真的<b>日历或手机日历</b>，
-          和他一起找「<b>今天是周几</b>」，再一起<b>数到周末</b>（还有几天放假/出去玩）；
-          问问他「<b>明天是周几</b>」「<b>奶奶哪天来</b>」。<br><br>
-          <b>可以追问：</b>「一个星期有几天？」「周三的后面一天是？」「今天周六，明天是周几？」
-          让他自己说出答案，这就是日后看课程表、记日子的基础。
+          <b>「鸡兔同笼」是一道经典趣味题</b>，最早出现在一千多年前的《孙子算经》里。它好玩的地方在于：
+          这是孩子第一次遇到需要<b>多步推理</b>的问题——不能一眼看出答案，要一步一步想。<br><br>
+          <b>两种好用的方法：</b><br>
+          ① <b>画图法 / 数脚法</b>：把头一个个画出来，先给每个头画 2 只脚（当成鸡），数数还差几只脚，
+          每差 2 只就把一只「鸡」变成「兔」（再添 2 只脚）。<br>
+          ② <b>抬脚法（假设法）</b>：假设全是鸡，脚数 = 头数 × 2；用<b>实际脚数减去这个数</b>，
+          得到「多出来的脚」；因为每只兔比鸡多 2 只脚，所以 <b>多出来的脚 ÷ 2 = 兔的只数</b>。<br><br>
+          <b>怎么一起玩：</b> 探索屏里有 3 个头、8 只脚的小笼子。陪他用「＋／－」按钮调兔子的只数，
+          看每只动物的脚一只只画出来，数到刚好 8 只就成功。别急着给答案，让他<b>慢慢试、慢慢数</b>，
+          自己发现「1 只兔、2 只鸡」。<br><br>
+          <b>可以追问：</b>「如果全是鸡，会有几只脚呀？」「还差几只脚？」「差的脚是谁的呀？」
+          让他自己说出「多出来的脚是兔子的，每只兔多 2 只脚」，这就是抬脚法的核心。这是困难关，做出来超棒！
         </p>
       </details>
     </div>
@@ -236,22 +247,36 @@
   <!-- ============ 探索 ============ -->
   <section class="screen" id="explore">
     <div class="card">
-      <h2>📅 认识一周和日历</h2>
+      <h2>🐔🐰 3 个头、8 只脚，几鸡几兔？</h2>
+      <p class="lead" style="margin-top:0">
+        笼子里有 <b class="pu">3 个头</b>、<b class="or">8 只脚</b>。<br>
+        用 ＋／－ 调<b class="pu">兔子的只数</b>，剩下的都是鸡，数数脚够不够 8！
+      </p>
 
-      <div class="part-tag">第一部分：一周有七天 🔁</div>
-      <div class="loop-hint">点一点每一天，听听它的下一天～</div>
-      <div class="weekrow" id="weekRow"></div>
-      <div class="loop-hint"><span class="loop-arrow">↪️</span> 周日的后面，又回到 <b>周一</b>！</div>
-
-      <div class="part-tag">第二部分：看日历找星期几 🔎</div>
-      <div class="cal">
-        <div class="cal-title">🗓️ 示例月历</div>
-        <div class="calgrid" id="calHead"></div>
-        <div class="calgrid" id="calBody" style="margin-top:5px"></div>
+      <div class="target-card">
+        <span>🎯 目标：</span>
+        <span class="t">3 个头</span>
+        <span>·</span>
+        <span class="legs">8 只脚</span>
       </div>
-      <button class="ask-btn" id="askBtn">考考我：15 号是星期几? 🤔</button>
 
-      <div class="note" id="note">先点点上面的星期，再点点下面的日历吧！</div>
+      <div class="cage" id="cage"></div>
+
+      <div class="legcount" id="legcount"></div>
+
+      <div class="rab-btns">
+        <button class="minus" id="rabMinus" aria-label="减少兔子">−</button>
+        <div class="slider-row" style="margin:0">
+          <span class="lab">🐰 兔子</span>
+          <span class="rabnum" id="rabNum">0</span>
+          <span class="lab">只</span>
+        </div>
+        <button class="plus" id="rabPlus" aria-label="增加兔子">＋</button>
+      </div>
+
+      <div class="note" id="note">现在 0 只兔、3 只鸡。点 ＋ 加一只兔子试试看！</div>
+
+      <div class="wrongway" id="wrongway"></div>
 
       <div class="unlock" id="unlock"></div>
       <button class="big-btn purple" id="toPractice" disabled>去闯关 →</button>
@@ -261,7 +286,7 @@
   <!-- ============ 闯关 ============ -->
   <section class="screen" id="practice">
     <div class="card">
-      <div class="chal-banner">🌟 挑战题来了！要数一数星期，加油！</div>
+      <div class="chal-banner">🌟 挑战题来了！更难一点，加油！</div>
       <div class="level-tag" id="levelTag">第 1 / 5 关</div>
       <div class="q-hint" id="qHint"></div>
 
@@ -275,18 +300,15 @@
   <!-- ============ 完成 ============ -->
   <section class="screen" id="done">
     <div class="card">
-      <div class="badge">🎖️</div>
+      <div class="badge">🏆</div>
       <h1>太厉害啦！</h1>
-      <div class="trophy-name">🎖️ 日历小达人</div>
+      <div class="trophy-name">🏆 解谜小高手</div>
       <p class="lead">
-        你学会啦：<br>
-        一个星期有 <b class="gr">7 天</b> 🔁，<br>
-        还会<b class="bl">看日历</b>找出今天是<b class="pu">星期几</b>！
+        你用<b class="gr">抬脚法</b>打败了<b class="pu">困难关大 Boss</b>！🐔🐰<br>
+        先<b>假设全是鸡</b>，多出来的脚 ÷ 2，就是<b class="pu">兔子</b>的只数！<br>
+        🎉 你闯到这里太了不起了！整个数学王国，你都通关啦！
       </p>
-      <p class="lead" style="font-size:1.05rem; color:var(--purple); font-weight:800">
-        🎉 你已经闯完了全部 <b>42 关</b>，太了不起啦！
-      </p>
-      <button class="big-btn" id="nextChapter" onclick="try{speechSynthesis.cancel()}catch(e){};location.href='数轴.html'">进入下一关 →</button>
+      <button class="big-btn" id="nextChapter" onclick="try{speechSynthesis.cancel()}catch(e){};location.href='index.html'">🎉 全部通关！回到地图</button>
       <button class="big-btn orange" id="again">再玩一次 🔁</button>
     </div>
   </section>
@@ -347,133 +369,140 @@ function show(id,step){
 }
 
 /* ============ 探索 ============ */
-/* 固定的星期数据（不使用真实 Date，保证每次都一样） */
-const WEEK=['周一','周二','周三','周四','周五','周六','周日'];  // 列 0..6
-const seen={week:false, cal:false};
+/* 经典案例：3 个头、8 只脚。调兔子的只数(0~3)，剩下的都是鸡。鸡 2 脚、兔 4 脚。
+   答案：兔=1（2脚×2鸡 + 4×1兔 = 8）。 */
+const HEADS=3, GOAL=8;
+let rabbits=0;          // 当前兔子只数 0~3
+let solved=false;       // 是否找到答案
 let unlocked=false;
 
-const note=$('#note'), unlock=$('#unlock'), toPractice=$('#toPractice');
+const cage=$('#cage'), legcount=$('#legcount'), note=$('#note');
+const rabNum=$('#rabNum'), rabMinus=$('#rabMinus'), rabPlus=$('#rabPlus');
+const wrongway=$('#wrongway'), unlock=$('#unlock'), toPractice=$('#toPractice');
 
-/* ---- 第一部分：一周七天 ---- */
-function buildWeek(){
-  const row=$('#weekRow'); row.innerHTML='';
-  WEEK.forEach((name,i)=>{
-    const b=document.createElement('button');
-    b.className='daychip'+((i>=5)?' weekend':'');
-    b.textContent=name;
-    b.addEventListener('click',()=>tapDay(i,b));
-    row.appendChild(b);
-  });
+/* 一只动物的 HTML：rabbit=4 条腿+🐰，chicken=2 条腿+🐔 */
+function animalHTML(isRabbit,doPop){
+  const legs = isRabbit ? 4 : 2;
+  let row='';
+  for(let i=0;i<legs;i++) row+='<span class="leg"></span>';
+  return '<div class="animal '+(isRabbit?'rabbit':'chicken')+(doPop?' pop':'')+'">'+
+           '<span class="face">'+(isRabbit?'🐰':'🐔')+'</span>'+
+           '<span class="legs-row">'+row+'</span>'+
+         '</div>';
 }
-function tapDay(i,b){
-  $$('.daychip').forEach(c=>c.classList.remove('on'));
-  b.classList.add('on');
-  sClick();
-  const next=WEEK[(i+1)%7];
-  if(i===6){
-    note.innerHTML='<b class="pu">周日</b>是一周的最后一天，后面一天又回到 <b class="pu">周一</b>，重新开始！🔁';
-    say('周日，是一周的最后一天。后面一天，又回到周一，重新开始！');
+
+function legsTotal(){ return rabbits*4 + (HEADS-rabbits)*2; }
+
+function renderCage(doPop){
+  let html='';
+  for(let i=0;i<HEADS;i++) html+=animalHTML(i<rabbits,doPop);
+  cage.innerHTML=html;
+}
+
+function renderExplore(doPop){
+  renderCage(doPop);
+  const chickens=HEADS-rabbits, total=legsTotal();
+  rabNum.textContent=rabbits;
+  rabMinus.disabled=(rabbits<=0);
+  rabPlus.disabled=(rabbits>=HEADS);
+
+  if(total===GOAL){
+    legcount.className='legcount hit';
+    legcount.innerHTML='🦵 现在一共 <b>'+total+'</b> 只脚 = 目标 <b>'+GOAL+'</b> 只脚 ✓';
   }else{
-    note.innerHTML='<b class="pu">'+WEEK[i]+'</b>，后面一天是 <b class="pu">'+next+'</b>。';
-    say(WEEK[i]+'，后面一天是'+next+'。');
+    legcount.className='legcount';
+    legcount.innerHTML='🦵 现在一共 <span class="now">'+total+'</span> 只脚（目标 <span class="goal">'+GOAL+'</span> 只脚）';
   }
-  seen.week=true; checkUnlock();
+
+  if(total===GOAL){
+    // 找到答案：兔=1, 鸡=2
+    note.innerHTML='🎉 <b class="gr">'+rabbits+' 只兔、'+chickens+' 只鸡</b>，刚好 <b class="gr">'+GOAL+' 只脚</b>！';
+    if(!solved){
+      solved=true;
+      sGood(); say(rabbits+' 只兔、'+chickens+' 只鸡，刚好 '+GOAL+' 只脚！你找到答案啦！');
+      showMethod();
+      checkUnlock();
+    }
+  }else if(total<GOAL){
+    note.innerHTML=rabbits+' 只兔、'+chickens+' 只鸡，才 <b class="bl">'+total+'</b> 只脚，<b class="or">还不够</b>，再加只兔子！🐰';
+  }else{
+    note.innerHTML=rabbits+' 只兔、'+chickens+' 只鸡，有 <b class="bl">'+total+'</b> 只脚，<b class="or">太多啦</b>，减一只兔子！';
+  }
 }
 
-/* ---- 第二部分：示例月历（确定性：1 号是周一）---- */
-const CAL_DAYS=30;     // 固定 30 天的月份
-const CAL_START=0;     // 1 号在第 0 列 = 周一
-function weekdayOf(d){ return WEEK[(d-1+CAL_START)%7]; }  // d 是 1..30
-
-function buildCal(){
-  const head=$('#calHead'); head.innerHTML='';
-  ['一','二','三','四','五','六','日'].forEach((t,i)=>{
-    const h=document.createElement('div');
-    h.className='calhead'+((i>=5)?' we':'');
-    h.textContent=t;
-    head.appendChild(h);
-  });
-  const body=$('#calBody'); body.innerHTML='';
-  // 前导空格
-  for(let i=0;i<CAL_START;i++){
-    const e=document.createElement('div'); e.className='caldate empty'; body.appendChild(e);
-  }
-  for(let d=1;d<=CAL_DAYS;d++){
-    const col=(d-1+CAL_START)%7;
-    const b=document.createElement('button');
-    b.className='caldate'+((col>=5)?' we':'');
-    b.textContent=d;
-    b.addEventListener('click',()=>tapDate(d,b));
-    body.appendChild(b);
-  }
+/* 抬脚法算理，写在绿色 wrongway 框里 */
+function showMethod(){
+  wrongway.classList.add('show');
+  wrongway.innerHTML='✨ <b>抬脚法</b>：假设全是鸡，<b class="or">3 × 2 = 6</b> 只脚，'+
+    '还差 <b class="or">8 − 6 = 2</b> 只脚；<br>每只兔比鸡多 2 只脚，'+
+    '<b class="gr">2 ÷ 2 = 1 只兔</b>，剩下 2 只是鸡！';
+  setTimeout(()=>say('用抬脚法也行。假设全是鸡，3 乘 2 等于 6 只脚，还差 2 只脚，每只兔多 2 只脚，2 除以 2 等于 1 只兔。'),3000);
 }
-function tapDate(d,b){
-  $$('.caldate').forEach(c=>c.classList.remove('on'));
-  b.classList.add('on');
-  sClick();
-  const wd=weekdayOf(d);
-  note.innerHTML='<b class="gr">'+d+' 号</b> 是 <b class="pu">'+wd+'</b>。';
-  say(d+'号，是'+wd+'。');
-  seen.cal=true; checkUnlock();
-}
-$('#askBtn').addEventListener('click',()=>{
-  sClick();
-  const d=15, wd=weekdayOf(d);
-  $$('.caldate').forEach(c=>{ c.classList.toggle('on', c.textContent===String(d)); });
-  note.innerHTML='数一数～ <b class="gr">15 号</b> 是 <b class="pu">'+wd+'</b>！你找对了吗？😊';
-  say('我们来数一数。15号，是'+wd+'。你找对了吗？');
-  seen.cal=true; checkUnlock();
-});
 
 function checkUnlock(){
   if(unlocked) return;
-  if(seen.week && seen.cal){
+  if(solved){
     unlocked=true; toPractice.disabled=false; toPractice.classList.add('ready');
-    unlock.textContent='🎉 一周七天和日历你都玩明白啦，去闯关试试！';
-    sWin(); say('太棒了！一周七天和看日历你都会啦，去闯关试试吧！');
-  }else if(seen.week){
-    unlock.textContent='👍 不错！再点点下面的「日历」就能去闯关！';
-  }else if(seen.cal){
-    unlock.textContent='👍 不错！再点点上面的「星期」就能去闯关！';
+    unlock.textContent='🎉 你解开了鸡兔同笼的小秘密！去闯关挑战吧！';
+    sWin();
   }
 }
 
+function setRabbits(n,doPop){
+  n=Math.max(0,Math.min(HEADS,n));
+  if(n===rabbits && cage.children.length){ return; }
+  rabbits=n;
+  renderExplore(doPop);
+}
+
+rabMinus.addEventListener('click',()=>{
+  if(rabMinus.disabled) return;
+  sClick(); setRabbits(rabbits-1,true);
+});
+rabPlus.addEventListener('click',()=>{
+  if(rabPlus.disabled) return;
+  sClick(); setRabbits(rabbits+1,true);
+});
 $('#toPractice').addEventListener('click',()=>{ sClick(); startPractice(); });
 
 /* ============ 闯关 + 挑战 ============ */
+/* BASIC(5)：小而干净的案例，避开演示用的「3 头 8 脚」 */
 const BASIC=[
-  { q:'一个星期有几天?', opts:['7','5','10'], ans:'7',
-    hint:'周一到周日，一共 7 天。',
-    voice:'一个星期有几天呢？从周一数到周日。' },
-  { q:'周三的后一天是?', opts:['周四','周二','周五'], ans:'周四',
-    hint:'一、二、三、四…三的后面是四。',
-    voice:'周三的后一天是星期几呢？一、二、三、四。' },
-  { q:'今天是周六，明天是?', opts:['周日','周五','周一'], ans:'周日',
-    hint:'六的后面是日。',
-    voice:'今天是周六，那明天是星期几呢？六的后面是日。' },
-  { q:'周一的前一天是?', opts:['周日','周二','周六'], ans:'周日',
-    hint:'一星期循环，周一前面是上一周的周日。',
-    voice:'周一的前一天是星期几呢？一星期是循环的哦。' },
-  { q:'一个星期里，周末是哪两天?', opts:['周六和周日','周一和周二','周五和周六'], ans:'周六和周日',
-    hint:'周末就是周六和周日。',
-    voice:'一个星期里，周末是哪两天呢？' }
+  { q:'2 个头、6 只脚，几只兔?', ans:1, opts:[1,2,0],
+    hint:'1 兔 1 鸡：4 + 2 = 6。 🐰🐔',
+    voice:'2 个头、6 只脚，有几只兔呢？1 只兔加 1 只鸡，4 加 2 等于 6。' },
+  { q:'4 个头、10 只脚，几只兔?', ans:1, opts:[1,2,3],
+    hint:'1 兔 3 鸡：4 + 6 = 10。 🐰🐔',
+    voice:'4 个头、10 只脚，有几只兔呢？1 只兔加 3 只鸡，4 加 6 等于 10。' },
+  { q:'5 个头，全是鸡，一共几只脚?', ans:10, opts:[10,5,20],
+    hint:'每只鸡 2 只脚，5 × 2 = 10。 🐔',
+    voice:'5 个头，全是鸡，一共几只脚呢？每只鸡 2 只脚，5 乘 2 等于 10。' },
+  { q:'3 个头，全是兔，一共几只脚?', ans:12, opts:[12,6,3],
+    hint:'每只兔 4 只脚，3 × 4 = 12。 🐰',
+    voice:'3 个头，全是兔，一共几只脚呢？每只兔 4 只脚，3 乘 4 等于 12。' },
+  { q:'2 个头、8 只脚，几只兔?', ans:2, opts:[2,1,0],
+    hint:'两只都是兔：4 + 4 = 8。 🐰🐰',
+    voice:'2 个头、8 只脚，有几只兔呢？两只都是兔，4 加 4 等于 8。' }
 ];
+/* CHAL(3)：更难，正式用抬脚法 */
 const CHAL=[
-  { q:'1 号是周一，那么 8 号是星期几?', opts:['周一','周二','周日'], ans:'周一',
-    hint:'8 = 1 + 7，过了一整周，还是周一。',
-    voice:'一号是周一，那么八号是星期几呢？八等于一加七哦。' },
-  { q:'今天是周四，3 天后是星期几?', opts:['周日','周六','周一'], ans:'周日',
-    hint:'四→五→六→日，数 3 天。',
-    voice:'今天是周四，三天以后是星期几呢？我们一天一天数。' },
-  { q:'1 号是周一，本月第一个周日是几号?', opts:['7号','6号','8号'], ans:'7号',
-    hint:'周一1、周二2…周日就是 7 号。',
-    voice:'一号是周一，这个月第一个周日是几号呢？数一数。' }
+  { q:'5 个头、14 只脚，几只兔?', ans:2, opts:[2,3,1],
+    hint:'全鸡 5×2=10，差 4 只脚，4÷2=2 只兔。 🦵',
+    voice:'5 个头、14 只脚，几只兔呢？假设全是鸡，5 乘 2 等于 10，还差 4 只脚，4 除以 2 等于 2 只兔。' },
+  { q:'6 个头、16 只脚，几只兔?', ans:2, opts:[2,3,4],
+    hint:'全鸡 6×2=12，差 4 只脚，4÷2=2 只兔。 🦵',
+    voice:'6 个头、16 只脚，几只兔呢？假设全是鸡，6 乘 2 等于 12，还差 4 只脚，4 除以 2 等于 2 只兔。' },
+  { q:'4 个头、14 只脚，几只兔?', ans:3, opts:[3,2,4],
+    hint:'全鸡 4×2=8，差 6 只脚，6÷2=3 只兔。 🦵',
+    voice:'4 个头、14 只脚，几只兔呢？假设全是鸡，4 乘 2 等于 8，还差 6 只脚，6 除以 2 等于 3 只兔。' }
 ];
-let phase='basic', pi=0;
+let phase='basic';   // 'basic' | 'chal'
+let pi=0;
 function startPractice(){
   phase='basic'; pi=0;
   $('#practice .card').classList.remove('chal-mode');
-  show('practice',2); renderLevel();
+  show('practice',2);
+  renderLevel();
 }
 
 function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
@@ -501,7 +530,6 @@ function renderLevel(){
 let answered=false;
 function choose(btn,v,ans){
   if(answered) return;
-  const arr = phase==='basic' ? BASIC : CHAL;
   if(v===ans){
     answered=true;
     btn.classList.add('correct'); sGood();
@@ -509,44 +537,47 @@ function choose(btn,v,ans){
     say('答对啦！你真厉害！');
     $$('.opt').forEach(o=>o.disabled=true);
     const nb=$('#nextLevel');
-    if(phase==='basic') nb.textContent = (pi<4) ? '下一关 →' : '进入挑战 🌟';
-    else                nb.textContent = (pi<2) ? '下一挑战 →' : '完成啦 🎉';
+    if(phase==='basic') nb.textContent = pi<4 ? '下一关 →' : '进入挑战 🌟';
+    else                nb.textContent = pi<2 ? '下一挑战 →' : '完成啦 🎉';
     nb.style.display='block';
   }else{
     btn.classList.add('wrong'); sBad();
-    $('#feedback').innerHTML='<span class="or">'+arr[pi].hint+' 再试试！</span>';
-    say('再想一想，'+arr[pi].hint);
+    $('#feedback').innerHTML='<span class="or">再想想，先假设全是鸡哦～</span>';
+    say('再想想，先假设全是鸡，看看还差几只脚。');
     setTimeout(()=>btn.classList.remove('wrong'),400);
   }
 }
 
 $('#nextLevel').addEventListener('click',()=>{
   sClick(); answered=false;
-  if(phase==='basic'){
-    if(pi===4){
-      phase='chal'; pi=0;
-      $('#practice .card').classList.add('chal-mode');
-      show('practice',3); renderLevel();
-      say('闯关成功！挑战时间到，要数一数星期哦！');
-    }else{ pi++; renderLevel(); }
+  if(phase==='basic' && pi===4){
+    phase='chal'; pi=0;
+    $('#practice .card').classList.add('chal-mode');
+    show('practice',3);
+    renderLevel();
+    say('闯关成功！挑战时间到，这些题更难一点哦！');
+  }else if(phase==='basic'){
+    pi++; renderLevel();
+  }else if(phase==='chal' && pi===2){
+    finish();
   }else{
-    if(pi===2){ finish(); }
-    else{ pi++; renderLevel(); }
+    pi++; renderLevel();
   }
 });
 
 /* ============ 完成 ============ */
 function finish(){
-  show('done',4); sWin();
-  say('太厉害啦！你已经是日历小达人啦！而且你闯完了全部四十二关，太了不起啦！');
+  show('done',4); sWin(); say('太厉害啦！你用抬脚法打败了困难关大 Boss！整个数学王国，你都通关啦！');
   confetti();
 }
-$('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('explore',1); say('我们再玩一次！点点星期，再点点日历吧！'); });
+$('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('explore',1); say('我们再玩一次！');
+  setTimeout(()=>say('用加号和减号调兔子的只数，数数脚够不够 8 只。'),1200); });
 
 /* ---------- 顶部按钮 ---------- */
 $('#startBtn').addEventListener('click',()=>{
   ac(); sClick(); show('explore',1);
-  say('一个星期有七天，周一到周日，然后又回到周一。点点上面的星期，再看看下面的日历吧！');
+  renderExplore(false);
+  say('这是困难关！笼子里有 3 个头、8 只脚，用加号和减号调兔子的只数，数数脚够不够 8 只。');
 });
 $('#muteBtn').addEventListener('click',()=>{
   muted=!muted; $('#muteBtn').textContent=muted?'🔇':'🔊';
@@ -556,12 +587,11 @@ $('#homeBtn').addEventListener('click',()=>{ sClick(); if('speechSynthesis'in wi
 
 function resetAll(){
   unlocked=false; answered=false; phase='basic'; pi=0;
+  solved=false; rabbits=0;
   $('#practice .card').classList.remove('chal-mode');
-  seen.week=false; seen.cal=false;
   toPractice.disabled=true; toPractice.classList.remove('ready'); unlock.textContent='';
-  note.innerHTML='先点点上面的星期，再点点下面的日历吧！';
-  $$('.daychip').forEach(c=>c.classList.remove('on'));
-  $$('.caldate').forEach(c=>c.classList.remove('on'));
+  wrongway.classList.remove('show'); wrongway.innerHTML='';
+  renderExplore(false);
 }
 
 /* ---------- 彩带 ---------- */
@@ -587,8 +617,7 @@ function confetti(){
 }
 
 /* 初始 */
-buildWeek();
-buildCal();
+renderExplore(false);
 /* —— 通关记录（本地 localStorage）—— */
 /* —— 步骤 tab 可点击：已到达的阶段可回看，不能跳到未解锁阶段 —— */
 (function(){
@@ -613,7 +642,7 @@ buildCal();
   pills.forEach(function(p){ p.addEventListener('click',function(){ go(+p.dataset.step); }); });
   sync();
 })();
-(function(){var ID='rili';try{var d=document.getElementById('done');if(d){var mark=function(){if(d.classList.contains('on')){try{localStorage.setItem('yswg:done:'+ID,'1');}catch(e){}}};new MutationObserver(mark).observe(d,{attributes:true,attributeFilter:['class']});mark();}}catch(e){}})();
+(function(){var ID='jitu';try{var d=document.getElementById('done');if(d){var mark=function(){if(d.classList.contains('on')){try{localStorage.setItem('yswg:done:'+ID,'1');}catch(e){}}};new MutationObserver(mark).observe(d,{attributes:true,attributeFilter:['class']});mark();}}catch(e){}})();
 </script>
 </body>
 </html>

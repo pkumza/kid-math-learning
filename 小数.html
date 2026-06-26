@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>小数 · 数学小课堂</title>
+<style>
+  :root{
+    --dot: clamp(15px, 4.2vw, 30px);
+    --blue:#2563EB; --blue2:#60A5FA;
+    --orange:#EA580C; --orange2:#FB923C;
+    --green:#16A34A; --green2:#4ADE80;
+    --purple:#7C3AED;
+    --ink:#1F2937; --soft:#6B7280;
+    --card:#ffffff;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",
+      "Hiragino Sans GB","Helvetica Neue",sans-serif;
+    color:var(--ink);
+    background:linear-gradient(160deg,#EAF4FF 0%,#FFF6EC 60%,#FDEFF6 100%);
+    min-height:100vh;
+    overflow-x:hidden;
+    user-select:none;
+  }
+  .wrap{max-width:760px; margin:0 auto; padding:10px 14px 40px;}
+
+  /* ---- 顶部 ---- */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 4px 6px;
+  }
+  .brand{display:flex; align-items:center; gap:8px; font-weight:800; font-size:1.15rem;}
+  .brand .fox{font-size:1.6rem;}
+  .brand small{color:var(--soft); font-weight:600; font-size:.78rem;}
+  .tools{display:flex; gap:8px;}
+  .icon-btn{
+    border:none; background:#fff; border-radius:14px; width:44px; height:44px;
+    font-size:1.25rem; cursor:pointer; box-shadow:0 3px 8px rgba(0,0,0,.08);
+    transition:transform .1s;
+  }
+  .icon-btn:active{transform:scale(.92);}
+
+  .steps{display:flex; gap:6px; justify-content:center; margin:4px 0 12px;}
+  .pill{
+    font-size:.82rem; font-weight:700; color:var(--soft);
+    background:#fff; padding:5px 12px; border-radius:999px;
+    box-shadow:0 2px 5px rgba(0,0,0,.05);
+  }
+  .pill.active{color:#fff; background:var(--purple); box-shadow:0 4px 10px rgba(124,58,237,.35);}
+
+  /* ---- 卡片 / 屏幕 ---- */
+  .screen{display:none; animation:pop .35s ease both;}
+  .screen.on{display:block;}
+  @keyframes pop{from{opacity:0; transform:translateY(12px) scale(.98);} to{opacity:1; transform:none;}}
+  .card{
+    background:var(--card); border-radius:26px; padding:22px 18px;
+    box-shadow:0 12px 30px rgba(80,90,130,.12); margin-bottom:16px;
+  }
+  h1{font-size:1.7rem; margin:.1em 0 .2em; text-align:center;}
+  h2{font-size:1.25rem; margin:.1em 0 .5em; text-align:center; color:var(--purple);}
+  .lead{text-align:center; color:var(--soft); font-size:1rem; line-height:1.7; margin:.3em 0 .2em;}
+  .pinyin{display:block; color:var(--soft); font-size:.95rem; letter-spacing:.06em; font-weight:600; text-align:center;}
+
+  /* ---- 按钮 ---- */
+  .big-btn{
+    display:block; width:100%; border:none; cursor:pointer;
+    font-size:1.3rem; font-weight:800; color:#fff;
+    padding:16px; border-radius:20px; margin-top:8px;
+    background:linear-gradient(135deg,#34D399,#10B981);
+    box-shadow:0 8px 18px rgba(16,185,129,.35);
+    transition:transform .12s, box-shadow .12s, filter .2s;
+  }
+  .big-btn.purple{background:linear-gradient(135deg,#A78BFA,#7C3AED); box-shadow:0 8px 18px rgba(124,58,237,.35);}
+  .big-btn.orange{background:linear-gradient(135deg,#FDBA74,#F97316); box-shadow:0 8px 18px rgba(249,115,22,.35);}
+  .big-btn:active{transform:translateY(2px) scale(.99);}
+  .big-btn:disabled{filter:grayscale(.7) opacity(.55); cursor:not-allowed; box-shadow:none;}
+  .big-btn.ready{animation:bounce 1s infinite;}
+  @keyframes bounce{0%,100%{transform:none;}50%{transform:translateY(-5px);}}
+
+  /* ---- 小数：整条 + 分格 ---- */
+  .barwrap{margin:14px 0 6px;}
+  .barlabel{text-align:center; color:var(--soft); font-weight:800; margin-bottom:6px;}
+  .bar{
+    display:flex; width:100%; max-width:420px; margin:0 auto;
+    border:3px solid #C7D2FE; border-radius:14px; overflow:hidden;
+    background:#F8FAFF; height:64px;
+  }
+  .cell{
+    flex:1 1 0; border-right:2px solid #C7D2FE; cursor:pointer;
+    transition:background .18s, transform .1s;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:900; color:#fff; font-size:1rem;
+  }
+  .cell:last-child{border-right:none;}
+  .cell:active{transform:scale(.94);}
+  .cell.fill{background:linear-gradient(135deg,#60A5FA,#2563EB);}
+  .cell.half{background:linear-gradient(135deg,#FDBA74,#F97316);}
+  .bigval{text-align:center; font-size:2.2rem; font-weight:900; margin:10px 0 2px; color:var(--blue);}
+  .bigval .eq{color:var(--soft); font-weight:800; font-size:1.5rem;}
+  .bigval .frac{color:var(--orange);}
+
+  /* ---- 数轴 ---- */
+  .numline{position:relative; max-width:440px; margin:18px auto 8px; height:74px;}
+  .numline .axis{position:absolute; left:4%; right:4%; top:34px; height:6px; background:#C7D2FE; border-radius:6px;}
+  .numline .mk{position:absolute; top:24px; width:4px; height:26px; background:#94A3B8; border-radius:3px; transform:translateX(-50%);}
+  .numline .mk.big{height:34px; top:18px; background:#2563EB; width:5px;}
+  .numline .dot{
+    position:absolute; top:21px; width:22px; height:22px; border-radius:50%;
+    background:linear-gradient(135deg,#FDBA74,#F97316); border:3px solid #fff;
+    box-shadow:0 3px 8px rgba(249,115,22,.4); transform:translateX(-50%);
+  }
+  .numline .lab{position:absolute; top:46px; transform:translateX(-50%); font-weight:800; color:var(--ink); font-size:.95rem; white-space:nowrap;}
+  .numline .lab.hi{color:var(--orange);}
+
+  /* ---- 比一比两条 ---- */
+  .compare{max-width:420px; margin:10px auto 4px;}
+  .cmprow{display:flex; align-items:center; gap:10px; margin:8px 0;}
+  .cmptag{width:54px; text-align:right; font-weight:900; font-size:1.1rem;}
+  .cmptag.a{color:var(--blue);} .cmptag.b{color:var(--orange);}
+  .cmptrack{flex:1; height:30px; background:#F1F5F9; border-radius:10px; overflow:hidden; border:2px solid #E2E8F0;}
+  .cmpfill{height:100%; border-radius:8px 0 0 8px; transition:width .8s ease;}
+  .cmpfill.a{background:linear-gradient(135deg,#60A5FA,#2563EB); width:0;}
+  .cmpfill.b{background:linear-gradient(135deg,#FDBA74,#F97316); width:0;}
+
+  .vtoggle{display:flex; gap:10px; justify-content:center; margin:6px 0 12px;}
+  .vtab{
+    border:none; cursor:pointer; font-weight:800; font-size:1rem;
+    padding:9px 16px; border-radius:14px; background:#fff; color:var(--soft);
+    box-shadow:0 3px 8px rgba(0,0,0,.08); border:3px solid #E5E7EB;
+  }
+  .vtab.on{color:#fff; background:var(--green); border-color:var(--green);}
+  .vtab.on.brk{background:var(--blue); border-color:var(--blue);}
+  .vtab:active{transform:scale(.96);}
+
+  .step-btn{
+    display:block; margin:8px auto 0; border:none; cursor:pointer;
+    background:linear-gradient(135deg,#FDE68A,#F59E0B); color:#7c2d12; font-weight:800;
+    padding:12px 20px; border-radius:16px; font-size:1.05rem; box-shadow:0 5px 12px rgba(245,158,11,.3);
+  }
+  .step-btn:active{transform:scale(.96);}
+  .step-btn:disabled{filter:grayscale(.6) opacity(.6); cursor:not-allowed; box-shadow:none;}
+
+  .note{
+    margin-top:12px; background:#FFFDF5; border-radius:14px; padding:12px 14px;
+    color:#92400E; font-weight:700; line-height:1.6; font-size:1.05rem; text-align:center; min-height:1.5em;
+  }
+  .muted{color:var(--soft);}
+  .bl{color:var(--blue);} .or{color:var(--orange);} .gr{color:var(--green);} .pu{color:var(--purple);}
+  .unlock{text-align:center; font-weight:800; color:var(--purple); margin:14px 0 4px; min-height:1.4em;}
+
+  .wrongway{
+    display:none; margin:12px auto 2px; max-width:360px; background:#FEF2F2; border:2px solid #FECACA;
+    border-radius:16px; padding:11px 14px; text-align:center; color:#991B1B;
+    font-weight:800; line-height:1.7; font-size:1.02rem;
+  }
+  .wrongway.show{display:block; animation:dotin .4s ease both;}
+  @keyframes dotin{from{transform:scale(0);}to{transform:scale(1);}}
+
+  /* ---- 闯关 ---- */
+  .card.chal-mode{border:3px solid #F59E0B; box-shadow:0 12px 30px rgba(245,158,11,.28);}
+  .chal-banner{display:none; text-align:center; font-weight:900; color:#B45309; background:#FFF7ED; border:2px dashed #F59E0B; border-radius:14px; padding:9px 12px; margin-bottom:10px; font-size:1.02rem;}
+  .card.chal-mode .chal-banner{display:block;}
+  .level-tag{text-align:center; color:var(--soft); font-weight:800; margin-bottom:2px;}
+  .q-hint{text-align:center; color:var(--orange); font-weight:800; font-size:1.05rem; margin:6px 0; min-height:1.3em;}
+  .ask{text-align:center; font-size:1.5rem; font-weight:900; margin:10px 0 6px;}
+  .options{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+  .opt{
+    border:none; cursor:pointer; min-width:92px; font-size:1.7rem; font-weight:900;
+    padding:14px 8px; border-radius:18px; background:#fff; color:var(--ink);
+    box-shadow:0 5px 12px rgba(0,0,0,.1); transition:transform .1s;
+    border:3px solid #E5E7EB;
+  }
+  .opt:active{transform:scale(.95);}
+  .opt.correct{background:var(--green); color:#fff; border-color:var(--green);}
+  .opt.wrong{background:#FCA5A5; border-color:#EF4444; animation:shake .35s;}
+  @keyframes shake{0%,100%{transform:none;}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+  .feedback{text-align:center; font-weight:900; font-size:1.3rem; min-height:1.5em; margin-top:12px;}
+  .stars{font-size:1.6rem; letter-spacing:6px; text-align:center;}
+
+  /* ---- 完成 ---- */
+  .badge{font-size:4.5rem; text-align:center; animation:spin 3s linear infinite;}
+  @keyframes spin{from{transform:rotate(-8deg);}50%{transform:rotate(8deg);}to{transform:rotate(-8deg);}}
+  .trophy-name{text-align:center; font-size:1.5rem; font-weight:900; color:var(--purple); margin:6px 0;}
+
+  details{margin-top:8px; background:#F8FAFF; border-radius:16px; padding:4px 14px;}
+  summary{cursor:pointer; font-weight:800; color:var(--purple); padding:10px 0; list-style:none;}
+  summary::-webkit-details-marker{display:none;}
+  details p{color:#374151; line-height:1.75; font-size:.95rem;}
+  details b{color:var(--ink);}
+
+  #confetti{position:fixed; inset:0; pointer-events:none; display:none; z-index:99;}
+  /* 步骤 tab 可点击导航：已到达的阶段可回看 */
+  .pill.nav-on{cursor:pointer;}
+  .pill.nav-on:active{transform:scale(.93);}
+  .pill.nav-locked{opacity:.45;}
+  .pill{transition:transform .1s, opacity .2s;}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="wrap">
+
+  <header>
+    <div class="brand"><span class="fox">🦊</span><div>数学王国<br><small>小数</small></div></div>
+    <div class="tools">
+      <button class="icon-btn" id="homeBtn" title="重新开始">🏠</button>
+      <button class="icon-btn" id="muteBtn" title="声音开关">🔊</button>
+    </div>
+  </header>
+
+  <div class="steps">
+    <span class="pill" data-step="1">① 探索</span>
+    <span class="pill" data-step="2">② 闯关</span>
+    <span class="pill" data-step="3">③ 挑战</span>
+    <span class="pill" data-step="4">④ 完成</span>
+  </div>
+
+  <!-- ============ 欢迎 ============ -->
+  <section class="screen on" id="welcome">
+    <div class="card">
+      <div style="font-size:3.4rem;text-align:center">🔢</div>
+      <h1>小数</h1>
+      <span class="pinyin">xiǎo shù · 把 1 分成 10 份</span>
+      <p class="lead">
+        把 <b>1</b> 平均分成 <b class="bl">10 份</b>，<br>
+        每一份就是 <b class="bl">0.1</b>，也就是 <b class="or">十分之一</b>！<br>
+        <b class="gr">0.5</b> 就是<b class="gr">一半</b>，也就是 <b class="or">1/2</b>。<br>
+        小数还能<b>比大小</b>、能<b>加减</b>、能放到<b class="pu">数轴</b>上哦～
+      </p>
+      <button class="big-btn" id="startBtn">开始探索 →</button>
+
+      <details>
+        <summary>👨‍👩‍👧 给爸爸妈妈的话（点开）</summary>
+        <p>
+          这一课<b>不是小数的入门</b>——孩子已经熟悉小数和分数了。我们把小数的几件大事<b>串成一条线</b>：
+          <b>① 意义</b>（0.1 = 十分之一，0.5 = 一半 = 1/2）、<b>② 比大小</b>、<b>③ 加减</b>、<b>④ 数轴上的位置</b>。
+          这里特意<b>不用人民币</b>，而是用「把 1 切成 10 份」的长条，让小数回到它最本来的样子：
+          <b>十进制的份数</b>。<br><br>
+          <b>怎么一起玩：</b> 探索屏里让他<b>点亮长条</b>上的格子——点 3 格就显示「0.3 = 三/十」，
+          帮他把<b>小数</b>和<b>分数</b>对上号；再看 <b>0.5 = 一半</b>。然后看一条<b>数轴</b>，
+          找到 0.5、1、1.5 的位置；最后<b>比一比</b> 0.3 和 0.7，哪条长哪个就大。<br><br>
+          <b>可以追问：</b>「0.3 是几个十分之一呀？」「0.5 和一半一样吗？」
+          「0.3 和 0.25 谁大？」（这题是挑战里的陷阱：<b>0.3 = 0.30</b>，比 0.25 大，别被位数多骗了）
+          让他自己说出小数的道理，这就是日后所有小数运算的根基。
+        </p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ 探索 ============ -->
+  <section class="screen" id="explore">
+    <div class="card">
+      <h2>🔢 把 1 分成 10 份</h2>
+      <p class="lead" style="margin-top:0">
+        这是一整条 <b>1</b>，被平均分成了 <b class="bl">10 份</b>。<br>点一点格子，看看变成几点几！
+      </p>
+
+      <div class="vtoggle">
+        <button class="vtab on" id="tabFill" data-mode="fill">点亮长条</button>
+        <button class="vtab brk" id="tabCmp" data-mode="cmp">比一比</button>
+      </div>
+
+      <!-- 点亮长条视图 -->
+      <div id="viewFill">
+        <div class="barwrap">
+          <div class="barlabel">一整条 = <b class="bl">1</b>（10 份）</div>
+          <div class="bar" id="bar"></div>
+        </div>
+        <div class="bigval" id="bigval">0.0 <span class="eq">=</span> <span class="frac">0/10</span></div>
+        <button class="step-btn" id="halfBtn">看看 0.5 = 一半 ✨</button>
+
+        <div class="barwrap" style="margin-top:14px;">
+          <div class="barlabel">数轴：0.5、1、1.5 在哪里？</div>
+          <div class="numline" id="numline"></div>
+        </div>
+      </div>
+
+      <!-- 比一比视图 -->
+      <div id="viewCmp" style="display:none;">
+        <p class="lead" style="margin:.2em 0;">谁更长，谁就更大！</p>
+        <div class="compare">
+          <div class="cmprow">
+            <div class="cmptag a">0.3</div>
+            <div class="cmptrack"><div class="cmpfill a" id="cf3"></div></div>
+          </div>
+          <div class="cmprow">
+            <div class="cmptag b">0.7</div>
+            <div class="cmptrack"><div class="cmpfill b" id="cf7"></div></div>
+          </div>
+        </div>
+        <button class="step-btn" id="cmpBtn">比一比 ✨</button>
+      </div>
+
+      <div class="note" id="note">点格子点亮长条，看看是几点几！</div>
+
+      <div class="wrongway" id="wrongway"></div>
+
+      <div class="unlock" id="unlock"></div>
+      <button class="big-btn purple" id="toPractice" disabled>去闯关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 闯关 ============ -->
+  <section class="screen" id="practice">
+    <div class="card">
+      <div class="chal-banner">🌟 挑战题来了！更难一点，加油！</div>
+      <div class="level-tag" id="levelTag">第 1 / 5 关</div>
+      <div class="q-hint" id="qHint"></div>
+
+      <div class="ask" id="ask"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="big-btn" id="nextLevel" style="display:none">下一关 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 完成 ============ -->
+  <section class="screen" id="done">
+    <div class="card">
+      <div class="badge">🎖️</div>
+      <h1>太厉害啦！</h1>
+      <div class="trophy-name">🎖️ 小数小达人</div>
+      <p class="lead">
+        你把<b class="pu">小数</b>的大秘密都搞懂啦：<br>
+        🔢 <b class="bl">0.1 = 十分之一</b>，<b class="gr">0.5 = 一半</b>，<br>
+        小数能<b>比大小</b>、能<b>加减</b>、能放上<b class="or">数轴</b>！🎉
+      </p>
+      <button class="big-btn" id="nextChapter" onclick="try{speechSynthesis.cancel()}catch(e){};location.href='周期问题.html'">进入下一关 →</button>
+      <button class="big-btn orange" id="again">再玩一次 🔁</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+"use strict";
+const $=(s,el=document)=>el.querySelector(s);
+const $$=(s,el=document)=>[...el.querySelectorAll(s)];
+
+/* ---------- 声音 ---------- */
+let muted=false, audioCtx=null;
+function ac(){ if(!audioCtx){ try{audioCtx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return audioCtx; }
+function beep(freq,dur,type,vol,when){
+  if(muted) return; const c=ac(); if(!c) return;
+  const t=c.currentTime+(when||0), o=c.createOscillator(), g=c.createGain();
+  o.type=type||'sine'; o.frequency.value=freq;
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol||0.15,t+0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g).connect(c.destination); o.start(t); o.stop(t+dur+0.02);
+}
+const sClick=()=>beep(680,0.06,'triangle',0.12,0);
+const sCut  =()=>{beep(900,0.05,'square',0.08,0); beep(500,0.07,'triangle',0.1,0.05);};
+const sGood =()=>[523,659,784].forEach((f,i)=>beep(f,0.12,'sine',0.16,i*0.09));
+const sWin  =()=>[523,659,784,1047,1319].forEach((f,i)=>beep(f,0.16,'sine',0.18,i*0.12));
+const sBad  =()=>beep(190,0.2,'sawtooth',0.1,0);
+
+/* ---------- 语音（中文朗读） ---------- */
+let zhVoice=null;
+function pickVoice(){
+  if(!('speechSynthesis'in window)) return;
+  const vs=speechSynthesis.getVoices(); if(!vs||!vs.length) return;
+  const zh=vs.filter(v=>/zh|cmn|chinese|普通话|国语|中文/i.test((v.lang||'')+' '+(v.name||'')));
+  const female=/婷婷|美嘉|思琪|善怡|静|丽|语嫣|晓|Ting-?Ting|Mei-?Jia|Sin-?ji|Yu-?shu|Tian-?Tian|Li-?mu|Han|female|女/i;
+  const male=/男|male|Yu-?Long|Liang|国梁/i;
+  zhVoice = zh.find(v=>female.test(v.name))
+         || zh.find(v=>/zh[-_]?CN/i.test(v.lang)&&!male.test(v.name))
+         || zh.find(v=>!male.test(v.name))
+         || zh[0] || null;
+}
+if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; setTimeout(pickVoice,300); setTimeout(pickVoice,1200); }
+function say(text){
+  if(muted||!('speechSynthesis'in window)) return;
+  try{ if(!zhVoice) pickVoice(); speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang='zh-CN'; if(zhVoice)u.voice=zhVoice; u.rate=0.95; u.pitch=1.1;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ---------- 屏幕切换 ---------- */
+function show(id,step){
+  $$('.screen').forEach(s=>s.classList.remove('on'));
+  $('#'+id).classList.add('on');
+  $$('.pill').forEach(p=>p.classList.toggle('active', +p.dataset.step===step));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ============ 探索 ============ */
+/* fill = 点亮长条（10 格），cmp = 比一比 0.3 vs 0.7 */
+let mode='fill';      // 'fill' | 'cmp'
+let filled=0;         // 点亮的格子数 0..10
+let halfShown=false;  // 是否看过 0.5 = 一半
+const seen={fill:false, cmp:false};   // fill: 点过格子；cmp: 看过比一比
+let unlocked=false;
+
+const barEl=$('#bar'), bigval=$('#bigval'), note=$('#note');
+const wrongway=$('#wrongway'), unlock=$('#unlock'), toPractice=$('#toPractice');
+const ZH=['零','一','二','三','四','五','六','七','八','九','十'];
+
+/* 建长条 10 格 */
+function buildBar(){
+  barEl.innerHTML='';
+  for(let i=0;i<10;i++){
+    const c=document.createElement('div');
+    c.className='cell'; c.dataset.i=i;
+    c.addEventListener('click',()=>fillTo(+c.dataset.i+1));
+    barEl.appendChild(c);
+  }
+}
+function paintBar(){
+  $$('.cell',barEl).forEach((c,i)=>{
+    c.classList.toggle('fill', i<filled);
+    c.classList.remove('half');
+  });
+  /* 0.5 特例：高亮前 5 格为「一半」橙色 */
+  if(filled===5 && halfShown){
+    $$('.cell',barEl).forEach((c,i)=>{ if(i<5){ c.classList.remove('fill'); c.classList.add('half'); } });
+  }
+}
+function showVal(){
+  const d=(filled/10).toFixed(1);              // 0.0 .. 1.0
+  bigval.innerHTML = d+' <span class="eq">=</span> <span class="frac">'+filled+'/10</span>';
+}
+function fillTo(k){
+  filled=k; halfShown=false;
+  sClick(); paintBar(); showVal();
+  if(!seen.fill){ seen.fill=true; }
+  if(k===10){
+    note.innerHTML='点亮 <b class="bl">10</b> 格，就是一整条 <b class="bl">1.0 = 1</b>！';
+    say('点亮 10 格，就是一整条，1 点 0，就是 1。');
+  }else{
+    note.innerHTML='点亮 <b class="bl">'+k+'</b> 格 = <b class="bl">0.'+k+'</b> = <b class="or">'+ZH[k]+'/十</b>（'+ZH[k]+'个十分之一）。';
+    say('点亮 '+k+' 格，就是 0 点 '+k+'，也就是十分之'+ZH[k]+'。');
+  }
+  checkUnlock();
+}
+
+/* 0.5 = 一半 */
+$('#halfBtn').addEventListener('click',()=>{
+  filled=5; halfShown=true;
+  sCut(); paintBar();
+  bigval.innerHTML='0.5 <span class="eq">=</span> <span class="frac">5/10</span> <span class="eq">=</span> <span class="frac">1/2</span>';
+  note.innerHTML='看！点亮 <b class="or">5 格</b> 正好是<b class="or">一半</b>：<b class="gr">0.5 = 5/10 = 1/2</b>。';
+  seen.fill=true;
+  say('看，点亮 5 格正好是一半。0 点 5，等于十分之五，也就是二分之一。');
+  checkUnlock();
+});
+
+/* 数轴 0–2，标 0.5 / 1 / 1.5 */
+function buildNumline(){
+  const nl=$('#numline'); nl.innerHTML='<div class="axis"></div>';
+  const L=4, R=96, span=R-L;            // 百分比范围
+  const pos=v=>L+span*(v/2);            // 0..2 -> L..R
+  /* 主刻度 0,1,2 */
+  [0,1,2].forEach(v=>{
+    const m=document.createElement('div'); m.className='mk big'; m.style.left=pos(v)+'%'; nl.appendChild(m);
+    const lab=document.createElement('div'); lab.className='lab'; lab.style.left=pos(v)+'%'; lab.textContent=v; nl.appendChild(lab);
+  });
+  /* 高亮点 0.5 / 1.5（1 已有主刻度，这里加 0.5 与 1.5 的橙点） */
+  [0.5,1.5].forEach(v=>{
+    const d=document.createElement('div'); d.className='dot'; d.style.left=pos(v)+'%'; nl.appendChild(d);
+    const lab=document.createElement('div'); lab.className='lab hi'; lab.style.left=pos(v)+'%'; lab.textContent=v; nl.appendChild(lab);
+  });
+}
+
+/* 比一比 0.3 vs 0.7 */
+$('#cmpBtn').addEventListener('click',()=>{
+  sCut();
+  $('#cf3').style.width='30%';
+  $('#cf7').style.width='70%';
+  note.innerHTML='<b class="or">0.7</b> 的条更长，所以 <b class="or">0.7 &gt; 0.3</b>，0.7 更大！';
+  seen.cmp=true;
+  say('比一比，0 点 7 的条更长，所以 0 点 7 比 0 点 3 大。');
+  checkUnlock();
+});
+
+function setMode(m,quiet){
+  mode=m;
+  $('#tabFill').classList.toggle('on', m==='fill');
+  $('#tabCmp').classList.toggle('on', m==='cmp');
+  $('#viewFill').style.display = m==='fill' ? 'block' : 'none';
+  $('#viewCmp').style.display  = m==='cmp'  ? 'block' : 'none';
+  if(m==='fill'){
+    note.innerHTML='点格子点亮长条，看看是几点几！';
+  }else{
+    note.innerHTML='点「比一比」，看看 0.3 和 0.7 谁更长～';
+  }
+  if(!quiet){ sClick(); say(m==='fill'?'点一点格子，把长条点亮，看看是几点几。':'我们来比一比，0 点 3 和 0 点 7，哪个更大呢？'); }
+}
+
+function checkUnlock(){
+  if(unlocked) return;
+  if(seen.fill && seen.cmp){
+    unlocked=true; toPractice.disabled=false; toPractice.classList.add('ready');
+    unlock.textContent='🎉 0.1 是十分之一、0.5 是一半，还会比大小啦，去闯关吧！';
+    sWin(); say('太棒了！0 点 1 是十分之一，0 点 5 是一半，你还会比大小啦，去闯关试试吧！');
+  }else if(seen.fill && !seen.cmp){
+    unlock.textContent='👍 不错！再切到「比一比」看看 0.3 和 0.7，就能去闯关！';
+  }else if(!seen.fill && seen.cmp){
+    unlock.textContent='👍 不错！再回到「点亮长条」点几个格子，就能去闯关！';
+  }
+}
+
+$('#tabFill').addEventListener('click',()=>setMode('fill'));
+$('#tabCmp').addEventListener('click',()=>setMode('cmp'));
+$('#toPractice').addEventListener('click',()=>{ sClick(); startPractice(); });
+
+/* ============ 闯关 + 挑战 ============ */
+const BASIC=[
+  { q:'0.1 是十分之几？', ans:1, opts:[1,2,10],
+    hint:'0.1 就是十分之一。 🔢',
+    voice:'0 点 1 是十分之几呢？0 点 1 就是十分之一。' },
+  { q:'0.5 等于几分之几？', ans:'1/2', opts:['1/2','1/5','1/10'],
+    hint:'0.5 是一半，就是 1/2。 🟧',
+    voice:'0 点 5 等于几分之几呢？0 点 5 是一半，就是二分之一。' },
+  { q:'比一比：0.3 和 0.7 哪个大？', ans:0.7, opts:[0.7,0.3,'一样'],
+    hint:'0.7 比 0.3 大。 📏',
+    voice:'比一比，0 点 3 和 0 点 7 哪个大呢？0 点 7 比 0 点 3 大。' },
+  { q:'0.2 + 0.3 = ?', ans:0.5, opts:[0.5,0.6,5],
+    hint:'两份加三份是五份，0.5。 ➕',
+    voice:'0 点 2 加 0 点 3 等于多少呢？两份加三份是五份，就是 0 点 5。' },
+  { q:'0.6 + 0.1 = ?', ans:0.7, opts:[0.7,0.16,0.5],
+    hint:'六份加一份是七份。 ➕',
+    voice:'0 点 6 加 0 点 1 等于多少呢？六份加一份是七份，就是 0 点 7。' }
+];
+const CHAL=[
+  { q:'0.7 + 0.5 = ?', ans:1.2, opts:[1.2,0.12,1.0],
+    hint:'满十份就进一，超过 1，是 1.2。 ➕',
+    voice:'0 点 7 加 0 点 5 等于多少呢？满十份就进一，加起来超过 1，是 1 点 2。' },
+  { q:'比一比：0.3 和 0.25 哪个大？', ans:0.3, opts:[0.3,0.25,'一样'],
+    hint:'0.3 = 0.30，比 0.25 大，别被位数骗了。 📏',
+    voice:'比一比，0 点 3 和 0 点 2 5 哪个大呢？0 点 3 就是 0 点 3 0，比 0 点 2 5 大，别被位数多骗了。' },
+  { q:'1 − 0.4 = ?', ans:0.6, opts:[0.6,0.4,6],
+    hint:'1 就是 1.0，减 0.4 剩 0.6。 ➖',
+    voice:'1 减 0 点 4 等于多少呢？1 就是 1 点 0，减 0 点 4 还剩 0 点 6。' }
+];
+let phase='basic';   // 'basic' | 'chal'
+let pi=0;
+function startPractice(){
+  phase='basic'; pi=0;
+  $('#practice .card').classList.remove('chal-mode');
+  show('practice',2);
+  renderLevel();
+}
+
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+function renderLevel(){
+  const arr = phase==='basic' ? BASIC : CHAL;
+  const P=arr[pi];
+  $('#levelTag').textContent = phase==='basic' ? `第 ${pi+1} / 5 关` : `🌟 挑战 ${pi+1} / 3`;
+  $('#qHint').textContent=P.hint;
+  $('#ask').textContent=P.q;
+  $('#feedback').textContent='';
+  $('#nextLevel').style.display='none';
+
+  const opts=shuffle(P.opts.slice());
+  const box=$('#options'); box.innerHTML='';
+  opts.forEach(v=>{
+    const btn=document.createElement('button');
+    btn.className='opt'; btn.textContent=v;
+    btn.addEventListener('click',()=>choose(btn,v,P.ans));
+    box.appendChild(btn);
+  });
+  say(P.voice);
+}
+
+let answered=false;
+function choose(btn,v,ans){
+  if(answered) return;
+  if(v===ans){
+    answered=true;
+    btn.classList.add('correct'); sGood();
+    $('#feedback').innerHTML='<span class="gr">答对啦！🎉</span><div class="stars">⭐⭐⭐</div>';
+    say('答对啦！你真厉害！');
+    $$('.opt').forEach(o=>o.disabled=true);
+    const nb=$('#nextLevel');
+    if(phase==='basic') nb.textContent = pi<4 ? '下一关 →' : '进入挑战 🌟';
+    else                nb.textContent = pi<2 ? '下一挑战 →' : '完成啦 🎉';
+    nb.style.display='block';
+  }else{
+    btn.classList.add('wrong'); sBad();
+    $('#feedback').innerHTML='<span class="or">再想想，数一数有几份哦～</span>';
+    say('再想想，数一数有几份哦。');
+    setTimeout(()=>btn.classList.remove('wrong'),400);
+  }
+}
+
+$('#nextLevel').addEventListener('click',()=>{
+  sClick(); answered=false;
+  if(phase==='basic' && pi===4){
+    phase='chal'; pi=0;
+    $('#practice .card').classList.add('chal-mode');
+    show('practice',3);
+    renderLevel();
+    say('闯关成功！挑战时间到，这些题更难一点哦！');
+  }else if(phase==='basic'){
+    pi++; renderLevel();
+  }else if(phase==='chal' && pi===2){
+    finish();
+  }else{
+    pi++; renderLevel();
+  }
+});
+
+/* ============ 完成 ============ */
+function finish(){
+  show('done',4); sWin(); say('太厉害啦！你已经是小数小达人啦！0 点 1 是十分之一，0 点 5 是一半，小数能比大小、能加减、还能放上数轴！');
+  confetti();
+}
+$('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('explore',1); setMode('fill',true); say('我们再玩一次！'); });
+
+/* ---------- 顶部按钮 ---------- */
+$('#startBtn').addEventListener('click',()=>{
+  ac(); sClick(); show('explore',1);
+  setMode('fill',true);
+  say('把 1 平均分成 10 份，每一份就是 0 点 1。点一点格子，看看是几点几吧！');
+});
+$('#muteBtn').addEventListener('click',()=>{
+  muted=!muted; $('#muteBtn').textContent=muted?'🔇':'🔊';
+  if(muted&&'speechSynthesis'in window) speechSynthesis.cancel(); else sClick();
+});
+$('#homeBtn').addEventListener('click',()=>{ sClick(); if('speechSynthesis'in window)speechSynthesis.cancel(); location.href='index.html'; });
+
+function resetAll(){
+  unlocked=false; answered=false; phase='basic'; pi=0;
+  seen.fill=false; seen.cmp=false;
+  filled=0; halfShown=false;
+  $('#practice .card').classList.remove('chal-mode');
+  toPractice.disabled=true; toPractice.classList.remove('ready'); unlock.textContent='';
+  mode='fill';
+  paintBar(); showVal();
+  $('#cf3').style.width='0'; $('#cf7').style.width='0';
+}
+
+/* ---------- 彩带 ---------- */
+function confetti(){
+  const cv=$('#confetti'), ctx=cv.getContext('2d');
+  cv.width=innerWidth; cv.height=innerHeight; cv.style.display='block';
+  const colors=['#2563EB','#F97316','#16A34A','#EAB308','#EC4899','#7C3AED'];
+  const P=[];
+  for(let i=0;i<150;i++) P.push({
+    x:innerWidth/2+(Math.random()-0.5)*120, y:innerHeight*0.28,
+    vx:(Math.random()-0.5)*13, vy:Math.random()*-13-3, g:0.32,
+    s:7+Math.random()*9, c:colors[i%colors.length], rot:Math.random()*6, vr:(Math.random()-0.5)*0.4
+  });
+  let t=0;
+  (function anim(){
+    t++; ctx.clearRect(0,0,cv.width,cv.height);
+    P.forEach(p=>{ p.vy+=p.g; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c;
+      ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6); ctx.restore();
+    });
+    if(t<150) requestAnimationFrame(anim); else cv.style.display='none';
+  })();
+}
+
+/* 初始 */
+buildBar(); buildNumline(); paintBar(); showVal();
+setMode('fill',true);
+/* —— 通关记录（本地 localStorage）—— */
+/* —— 步骤 tab 可点击：已到达的阶段可回看，不能跳到未解锁阶段 —— */
+(function(){
+  if(typeof show!=='function') return;
+  var pills=[].slice.call(document.querySelectorAll('.pill'));
+  if(!pills.length) return;
+  var maxStep=0;
+  var lastStep=Math.max.apply(null,pills.map(function(p){return +p.dataset.step;}));
+  var hasChal=lastStep>=4;
+  var _show=show;
+  show=function(id,step){ _show(id,step); if(typeof step==='number'){ if(step>maxStep){maxStep=step;} sync(); } };
+  function sync(){ pills.forEach(function(p){ var s=+p.dataset.step; p.classList.toggle('nav-on',s<=maxStep); p.classList.toggle('nav-locked',s>maxStep); }); }
+  function go(s){
+    if(s>maxStep) return;
+    try{
+      if(s===1){ show('explore',1); }
+      else if(s===lastStep){ show('done',lastStep); }
+      else if(s===2){ startPractice(); }
+      else if(s===3&&hasChal){ try{ phase='chal'; pi=0; }catch(e){} var c=document.querySelector('#practice .card'); if(c){c.classList.add('chal-mode');} show('practice',3); try{ renderLevel(); }catch(e){} }
+    }catch(e){}
+  }
+  pills.forEach(function(p){ p.addEventListener('click',function(){ go(+p.dataset.step); }); });
+  sync();
+})();
+(function(){var ID='xiaoshu';try{var d=document.getElementById('done');if(d){var mark=function(){if(d.classList.contains('on')){try{localStorage.setItem('yswg:done:'+ID,'1');}catch(e){}}};new MutationObserver(mark).observe(d,{attributes:true,attributeFilter:['class']});mark();}}catch(e){}})();
+</script>
+</body>
+</html>

@@ -66,6 +66,7 @@
   .tag.new{background:var(--orange);}
   .tag.learned{background:var(--green);}
   .tag.known{background:#9CA3AF;}
+  .tag.hard{background:#B91C1C;}
   .visited-star{position:absolute; top:-8px; right:-6px; font-size:1.4rem; filter:drop-shadow(0 2px 2px rgba(0,0,0,.2)); display:none;}
   .stop.done .visited-star{display:block;}
   .stop.done{border-color:#BBF7D0;}
@@ -131,7 +132,7 @@
   <div class="progress-card">
     <div class="progress-top">
       <span class="progress-label">🏆 闯关进度</span>
-      <span class="progress-count"><b id="doneCount">0</b> / <b id="totalCount">42</b> 关</span>
+      <span class="progress-count"><b id="doneCount">0</b> / <b id="totalCount">48</b> 关</span>
       <button id="resetBtn" class="reset-btn">重置进度</button>
     </div>
     <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
@@ -240,6 +241,13 @@
         <div class="desc">4 份里取 3 份就是 3/4，还能比大小、相加！</div></div>
       <span class="go">→</span>
     </a>
+    <a class="stop frac" href="小数.html" data-id="xiaoshu">
+      <span class="visited-star">⭐</span>
+      <div class="num">46</div><span class="emoji">🔢</span>
+      <div class="body"><div class="title">小数 <span class="tag js-status">新</span></div>
+        <div class="desc">把 1 分成 10 份，每份是 0.1；比大小、加减、放数轴！</div></div>
+      <span class="go">→</span>
+    </a>
   </div>
 
   <!-- 数字探秘 -->
@@ -327,6 +335,27 @@
       <div class="num">38</div><span class="emoji">🔗</span>
       <div class="body"><div class="title">公因数与公倍数 <span class="tag js-status">新</span></div>
         <div class="desc">两个数共同的因数、共同的倍数，找出它们的「好朋友」！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop nums" href="数轴.html" data-id="shuzhou">
+      <span class="visited-star">⭐</span>
+      <div class="num">43</div><span class="emoji">📏</span>
+      <div class="body"><div class="title">数轴 <span class="tag js-status">新</span></div>
+        <div class="desc">把数放到一条线上，比大小、排顺序，还能放小数和分数！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop nums" href="周期问题.html" data-id="zhouqi">
+      <span class="visited-star">⭐</span>
+      <div class="num">47</div><span class="emoji">🔁</span>
+      <div class="body"><div class="title">周期问题 <span class="tag js-status">新</span></div>
+        <div class="desc">🔴🔵🟡 一直循环，第20个是什么？用除法和余数找出来！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop nums" href="鸡兔同笼.html" data-id="jitu">
+      <span class="visited-star">⭐</span>
+      <div class="num">48</div><span class="emoji">🐔</span>
+      <div class="body"><div class="title">鸡兔同笼 <span class="tag hard">🏆 困难</span> <span class="tag js-status">新</span></div>
+        <div class="desc">数头数脚，几鸡几兔？用「抬脚法」破解经典难题！</div></div>
       <span class="go">→</span>
     </a>
   </div>
@@ -484,6 +513,20 @@
         <div class="desc">一周 7 天，看日历找星期几，明天是周几？</div></div>
       <span class="go">→</span>
     </a>
+    <a class="stop shop" href="年月日.html" data-id="nianyueri">
+      <span class="visited-star">⭐</span>
+      <div class="num">44</div><span class="emoji">📆</span>
+      <div class="body"><div class="title">年、月、日 <span class="tag js-status">新</span></div>
+        <div class="desc">一年12个月，大月31天小月30天，拳头记月法！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop shop" href="平均数.html" data-id="pingjun">
+      <span class="visited-star">⭐</span>
+      <div class="num">45</div><span class="emoji">⚖️</span>
+      <div class="body"><div class="title">平均数 <span class="tag js-status">新</span></div>
+        <div class="desc">移多补少匀一匀，平均数 = 总和 ÷ 个数！</div></div>
+      <span class="go">→</span>
+    </a>
   </div>
   </div><!-- /mapBody -->
 
@@ -518,7 +561,7 @@
 <script>
 "use strict";
 /* 通关进度（存在浏览器本地 localStorage；通关一节课会自动点亮） */
-const LESSON_IDS=['fenpei','jiehe','liangwei','chufa','yushu','fenshu','qiou','guilv','beishu','weizhi','duicheng','shijian','liangwei2','jifen','renminbi','pingfang','tongji','liti','zhishu','changdu','mianji','zhouchang','jishi','kenengxing','yinshu','dashu','zhongliang','shijianjisuan','xuanzhuan','gengkeneng','jiao','rongliang','sanjiaoxing','ershisi','shutuxing','shushi','yunsuan','gongbei','sanwei','chushu','fangwei','rili'];
+const LESSON_IDS=['fenpei','jiehe','liangwei','chufa','yushu','fenshu','qiou','guilv','beishu','weizhi','duicheng','shijian','liangwei2','jifen','renminbi','pingfang','tongji','liti','zhishu','changdu','mianji','zhouchang','jishi','kenengxing','yinshu','dashu','zhongliang','shijianjisuan','xuanzhuan','gengkeneng','jiao','rongliang','sanjiaoxing','ershisi','shutuxing','shushi','yunsuan','gongbei','sanwei','chushu','fangwei','rili','shuzhou','nianyueri','pingjun','xiaoshu','zhouqi','jitu'];
 function isDone(id){ try{ return localStorage.getItem('yswg:done:'+id)==='1'; }catch(e){ return false; } }
 /* 首次打开：默认把前 36 关设为已完成（只跑一次；之后可用重置按钮清空） */
 (function seedDone(){ try{
