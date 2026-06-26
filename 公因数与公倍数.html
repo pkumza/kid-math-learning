@@ -161,6 +161,11 @@
   .card.chal-mode{border:3px solid #F59E0B; box-shadow:0 12px 30px rgba(245,158,11,.28);}
   .chal-banner{display:none; text-align:center; font-weight:900; color:#B45309; background:#FFF7ED; border:2px dashed #F59E0B; border-radius:14px; padding:9px 12px; margin-bottom:10px; font-size:1.02rem;}
   .card.chal-mode .chal-banner{display:block;}
+  /* 步骤 tab 可点击导航：已到达的阶段可回看 */
+  .pill.nav-on{cursor:pointer;}
+  .pill.nav-on:active{transform:scale(.93);}
+  .pill.nav-locked{opacity:.45;}
+  .pill{transition:transform .1s, opacity .2s;}
 </style>
 </head>
 <body>
@@ -568,6 +573,29 @@ function confetti(){
 resetExplore();
 setPart('A',true);
 /* —— 通关记录（本地 localStorage）—— */
+/* —— 步骤 tab 可点击：已到达的阶段可回看，不能跳到未解锁阶段 —— */
+(function(){
+  if(typeof show!=='function') return;
+  var pills=[].slice.call(document.querySelectorAll('.pill'));
+  if(!pills.length) return;
+  var maxStep=0;
+  var lastStep=Math.max.apply(null,pills.map(function(p){return +p.dataset.step;}));
+  var hasChal=lastStep>=4;
+  var _show=show;
+  show=function(id,step){ _show(id,step); if(typeof step==='number'){ if(step>maxStep){maxStep=step;} sync(); } };
+  function sync(){ pills.forEach(function(p){ var s=+p.dataset.step; p.classList.toggle('nav-on',s<=maxStep); p.classList.toggle('nav-locked',s>maxStep); }); }
+  function go(s){
+    if(s>maxStep) return;
+    try{
+      if(s===1){ show('explore',1); }
+      else if(s===lastStep){ show('done',lastStep); }
+      else if(s===2){ startPractice(); }
+      else if(s===3&&hasChal){ try{ phase='chal'; pi=0; }catch(e){} var c=document.querySelector('#practice .card'); if(c){c.classList.add('chal-mode');} show('practice',3); try{ renderLevel(); }catch(e){} }
+    }catch(e){}
+  }
+  pills.forEach(function(p){ p.addEventListener('click',function(){ go(+p.dataset.step); }); });
+  sync();
+})();
 (function(){var ID='gongbei';try{var d=document.getElementById('done');if(d){var mark=function(){if(d.classList.contains('on')){try{localStorage.setItem('yswg:done:'+ID,'1');}catch(e){}}};new MutationObserver(mark).observe(d,{attributes:true,attributeFilter:['class']});mark();}}catch(e){}})();
 </script>
 </body>
