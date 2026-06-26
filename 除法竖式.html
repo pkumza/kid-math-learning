@@ -89,7 +89,7 @@
   /* 除法竖式布局：商在上，被除数在厂内，除数在厂左 */
   .dgrid{
     display:grid;
-    grid-template-columns:auto 1.5em 1.5em;  /* 除数列 + 两位被除数 */
+    grid-template-columns:auto 1.5em 1.5em;  /* 除数列 + 两位被除数（默认，可被 JS 覆盖） */
     justify-items:center; align-items:end;
     row-gap:2px;
   }
@@ -100,6 +100,7 @@
   .ddivisor{color:var(--purple); padding-right:10px;}
   .dquo{color:var(--green);}                 /* 商 */
   .dtens{color:var(--blue);} .dones{color:var(--orange);}  /* 被除数 */
+  .dhuns{color:#0EA5E9;} .dthou{color:#DB2777;} /* 三位/四位被除数高位（青/玫，避开商的绿） */
   .dhide{visibility:hidden;}
   .dshow{animation:dotin .35s ease both;}
   @keyframes dotin{from{transform:scale(0);}to{transform:scale(1);}}
@@ -169,6 +170,11 @@
   details b{color:var(--ink);}
 
   #confetti{position:fixed; inset:0; pointer-events:none; display:none; z-index:99;}
+
+  /* ---- 挑战模式 ---- */
+  .card.chal-mode{border:3px solid #F59E0B; box-shadow:0 12px 30px rgba(245,158,11,.28);}
+  .chal-banner{display:none; text-align:center; font-weight:900; color:#B45309; background:#FFF7ED; border:2px dashed #F59E0B; border-radius:14px; padding:9px 12px; margin-bottom:10px; font-size:1.02rem;}
+  .card.chal-mode .chal-banner{display:block;}
 </style>
 </head>
 <body>
@@ -186,7 +192,8 @@
   <div class="steps">
     <span class="pill" data-step="1">① 探索</span>
     <span class="pill" data-step="2">② 闯关</span>
-    <span class="pill" data-step="3">③ 完成</span>
+    <span class="pill" data-step="3">③ 挑战</span>
+    <span class="pill" data-step="4">④ 完成</span>
   </div>
 
   <!-- ============ 欢迎 ============ -->
@@ -260,7 +267,8 @@
   <!-- ============ 闯关 ============ -->
   <section class="screen" id="practice">
     <div class="card">
-      <div class="level-tag" id="levelTag">第 1 / 3 关</div>
+      <div class="chal-banner">🌟 挑战题来了！这些是三位数，更难一点，加油！</div>
+      <div class="level-tag" id="levelTag">第 1 / 5 关</div>
       <div class="q-hint" id="qHint"></div>
 
       <div class="vstage">
@@ -395,41 +403,82 @@ function checkUnlock(){
 stepBtn.addEventListener('click',()=>{ if(!stepBtn.disabled) demoStep(); });
 $('#toPractice').addEventListener('click',()=>{ sClick(); startPractice(); });
 
-/* ============ 闯关 ============ */
-const PROB=[
-  { a:69, b:3, ans:23, opts:[23,32,13],
-    hint:'十位 6÷3=2，个位 9÷3=3。',
-    voice:'69 除以 3。十位 6 除以 3，个位 9 除以 3。商是多少呢？' },
+/* ============ 闯关 + 挑战 ============ */
+/* 基础关：5 题（两位数 ÷ 一位数，每位都整除，避开 69÷3 演示题） */
+const BASIC=[
   { a:84, b:4, ans:21, opts:[21,12,22],
     hint:'十位 8÷4=2，个位 4÷4=1。',
     voice:'84 除以 4。十位 8 除以 4，个位 4 除以 4。商是多少呢？' },
   { a:96, b:3, ans:32, opts:[32,23,33],
     hint:'十位 9÷3=3，个位 6÷3=2。',
-    voice:'96 除以 3。十位 9 除以 3，个位 6 除以 3。商是多少呢？' }
+    voice:'96 除以 3。十位 9 除以 3，个位 6 除以 3。商是多少呢？' },
+  { a:88, b:4, ans:22, opts:[22,28,24],
+    hint:'十位 8÷4=2，个位 8÷4=2。',
+    voice:'88 除以 4。十位 8 除以 4，个位 8 除以 4。商是多少呢？' },
+  { a:63, b:3, ans:21, opts:[21,12,23],
+    hint:'十位 6÷3=2，个位 3÷3=1。',
+    voice:'63 除以 3。十位 6 除以 3，个位 3 除以 3。商是多少呢？' },
+  { a:48, b:2, ans:24, opts:[24,42,28],
+    hint:'十位 4÷2=2，个位 8÷2=4。',
+    voice:'48 除以 2。十位 4 除以 2，个位 8 除以 2。商是多少呢？' }
 ];
-let pi=0;
-function startPractice(){ pi=0; show('practice',2); renderLevel(); }
+/* 挑战关：3 题（三位数 ÷ 一位数，每位都整除） */
+const CHAL=[
+  { a:369, b:3, ans:123, opts:[123,133,113],
+    hint:'百位 3÷3=1，十位 6÷3=2，个位 9÷3=3。',
+    voice:'369 除以 3。百位 3 除以 3，十位 6 除以 3，个位 9 除以 3。商是多少呢？' },
+  { a:488, b:4, ans:122, opts:[122,121,222],
+    hint:'百位 4÷4=1，十位 8÷4=2，个位 8÷4=2。',
+    voice:'488 除以 4。百位 4 除以 4，十位 8 除以 4，个位 8 除以 4。商是多少呢？' },
+  { a:639, b:3, ans:213, opts:[213,231,203],
+    hint:'百位 6÷3=2，十位 3÷3=1，个位 9÷3=3。',
+    voice:'639 除以 3。百位 6 除以 3，十位 3 除以 3，个位 9 除以 3。商是多少呢？' }
+];
+
+let phase='basic', pi=0;
+function startPractice(){
+  phase='basic'; pi=0;
+  $('#practice .card').classList.remove('chal-mode');
+  show('practice',2); renderLevel();
+}
 
 function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
 
-/* 渲染除法竖式（厂字形，商位用 ? 占位） */
+/* 渲染除法竖式（厂字形，商位用 ? 占位；支持 N 位被除数 / N 位商） */
 function renderDivGrid(a,b){
-  const t=Math.floor(a/10), o=a%10;
-  return ''+
-    '<div class="dcell dquo dq-tens">?</div>'+
-    '<div class="dcell dquo dq-ones">?</div>'+
-    '<div class="dbracket"></div>'+
-    '<div class="dvbar"></div>'+
-    '<div class="dcell ddivisor dd-divisor">'+b+'</div>'+
-    '<div class="dcell dtens dd-tens">'+t+'</div>'+
-    '<div class="dcell dones dd-ones">'+o+'</div>';
+  const digits=String(a).split('');   // 被除数每一位
+  const n=digits.length;
+  // 列：第1列=除数，第2..(n+1)列=被除数各位；商对齐在被除数上方
+  const grid=$('#pGridDiv');
+  grid.style.gridTemplateColumns='auto'+' 1.5em'.repeat(n);
+  const digColors=['dones','dtens','dhuns','dthou']; // 从个位往高位（仅用于上色，缺失即默认色）
+  let html='';
+  // 商行（行1）：每一位被除数上方放一个 ?，占第 (i+2) 列
+  for(let i=0;i<n;i++){
+    html+='<div class="dcell dquo" style="grid-column:'+(i+2)+'; grid-row:1;">?</div>';
+  }
+  // 厂字形：横线盖住所有被除数位（第2..n+1列），竖线在除数右侧
+  html+='<div class="dbracket" style="grid-column:2 / '+(n+2)+'; grid-row:2;"></div>';
+  html+='<div class="dvbar" style="grid-column:1; grid-row:2 / 4;"></div>';
+  // 除数（第1列，行3）
+  html+='<div class="dcell ddivisor" style="grid-column:1; grid-row:3;">'+b+'</div>';
+  // 被除数各位（行3）
+  for(let i=0;i<n;i++){
+    const place=n-1-i;                 // 该位距个位的距离：0=个位
+    const cls=digColors[place]||'';
+    html+='<div class="dcell '+cls+'" style="grid-column:'+(i+2)+'; grid-row:3;">'+digits[i]+'</div>';
+  }
+  grid.innerHTML=html;
 }
 
 function renderLevel(){
-  const P=PROB[pi];
-  $('#levelTag').textContent=`第 ${pi+1} / ${PROB.length} 关`;
+  const arr = phase==='basic' ? BASIC : CHAL;
+  const P=arr[pi];
+  $('#levelTag').textContent = phase==='basic'
+    ? `第 ${pi+1} / 5 关`
+    : `🌟 挑战 ${pi+1} / 3`;
   $('#qHint').textContent=P.hint;
-  $('#pGridDiv').innerHTML=renderDivGrid(P.a,P.b);
+  renderDivGrid(P.a,P.b);
   $('#feedback').textContent='';
   $('#nextLevel').style.display='none';
 
@@ -453,13 +502,17 @@ function choose(btn,v,ans){
     $('#feedback').innerHTML='<span class="gr">答对啦！🎉</span><div class="stars">⭐⭐⭐</div>';
     say('答对啦！你真厉害！');
     $$('.opt').forEach(o=>o.disabled=true);
-    const last=(pi===PROB.length-1);
     const nb=$('#nextLevel');
-    nb.textContent = last ? '完成啦 🎉' : '下一关 →';
+    if(phase==='basic'){
+      nb.textContent = pi<4 ? '下一关 →' : '进入挑战 🌟';
+    }else{
+      nb.textContent = pi<2 ? '下一挑战 →' : '完成啦 🎉';
+    }
     nb.style.display='block';
   }else{
+    const arr = phase==='basic' ? BASIC : CHAL;
     btn.classList.add('wrong'); sBad();
-    $('#feedback').innerHTML='<span class="or">再算一算～ '+PROB[pi].hint+'</span>';
+    $('#feedback').innerHTML='<span class="or">再算一算～ '+arr[pi].hint+'</span>';
     say('再算一算，你可以的！');
     setTimeout(()=>btn.classList.remove('wrong'),400);
   }
@@ -467,13 +520,22 @@ function choose(btn,v,ans){
 
 $('#nextLevel').addEventListener('click',()=>{
   sClick(); answered=false;
-  if(pi===PROB.length-1){ finish(); }
-  else{ pi++; renderLevel(); }
+  if(phase==='basic'){
+    if(pi===4){
+      phase='chal'; pi=0;
+      $('#practice .card').classList.add('chal-mode');
+      show('practice',3); renderLevel();
+      say('闯关成功！挑战时间到，这些是三位数，更难哦！');
+    }else{ pi++; renderLevel(); }
+  }else{
+    if(pi===2){ finish(); }
+    else{ pi++; renderLevel(); }
+  }
 });
 
 /* ============ 完成 ============ */
 function finish(){
-  show('done',3); sWin(); say('太厉害啦！你已经是除法小达人啦！');
+  show('done',4); sWin(); say('太厉害啦！你已经是除法小达人啦！');
   confetti();
 }
 $('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('explore',1); say('我们再玩一次！点一步一步算试试看。'); });
@@ -490,7 +552,8 @@ $('#muteBtn').addEventListener('click',()=>{
 $('#homeBtn').addEventListener('click',()=>{ sClick(); if('speechSynthesis'in window)speechSynthesis.cancel(); location.href='index.html'; });
 
 function resetAll(){
-  unlocked=false; answered=false; pi=0; demoSeen=false;
+  unlocked=false; answered=false; phase='basic'; pi=0; demoSeen=false;
+  $('#practice .card').classList.remove('chal-mode');
   toPractice.disabled=true; toPractice.classList.remove('ready'); unlock.textContent='';
   resetDemo();
 }

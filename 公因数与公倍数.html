@@ -156,6 +156,11 @@
   details b{color:var(--ink);}
 
   #confetti{position:fixed; inset:0; pointer-events:none; display:none; z-index:99;}
+
+  /* ---- 挑战 ---- */
+  .card.chal-mode{border:3px solid #F59E0B; box-shadow:0 12px 30px rgba(245,158,11,.28);}
+  .chal-banner{display:none; text-align:center; font-weight:900; color:#B45309; background:#FFF7ED; border:2px dashed #F59E0B; border-radius:14px; padding:9px 12px; margin-bottom:10px; font-size:1.02rem;}
+  .card.chal-mode .chal-banner{display:block;}
 </style>
 </head>
 <body>
@@ -173,7 +178,8 @@
   <div class="steps">
     <span class="pill" data-step="1">① 探索</span>
     <span class="pill" data-step="2">② 闯关</span>
-    <span class="pill" data-step="3">③ 完成</span>
+    <span class="pill" data-step="3">③ 挑战</span>
+    <span class="pill" data-step="4">④ 完成</span>
   </div>
 
   <!-- ============ 欢迎 ============ -->
@@ -258,7 +264,8 @@
   <!-- ============ 闯关 ============ -->
   <section class="screen" id="practice">
     <div class="card">
-      <div class="level-tag" id="levelTag">第 1 / 3 关</div>
+      <div class="chal-banner">🌟 挑战题来了！更难一点，加油！</div>
+      <div class="level-tag" id="levelTag">第 1 / 5 关</div>
       <div class="q-hint" id="qHint"></div>
 
       <div class="ask" id="ask"></div>
@@ -416,25 +423,47 @@ function checkUnlock(){
 $('#toPractice').addEventListener('click',()=>{ sClick(); startPractice(); });
 
 /* ============ 闯关 ============ */
-const PROB=[
+const BASIC=[
   { q:'6 和 9 的公因数，除了 1，还有几？', ans:3, opts:[3,2,4],
-    hint:'6 的因数 1,2,3,6；9 的因数 1,3,9；共同的是 1 和 3。',
+    hint:'6 的因数 1,2,3,6；9 的因数 1,3,9；都有的是 1 和 3。',
     voice:'6 和 9 的公因数，除了 1，还有几？' },
-  { q:'2 和 3 的最小公倍数是？', ans:6, opts:[6,5,1],
-    hint:'2,4,6… 和 3,6… 第一个共同的是 6。',
-    voice:'2 和 3 的最小公倍数是几？' },
-  { q:'下面哪个是 4 和 6 的公倍数？', ans:12, opts:[12,10,9],
-    hint:'4 的倍数有 12，6 的倍数也有 12。',
-    voice:'下面哪个是 4 和 6 的公倍数？' }
+  { q:'4 和 6 的最小公倍数是？', ans:12, opts:[12,10,24],
+    hint:'4,8,12… 和 6,12… 第一个共同的是 12。',
+    voice:'4 和 6 的最小公倍数是几？' },
+  { q:'10 和 15 的公因数，除了 1，还有几？', ans:5, opts:[5,2,3],
+    hint:'10 的因数有 5，15 的因数也有 5。',
+    voice:'10 和 15 的公因数，除了 1，还有几？' },
+  { q:'3 和 5 的最小公倍数是？', ans:15, opts:[15,8,30],
+    hint:'3,6,9,12,15… 和 5,10,15… 共同最小是 15。',
+    voice:'3 和 5 的最小公倍数是几？' },
+  { q:'8 和 12 的公因数里，最大的是？', ans:4, opts:[4,2,8],
+    hint:'都有的因数 1,2,4，最大是 4。',
+    voice:'8 和 12 的公因数里，最大的是几？' }
 ];
-let pi=0, answered=false;
-function startPractice(){ pi=0; answered=false; show('practice',2); renderLevel(); }
+const CHAL=[
+  { q:'12 和 18 的最大公因数是？', ans:6, opts:[6,3,12],
+    hint:'都有的因数 1,2,3,6，最大是 6。',
+    voice:'12 和 18 的最大公因数是几？' },
+  { q:'3 和 4 的最小公倍数是？', ans:12, opts:[12,7,6],
+    hint:'3,6,9,12… 和 4,8,12… 第一个共同是 12。',
+    voice:'3 和 4 的最小公倍数是几？' },
+  { q:'6 和 8 的最小公倍数是？', ans:24, opts:[24,12,48],
+    hint:'6,12,18,24… 和 8,16,24… 第一个共同是 24。',
+    voice:'6 和 8 的最小公倍数是几？' }
+];
+let phase='basic', pi=0, answered=false;
+function startPractice(){
+  phase='basic'; pi=0; answered=false;
+  $('#practice .card').classList.remove('chal-mode');
+  show('practice',2); renderLevel();
+}
 
 function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
 
 function renderLevel(){
-  const P=PROB[pi];
-  $('#levelTag').textContent=`第 ${pi+1} / ${PROB.length} 关`;
+  const arr = phase==='basic' ? BASIC : CHAL;
+  const P=arr[pi];
+  $('#levelTag').textContent = phase==='basic' ? `第 ${pi+1} / 5 关` : `🌟 挑战 ${pi+1} / 3`;
   $('#qHint').textContent=P.hint;
   $('#ask').textContent=P.q;
   $('#feedback').textContent='';
@@ -448,7 +477,7 @@ function renderLevel(){
     btn.addEventListener('click',()=>choose(btn,v,P.ans));
     box.appendChild(btn);
   });
-  say(P.voice);
+  say(P.voice+'。'+P.hint);
 }
 
 function choose(btn,v,ans){
@@ -459,9 +488,9 @@ function choose(btn,v,ans){
     $('#feedback').innerHTML='<span class="gr">答对啦！🎉</span><div class="stars">⭐⭐⭐</div>';
     say('答对啦！你真厉害！');
     $$('.opt').forEach(o=>o.disabled=true);
-    const last=(pi===PROB.length-1);
     const nb=$('#nextLevel');
-    nb.textContent = last ? '完成啦 🎉' : '下一关 →';
+    if(phase==='basic'){ nb.textContent = pi<4 ? '下一关 →' : '进入挑战 🌟'; }
+    else{ nb.textContent = pi<2 ? '下一挑战 →' : '完成啦 🎉'; }
     nb.style.display='block';
   }else{
     btn.classList.add('wrong'); sBad();
@@ -473,13 +502,22 @@ function choose(btn,v,ans){
 
 $('#nextLevel').addEventListener('click',()=>{
   sClick(); answered=false;
-  if(pi===PROB.length-1){ finish(); }
-  else{ pi++; renderLevel(); }
+  if(phase==='basic'){
+    if(pi===4){
+      phase='chal'; pi=0;
+      $('#practice .card').classList.add('chal-mode');
+      show('practice',3); renderLevel();
+      say('闯关成功！挑战时间到，这些题更难一点哦！');
+    }else{ pi++; renderLevel(); }
+  }else{
+    if(pi===2){ finish(); }
+    else{ pi++; renderLevel(); }
+  }
 });
 
 /* ============ 完成 ============ */
 function finish(){
-  show('done',3); sWin(); say('太厉害啦！你已经是公倍数小达人啦！');
+  show('done',4); sWin(); say('太厉害啦！你已经是公倍数小达人啦！');
   confetti();
 }
 $('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('explore',1); setPart('A',true); say('我们再玩一次！'); });
@@ -497,8 +535,9 @@ $('#muteBtn').addEventListener('click',()=>{
 $('#homeBtn').addEventListener('click',()=>{ sClick(); if('speechSynthesis'in window)speechSynthesis.cancel(); location.href='index.html'; });
 
 function resetAll(){
-  unlocked=false; answered=false; pi=0;
+  unlocked=false; answered=false; phase='basic'; pi=0;
   seen.A=false; seen.B=false;
+  $('#practice .card').classList.remove('chal-mode');
   $('#toPractice').disabled=true; $('#toPractice').classList.remove('ready'); $('#unlock').textContent='';
   resetExplore();
 }

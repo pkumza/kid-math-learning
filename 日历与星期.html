@@ -156,6 +156,11 @@
   .feedback{text-align:center; font-weight:900; font-size:1.3rem; min-height:1.5em; margin-top:12px;}
   .stars{font-size:1.6rem; letter-spacing:6px; text-align:center;}
 
+  /* ---- 挑战 ---- */
+  .card.chal-mode{border:3px solid #F59E0B; box-shadow:0 12px 30px rgba(245,158,11,.28);}
+  .chal-banner{display:none; text-align:center; font-weight:900; color:#B45309; background:#FFF7ED; border:2px dashed #F59E0B; border-radius:14px; padding:9px 12px; margin-bottom:10px; font-size:1.02rem;}
+  .card.chal-mode .chal-banner{display:block;}
+
   /* ---- 完成 ---- */
   .badge{font-size:4.5rem; text-align:center; animation:spin 3s linear infinite;}
   @keyframes spin{from{transform:rotate(-8deg);}50%{transform:rotate(8deg);}to{transform:rotate(-8deg);}}
@@ -185,7 +190,8 @@
   <div class="steps">
     <span class="pill" data-step="1">① 探索</span>
     <span class="pill" data-step="2">② 闯关</span>
-    <span class="pill" data-step="3">③ 完成</span>
+    <span class="pill" data-step="3">③ 挑战</span>
+    <span class="pill" data-step="4">④ 完成</span>
   </div>
 
   <!-- ============ 欢迎 ============ -->
@@ -250,7 +256,8 @@
   <!-- ============ 闯关 ============ -->
   <section class="screen" id="practice">
     <div class="card">
-      <div class="level-tag" id="levelTag">第 1 / 3 关</div>
+      <div class="chal-banner">🌟 挑战题来了！要数一数星期，加油！</div>
+      <div class="level-tag" id="levelTag">第 1 / 5 关</div>
       <div class="q-hint" id="qHint"></div>
 
       <div class="ask" id="ask"></div>
@@ -428,26 +435,48 @@ function checkUnlock(){
 
 $('#toPractice').addEventListener('click',()=>{ sClick(); startPractice(); });
 
-/* ============ 闯关 ============ */
-const PROB=[
+/* ============ 闯关 + 挑战 ============ */
+const BASIC=[
   { q:'一个星期有几天?', opts:['7','5','10'], ans:'7',
-    hint:'周一到周日，数一数～',
+    hint:'周一到周日，一共 7 天。',
     voice:'一个星期有几天呢？从周一数到周日。' },
   { q:'周三的后一天是?', opts:['周四','周二','周五'], ans:'周四',
-    hint:'一、二、三、四……三的后面是四。',
+    hint:'一、二、三、四…三的后面是四。',
     voice:'周三的后一天是星期几呢？一、二、三、四。' },
-  { q:'如果今天是周六，明天是?', opts:['周日','周五','周一'], ans:'周日',
-    hint:'六的后面是日，周六的后面是周日。',
-    voice:'如果今天是周六，那明天是星期几呢？六的后面是日。' }
+  { q:'今天是周六，明天是?', opts:['周日','周五','周一'], ans:'周日',
+    hint:'六的后面是日。',
+    voice:'今天是周六，那明天是星期几呢？六的后面是日。' },
+  { q:'周一的前一天是?', opts:['周日','周二','周六'], ans:'周日',
+    hint:'一星期循环，周一前面是上一周的周日。',
+    voice:'周一的前一天是星期几呢？一星期是循环的哦。' },
+  { q:'一个星期里，周末是哪两天?', opts:['周六和周日','周一和周二','周五和周六'], ans:'周六和周日',
+    hint:'周末就是周六和周日。',
+    voice:'一个星期里，周末是哪两天呢？' }
 ];
-let pi=0;
-function startPractice(){ pi=0; show('practice',2); renderLevel(); }
+const CHAL=[
+  { q:'1 号是周一，那么 8 号是星期几?', opts:['周一','周二','周日'], ans:'周一',
+    hint:'8 = 1 + 7，过了一整周，还是周一。',
+    voice:'一号是周一，那么八号是星期几呢？八等于一加七哦。' },
+  { q:'今天是周四，3 天后是星期几?', opts:['周日','周六','周一'], ans:'周日',
+    hint:'四→五→六→日，数 3 天。',
+    voice:'今天是周四，三天以后是星期几呢？我们一天一天数。' },
+  { q:'1 号是周一，本月第一个周日是几号?', opts:['7号','6号','8号'], ans:'7号',
+    hint:'周一1、周二2…周日就是 7 号。',
+    voice:'一号是周一，这个月第一个周日是几号呢？数一数。' }
+];
+let phase='basic', pi=0;
+function startPractice(){
+  phase='basic'; pi=0;
+  $('#practice .card').classList.remove('chal-mode');
+  show('practice',2); renderLevel();
+}
 
 function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
 
 function renderLevel(){
-  const P=PROB[pi];
-  $('#levelTag').textContent=`第 ${pi+1} / ${PROB.length} 关`;
+  const arr = phase==='basic' ? BASIC : CHAL;
+  const P=arr[pi];
+  $('#levelTag').textContent = phase==='basic' ? `第 ${pi+1} / 5 关` : `🌟 挑战 ${pi+1} / 3`;
   $('#qHint').textContent=P.hint;
   $('#ask').textContent=P.q;
   $('#feedback').textContent='';
@@ -467,33 +496,43 @@ function renderLevel(){
 let answered=false;
 function choose(btn,v,ans){
   if(answered) return;
+  const arr = phase==='basic' ? BASIC : CHAL;
   if(v===ans){
     answered=true;
     btn.classList.add('correct'); sGood();
     $('#feedback').innerHTML='<span class="gr">答对啦！🎉</span><div class="stars">⭐⭐⭐</div>';
     say('答对啦！你真厉害！');
     $$('.opt').forEach(o=>o.disabled=true);
-    const last=(pi===PROB.length-1);
     const nb=$('#nextLevel');
-    nb.textContent = last ? '完成啦 🎉' : '下一关 →';
+    if(phase==='basic') nb.textContent = (pi<4) ? '下一关 →' : '进入挑战 🌟';
+    else                nb.textContent = (pi<2) ? '下一挑战 →' : '完成啦 🎉';
     nb.style.display='block';
   }else{
     btn.classList.add('wrong'); sBad();
-    $('#feedback').innerHTML='<span class="or">'+PROB[pi].hint+' 再试试！</span>';
-    say('再想一想，'+PROB[pi].hint);
+    $('#feedback').innerHTML='<span class="or">'+arr[pi].hint+' 再试试！</span>';
+    say('再想一想，'+arr[pi].hint);
     setTimeout(()=>btn.classList.remove('wrong'),400);
   }
 }
 
 $('#nextLevel').addEventListener('click',()=>{
   sClick(); answered=false;
-  if(pi===PROB.length-1){ finish(); }
-  else{ pi++; renderLevel(); }
+  if(phase==='basic'){
+    if(pi===4){
+      phase='chal'; pi=0;
+      $('#practice .card').classList.add('chal-mode');
+      show('practice',3); renderLevel();
+      say('闯关成功！挑战时间到，要数一数星期哦！');
+    }else{ pi++; renderLevel(); }
+  }else{
+    if(pi===2){ finish(); }
+    else{ pi++; renderLevel(); }
+  }
 });
 
 /* ============ 完成 ============ */
 function finish(){
-  show('done',3); sWin();
+  show('done',4); sWin();
   say('太厉害啦！你已经是日历小达人啦！而且你闯完了全部四十二关，太了不起啦！');
   confetti();
 }
@@ -511,7 +550,8 @@ $('#muteBtn').addEventListener('click',()=>{
 $('#homeBtn').addEventListener('click',()=>{ sClick(); if('speechSynthesis'in window)speechSynthesis.cancel(); location.href='index.html'; });
 
 function resetAll(){
-  unlocked=false; answered=false; pi=0;
+  unlocked=false; answered=false; phase='basic'; pi=0;
+  $('#practice .card').classList.remove('chal-mode');
   seen.week=false; seen.cal=false;
   toPractice.disabled=true; toPractice.classList.remove('ready'); unlock.textContent='';
   note.innerHTML='先点点上面的星期，再点点下面的日历吧！';

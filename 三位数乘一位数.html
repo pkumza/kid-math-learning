@@ -166,6 +166,11 @@
   details p{color:#374151; line-height:1.75; font-size:.95rem;}
   details b{color:var(--ink);}
 
+  /* ---- 挑战模式 ---- */
+  .card.chal-mode{border:3px solid #F59E0B; box-shadow:0 12px 30px rgba(245,158,11,.28);}
+  .chal-banner{display:none; text-align:center; font-weight:900; color:#B45309; background:#FFF7ED; border:2px dashed #F59E0B; border-radius:14px; padding:9px 12px; margin-bottom:10px; font-size:1.02rem;}
+  .card.chal-mode .chal-banner{display:block;}
+
   #confetti{position:fixed; inset:0; pointer-events:none; display:none; z-index:99;}
 </style>
 </head>
@@ -184,7 +189,8 @@
   <div class="steps">
     <span class="pill" data-step="1">① 探索</span>
     <span class="pill" data-step="2">② 闯关</span>
-    <span class="pill" data-step="3">③ 完成</span>
+    <span class="pill" data-step="3">③ 挑战</span>
+    <span class="pill" data-step="4">④ 完成</span>
   </div>
 
   <!-- ============ 欢迎 ============ -->
@@ -262,7 +268,8 @@
   <!-- ============ 闯关 ============ -->
   <section class="screen" id="practice">
     <div class="card">
-      <div class="level-tag" id="levelTag">第 1 / 3 关</div>
+      <div class="chal-banner">🌟 挑战题来了！这些会进位，更难一点，加油！</div>
+      <div class="level-tag" id="levelTag">第 1 / 5 关</div>
       <div class="q-hint" id="qHint"></div>
 
       <div class="ask" id="ask">等于多少呢？ 👇</div>
@@ -409,26 +416,48 @@ stepBtn.addEventListener('click',()=>{
 });
 $('#toPractice').addEventListener('click',()=>{ sClick(); startPractice(); });
 
-/* ============ 闯关 ============ */
-const PROB=[
-  { q:'213 × 3 = ?', ans:639, opts:[639,636,619],
-    hint:'200×3=600，10×3=30，3×3=9，合起来。',
-    voice:'213 乘 3。把 213 拆成 200、10、3 分别乘，再合起来。等于多少呢？' },
+/* ============ 闯关 + 挑战 ============ */
+const BASIC=[
   { q:'121 × 4 = ?', ans:484, opts:[484,448,488],
     hint:'100×4=400，20×4=80，1×4=4。',
     voice:'121 乘 4。把 121 拆成 100、20、1 分别乘，再合起来。等于多少呢？' },
   { q:'132 × 3 = ?', ans:396, opts:[396,369,393],
     hint:'100×3=300，30×3=90，2×3=6。',
-    voice:'132 乘 3。把 132 拆成 100、30、2 分别乘，再合起来。等于多少呢？' }
+    voice:'132 乘 3。把 132 拆成 100、30、2 分别乘，再合起来。等于多少呢？' },
+  { q:'212 × 4 = ?', ans:848, opts:[848,824,488],
+    hint:'200×4=800，10×4=40，2×4=8。',
+    voice:'212 乘 4。把 212 拆成 200、10、2 分别乘，再合起来。等于多少呢？' },
+  { q:'203 × 3 = ?', ans:609, opts:[609,690,69],
+    hint:'200×3=600，0×3=0，3×3=9。',
+    voice:'203 乘 3。把 203 拆成 200、0、3 分别乘，再合起来。等于多少呢？' },
+  { q:'124 × 2 = ?', ans:248, opts:[248,244,284],
+    hint:'100×2=200，20×2=40，4×2=8。',
+    voice:'124 乘 2。把 124 拆成 100、20、4 分别乘，再合起来。等于多少呢？' }
 ];
-let pi=0;
-function startPractice(){ pi=0; show('practice',2); renderLevel(); }
+const CHAL=[
+  { q:'127 × 3 = ?', ans:381, opts:[381,361,321],
+    hint:'个位 7×3=21 满十进二！再 2×3+2、1×3。',
+    voice:'127 乘 3。个位 7 乘 3 等于 21，满十要进二哦！等于多少呢？' },
+  { q:'216 × 4 = ?', ans:864, opts:[864,844,824],
+    hint:'个位 6×4=24 进二；十位 1×4+2=6；百位 2×4=8。',
+    voice:'216 乘 4。个位 6 乘 4 等于 24，要进二！等于多少呢？' },
+  { q:'158 × 2 = ?', ans:316, opts:[316,216,326],
+    hint:'个位 8×2=16 进一；十位 5×2+1=11 进一；百位 1×2+1=3。',
+    voice:'158 乘 2。个位 8 乘 2 等于 16 进一，十位也要进一哦！等于多少呢？' }
+];
+let phase='basic', pi=0;
+function startPractice(){
+  phase='basic'; pi=0;
+  $('#practice .card').classList.remove('chal-mode');
+  show('practice',2); renderLevel();
+}
 
 function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
 
 function renderLevel(){
-  const P=PROB[pi];
-  $('#levelTag').textContent=`第 ${pi+1} / ${PROB.length} 关`;
+  const arr = phase==='basic'?BASIC:CHAL;
+  const P=arr[pi];
+  $('#levelTag').textContent = phase==='basic' ? `第 ${pi+1} / 5 关` : `🌟 挑战 ${pi+1} / 3`;
   $('#qHint').textContent=P.hint;
   $('#ask').textContent=P.q;
   $('#feedback').textContent='';
@@ -448,33 +477,44 @@ function renderLevel(){
 let answered=false;
 function choose(btn,v,ans){
   if(answered) return;
+  const arr = phase==='basic'?BASIC:CHAL;
   if(v===ans){
     answered=true;
     btn.classList.add('correct'); sGood();
     $('#feedback').innerHTML='<span class="gr">答对啦！🎉</span><div class="stars">⭐⭐⭐</div>';
     say('答对啦！你真厉害！');
     $$('.opt').forEach(o=>o.disabled=true);
-    const last=(pi===PROB.length-1);
     const nb=$('#nextLevel');
-    nb.textContent = last ? '完成啦 🎉' : '下一关 →';
+    if(phase==='basic') nb.textContent = pi<4 ? '下一关 →' : '进入挑战 🌟';
+    else                nb.textContent = pi<2 ? '下一挑战 →' : '完成啦 🎉';
     nb.style.display='block';
   }else{
     btn.classList.add('wrong'); sBad();
-    $('#feedback').innerHTML='<span class="or">'+PROB[pi].hint+'</span>';
-    say('再算一算，'+PROB[pi].hint);
+    $('#feedback').innerHTML='<span class="or">'+arr[pi].hint+'</span>';
+    say('再算一算，'+arr[pi].hint);
     setTimeout(()=>btn.classList.remove('wrong'),400);
   }
 }
 
 $('#nextLevel').addEventListener('click',()=>{
   sClick(); answered=false;
-  if(pi===PROB.length-1){ finish(); }
-  else{ pi++; renderLevel(); }
+  if(phase==='basic' && pi===4){
+    phase='chal'; pi=0;
+    $('#practice .card').classList.add('chal-mode');
+    show('practice',3); renderLevel();
+    say('闯关成功！挑战时间到，这些会进位，更难哦！');
+  }else if(phase==='basic'){
+    pi++; renderLevel();
+  }else if(phase==='chal' && pi===2){
+    finish();
+  }else{
+    pi++; renderLevel();
+  }
 });
 
 /* ============ 完成 ============ */
 function finish(){
-  show('done',3); sWin(); say('太厉害啦！你已经是乘法小达人啦！');
+  show('done',4); sWin(); say('太厉害啦！你已经是乘法小达人啦！');
   confetti();
 }
 $('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('explore',1); say('我们再玩一次！点一步一步算，把 213 拆成百十个吧！'); });
@@ -491,7 +531,8 @@ $('#muteBtn').addEventListener('click',()=>{
 $('#homeBtn').addEventListener('click',()=>{ sClick(); if('speechSynthesis'in window)speechSynthesis.cancel(); location.href='index.html'; });
 
 function resetAll(){
-  answered=false; pi=0;
+  answered=false; phase='basic'; pi=0;
+  $('#practice .card').classList.remove('chal-mode');
   toPractice.disabled=true; toPractice.classList.remove('ready'); unlock.textContent='';
   resetBoard();
 }
