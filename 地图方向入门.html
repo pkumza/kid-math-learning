@@ -181,9 +181,9 @@
     <div class="card">
       <div style="font-size:3.4rem;text-align:center">🗺️</div>
       <h1>地图方向入门</h1>
-      <span class="pinyin">dì tú fāng xiàng rù mén · 只看地图，不转身体</span>
+      <span class="pinyin">dì tú fāng xiàng rù mén · 先看地图，不转身体</span>
       <p class="lead">
-        今天只学一种方向：<b>地图上的方向</b>。<br>
+        今天先学一种方向：<b>地图上的方向</b>。<br>
         地图不会转，所以方向很稳定：<br>
         <b class="bl">上北</b> · <b class="or">下南</b> · <b class="pk">左西</b> · <b class="gr">右东</b>
       </p>
@@ -319,12 +319,24 @@ function pickVoice(){
   zhVoice=zh.find(v=>/zh[-_]?CN/i.test(v.lang))||zh[0]||null;
 }
 if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; setTimeout(pickVoice,300); }
+function normalizeSpeechText(text){
+  return String(text)
+    .replace(/只看/g,'先看')
+    .replace(/只学/g,'先学')
+    .replace(/只学习/g,'先学习')
+    .replace(/第 49 关/g,'第四十九关')
+    .replace(/·/g,'，')
+    .replace(/→/g,'，')
+    .replace(/[🦊🗺️🧭🎉⭐👇👉⬆️⬇️⬅️➡️]/g,'')
+    .replace(/\s+/g,' ')
+    .trim();
+}
 function say(text){
   if(muted||!('speechSynthesis'in window)) return;
   try{
     if(!zhVoice) pickVoice();
     speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(text);
+    const u=new SpeechSynthesisUtterance(normalizeSpeechText(text)+'。');
     u.lang='zh-CN'; if(zhVoice)u.voice=zhVoice; u.rate=0.95; u.pitch=1.08;
     speechSynthesis.speak(u);
   }catch(e){}
@@ -565,7 +577,7 @@ function confetti(){
 
 $('#startBtn').addEventListener('click',()=>{
   ac(); sClick(); show('explore',1);
-  say('今天只看地图，不转身体。记住，上北，下南，左西，右东。');
+  say('今天我们先学习地图上的方向，不转身体。记住，上北，下南，左西，右东。');
 });
 $('#toWalk').addEventListener('click',()=>{ sClick(); show('walk',2); renderWalk(); say('现在走格子。先看旗子在哪里，再按方向走过去。'); });
 $('#toCorners').addEventListener('click',()=>{ sClick(); show('corners',3); renderCornerBoard(); say('现在认角落。两个方向合起来，就是一个角落。'); });
