@@ -132,7 +132,7 @@
   <div class="progress-card">
     <div class="progress-top">
       <span class="progress-label">🏆 闯关进度</span>
-      <span class="progress-count"><b id="doneCount">0</b> / <b id="totalCount">48</b> 关</span>
+      <span class="progress-count"><b id="doneCount">0</b> / <b id="totalCount">49</b> 关</span>
       <button id="resetBtn" class="reset-btn">重置进度</button>
     </div>
     <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
@@ -358,6 +358,13 @@
         <div class="desc">数头数脚，几鸡几兔？用「抬脚法」破解经典难题！</div></div>
       <span class="go">→</span>
     </a>
+    <a class="stop nums" href="地图方向入门.html" data-id="ditu49">
+      <span class="visited-star">⭐</span>
+      <div class="num">49</div><span class="emoji">🗺️</span>
+      <div class="body"><div class="title">地图方向入门 <span class="tag js-status">新</span></div>
+        <div class="desc">先只看固定地图：上北下南、左西右东，再走格子认四角！</div></div>
+      <span class="go">→</span>
+    </a>
   </div>
 
   <!-- 图形与生活 -->
@@ -561,7 +568,7 @@
 <script>
 "use strict";
 /* 通关进度（存在浏览器本地 localStorage；通关一节课会自动点亮） */
-const LESSON_IDS=['fenpei','jiehe','liangwei','chufa','yushu','fenshu','qiou','guilv','beishu','weizhi','duicheng','shijian','liangwei2','jifen','renminbi','pingfang','tongji','liti','zhishu','changdu','mianji','zhouchang','jishi','kenengxing','yinshu','dashu','zhongliang','shijianjisuan','xuanzhuan','gengkeneng','jiao','rongliang','sanjiaoxing','ershisi','shutuxing','shushi','yunsuan','gongbei','sanwei','chushu','fangwei','rili','shuzhou','nianyueri','pingjun','xiaoshu','zhouqi','jitu'];
+const LESSON_IDS=['fenpei','jiehe','liangwei','chufa','yushu','fenshu','qiou','guilv','beishu','weizhi','duicheng','shijian','liangwei2','jifen','renminbi','pingfang','tongji','liti','zhishu','changdu','mianji','zhouchang','jishi','kenengxing','yinshu','dashu','zhongliang','shijianjisuan','xuanzhuan','gengkeneng','jiao','rongliang','sanjiaoxing','ershisi','shutuxing','shushi','yunsuan','gongbei','sanwei','chushu','fangwei','rili','shuzhou','nianyueri','pingjun','xiaoshu','zhouqi','jitu','ditu49'];
 function isDone(id){ try{ return localStorage.getItem('yswg:done:'+id)==='1'; }catch(e){ return false; } }
 /* 首次打开：默认把前 36 关设为已完成（只跑一次；之后可用重置按钮清空） */
 (function seedDone(){ try{

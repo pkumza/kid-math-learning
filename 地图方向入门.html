@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>地图方向入门 · 数学小课堂</title>
+<style>
+  :root{
+    --blue:#2563EB; --blue2:#60A5FA;
+    --orange:#EA580C; --orange2:#FB923C;
+    --green:#16A34A; --green2:#4ADE80;
+    --purple:#7C3AED; --pink:#DB2777;
+    --ink:#1F2937; --soft:#6B7280; --card:#fff;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Hiragino Sans GB","Helvetica Neue",sans-serif;
+    color:var(--ink);
+    background:linear-gradient(160deg,#EAF4FF 0%,#FFF6EC 58%,#FDEFF6 100%);
+    min-height:100vh; overflow-x:hidden; user-select:none;
+  }
+  .wrap{max-width:760px; margin:0 auto; padding:10px 14px 40px;}
+  header{display:flex; align-items:center; justify-content:space-between; padding:8px 4px 6px;}
+  .brand{display:flex; align-items:center; gap:8px; font-weight:800; font-size:1.15rem;}
+  .brand .fox{font-size:1.6rem;}
+  .brand small{color:var(--soft); font-weight:600; font-size:.78rem;}
+  .tools{display:flex; gap:8px;}
+  .icon-btn{
+    border:none; background:#fff; border-radius:14px; width:44px; height:44px;
+    font-size:1.25rem; cursor:pointer; box-shadow:0 3px 8px rgba(0,0,0,.08);
+    transition:transform .1s;
+  }
+  .icon-btn:active{transform:scale(.92);}
+  .steps{display:flex; gap:6px; justify-content:center; margin:4px 0 12px; flex-wrap:wrap;}
+  .pill{
+    font-size:.82rem; font-weight:800; color:var(--soft); background:#fff;
+    padding:5px 12px; border-radius:999px; box-shadow:0 2px 5px rgba(0,0,0,.05);
+    white-space:nowrap; transition:transform .1s, opacity .2s;
+  }
+  .pill.active{color:#fff; background:var(--purple); box-shadow:0 4px 10px rgba(124,58,237,.35);}
+  .pill.nav-on{cursor:pointer;}
+  .pill.nav-on:active{transform:scale(.93);}
+  .pill.nav-locked{opacity:.45;}
+  .screen{display:none; animation:pop .35s ease both;}
+  .screen.on{display:block;}
+  @keyframes pop{from{opacity:0; transform:translateY(12px) scale(.98);} to{opacity:1; transform:none;}}
+  .card{
+    background:var(--card); border-radius:26px; padding:22px 18px;
+    box-shadow:0 12px 30px rgba(80,90,130,.12); margin-bottom:16px;
+  }
+  h1{font-size:1.7rem; margin:.1em 0 .2em; text-align:center;}
+  h2{font-size:1.25rem; margin:.1em 0 .5em; text-align:center; color:var(--purple);}
+  .lead{text-align:center; color:var(--soft); font-size:1rem; line-height:1.7; margin:.3em 0 .2em;}
+  .pinyin{display:block; color:var(--soft); font-size:.95rem; font-weight:600; text-align:center;}
+  .big-btn{
+    display:block; width:100%; border:none; cursor:pointer; font-size:1.3rem; font-weight:900;
+    color:#fff; padding:16px; border-radius:20px; margin-top:10px;
+    background:linear-gradient(135deg,#34D399,#10B981);
+    box-shadow:0 8px 18px rgba(16,185,129,.35);
+    transition:transform .12s, filter .2s;
+  }
+  .big-btn.purple{background:linear-gradient(135deg,#A78BFA,#7C3AED); box-shadow:0 8px 18px rgba(124,58,237,.35);}
+  .big-btn.orange{background:linear-gradient(135deg,#FDBA74,#F97316); box-shadow:0 8px 18px rgba(249,115,22,.35);}
+  .big-btn.blue{background:linear-gradient(135deg,#60A5FA,#2563EB); box-shadow:0 8px 18px rgba(37,99,235,.35);}
+  .big-btn:active{transform:translateY(2px) scale(.99);}
+  .big-btn:disabled{filter:grayscale(.7) opacity(.55); cursor:not-allowed; box-shadow:none;}
+  .big-btn.ready{animation:bounce 1s infinite;}
+  @keyframes bounce{0%,100%{transform:none;}50%{transform:translateY(-5px);}}
+  .note{
+    margin-top:12px; background:#FFFDF5; border-radius:14px; padding:12px 14px;
+    color:#92400E; font-weight:800; line-height:1.6; font-size:1.02rem; text-align:center; min-height:1.5em;
+  }
+  .unlock{text-align:center; font-weight:900; color:var(--purple); margin:12px 0 4px; min-height:1.4em;}
+  .bl{color:var(--blue);} .or{color:var(--orange);} .gr{color:var(--green);} .pu{color:var(--purple);} .pk{color:var(--pink);}
+  .mantra{text-align:center; font-size:1.45rem; font-weight:900; margin:6px 0 14px;}
+  .partbox{margin:10px 0 4px; padding:14px 12px; border-radius:20px; background:#F8FAFF; border:2px dashed #DBE3F4;}
+  .part-title{text-align:center; font-weight:900; color:var(--purple); font-size:1.08rem; margin-bottom:8px;}
+  .map-board{
+    width:min(82vw,330px); aspect-ratio:1/1; margin:10px auto;
+    display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr);
+    gap:8px; position:relative;
+  }
+  .tile{
+    border:3px solid #E5E7EB; background:#fff; border-radius:16px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    font-weight:900; color:var(--ink); min-width:0; min-height:0;
+    transition:transform .12s, border-color .15s, background .15s;
+  }
+  .tile .ic{font-size:2rem; line-height:1;}
+  .tile .txt{font-size:.88rem; margin-top:4px; text-align:center;}
+  .tile.hit{cursor:pointer;}
+  .tile.hit:active{transform:scale(.94);}
+  .tile.lit{background:#FFF7ED; border-color:var(--orange); transform:scale(1.04);}
+  .tile.center{background:#EEF2FF; border-color:#C4B5FD;}
+  .tile.goal{background:#ECFDF5; border-color:var(--green);}
+  .tile.player{background:#FEF3C7; border-color:#F59E0B;}
+  .tile.corner{background:#FDF2F8;}
+  .map-label{
+    position:absolute; font-weight:900; color:#fff; border-radius:999px;
+    padding:4px 10px; font-size:.9rem; box-shadow:0 3px 8px rgba(0,0,0,.12);
+  }
+  .map-label.n{top:-16px; left:50%; transform:translateX(-50%); background:var(--blue);}
+  .map-label.s{bottom:-16px; left:50%; transform:translateX(-50%); background:var(--orange);}
+  .map-label.w{left:-14px; top:50%; transform:translateY(-50%); background:var(--pink);}
+  .map-label.e{right:-14px; top:50%; transform:translateY(-50%); background:var(--green);}
+  .dir-buttons{
+    display:grid;
+    grid-template-columns:repeat(3, minmax(64px, 88px));
+    grid-template-areas:
+      ". north ."
+      "west . east"
+      ". south .";
+    gap:10px;
+    justify-content:center;
+    margin-top:12px;
+  }
+  .dir-buttons .mini-btn{width:100%; min-height:52px;}
+  .dir-buttons .north{grid-area:north;}
+  .dir-buttons .south{grid-area:south;}
+  .dir-buttons .west{grid-area:west;}
+  .dir-buttons .east{grid-area:east;}
+  .corner-buttons{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:12px;}
+  .mini-btn{
+    border:none; cursor:pointer; font-weight:900; font-size:1.05rem; padding:10px 16px;
+    border-radius:15px; color:#fff; box-shadow:0 5px 12px rgba(0,0,0,.12);
+    transition:transform .1s;
+  }
+  .mini-btn:active{transform:scale(.95);}
+  .north{background:linear-gradient(135deg,#60A5FA,#2563EB);}
+  .south{background:linear-gradient(135deg,#FB923C,#EA580C);}
+  .east{background:linear-gradient(135deg,#4ADE80,#16A34A);}
+  .west{background:linear-gradient(135deg,#F472B6,#DB2777);}
+  .corner-btn{background:linear-gradient(135deg,#A78BFA,#7C3AED);}
+  .level-tag{text-align:center; color:var(--soft); font-weight:900; margin-bottom:4px;}
+  .q-hint{text-align:center; color:var(--orange); font-weight:900; font-size:1.02rem; min-height:1.3em; margin:6px 0;}
+  .ask{text-align:center; font-size:1.45rem; font-weight:900; margin:10px 0 8px;}
+  .options{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+  .opt{
+    border:none; cursor:pointer; min-width:92px; font-size:1.45rem; font-weight:900;
+    padding:14px 10px; border-radius:18px; background:#fff; color:var(--ink);
+    box-shadow:0 5px 12px rgba(0,0,0,.1); border:3px solid #E5E7EB;
+    transition:transform .1s;
+  }
+  .opt:active{transform:scale(.95);}
+  .opt.correct{background:var(--green); color:#fff; border-color:var(--green);}
+  .opt.wrong{background:#FCA5A5; border-color:#EF4444; animation:shake .35s;}
+  @keyframes shake{0%,100%{transform:none;}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+  .feedback{text-align:center; font-weight:900; font-size:1.25rem; min-height:1.5em; margin-top:12px;}
+  .stars{font-size:1.55rem; letter-spacing:6px; text-align:center;}
+  .badge{font-size:4.5rem; text-align:center; animation:spin 3s linear infinite;}
+  @keyframes spin{from{transform:rotate(-8deg);}50%{transform:rotate(8deg);}to{transform:rotate(-8deg);}}
+  .trophy-name{text-align:center; font-size:1.5rem; font-weight:900; color:var(--purple); margin:6px 0;}
+  details{margin-top:10px; background:#F8FAFF; border-radius:16px; padding:4px 14px;}
+  summary{cursor:pointer; font-weight:900; color:var(--purple); padding:10px 0; list-style:none;}
+  summary::-webkit-details-marker{display:none;}
+  details p{color:#374151; line-height:1.75; font-size:.95rem;}
+  #confetti{position:fixed; inset:0; pointer-events:none; display:none; z-index:99;}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="wrap">
+  <header>
+    <div class="brand"><span class="fox">🦊</span><div>数学王国<br><small>地图方向入门</small></div></div>
+    <div class="tools">
+      <button class="icon-btn" id="homeBtn" title="回家">🏠</button>
+      <button class="icon-btn" id="muteBtn" title="声音开关">🔊</button>
+    </div>
+  </header>
+
+  <div class="steps">
+    <span class="pill" data-step="1">① 点方向</span>
+    <span class="pill" data-step="2">② 走格子</span>
+    <span class="pill" data-step="3">③ 认角落</span>
+    <span class="pill" data-step="4">④ 闯关</span>
+    <span class="pill" data-step="5">⑤ 完成</span>
+  </div>
+
+  <section class="screen on" id="welcome">
+    <div class="card">
+      <div style="font-size:3.4rem;text-align:center">🗺️</div>
+      <h1>地图方向入门</h1>
+      <span class="pinyin">dì tú fāng xiàng rù mén · 只看地图，不转身体</span>
+      <p class="lead">
+        今天只学一种方向：<b>地图上的方向</b>。<br>
+        地图不会转，所以方向很稳定：<br>
+        <b class="bl">上北</b> · <b class="or">下南</b> · <b class="pk">左西</b> · <b class="gr">右东</b>
+      </p>
+      <button class="big-btn" id="startBtn">开始探索 →</button>
+      <details>
+        <summary>👨‍👩‍👧 给爸爸妈妈的话（点开）</summary>
+        <p>
+          这一关刻意只使用「地图参照系」，不问「面向北时右手边」这类身体转向题。
+          目标是让孩子先把固定地图里的上、下、左、右和北、南、西、东稳定绑定起来。<br><br>
+          陪玩时可以一直提醒一句：<b>这张地图不转，我们也先不转身体。</b>
+          等孩子能稳定说出「右上角是东北、左下角是西南」之后，再回到第 41 关会轻松很多。
+        </p>
+      </details>
+    </div>
+  </section>
+
+  <section class="screen" id="explore">
+    <div class="card">
+      <h2>🧭 点一点 · 四个方向</h2>
+      <div class="mantra"><span class="bl">上北</span> <span class="or">下南</span> <span class="pk">左西</span> <span class="gr">右东</span></div>
+      <div class="partbox">
+        <div class="part-title">地图中心站着小探险家，四边各有一个地点</div>
+        <div class="map-board" id="dirBoard">
+          <div class="map-label n">北</div><div class="map-label s">南</div><div class="map-label w">西</div><div class="map-label e">东</div>
+        </div>
+        <div class="dir-buttons">
+          <button class="mini-btn north" data-dir="北">⬆ 北</button>
+          <button class="mini-btn south" data-dir="南">⬇ 南</button>
+          <button class="mini-btn west" data-dir="西">⬅ 西</button>
+          <button class="mini-btn east" data-dir="东">➡ 东</button>
+        </div>
+        <div class="note" id="dirNote">点一个方向，看看地图上哪个地点会亮起来。</div>
+      </div>
+      <div class="unlock" id="dirUnlock"></div>
+      <button class="big-btn purple" id="toWalk" disabled>去走格子 →</button>
+    </div>
+  </section>
+
+  <section class="screen" id="walk">
+    <div class="card">
+      <h2>🧭 走一走 · 到旗子那里</h2>
+      <p class="lead">先看旗子在哪里，再按方向按钮走过去。</p>
+      <div class="partbox">
+        <div class="map-board" id="walkBoard">
+          <div class="map-label n">北</div><div class="map-label s">南</div><div class="map-label w">西</div><div class="map-label e">东</div>
+        </div>
+        <div class="dir-buttons">
+          <button class="mini-btn north" data-move="北">⬆ 北</button>
+          <button class="mini-btn south" data-move="南">⬇ 南</button>
+          <button class="mini-btn west" data-move="西">⬅ 西</button>
+          <button class="mini-btn east" data-move="东">➡ 东</button>
+        </div>
+        <div class="note" id="walkNote">第一面旗子在右边。右边是东，试试往东走。</div>
+      </div>
+      <div class="unlock" id="walkUnlock"></div>
+      <button class="big-btn orange" id="toCorners" disabled>去认角落 →</button>
+    </div>
+  </section>
+
+  <section class="screen" id="corners">
+    <div class="card">
+      <h2>🧩 拼一拼 · 两个方向合起来</h2>
+      <p class="lead">上面又右边，就是东北。下面又左边，就是西南。</p>
+      <div class="partbox">
+        <div class="map-board" id="cornerBoard">
+          <div class="map-label n">北</div><div class="map-label s">南</div><div class="map-label w">西</div><div class="map-label e">东</div>
+        </div>
+        <div class="corner-buttons">
+          <button class="mini-btn corner-btn" data-corner="东北">东北</button>
+          <button class="mini-btn corner-btn" data-corner="西北">西北</button>
+          <button class="mini-btn corner-btn" data-corner="东南">东南</button>
+          <button class="mini-btn corner-btn" data-corner="西南">西南</button>
+        </div>
+        <div class="note" id="cornerNote">点一个角落名字，看看它在地图哪里。</div>
+      </div>
+      <div class="unlock" id="cornerUnlock"></div>
+      <button class="big-btn blue" id="toPractice" disabled>去闯关 →</button>
+    </div>
+  </section>
+
+  <section class="screen" id="practice">
+    <div class="card">
+      <div class="level-tag" id="levelTag">第 1 / 8 关</div>
+      <div class="q-hint" id="qHint"></div>
+      <div class="ask" id="ask"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="big-btn" id="nextLevel" style="display:none">下一关 →</button>
+    </div>
+  </section>
+
+  <section class="screen" id="done">
+    <div class="card">
+      <div class="badge">🎖️</div>
+      <h1>太厉害啦！</h1>
+      <div class="trophy-name">🎖️ 地图方向小达人</div>
+      <p class="lead">
+        你已经会看固定地图啦：<br>
+        <b class="bl">上北</b> · <b class="or">下南</b> · <b class="pk">左西</b> · <b class="gr">右东</b><br>
+        还会认东北、西北、东南、西南！
+      </p>
+      <button class="big-btn" id="nextChapter" onclick="try{speechSynthesis.cancel()}catch(e){};location.href='index.html'">回到地图 →</button>
+      <button class="big-btn orange" id="again">再玩一次 🔁</button>
+    </div>
+  </section>
+</div>
+
+<script>
+"use strict";
+const $=(s,el=document)=>el.querySelector(s);
+const $$=(s,el=document)=>[...el.querySelectorAll(s)];
+
+let muted=false, audioCtx=null;
+function ac(){ if(!audioCtx){ try{audioCtx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return audioCtx; }
+function beep(freq,dur,type,vol,when){
+  if(muted) return; const c=ac(); if(!c) return;
+  const t=c.currentTime+(when||0), o=c.createOscillator(), g=c.createGain();
+  o.type=type||'sine'; o.frequency.value=freq;
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol||0.15,t+0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g).connect(c.destination); o.start(t); o.stop(t+dur+0.02);
+}
+const sClick=()=>beep(680,0.06,'triangle',0.12,0);
+const sGood =()=>[523,659,784].forEach((f,i)=>beep(f,0.12,'sine',0.16,i*0.09));
+const sWin  =()=>[523,659,784,1047,1319].forEach((f,i)=>beep(f,0.16,'sine',0.18,i*0.12));
+const sBad  =()=>beep(190,0.2,'sawtooth',0.1,0);
+
+let zhVoice=null;
+function pickVoice(){
+  if(!('speechSynthesis'in window)) return;
+  const vs=speechSynthesis.getVoices(); if(!vs||!vs.length) return;
+  const zh=vs.filter(v=>/zh|cmn|chinese|普通话|国语|中文/i.test((v.lang||'')+' '+(v.name||'')));
+  zhVoice=zh.find(v=>/zh[-_]?CN/i.test(v.lang))||zh[0]||null;
+}
+if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; setTimeout(pickVoice,300); }
+function say(text){
+  if(muted||!('speechSynthesis'in window)) return;
+  try{
+    if(!zhVoice) pickVoice();
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang='zh-CN'; if(zhVoice)u.voice=zhVoice; u.rate=0.95; u.pitch=1.08;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+function show(id,step){
+  $$('.screen').forEach(s=>s.classList.remove('on'));
+  $('#'+id).classList.add('on');
+  $$('.pill').forEach(p=>p.classList.toggle('active', +p.dataset.step===step));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+const boardCells=[
+  {pos:'nw', ic:'🏔️', txt:'西北角'}, {pos:'n', ic:'⛰️', txt:'北边山'}, {pos:'ne', ic:'🌲', txt:'东北角'},
+  {pos:'w', ic:'🌉', txt:'西边桥'}, {pos:'c', ic:'🧒', txt:'中心'}, {pos:'e', ic:'🏫', txt:'东边学校'},
+  {pos:'sw', ic:'🏖️', txt:'西南角'}, {pos:'s', ic:'🏠', txt:'南边家'}, {pos:'se', ic:'⛲', txt:'东南角'}
+];
+const dirToPos={北:'n', 南:'s', 西:'w', 东:'e'};
+const cornerToPos={东北:'ne', 西北:'nw', 东南:'se', 西南:'sw'};
+const dirSay={
+  北:'北在地图上面。',
+  南:'南在地图下面。',
+  西:'西在地图左边。',
+  东:'东在地图右边。'
+};
+
+function makeTile(cell, extra){
+  const d=document.createElement('div');
+  d.className='tile '+(extra||'');
+  d.dataset.pos=cell.pos;
+  d.innerHTML='<div class="ic">'+cell.ic+'</div><div class="txt">'+cell.txt+'</div>';
+  return d;
+}
+function renderDirBoard(){
+  const b=$('#dirBoard');
+  b.querySelectorAll('.tile').forEach(n=>n.remove());
+  boardCells.forEach(cell=>{
+    const extra=cell.pos==='c'?'center':(Object.values(dirToPos).includes(cell.pos)?'hit':'');
+    b.appendChild(makeTile(cell,extra));
+  });
+}
+
+const seenDir={北:false,南:false,西:false,东:false};
+let dirUnlocked=false;
+function lightDir(dir){
+  sClick();
+  $$('#dirBoard .tile').forEach(t=>t.classList.toggle('lit', t.dataset.pos===dirToPos[dir]));
+  $('#dirNote').innerHTML='你点了 <b class="pu">'+dir+'</b>。'+dirSay[dir];
+  say(dirSay[dir]);
+  seenDir[dir]=true;
+  checkDirUnlock();
+}
+function checkDirUnlock(){
+  if(dirUnlocked) return;
+  const count=Object.values(seenDir).filter(Boolean).length;
+  if(count===4){
+    dirUnlocked=true; $('#toWalk').disabled=false; $('#toWalk').classList.add('ready');
+    $('#dirUnlock').textContent='🎉 四个方向都点亮啦！';
+    sWin(); say('四个方向都点亮啦，去走格子吧。');
+  }else{
+    $('#dirUnlock').textContent='再点亮 '+(4-count)+' 个方向。';
+  }
+}
+
+let wx=1, wy=1, walkGoalIndex=0, walkUnlocked=false;
+const walkGoals=[
+  {x:2,y:1,name:'东边旗子', hint:'旗子在右边，右边是东。'},
+  {x:2,y:0,name:'东北角旗子', hint:'旗子在右上角，先东后北，或先北后东。'},
+  {x:0,y:2,name:'西南角旗子', hint:'旗子在左下角，要往西和南走。'}
+];
+function renderWalk(){
+  const b=$('#walkBoard');
+  b.querySelectorAll('.tile').forEach(n=>n.remove());
+  const g=walkGoals[walkGoalIndex];
+  boardCells.forEach(cell=>{
+    const x=cell.pos==='w'||cell.pos==='nw'||cell.pos==='sw'?0:cell.pos==='e'||cell.pos==='ne'||cell.pos==='se'?2:1;
+    const y=cell.pos==='n'||cell.pos==='nw'||cell.pos==='ne'?0:cell.pos==='s'||cell.pos==='sw'||cell.pos==='se'?2:1;
+    let data=cell;
+    let extra='';
+    if(x===g.x && y===g.y){ data={pos:cell.pos, ic:'🚩', txt:g.name}; extra='goal'; }
+    if(x===wx && y===wy){ data={pos:cell.pos, ic:'🧒', txt:'我在这里'}; extra='player'; }
+    b.appendChild(makeTile(data,extra));
+  });
+}
+function move(dir){
+  if(walkUnlocked) return;
+  sClick();
+  let nx=wx, ny=wy;
+  if(dir==='北') ny--; else if(dir==='南') ny++; else if(dir==='西') nx--; else if(dir==='东') nx++;
+  if(nx<0||nx>2||ny<0||ny>2){
+    $('#walkNote').innerHTML='到地图边上啦，换个方向试试。';
+    say('到地图边上啦，换个方向试试。');
+    return;
+  }
+  wx=nx; wy=ny; renderWalk();
+  const g=walkGoals[walkGoalIndex];
+  if(wx===g.x && wy===g.y){
+    sGood();
+    if(walkGoalIndex===walkGoals.length-1){
+      walkUnlocked=true; $('#toCorners').disabled=false; $('#toCorners').classList.add('ready');
+      $('#walkNote').innerHTML='🎉 三面旗子都找到了！';
+      $('#walkUnlock').textContent='可以去认角落啦！';
+      say('三面旗子都找到了，可以去认角落啦。');
+    }else{
+      walkGoalIndex++; wx=1; wy=1; renderWalk();
+      $('#walkNote').innerHTML='找到啦！下一面旗子：'+walkGoals[walkGoalIndex].hint;
+      say('找到啦。下一面旗子，'+walkGoals[walkGoalIndex].hint);
+    }
+  }else{
+    $('#walkNote').innerHTML='往 <b class="pu">'+dir+'</b> 走了一步。'+g.hint;
+    say('往'+dir+'走了一步。');
+  }
+}
+
+const seenCorner={东北:false,西北:false,东南:false,西南:false};
+let cornerUnlocked=false;
+function renderCornerBoard(active){
+  const b=$('#cornerBoard');
+  b.querySelectorAll('.tile').forEach(n=>n.remove());
+  boardCells.forEach(cell=>{
+    const isCorner=['ne','nw','se','sw'].includes(cell.pos);
+    const extra=(isCorner?'corner ':'')+(active&&cell.pos===cornerToPos[active]?'lit':'');
+    b.appendChild(makeTile(cell,extra));
+  });
+}
+function chooseCorner(name){
+  sClick(); renderCornerBoard(name);
+  const text={
+    东北:'东北在右上角：东是右，北是上。',
+    西北:'西北在左上角：西是左，北是上。',
+    东南:'东南在右下角：东是右，南是下。',
+    西南:'西南在左下角：西是左，南是下。'
+  }[name];
+  $('#cornerNote').innerHTML='你点了 <b class="pu">'+name+'</b>。'+text;
+  say(text);
+  seenCorner[name]=true; checkCornerUnlock();
+}
+function checkCornerUnlock(){
+  if(cornerUnlocked) return;
+  const count=Object.values(seenCorner).filter(Boolean).length;
+  if(count===4){
+    cornerUnlocked=true; $('#toPractice').disabled=false; $('#toPractice').classList.add('ready');
+    $('#cornerUnlock').textContent='🎉 四个角落都认识啦！';
+    sWin(); say('四个角落都认识啦，去闯关吧。');
+  }else{
+    $('#cornerUnlock').textContent='再点亮 '+(4-count)+' 个角落。';
+  }
+}
+
+const LEVELS=[
+  {q:'地图上，上面是哪个方向？', ans:'北', opts:['北','南','东'], hint:'上北。'},
+  {q:'地图上，下面是哪个方向？', ans:'南', opts:['南','西','北'], hint:'下南。'},
+  {q:'地图上，右边是哪个方向？', ans:'东', opts:['东','西','南'], hint:'右东。'},
+  {q:'地图上，左边是哪个方向？', ans:'西', opts:['西','东','北'], hint:'左西。'},
+  {q:'右上角叫什么？', ans:'东北', opts:['东北','西北','东南'], hint:'右是东，上是北。'},
+  {q:'左下角叫什么？', ans:'西南', opts:['西南','东南','西北'], hint:'左是西，下是南。'},
+  {q:'从中心向东走一格，会到哪边？', ans:'右边', opts:['右边','左边','下面'], hint:'东在右边。'},
+  {q:'从中心先向西，再向北，会到哪个角？', ans:'西北', opts:['西北','东北','西南'], hint:'西是左，北是上。'}
+];
+let pi=0, answered=false;
+function startPractice(){ pi=0; answered=false; show('practice',4); renderLevel(); }
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+function renderLevel(){
+  const P=LEVELS[pi];
+  $('#levelTag').textContent='第 '+(pi+1)+' / '+LEVELS.length+' 关';
+  $('#qHint').textContent='💡 '+P.hint;
+  $('#ask').textContent=P.q+' 👇';
+  $('#feedback').textContent='';
+  $('#nextLevel').style.display='none';
+  const box=$('#options'); box.innerHTML='';
+  shuffle(P.opts.slice()).forEach(v=>{
+    const btn=document.createElement('button');
+    btn.className='opt'; btn.textContent=v;
+    btn.addEventListener('click',()=>choose(btn,v,P.ans));
+    box.appendChild(btn);
+  });
+  say(P.q+'。'+P.hint);
+}
+function choose(btn,v,ans){
+  if(answered) return;
+  if(v===ans){
+    answered=true; btn.classList.add('correct'); sGood();
+    $('#feedback').innerHTML='<span class="gr">答对啦！🎉</span><div class="stars">⭐⭐⭐</div>';
+    say('答对啦。');
+    $$('.opt').forEach(o=>o.disabled=true);
+    $('#nextLevel').textContent=pi<LEVELS.length-1?'下一关 →':'完成啦 🎉';
+    $('#nextLevel').style.display='block';
+  }else{
+    btn.classList.add('wrong'); sBad();
+    $('#feedback').innerHTML='<span class="or">再想想～ '+LEVELS[pi].hint+'</span>';
+    say('再想想，'+LEVELS[pi].hint);
+    setTimeout(()=>btn.classList.remove('wrong'),400);
+  }
+}
+$('#nextLevel').addEventListener('click',()=>{
+  sClick(); answered=false;
+  if(pi===LEVELS.length-1) finish(); else { pi++; renderLevel(); }
+});
+function finish(){
+  show('done',5); sWin(); say('太厉害啦，你已经是地图方向小达人啦。');
+  confetti();
+}
+
+function resetAll(){
+  Object.keys(seenDir).forEach(k=>seenDir[k]=false);
+  Object.keys(seenCorner).forEach(k=>seenCorner[k]=false);
+  dirUnlocked=false; walkUnlocked=false; cornerUnlocked=false; answered=false; pi=0;
+  wx=1; wy=1; walkGoalIndex=0;
+  $('#toWalk').disabled=true; $('#toWalk').classList.remove('ready');
+  $('#toCorners').disabled=true; $('#toCorners').classList.remove('ready');
+  $('#toPractice').disabled=true; $('#toPractice').classList.remove('ready');
+  $('#dirUnlock').textContent=''; $('#walkUnlock').textContent=''; $('#cornerUnlock').textContent='';
+  $('#dirNote').innerHTML='点一个方向，看看地图上哪个地点会亮起来。';
+  $('#walkNote').innerHTML='第一面旗子在右边。右边是东，试试往东走。';
+  $('#cornerNote').innerHTML='点一个角落名字，看看它在地图哪里。';
+  renderDirBoard(); renderWalk(); renderCornerBoard();
+}
+function confetti(){
+  const cv=$('#confetti'), ctx=cv.getContext('2d');
+  cv.width=innerWidth; cv.height=innerHeight; cv.style.display='block';
+  const colors=['#2563EB','#F97316','#16A34A','#EAB308','#EC4899','#7C3AED'];
+  const P=[];
+  for(let i=0;i<150;i++) P.push({
+    x:innerWidth/2+(Math.random()-0.5)*120, y:innerHeight*0.28,
+    vx:(Math.random()-0.5)*13, vy:Math.random()*-13-3, g:0.32,
+    s:7+Math.random()*9, c:colors[i%colors.length], rot:Math.random()*6, vr:(Math.random()-0.5)*0.4
+  });
+  let t=0;
+  (function anim(){
+    t++; ctx.clearRect(0,0,cv.width,cv.height);
+    P.forEach(p=>{ p.vy+=p.g; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c;
+      ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6); ctx.restore();
+    });
+    if(t<150) requestAnimationFrame(anim); else cv.style.display='none';
+  })();
+}
+
+$('#startBtn').addEventListener('click',()=>{
+  ac(); sClick(); show('explore',1);
+  say('今天只看地图，不转身体。记住，上北，下南，左西，右东。');
+});
+$('#toWalk').addEventListener('click',()=>{ sClick(); show('walk',2); renderWalk(); say('现在走格子。先看旗子在哪里，再按方向走过去。'); });
+$('#toCorners').addEventListener('click',()=>{ sClick(); show('corners',3); renderCornerBoard(); say('现在认角落。两个方向合起来，就是一个角落。'); });
+$('#toPractice').addEventListener('click',()=>{ sClick(); startPractice(); });
+$('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('explore',1); say('我们再玩一次地图方向。'); });
+$('#muteBtn').addEventListener('click',()=>{
+  muted=!muted; $('#muteBtn').textContent=muted?'🔇':'🔊';
+  if(muted&&'speechSynthesis'in window) speechSynthesis.cancel(); else sClick();
+});
+$('#homeBtn').addEventListener('click',()=>{ sClick(); if('speechSynthesis'in window)speechSynthesis.cancel(); location.href='index.html'; });
+$$('.mini-btn[data-dir]').forEach(b=>b.addEventListener('click',()=>lightDir(b.dataset.dir)));
+$$('.mini-btn[data-move]').forEach(b=>b.addEventListener('click',()=>move(b.dataset.move)));
+$$('.mini-btn[data-corner]').forEach(b=>b.addEventListener('click',()=>chooseCorner(b.dataset.corner)));
+
+renderDirBoard(); renderWalk(); renderCornerBoard();
+(function(){
+  if(typeof show!=='function') return;
+  var pills=[].slice.call(document.querySelectorAll('.pill'));
+  var maxStep=0, lastStep=5, _show=show;
+  show=function(id,step){ _show(id,step); if(typeof step==='number'){ if(step>maxStep) maxStep=step; sync(); } };
+  function sync(){ pills.forEach(function(p){ var s=+p.dataset.step; p.classList.toggle('nav-on',s<=maxStep); p.classList.toggle('nav-locked',s>maxStep); }); }
+  function go(s){
+    if(s>maxStep) return;
+    if(s===1) show('explore',1);
+    else if(s===2) show('walk',2);
+    else if(s===3) show('corners',3);
+    else if(s===4) startPractice();
+    else if(s===lastStep) show('done',lastStep);
+  }
+  pills.forEach(function(p){ p.addEventListener('click',function(){ go(+p.dataset.step); }); });
+  sync();
+})();
+(function(){var ID='ditu49';try{var d=document.getElementById('done');if(d){var mark=function(){if(d.classList.contains('on')){try{localStorage.setItem('yswg:done:'+ID,'1');}catch(e){}}};new MutationObserver(mark).observe(d,{attributes:true,attributeFilter:['class']});mark();}}catch(e){}})();
+</script>
+</body>
+</html>
