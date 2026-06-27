@@ -132,7 +132,7 @@
   <div class="progress-card">
     <div class="progress-top">
       <span class="progress-label">🏆 闯关进度</span>
-      <span class="progress-count"><b id="doneCount">0</b> / <b id="totalCount">49</b> 关</span>
+      <span class="progress-count"><b id="doneCount">0</b> / <b id="totalCount">51</b> 关</span>
       <button id="resetBtn" class="reset-btn">重置进度</button>
     </div>
     <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
@@ -365,6 +365,13 @@
         <div class="desc">先看固定地图：上北下南、左西右东，再走格子认四角！</div></div>
       <span class="go">→</span>
     </a>
+    <a class="stop nums" href="等式天平.html" data-id="dengshi50">
+      <span class="visited-star">⭐</span>
+      <div class="num">50</div><span class="emoji">⚖️</span>
+      <div class="body"><div class="title">等式天平 <span class="tag js-status">新</span></div>
+        <div class="desc">等号两边一样多：补缺口、同加同减，先不用写 x！</div></div>
+      <span class="go">→</span>
+    </a>
   </div>
 
   <!-- 图形与生活 -->
@@ -457,6 +464,13 @@
       <div class="num">32</div><span class="emoji">🥤</span>
       <div class="body"><div class="title">容量·升与毫升 <span class="tag js-status">新</span></div>
         <div class="desc">量杯能装多少水？1 升 = 1000 毫升！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop meas" href="图形分割与面积.html" data-id="fenge51">
+      <span class="visited-star">⭐</span>
+      <div class="num">51</div><span class="emoji">🧩</span>
+      <div class="body"><div class="title">图形分割与面积 <span class="tag js-status">新</span></div>
+        <div class="desc">把复杂图形切成小长方形，数方格、分块相加！</div></div>
       <span class="go">→</span>
     </a>
   </div>
@@ -568,7 +582,7 @@
 <script>
 "use strict";
 /* 通关进度（存在浏览器本地 localStorage；通关一节课会自动点亮） */
-const LESSON_IDS=['fenpei','jiehe','liangwei','chufa','yushu','fenshu','qiou','guilv','beishu','weizhi','duicheng','shijian','liangwei2','jifen','renminbi','pingfang','tongji','liti','zhishu','changdu','mianji','zhouchang','jishi','kenengxing','yinshu','dashu','zhongliang','shijianjisuan','xuanzhuan','gengkeneng','jiao','rongliang','sanjiaoxing','ershisi','shutuxing','shushi','yunsuan','gongbei','sanwei','chushu','fangwei','rili','shuzhou','nianyueri','pingjun','xiaoshu','zhouqi','jitu','ditu49'];
+const LESSON_IDS=['fenpei','jiehe','liangwei','chufa','yushu','fenshu','qiou','guilv','beishu','weizhi','duicheng','shijian','liangwei2','jifen','renminbi','pingfang','tongji','liti','zhishu','changdu','mianji','zhouchang','jishi','kenengxing','yinshu','dashu','zhongliang','shijianjisuan','xuanzhuan','gengkeneng','jiao','rongliang','sanjiaoxing','ershisi','shutuxing','shushi','yunsuan','gongbei','sanwei','chushu','fangwei','rili','shuzhou','nianyueri','pingjun','xiaoshu','zhouqi','jitu','ditu49','dengshi50','fenge51'];
 function isDone(id){ try{ return localStorage.getItem('yswg:done:'+id)==='1'; }catch(e){ return false; } }
 /* 首次打开：默认把前 36 关设为已完成（只跑一次；之后可用重置按钮清空） */
 (function seedDone(){ try{
