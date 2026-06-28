@@ -77,6 +77,11 @@
   summary::-webkit-details-marker{display:none;}
   details p{color:#374151; line-height:1.75; font-size:.95rem;}
   #confetti{position:fixed; inset:0; pointer-events:none; display:none; z-index:99;}
+
+  .hint-btn{border:none; cursor:pointer; font-weight:900; font-size:1rem; color:#fff; background:linear-gradient(135deg,#FDBA74,#F97316); padding:8px 16px; border-radius:999px; box-shadow:0 4px 10px rgba(249,115,22,.25);}
+  .hint-btn:active{transform:scale(.95);}
+  .hint-text{display:inline-block; color:var(--orange);}
+  .hint-text[hidden]{display:none;}
 </style>
 </head>
 <body>
@@ -195,6 +200,28 @@
 </div>
 <script>
 "use strict";
+function setQHint(text){
+  const el=document.getElementById('qHint');
+  if(!el) return;
+  const hint=String(text||'').replace(/^💡\s*/, '');
+  el.innerHTML='';
+  const btn=document.createElement('button');
+  btn.type='button'; btn.className='hint-btn'; btn.textContent='💡 提示';
+  const span=document.createElement('span');
+  span.className='hint-text'; span.hidden=true; span.textContent='💡 '+hint;
+  btn.addEventListener('click',()=>{
+    btn.hidden=true; span.hidden=false;
+    if(typeof say==='function') say(hint);
+  });
+  el.appendChild(btn); el.appendChild(span);
+}
+function speakQuestion(item){
+  if(!item || typeof say!=='function') return;
+  const text = item.voiceQuestion || item.q || item.ask || item.qBig || item.question || '';
+  const clean = String(text).replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();
+  if(clean) say(clean);
+}
+
 const $=(s,el=document)=>el.querySelector(s);
 const $$=(s,el=document)=>[...el.querySelectorAll(s)];
 let muted=false, audioCtx=null;
@@ -245,7 +272,7 @@ const LEVELS=[
 let pi=0, answered=false;
 function startPractice(){ pi=0; answered=false; show('practice',4); renderLevel(); }
 function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
-function renderLevel(){ const P=LEVELS[pi]; $('#levelTag').textContent='第 '+(pi+1)+' / '+LEVELS.length+' 关'; $('#qHint').textContent='💡 '+P.hint; $('#ask').textContent=P.q+' 👇'; $('#feedback').textContent=''; $('#nextLevel').style.display='none'; const box=$('#options'); box.innerHTML=''; shuffle(P.opts.slice()).forEach(v=>{ const btn=document.createElement('button'); btn.className='opt'; btn.textContent=v; btn.addEventListener('click',()=>choose(btn,v,P.ans)); box.appendChild(btn); }); say(P.q+'。'+P.hint); }
+function renderLevel(){ const P=LEVELS[pi]; $('#levelTag').textContent='第 '+(pi+1)+' / '+LEVELS.length+' 关'; setQHint('💡 '+P.hint); $('#ask').textContent=P.q+' 👇'; $('#feedback').textContent=''; $('#nextLevel').style.display='none'; const box=$('#options'); box.innerHTML=''; shuffle(P.opts.slice()).forEach(v=>{ const btn=document.createElement('button'); btn.className='opt'; btn.textContent=v; btn.addEventListener('click',()=>choose(btn,v,P.ans)); box.appendChild(btn); }); say(P.q); }
 function choose(btn,v,ans){ if(answered) return; if(v===ans){ answered=true; btn.classList.add('correct'); sGood(); $('#feedback').innerHTML='<span class="gr">答对啦！🎉</span><div class="stars">⭐⭐⭐</div>'; say('答对啦。'); $$('.opt').forEach(o=>o.disabled=true); $('#nextLevel').textContent=pi<LEVELS.length-1?'下一关 →':'完成啦 🎉'; $('#nextLevel').style.display='block'; }else{ btn.classList.add('wrong'); sBad(); $('#feedback').innerHTML='<span class="or">再想想～ '+LEVELS[pi].hint+'</span>'; say('再想想，'+LEVELS[pi].hint); setTimeout(()=>btn.classList.remove('wrong'),400); } }
 $('#nextLevel').addEventListener('click',()=>{ sClick(); answered=false; if(pi===LEVELS.length-1) finish(); else{ pi++; renderLevel(); } });
 function finish(){ show('done',5); sWin(); say('太厉害啦，你已经是图形分割小达人啦。'); confetti(); }

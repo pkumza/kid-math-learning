@@ -369,6 +369,12 @@ function say(text){
     speechSynthesis.speak(u);
   }catch(e){}
 }
+function speakQuestion(item){
+  if(!item || typeof say!=='function') return;
+  const text = item.voiceQuestion || item.q || item.ask || item.qBig || item.question || '';
+  const clean = String(text).replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();
+  if(clean) say(clean);
+}
 
 /* ---------- 屏幕切换 ---------- */
 function show(id,step){
@@ -449,7 +455,7 @@ function renderLevel(){
     btn.addEventListener('click',()=>choose(btn,v,p.ans));
     box.appendChild(btn);
   });
-  say(p.voice);
+  speakQuestion(p);
 }
 
 function choose(btn,v,ans){
