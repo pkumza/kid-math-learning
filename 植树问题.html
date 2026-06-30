@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>植树问题 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-batch-61-66.css">
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'zhishu65',
+  title:'植树问题',
+  emoji:'🌳📏',
+  heading:'植树问题',
+  pinyin:'zhí shù wèn tí · 树和间隔',
+  intro:'一排树中间有空空的<b class="pu">间隔</b>。<br>两头都种树时，树比间隔<b class="or">多 1</b>；<br>围成一圈时，树和间隔<b class="gr">一样多</b>。',
+  parentNote:'植树问题的核心不是背公式，而是分清「点」和「段」。可以用手指当树，手指之间的缝当间隔：5 根手指之间只有 4 个缝。两端都种：树 = 间隔 + 1；只数中间的缝，孩子更容易懂。',
+  explore:{
+    title:'🌳 数树，也要数间隔',
+    lead:'小路上每隔一段种一棵树。<br>如果有 <b class="pu">4</b> 个间隔，两头都种树，<br>一共要种几棵树？',
+    visual:{type:'row',items:[{text:'🌳',cls:'green'},'-',{text:'🌳',cls:'green'},'-',{text:'🌳',cls:'green'},'-',{text:'🌳',cls:'green'},'-',{text:'🌳',cls:'green'}]},
+    note:'点卡片看：间隔是树和树中间的空。',
+    voice:'如果有 4 个间隔，两头都种树，一共要种几棵树？',
+    unlock:'🎉 你看出来啦：两头都种，树比间隔多 1！',
+    reveals:[
+      {pic:'📏',title:'先数间隔',answer:'树和树中间有 <b>4</b> 个间隔。',voice:'先数间隔，一共有 4 个间隔。'},
+      {pic:'🌳',title:'再数树',answer:'两头都种树，一共有 <b>5</b> 棵树。',voice:'再数树，两头都种，一共有 5 棵树。'},
+      {pic:'➕',title:'小秘密',answer:'树 = 间隔 + 1，所以 4 + 1 = <b>5</b>。',voice:'小秘密，树等于间隔加 1。4 加 1 等于 5。'}
+    ]
+  },
+  practice:[
+    {q:'一排路灯有 6 个间隔，两头都有灯，要几盏路灯？',hint:'两头都有：灯 = 间隔 + 1。',visual:{type:'row',items:[{text:'6 个间隔',cls:'purple'},'+',{text:'1',cls:'orange'}]},answer:'7',options:['5','6','7'],winVoice:'答对啦！6 个间隔要 7 盏路灯。',wrong:'两头都有，灯比间隔多 1。'},
+    {q:'8 棵树排成一排，两头都有树，中间有几个间隔？',hint:'间隔 = 树 - 1。',visual:{type:'row',items:[{text:'8 棵树',cls:'green'},'-',{text:'1',cls:'orange'}]},answer:'7',options:['7','8','9'],winVoice:'答对啦！8 棵树中间有 7 个间隔。',wrong:'用手指想一想，手指之间的缝比手指少 1。'},
+    {q:'围成一圈种 5 棵树，有几个间隔？',hint:'围成一圈时，树和间隔一样多。',visual:{type:'row',items:[{text:'🌳🌳🌳🌳🌳',cls:'green'},'↺',{text:'?',cls:'purple'}]},answer:'5',options:['4','5','6'],winVoice:'答对啦！围成一圈，5 棵树有 5 个间隔。',wrong:'一圈没有开头和结尾，树和间隔一样多。'},
+    {q:'一条直路有 10 个间隔，两头都种树，要几盏路灯？',hint:'路灯也像树：两头都有，数量比间隔多 1。',visual:{type:'row',items:[{text:'10 个间隔',cls:'purple'},'+',{text:'1',cls:'orange'}]},answer:'11',options:['10','11','12'],winVoice:'答对啦！10 个间隔，两头都有灯，就是 11 盏。',wrong:'两头都放，点比段多 1。'},
+    {q:'12 个小朋友排成一排，相邻两个之间有几个空？',hint:'空就是间隔，排成一排时，间隔比人数少 1。',visual:{type:'row',items:[{text:'12 人',cls:'blue'},'-',{text:'1',cls:'orange'}]},answer:'11',options:['10','11','12'],winVoice:'答对啦！12 个小朋友中间有 11 个空。',wrong:'想一想 5 根手指之间只有 4 个缝。'},
+    {q:'一条路有 6 个间隔，只在一头种树，另一头不种，要几棵树？',hint:'只种一头时，树和间隔一样多。',visual:{type:'row',items:[{text:'6 个间隔',cls:'purple'},'→',{text:'一头种',cls:'green'}]},answer:'6',options:['5','6','7'],winVoice:'答对啦！只种一头，6 个间隔就是 6 棵树。',wrong:'这次不是两头都种，所以不要加 1。'}
+  ],
+  challenge:[
+    {q:'挑战：20 米长的小路，每 5 米种一棵，两头都种，一共几棵？',hint:'先算有几个间隔：20 ÷ 5，再因为两头都种所以加 1。',visual:{type:'clues',items:['小路长 20 米','每 5 米一个间隔','两头都种树']},answer:'5',options:['4','5','6'],winVoice:'答对啦！20 除以 5 是 4 个间隔，两头都种要 5 棵树。',wrong:'先求间隔个数，再想两头都种。',hard:true},
+    {q:'挑战：30 米一圈的花坛，每 5 米放一盆花，要放几盆？',hint:'围成一圈时，花盆数和间隔数一样多。先算 30 ÷ 5。',visual:{type:'clues',items:['一圈 30 米','每 5 米一个间隔','围成一圈']},answer:'6',options:['5','6','7'],winVoice:'答对啦！30 除以 5 是 6，围成一圈就放 6 盆。',wrong:'一圈没有两头，不需要加 1。',hard:true}
+  ],
+  done:{badge:'🎖️',title:'🎖️ 间隔小园丁',text:'你学会了<b class="pu">植树问题</b>：<br>一排两头都种，树比间隔多 1；<br>围成一圈，树和间隔一样多。',extra:'🌟 看栏杆、路灯、队伍，都可以找「点」和「间隔」。'},
+  nextHref:'逻辑推理.html'
+};
+</script>
+<script src="lesson-batch-61-66.js"></script>
+</body>
+</html>

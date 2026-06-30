@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>等量代换进阶 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-batch-61-66.css">
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'dengdai62',
+  title:'等量代换进阶',
+  emoji:'⚖️🍎',
+  heading:'等量代换进阶',
+  pinyin:'děng liàng dài huàn · 一样重就能换',
+  intro:'如果天平两边一样重，<br>就可以把一个东西换成<b class="pu">一样重</b>的另一个。<br>像数学里的小魔术：<b class="or">1 个苹果 = 2 个梨</b>！',
+  parentNote:'这一关是代数启蒙，但不出现字母。孩子只需要理解「相等的东西可以互相替换」。陪玩时可以拿积木演示：1 个大积木和 2 个小积木一样高，那么 2 个大积木就能换成 4 个小积木。重点是说出「换完总量不变」。',
+  explore:{
+    title:'⚖️ 一样多，就能换',
+    lead:'天平告诉我们：<br><b class="pu">1 个苹果</b> 和 <b class="or">2 个梨</b> 一样重。<br>那 <b class="pu">2 个苹果</b> 可以换成几个梨？',
+    visual:{type:'row',items:[{text:'🍎',cls:'purple'},'=',{text:'🍐🍐',cls:'orange'}]},
+    note:'点卡片看一看：把苹果一个一个换成梨。',
+    voice:'1 个苹果和 2 个梨一样重。2 个苹果可以换成几个梨？',
+    unlock:'🎉 你会等量代换啦：一个苹果换两个梨，两个苹果换四个梨！',
+    reveals:[
+      {pic:'🍎',title:'换第 1 个苹果',answer:'1 个苹果 = <b>2 个梨</b>。',voice:'第 1 个苹果，可以换成 2 个梨。'},
+      {pic:'🍎',title:'换第 2 个苹果',answer:'又换出 <b>2 个梨</b>。',voice:'第 2 个苹果，也可以换成 2 个梨。'},
+      {pic:'🍐',title:'合起来',answer:'2 + 2 = <b>4 个梨</b>。',voice:'合起来，2 加 2 等于 4 个梨。'}
+    ]
+  },
+  practice:[
+    {q:'1 枚金币 = 2 张贴纸，3 枚金币 = 几张贴纸？',hint:'一枚金币换 2 张，三枚就换三次。',visual:{type:'row',items:[{text:'🪙🪙🪙',cls:'purple'},'=',{text:'?',cls:'orange'}]},answer:'6',options:['5','6','8'],winVoice:'答对啦！3 枚金币换成 6 张贴纸。',wrong:'每枚金币都能换 2 张贴纸。'},
+    {q:'1 个大积木 = 4 个小积木，2 个大积木 = 几个小积木？',hint:'4 + 4 是多少？',visual:{type:'row',items:[{text:'大×2',cls:'purple'},'=',{text:'小?',cls:'green'}]},answer:'8',options:['6','8','10'],winVoice:'答对啦！4 加 4 等于 8。',wrong:'一个大积木换 4 个，两个就换两次。'},
+    {q:'1 个星星 = 3 颗糖，4 个星星 = 几颗糖？',hint:'4 个 3 是多少？',visual:{type:'row',items:[{text:'⭐×4',cls:'purple'},'=',{text:'?',cls:'orange'}]},answer:'12',options:['7','10','12'],winVoice:'答对啦！4 个 3 是 12。',wrong:'一个星星换 3 颗糖，4 个星星就是 4 个 3。'},
+    {q:'2 个小月亮 = 1 个太阳，4 个小月亮 = 几个太阳？',hint:'2 个小月亮换 1 个太阳，4 个小月亮能分成两组 2 个。',visual:{type:'row',items:[{text:'🌙🌙',cls:'blue'},'=',{text:'☀️',cls:'orange'}]},answer:'2',options:['1','2','4'],winVoice:'答对啦！4 个小月亮可以分成两组，每组换 1 个太阳。',wrong:'先把 4 个小月亮分成 2 个、2 个。'},
+    {q:'1 只小熊 = 5 条小鱼，2 只小熊再加 1 条小鱼，一共等于几条小鱼？',hint:'先把 2 只小熊都换成小鱼，再加原来的 1 条。',visual:{type:'row',items:[{text:'🐻🐻',cls:'purple'},'+',{text:'🐟',cls:'blue'},'=',{text:'?',cls:'green'}]},answer:'11',options:['10','11','12'],winVoice:'答对啦！2 只小熊换 10 条鱼，再加 1 条，就是 11 条。',wrong:'别忘了最后还要加 1 条小鱼。'},
+    {q:'1 朵花 = 2 片叶子，3 朵花再加 1 片叶子，一共等于几片叶子？',hint:'3 朵花先换成 6 片叶子，再加 1。',visual:{type:'row',items:[{text:'🌸×3',cls:'red'},'+',{text:'🍃',cls:'green'},'=',{text:'?',cls:'purple'}]},answer:'7',options:['6','7','8'],winVoice:'答对啦！3 朵花换 6 片叶子，再加 1 片，就是 7 片。',wrong:'先代换，再加上题目里多出来的叶子。'}
+  ],
+  challenge:[
+    {q:'挑战：1 个钻石 = 2 个星星，1 个星星 = 3 个圆。1 个钻石 = 几个圆？',hint:'要换两次：钻石先换成星星，星星再换成圆。',visual:{type:'clues',items:['💎 = ⭐ + ⭐','⭐ = 3 个圆','💎 = ? 个圆']},answer:'6',options:['5','6','8'],winVoice:'答对啦！1 个钻石换 2 个星星，每个星星换 3 个圆，一共 6 个圆。',wrong:'先把钻石换成 2 个星星。',hard:true},
+    {q:'挑战：2 个贝壳 = 6 颗珠子，3 个贝壳 = 几颗珠子？',hint:'先想 1 个贝壳等于几颗珠子，再算 3 个贝壳。',visual:{type:'row',items:[{text:'🐚🐚',cls:'purple'},'=',{text:'珠子×6',cls:'orange'}]},answer:'9',options:['6','9','12'],winVoice:'答对啦！2 个贝壳等于 6 颗珠子，所以 1 个贝壳等于 3 颗珠子，3 个贝壳等于 9 颗珠子。',wrong:'先把 6 颗珠子平均分给 2 个贝壳。',hard:true}
+  ],
+  done:{badge:'🏅',title:'🏅 代换小魔法师',text:'你学会了<b class="pu">等量代换</b>：<br>一样多、一样重、一样值的东西，<br>可以放心地换来换去。',extra:'🌟 下次看到天平题，可以先找「谁等于谁」。'},
+  nextHref:'差倍问题.html'
+};
+</script>
+<script src="lesson-batch-61-66.js"></script>
+</body>
+</html>

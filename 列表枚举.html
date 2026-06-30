@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>列表枚举 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-batch-61-66.css">
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'meiju61',
+  title:'列表枚举',
+  emoji:'📝🔍',
+  heading:'列表枚举',
+  pinyin:'liè biǎo méi jǔ · 一个一个列出来',
+  intro:'有些题不能只猜一次，<br>要把所有可能<b class="pu">按顺序列出来</b>。<br>像小侦探做清单：不乱、不漏、不重复！',
+  parentNote:'这一关训练的是「系统枚举」：面对组合、搭配、可能性问题，不靠随口猜，而是按固定顺序列出所有可能。这个能力会服务后面的逻辑推理、排列组合和应用题。陪玩时可以提醒孩子先固定一个条件，再依次换另一个条件，例如先固定红上衣，再配黑裤、白裤。',
+  explore:{
+    title:'📝 做清单，不重不漏',
+    lead:'小狐狸有 <b class="pu">2 件上衣</b>：红、蓝。<br>还有 <b class="or">2 条裤子</b>：黑、白。<br>一件上衣配一条裤子，一共有几种穿法？',
+    visual:{type:'row',items:[{text:'红衣',cls:'red'},'或',{text:'蓝衣',cls:'blue'},'+',{text:'黑裤',cls:'purple'},'或',{text:'白裤',cls:'green'}]},
+    note:'点卡片，把穿法一条一条列出来。',
+    voice:'小狐狸有红衣、蓝衣，还有黑裤、白裤。一件上衣配一条裤子，一共有几种穿法？',
+    unlock:'🎉 你会列表枚举啦：先固定上衣，再一条一条配裤子！',
+    unlockVoice:'你会列表枚举啦！先固定上衣，再一条一条配裤子。',
+    reveals:[
+      {pic:'🔴⚫',title:'红衣 + 黑裤',answer:'第 1 种：<b>红衣配黑裤</b>。',voice:'第 1 种，红衣配黑裤。'},
+      {pic:'🔴⚪',title:'红衣 + 白裤',answer:'第 2 种：<b>红衣配白裤</b>。',voice:'第 2 种，红衣配白裤。'},
+      {pic:'🔵⚫',title:'蓝衣 + 黑裤',answer:'第 3 种：<b>蓝衣配黑裤</b>。',voice:'第 3 种，蓝衣配黑裤。'},
+      {pic:'🔵⚪',title:'蓝衣 + 白裤',answer:'第 4 种：<b>蓝衣配白裤</b>。',voice:'第 4 种，蓝衣配白裤。'}
+    ]
+  },
+  practice:[
+    {q:'2 种饮料、3 种点心，各选一种，一共有几种搭配？',hint:'先固定一种饮料，再配 3 种点心。',visual:{type:'row',items:[{text:'饮料2种',cls:'blue'},'×',{text:'点心3种',cls:'orange'}]},answer:'6',options:['5','6','8'],winVoice:'答对啦！2 种饮料，每种配 3 种点心，一共 6 种。',wrong:'可以列清单：第一种饮料配 3 个，第二种饮料也配 3 个。'},
+    {q:'3 顶帽子、2 条围巾，各选一种，一共有几种搭配？',hint:'先固定一顶帽子，它能配 2 条围巾。',visual:{type:'row',items:[{text:'帽子3顶',cls:'purple'},'×',{text:'围巾2条',cls:'green'}]},answer:'6',options:['5','6','9'],winVoice:'答对啦！3 顶帽子，每顶配 2 条围巾，一共 6 种。',wrong:'每顶帽子都能配 2 条围巾。'},
+    {q:'用数字 1、2、3 组成两位数，十位和个位不能一样，有几个？',hint:'十位固定 1，可以配 2、3；十位固定 2，可以配 1、3。',visual:{type:'clues',items:['十位可以是 1、2、3','个位也可以是 1、2、3','同一个数字不能重复']},answer:'6',options:['3','6','9'],winVoice:'答对啦！12、13、21、23、31、32，一共 6 个。',wrong:'按十位来列：十位是 1，再看个位能是谁。'},
+    {q:'红、蓝、黄三种颜色选两种做旗子，顺序不算，一共有几种？',hint:'红蓝和蓝红算同一种，所以不要重复数。',visual:{type:'row',items:[{text:'红',cls:'red'},{text:'蓝',cls:'blue'},{text:'黄',cls:'orange'}]},answer:'3',options:['3','6','9'],winVoice:'答对啦！红蓝、红黄、蓝黄，一共 3 种。',wrong:'顺序不算，红蓝和蓝红不要数两次。'},
+    {q:'4 个字母 A、B、C、D，配 2 个号码 1、2，一共有几个门牌？',hint:'每个字母都可以配 1 号或 2 号。',visual:{type:'row',items:[{text:'4 个字母',cls:'blue'},'×',{text:'2 个号码',cls:'orange'}]},answer:'8',options:['6','8','10'],winVoice:'答对啦！4 个字母，每个配 2 个号码，一共 8 个门牌。',wrong:'先固定 A，它有 A1、A2；B 也有两个。'},
+    {q:'小东、小西、小南比赛，选第 1 名和第 2 名，不能是同一个人，有几种排法？',hint:'第 1 名有 3 种选法；选好后，第 2 名还剩 2 种。',visual:{type:'clues',items:['第 1 名：3 种可能','第 2 名：还剩 2 种可能','同一个人不能站两个位置']},answer:'6',options:['3','6','9'],winVoice:'答对啦！3 个人抢第 1 名，第 2 名剩 2 种，一共 6 种。',wrong:'先固定第 1 名，再列第 2 名。'}
+  ],
+  challenge:[
+    {q:'挑战：2 种主食、2 种饮料、2 种甜点，各选一种，一共有几种套餐？',hint:'先算主食和饮料有 4 种，再每一种都能配 2 种甜点。',visual:{type:'row',items:[{text:'主食2',cls:'blue'},'×',{text:'饮料2',cls:'green'},'×',{text:'甜点2',cls:'orange'}]},answer:'8',options:['6','8','12'],winVoice:'答对啦！2 乘 2 乘 2，一共 8 种套餐。',wrong:'三样都要选，别只算前两样。',hard:true},
+    {q:'挑战：用 1、2、3、4 组成两位数，数字不能重复，十位必须是偶数，有几个？',hint:'十位只能选 2 或 4；选好十位后，个位还剩 3 个数字。',visual:{type:'clues',items:['十位必须是偶数：2 或 4','个位不能和十位一样','先固定十位，再列个位']},answer:'6',options:['4','6','8'],winVoice:'答对啦！十位有 2 种，每种个位剩 3 种，一共 6 个。',wrong:'先只看十位：它只能是 2 或 4。',hard:true}
+  ],
+  done:{badge:'🎖️',title:'🎖️ 清单小侦探',text:'你学会了<b class="pu">列表枚举</b>：<br>遇到很多可能时，<br>按顺序列出来，做到不重不漏！',extra:'🌟 下次搭衣服、点套餐、排数字，都可以先做清单。'},
+  nextHref:'等量代换进阶.html'
+};
+</script>
+<script src="lesson-batch-61-66.js"></script>
+</body>
+</html>

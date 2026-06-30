@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>差倍问题 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-batch-61-66.css">
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'chabei63',
+  title:'差倍问题',
+  emoji:'📏🍬',
+  heading:'差倍问题',
+  pinyin:'chā bèi wèn tí · 多出来的一段',
+  intro:'有时候只知道：<br>一个数是另一个的<b class="pu">几倍</b>，还知道它们<b class="or">相差多少</b>。<br>把倍数画成一段一段，就能看出答案！',
+  parentNote:'这一关引入线段图思维，难点是把「2 倍」理解成「两段一样长」，而差就是多出来的那一段。建议用糖果摆：哥哥是弟弟 2 倍，就是哥哥有两份、弟弟有一份；哥哥多 3 颗，所以多出来的一份是 3 颗。',
+  explore:{
+    title:'📏 多出来的一段是谁？',
+    lead:'哥哥的糖是弟弟的 <b class="pu">2 倍</b>。<br>哥哥比弟弟多 <b class="or">3</b> 颗。<br>弟弟有几颗糖？',
+    visual:{type:'row',items:[{text:'弟弟：?',cls:'green'},'→',{text:'哥哥：? + ?',cls:'purple'}]},
+    note:'点卡片看线段图：2 倍就是两段一样长。',
+    voice:'哥哥的糖是弟弟的 2 倍，哥哥比弟弟多 3 颗。弟弟有几颗糖？',
+    unlock:'🎉 你看懂啦：2 倍比 1 倍多出来的那一份，就是 3 颗！',
+    reveals:[
+      {pic:'🍬',title:'弟弟是一份',answer:'弟弟有 <b>1 份</b> 糖。',voice:'弟弟是一份糖。'},
+      {pic:'🍬🍬',title:'哥哥是两份',answer:'哥哥有 <b>2 份</b>，比弟弟多 <b>1 份</b>。',voice:'哥哥是两份，比弟弟多一份。'},
+      {pic:'📏',title:'差就是一份',answer:'多出来的 1 份 = <b>3</b> 颗，所以弟弟有 3 颗。',voice:'多出来的一份就是 3 颗，所以弟弟有 3 颗。'}
+    ]
+  },
+  practice:[
+    {q:'小猫鱼干是小狗的 2 倍，多 4 条。小狗有几条？',hint:'2 份比 1 份多 1 份，1 份就是 4。',visual:{type:'row',items:[{text:'狗：?',cls:'green'},'→',{text:'猫：?+?',cls:'purple'}]},answer:'4',options:['2','4','8'],winVoice:'答对啦！多出来的一份是 4，小狗有 4 条。',wrong:'2 倍比 1 倍多出来的是一份。'},
+    {q:'哥哥积木是妹妹的 3 倍，多 10 块。妹妹有几块？',hint:'3 份比 1 份多 2 份，10 ÷ 2。',visual:{type:'row',items:[{text:'妹：?',cls:'green'},'→',{text:'哥：?+?+?',cls:'purple'}]},answer:'5',options:['5','10','20'],winVoice:'答对啦！多 2 份是 10，一份就是 5。',wrong:'3 倍比 1 倍多 2 份，要把 10 分成 2 份。'},
+    {q:'红花是蓝花的 4 倍，多 9 朵。蓝花有几朵？',hint:'4 份比 1 份多 3 份，9 ÷ 3。',visual:{type:'row',items:[{text:'蓝：?',cls:'blue'},'→',{text:'红：4份',cls:'red'}]},answer:'3',options:['3','9','12'],winVoice:'答对啦！多出来 3 份是 9，一份就是 3。',wrong:'4 倍比 1 倍多 3 份。'},
+    {q:'大船座位是小船的 5 倍，多 12 个座位。小船有几个座位？',hint:'5 份比 1 份多 4 份，12 ÷ 4。',visual:{type:'row',items:[{text:'小船1份',cls:'green'},'→',{text:'大船5份',cls:'blue'}]},answer:'3',options:['3','4','12'],winVoice:'答对啦！多出来 4 份是 12，一份就是 3。',wrong:'5 倍和 1 倍之间差了 4 份。'},
+    {q:'姐姐贴纸是弟弟的 3 倍，多 8 张。弟弟有几张？',hint:'3 份比 1 份多 2 份，8 ÷ 2。',visual:{type:'row',items:[{text:'弟1份',cls:'green'},'→',{text:'姐3份',cls:'purple'}]},answer:'4',options:['4','6','8'],winVoice:'答对啦！多 2 份是 8，一份就是 4。',wrong:'先找多出来的是几份。'},
+    {q:'大桶水是小桶的 2 倍，多 7 杯。小桶有几杯？',hint:'2 份比 1 份只多 1 份。',visual:{type:'row',items:[{text:'小桶?',cls:'blue'},'→',{text:'大桶?+?',cls:'purple'}]},answer:'7',options:['5','7','14'],winVoice:'答对啦！2 倍比 1 倍多 1 份，所以一份就是 7。',wrong:'2 倍题最直接：多多少，小的就是多少。'}
+  ],
+  challenge:[
+    {q:'挑战：甲的卡片是乙的 4 倍，甲比乙多 18 张。乙有几张？',hint:'4 份比 1 份多 3 份，18 ÷ 3。',visual:{type:'row',items:[{text:'乙1份',cls:'green'},'→',{text:'甲4份',cls:'purple'}]},answer:'6',options:['6','12','18'],winVoice:'答对啦！多出来 3 份是 18，一份就是 6。',wrong:'先算 4 份比 1 份多几份。',hard:true},
+    {q:'挑战：小鹿跳的是小兔的 5 倍，小鹿比小兔多 24 下。小兔跳了几下？',hint:'5 倍比 1 倍多 4 份，24 要平均分成 4 份。',visual:{type:'clues',items:['小兔：1 份','小鹿：5 份','多出来：24 下']},answer:'6',options:['4','6','8'],winVoice:'答对啦！24 分成 4 份，每份 6，小兔跳 6 下。',wrong:'多出来的不是 5 份，而是 4 份。',hard:true}
+  ],
+  done:{badge:'🎖️',title:'🎖️ 线段图小能手',text:'你学会了看<b class="pu">倍数</b>和<b class="or">差</b>：<br>先画几份，再找多出来的份数，<br>差 ÷ 多出来的份数 = 一份。',extra:'🌟 以后遇到「几倍，多多少」，就先画一画。'},
+  nextHref:'和倍问题.html'
+};
+</script>
+<script src="lesson-batch-61-66.js"></script>
+</body>
+</html>
