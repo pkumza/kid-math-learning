@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>逻辑推理 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-batch-61-66.css">
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'luoji66',
+  title:'逻辑推理',
+  emoji:'🕵️‍♂️🧩',
+  heading:'🏆 困难关：逻辑推理',
+  pinyin:'luó jí tuī lǐ · 根据线索找答案',
+  hard:true,
+  intro:'这次是<b class="pu">挑战大 Boss</b>！<br>不能只算一个式子，要读懂线索：<br><b class="or">不是谁</b>、<b class="gr">比谁多</b>、<b class="pu">只有一个可能</b>。',
+  parentNote:'这是第 66 关，按「每 6 关一个困难关」设置。它把前面几关的能力合起来：逆向思考、等量代换、差倍/和倍、间隔，以及排除法。陪玩时请孩子把线索一条条说出来，先划掉不可能，再看剩下哪个可能。目标不是快，而是让他说出「为什么」。',
+  explore:{
+    title:'🕵️ 先排除，再确定',
+    lead:'三个小伙伴：安安、贝贝、晨晨。<br>他们分别拿了 <b class="pu">苹果</b>、<b class="or">梨</b>、<b class="gr">香蕉</b>。<br>线索：安安没拿苹果；贝贝拿的是梨。晨晨拿什么？',
+    visual:{type:'clues',items:['线索 1：<b>安安</b> 没拿苹果','线索 2：<b>贝贝</b> 拿梨','问题：<b>晨晨</b> 拿什么？']},
+    note:'点卡片，一条线索一条线索看。',
+    voice:'三个小伙伴分别拿苹果、梨、香蕉。安安没拿苹果，贝贝拿的是梨，晨晨拿什么？',
+    unlock:'🎉 你会排除啦：贝贝拿梨，安安不能拿苹果，所以晨晨只能拿苹果！',
+    unlockVoice:'你会排除啦！贝贝拿梨，安安不能拿苹果，所以晨晨只能拿苹果。',
+    reveals:[
+      {pic:'🍐',title:'先确定贝贝',answer:'贝贝已经拿了 <b>梨</b>，梨用掉了。',voice:'先确定贝贝，贝贝拿梨，梨已经用掉了。'},
+      {pic:'🚫🍎',title:'再看安安',answer:'安安没拿苹果，又不能拿梨，所以安安拿 <b>香蕉</b>。',voice:'再看安安，安安没拿苹果，又不能拿梨，所以安安拿香蕉。'},
+      {pic:'🍎',title:'剩下晨晨',answer:'剩下的水果是 <b>苹果</b>，晨晨拿苹果。',voice:'剩下的水果是苹果，晨晨拿苹果。'}
+    ]
+  },
+  practice:[
+    {q:'三人拿红、蓝、黄球。小明不是红球，小丽是蓝球。小刚拿什么？',hint:'先把蓝球给小丽，再排除小明不是红。',visual:{type:'clues',items:['小明 ≠ 红球','小丽 = 蓝球','小刚 = ?']},answer:'红球',options:['红球','蓝球','黄球'],winVoice:'答对啦！小丽拿蓝球，小明不能拿红球，只能拿黄球，所以小刚拿红球。',wrong:'先确定小丽，再看小明不能拿什么。'},
+    {q:'三人住 A、B、C 三间房。小东不住 A，小西住 B。小南住哪间？',hint:'先把 B 房给小西；小东不能住 A，也不能住 B。',visual:{type:'clues',items:['小东 ≠ A 房','小西 = B 房','小南 = ?']},answer:'A房',options:['A房','B房','C房'],winVoice:'答对啦！小西住 B，小东不能住 A，也不能住 B，所以小东住 C，小南住 A。',wrong:'先确定小西，再排除小东不能住的房间。'},
+    {q:'1 个星星 = 2 个圆。3 个星星能换几个圆？',hint:'这是等量代换：每个星星换 2 个圆。',visual:{type:'row',items:[{text:'⭐×3',cls:'purple'},'=',{text:'?',cls:'green'}]},answer:'6',options:['5','6','8'],winVoice:'答对啦！3 个星星换 6 个圆。',wrong:'每个星星换 2 个圆，数 3 个 2。'},
+    {q:'哥哥是弟弟的 3 倍，一共 16 块积木。弟弟有几块？',hint:'弟弟 1 份，哥哥 3 份，一共 4 份。',visual:{type:'row',items:[{text:'1份',cls:'green'},'+',{text:'3份',cls:'purple'},'=',{text:'16',cls:'orange'}]},answer:'4',options:['4','8','12'],winVoice:'答对啦！16 除以 4 等于 4。',wrong:'先找总份数：1 份加 3 份。'},
+    {q:'一排有 9 棵树，两头都有树，中间有几个间隔？',hint:'间隔 = 树 - 1。',visual:{type:'row',items:[{text:'9 棵树',cls:'green'},'-',{text:'1',cls:'orange'}]},answer:'8',options:['8','9','10'],winVoice:'答对啦！9 棵树中间有 8 个间隔。',wrong:'一排两头都有树，间隔比树少 1。'},
+    {q:'2 种主食、2 种饮料，各选一种，一共有几种套餐？',hint:'先固定一种主食，它能配 2 种饮料。',visual:{type:'row',items:[{text:'主食2种',cls:'blue'},'×',{text:'饮料2种',cls:'orange'}]},answer:'4',options:['3','4','6'],winVoice:'答对啦！2 乘 2，一共 4 种套餐。',wrong:'每种主食都能配 2 种饮料。'}
+  ],
+  challenge:[
+    {q:'挑战：三只盒子分别装苹果、梨、香蕉。红盒不装苹果，蓝盒装梨。绿盒装什么？',hint:'先确定蓝盒，再排除红盒。',visual:{type:'clues',items:['红盒 ≠ 苹果','蓝盒 = 梨','绿盒 = ?']},answer:'苹果',options:['苹果','梨','香蕉'],winVoice:'答对啦！蓝盒装梨，红盒不能装苹果，只能装香蕉，绿盒就是苹果。',wrong:'把已经确定的梨划掉，再看红盒不能装什么。',hard:true},
+    {q:'挑战：小兔糖是小熊的 2 倍，一共 18 颗。小兔有几颗？',hint:'小熊 1 份，小兔 2 份，一共 3 份；先求一份。',visual:{type:'row',items:[{text:'熊1份',cls:'green'},'+',{text:'兔2份',cls:'purple'},'=',{text:'18',cls:'orange'}]},answer:'12',options:['6','9','12'],winVoice:'答对啦！18 除以 3 等于 6，小兔是 2 份，就是 12。',wrong:'先求 1 份，再看小兔有 2 份。',hard:true},
+    {q:'终极挑战：? + 5 = 14，1 个星星 = 3 个圆。? 个星星能换几个圆？',hint:'先倒推 ? = 14 - 5，再做代换。',visual:{type:'clues',items:['? + 5 = 14','1 个星星 = 3 个圆','? 个星星 = 几个圆？']},answer:'27',options:['9','18','27'],winVoice:'太厉害啦！先算 14 减 5 等于 9，再用 9 个星星换 27 个圆。',wrong:'先倒着算出问号，再每个星星换 3 个圆。',hard:true}
+  ],
+  done:{badge:'🏆',title:'🏆 逻辑推理 Boss 徽章',text:'你打败了第 66 关！<br>你会读线索、会排除、会倒推，<br>还会把好几种本领连起来。',extra:'🌟 以后遇到难题，就一句一句读线索，慢慢排除。',voice:'太厉害啦！你打败了第 66 关逻辑推理大 Boss！'},
+  nextText:'🎉 回到地图',
+  nextHref:'index.html'
+};
+</script>
+<script src="lesson-batch-61-66.js"></script>
+</body>
+</html>

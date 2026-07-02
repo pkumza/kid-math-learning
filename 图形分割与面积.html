@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>图形分割与面积 · 数学小课堂</title>
+<style>
+  :root{
+    --blue:#2563EB; --orange:#EA580C; --green:#16A34A; --purple:#7C3AED;
+    --pink:#DB2777; --ink:#1F2937; --soft:#6B7280; --card:#fff;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Hiragino Sans GB","Helvetica Neue",sans-serif; color:var(--ink); background:linear-gradient(160deg,#EAF4FF 0%,#FFF6EC 58%,#FDEFF6 100%); min-height:100vh; overflow-x:hidden; user-select:none;}
+  .wrap{max-width:760px; margin:0 auto; padding:10px 14px 40px;}
+  header{display:flex; align-items:center; justify-content:space-between; padding:8px 4px 6px;}
+  .brand{display:flex; align-items:center; gap:8px; font-weight:800; font-size:1.15rem;}
+  .brand .fox{font-size:1.6rem;} .brand small{color:var(--soft); font-weight:600; font-size:.78rem;}
+  .tools{display:flex; gap:8px;}
+  .icon-btn{border:none; background:#fff; border-radius:14px; width:44px; height:44px; font-size:1.25rem; cursor:pointer; box-shadow:0 3px 8px rgba(0,0,0,.08); transition:transform .1s;}
+  .icon-btn:active{transform:scale(.92);}
+  .steps{display:flex; gap:6px; justify-content:center; margin:4px 0 12px; flex-wrap:wrap;}
+  .pill{font-size:.82rem; font-weight:800; color:var(--soft); background:#fff; padding:5px 12px; border-radius:999px; box-shadow:0 2px 5px rgba(0,0,0,.05); white-space:nowrap; transition:transform .1s, opacity .2s;}
+  .pill.active{color:#fff; background:var(--purple); box-shadow:0 4px 10px rgba(124,58,237,.35);}
+  .pill.nav-on{cursor:pointer;} .pill.nav-on:active{transform:scale(.93);} .pill.nav-locked{opacity:.45;}
+  .screen{display:none; animation:pop .35s ease both;}
+  .screen.on{display:block;}
+  @keyframes pop{from{opacity:0; transform:translateY(12px) scale(.98);} to{opacity:1; transform:none;}}
+  .card{background:var(--card); border-radius:26px; padding:22px 18px; box-shadow:0 12px 30px rgba(80,90,130,.12); margin-bottom:16px;}
+  h1{font-size:1.7rem; margin:.1em 0 .2em; text-align:center;}
+  h2{font-size:1.25rem; margin:.1em 0 .5em; text-align:center; color:var(--purple);}
+  .lead{text-align:center; color:var(--soft); font-size:1rem; line-height:1.7; margin:.3em 0 .2em;}
+  .pinyin{display:block; color:var(--soft); font-size:.95rem; font-weight:600; text-align:center;}
+  .big-btn{display:block; width:100%; border:none; cursor:pointer; font-size:1.3rem; font-weight:900; color:#fff; padding:16px; border-radius:20px; margin-top:10px; background:linear-gradient(135deg,#34D399,#10B981); box-shadow:0 8px 18px rgba(16,185,129,.35); transition:transform .12s, filter .2s;}
+  .big-btn.purple{background:linear-gradient(135deg,#A78BFA,#7C3AED); box-shadow:0 8px 18px rgba(124,58,237,.35);}
+  .big-btn.orange{background:linear-gradient(135deg,#FDBA74,#F97316); box-shadow:0 8px 18px rgba(249,115,22,.35);}
+  .big-btn.blue{background:linear-gradient(135deg,#60A5FA,#2563EB); box-shadow:0 8px 18px rgba(37,99,235,.35);}
+  .big-btn:active{transform:translateY(2px) scale(.99);}
+  .big-btn:disabled{filter:grayscale(.7) opacity(.55); cursor:not-allowed; box-shadow:none;}
+  .big-btn.ready{animation:bounce 1s infinite;}
+  @keyframes bounce{0%,100%{transform:none;}50%{transform:translateY(-5px);}}
+  .note{margin-top:12px; background:#FFFDF5; border-radius:14px; padding:12px 14px; color:#92400E; font-weight:800; line-height:1.6; font-size:1.02rem; text-align:center; min-height:1.5em;}
+  .unlock{text-align:center; font-weight:900; color:var(--purple); margin:12px 0 4px; min-height:1.4em;}
+  .bl{color:var(--blue);} .or{color:var(--orange);} .gr{color:var(--green);} .pu{color:var(--purple);}
+  .partbox{margin:10px 0 4px; padding:14px 12px; border-radius:20px; background:#F8FAFF; border:2px dashed #DBE3F4;}
+  .part-title{text-align:center; font-weight:900; color:var(--purple); font-size:1.08rem; margin-bottom:8px;}
+  .grid-wrap{display:flex; justify-content:center; margin:12px 0;}
+  .shape-grid{display:grid; gap:4px; background:#DBE3F4; padding:4px; border-radius:14px; box-shadow:0 5px 12px rgba(0,0,0,.08);}
+  .sq{width:clamp(34px, 11vw, 54px); aspect-ratio:1; background:#fff; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; color:#fff; transition:transform .15s, background .2s;}
+  .sq.a{background:linear-gradient(135deg,#60A5FA,#2563EB);}
+  .sq.b{background:linear-gradient(135deg,#FDBA74,#F97316);}
+  .sq.c{background:linear-gradient(135deg,#A78BFA,#7C3AED);}
+  .sq.empty{background:transparent; box-shadow:none;}
+  .sq.pop{transform:scale(1.08);}
+  .formula{text-align:center; font-size:1.35rem; font-weight:900; margin-top:10px;}
+  .choice-row{display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:12px;}
+  .mini-btn{border:none; cursor:pointer; font-weight:900; font-size:1.05rem; padding:11px 16px; border-radius:16px; color:#fff; background:linear-gradient(135deg,#A78BFA,#7C3AED); box-shadow:0 5px 12px rgba(124,58,237,.25); transition:transform .1s;}
+  .mini-btn:active{transform:scale(.95);}
+  .mini-btn.blue{background:linear-gradient(135deg,#60A5FA,#2563EB);}
+  .mini-btn.orange{background:linear-gradient(135deg,#FDBA74,#F97316);}
+  .level-tag{text-align:center; color:var(--soft); font-weight:900; margin-bottom:4px;}
+  .q-hint{text-align:center; color:var(--orange); font-weight:900; font-size:1.02rem; min-height:1.3em; margin:6px 0;}
+  .ask{text-align:center; font-size:1.45rem; font-weight:900; margin:10px 0 8px;}
+  .options{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+  .opt{border:none; cursor:pointer; min-width:92px; font-size:1.45rem; font-weight:900; padding:14px 10px; border-radius:18px; background:#fff; color:var(--ink); box-shadow:0 5px 12px rgba(0,0,0,.1); border:3px solid #E5E7EB; transition:transform .1s;}
+  .opt:active{transform:scale(.95);}
+  .opt.correct{background:var(--green); color:#fff; border-color:var(--green);}
+  .opt.wrong{background:#FCA5A5; border-color:#EF4444; animation:shake .35s;}
+  @keyframes shake{0%,100%{transform:none;}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+  .feedback{text-align:center; font-weight:900; font-size:1.25rem; min-height:1.5em; margin-top:12px;}
+  .stars{font-size:1.55rem; letter-spacing:6px; text-align:center;}
+  .badge{font-size:4.5rem; text-align:center; animation:spin 3s linear infinite;}
+  @keyframes spin{from{transform:rotate(-8deg);}50%{transform:rotate(8deg);}to{transform:rotate(-8deg);}}
+  .trophy-name{text-align:center; font-size:1.5rem; font-weight:900; color:var(--purple); margin:6px 0;}
+  details{margin-top:10px; background:#F8FAFF; border-radius:16px; padding:4px 14px;}
+  summary{cursor:pointer; font-weight:900; color:var(--purple); padding:10px 0; list-style:none;}
+  summary::-webkit-details-marker{display:none;}
+  details p{color:#374151; line-height:1.75; font-size:.95rem;}
+  #confetti{position:fixed; inset:0; pointer-events:none; display:none; z-index:99;}
+
+  .hint-btn{border:none; cursor:pointer; font-weight:900; font-size:1rem; color:#fff; background:linear-gradient(135deg,#FDBA74,#F97316); padding:8px 16px; border-radius:999px; box-shadow:0 4px 10px rgba(249,115,22,.25);}
+  .hint-btn:active{transform:scale(.95);}
+  .hint-text{display:inline-block; color:var(--orange);}
+  .hint-text[hidden]{display:none;}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="wrap">
+  <header>
+    <div class="brand"><span class="fox">🦊</span><div>数学王国<br><small>图形分割与面积</small></div></div>
+    <div class="tools">
+      <button class="icon-btn" id="homeBtn" title="回家">🏠</button>
+      <button class="icon-btn" id="muteBtn" title="声音开关">🔊</button>
+    </div>
+  </header>
+  <div class="steps">
+    <span class="pill" data-step="1">① 切长方形</span>
+    <span class="pill" data-step="2">② 拆 L 形</span>
+    <span class="pill" data-step="3">③ 换切法</span>
+    <span class="pill" data-step="4">④ 闯关</span>
+    <span class="pill" data-step="5">⑤ 完成</span>
+  </div>
+
+  <section class="screen on" id="welcome">
+    <div class="card">
+      <div style="font-size:3.4rem;text-align:center">🧩</div>
+      <h1>图形分割与面积</h1>
+      <span class="pinyin">tú xíng fēn gē yǔ miàn jī · 切开再相加</span>
+      <p class="lead">
+        复杂图形不用慌，先把它切成小长方形。<br>
+        面积可以<b class="gr">数方格</b>，也可以<b class="pu">分块相加</b>。
+      </p>
+      <button class="big-btn" id="startBtn">开始探索 →</button>
+      <details>
+        <summary>👨‍👩‍👧 给爸爸妈妈的话（点开）</summary>
+        <p>
+          这一关接在面积和数图形之后，目标是让孩子理解「复杂图形可以拆成简单图形」。
+          它不是死记公式，而是建立切分、合并、验证的几何思维。
+        </p>
+      </details>
+    </div>
+  </section>
+
+  <section class="screen" id="rectScreen">
+    <div class="card">
+      <h2>✂️ 切长方形 · 面积不变</h2>
+      <div class="partbox">
+        <div class="part-title">4 行 5 列的长方形，可以切成两块</div>
+        <div class="grid-wrap"><div class="shape-grid" id="rectGrid"></div></div>
+        <div class="formula" id="rectFormula">4 × 5 = 20</div>
+        <div class="choice-row">
+          <button class="mini-btn blue" id="cutRectBtn">切成 4×2 和 4×3</button>
+          <button class="mini-btn orange" id="countRectBtn">数一数方格</button>
+        </div>
+        <div class="note" id="rectNote">先看整个长方形：4 行，每行 5 个方格。</div>
+      </div>
+      <div class="unlock" id="rectUnlock"></div>
+      <button class="big-btn purple" id="toLShape" disabled>去拆 L 形 →</button>
+    </div>
+  </section>
+
+  <section class="screen" id="lScreen">
+    <div class="card">
+      <h2>🧩 拆 L 形 · 两块相加</h2>
+      <div class="partbox">
+        <div class="part-title">这个 L 形可以拆成上面一块和下面一块</div>
+        <div class="grid-wrap"><div class="shape-grid" id="lGrid"></div></div>
+        <div class="formula" id="lFormula">先数一数，一共有几个方格？</div>
+        <div class="choice-row">
+          <button class="mini-btn blue" id="splitLBtn">拆成两块</button>
+          <button class="mini-btn orange" id="countLBtn">显示总面积</button>
+        </div>
+        <div class="note" id="lNote">不要被缺口吓到，先切成两个长方形。</div>
+      </div>
+      <div class="unlock" id="lUnlock"></div>
+      <button class="big-btn orange" id="toWays" disabled>去看不同切法 →</button>
+    </div>
+  </section>
+
+  <section class="screen" id="waysScreen">
+    <div class="card">
+      <h2>🔁 换切法 · 答案一样</h2>
+      <div class="partbox">
+        <div class="part-title">同一个图形，可以横着切，也可以竖着切</div>
+        <div class="grid-wrap"><div class="shape-grid" id="waysGrid"></div></div>
+        <div class="formula" id="waysFormula">选择一种切法</div>
+        <div class="choice-row">
+          <button class="mini-btn blue" data-way="vertical">竖着切</button>
+          <button class="mini-btn orange" data-way="horizontal">横着切</button>
+        </div>
+        <div class="note" id="waysNote">切法可以不同，但总面积不会变。</div>
+      </div>
+      <div class="unlock" id="waysUnlock"></div>
+      <button class="big-btn blue" id="toPractice" disabled>去闯关 →</button>
+    </div>
+  </section>
+
+  <section class="screen" id="practice">
+    <div class="card">
+      <div class="level-tag" id="levelTag">第 1 / 8 关</div>
+      <div class="q-hint" id="qHint"></div>
+      <div class="ask" id="ask"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="big-btn" id="nextLevel" style="display:none">下一关 →</button>
+    </div>
+  </section>
+
+  <section class="screen" id="done">
+    <div class="card">
+      <div class="badge">🎖️</div>
+      <h1>太厉害啦！</h1>
+      <div class="trophy-name">🎖️ 图形分割小达人</div>
+      <p class="lead">你会把复杂图形切成简单图形，再把面积加起来啦！</p>
+      <button class="big-btn" onclick="try{speechSynthesis.cancel()}catch(e){};location.href='符号盒子.html'">进入下一关 →</button>
+      <button class="big-btn orange" id="again">再玩一次 🔁</button>
+    </div>
+  </section>
+</div>
+<script>
+"use strict";
+function setQHint(text){
+  const el=document.getElementById('qHint');
+  if(!el) return;
+  const hint=String(text||'').replace(/^💡\s*/, '');
+  el.innerHTML='';
+  const btn=document.createElement('button');
+  btn.type='button'; btn.className='hint-btn'; btn.textContent='💡 提示';
+  const span=document.createElement('span');
+  span.className='hint-text'; span.hidden=true; span.textContent='💡 '+hint;
+  btn.addEventListener('click',()=>{
+    btn.hidden=true; span.hidden=false;
+    if(typeof say==='function') say(hint);
+  });
+  el.appendChild(btn); el.appendChild(span);
+}
+function speakQuestion(item){
+  if(!item || typeof say!=='function') return;
+  const text = item.voiceQuestion || item.q || item.ask || item.qBig || item.question || '';
+  const clean = String(text).replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();
+  if(clean) say(clean);
+}
+
+const $=(s,el=document)=>el.querySelector(s);
+const $$=(s,el=document)=>[...el.querySelectorAll(s)];
+let muted=false, audioCtx=null;
+function ac(){ if(!audioCtx){ try{audioCtx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return audioCtx; }
+function beep(freq,dur,type,vol,when){ if(muted) return; const c=ac(); if(!c) return; const t=c.currentTime+(when||0), o=c.createOscillator(), g=c.createGain(); o.type=type||'sine'; o.frequency.value=freq; g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol||0.15,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+dur); o.connect(g).connect(c.destination); o.start(t); o.stop(t+dur+0.02); }
+const sClick=()=>beep(680,0.06,'triangle',0.12,0);
+const sGood=()=>[523,659,784].forEach((f,i)=>beep(f,0.12,'sine',0.16,i*0.09));
+const sWin=()=>[523,659,784,1047,1319].forEach((f,i)=>beep(f,0.16,'sine',0.18,i*0.12));
+const sBad=()=>beep(190,0.2,'sawtooth',0.1,0);
+let zhVoice=null;
+function pickVoice(){ if(!('speechSynthesis'in window)) return; const vs=speechSynthesis.getVoices(); if(!vs||!vs.length) return; const zh=vs.filter(v=>/zh|cmn|chinese|普通话|国语|中文/i.test((v.lang||'')+' '+(v.name||''))); zhVoice=zh.find(v=>/zh[-_]?CN/i.test(v.lang))||zh[0]||null; }
+if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; setTimeout(pickVoice,300); }
+function normalizeSpeechText(text){ return String(text).replace(/×/g,'乘').replace(/\+/g,'加').replace(/=/g,'等于').replace(/L 形/g,'L形').replace(/→/g,'，').replace(/[✂️🧩🎖️🎉⭐👇]/g,'').replace(/\s+/g,' ').trim(); }
+function say(text){ if(muted||!('speechSynthesis'in window)) return; try{ if(!zhVoice) pickVoice(); speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(normalizeSpeechText(text)+'。'); u.lang='zh-CN'; if(zhVoice)u.voice=zhVoice; u.rate=0.95; u.pitch=1.08; speechSynthesis.speak(u); }catch(e){} }
+function show(id,step){ $$('.screen').forEach(s=>s.classList.remove('on')); $('#'+id).classList.add('on'); $$('.pill').forEach(p=>p.classList.toggle('active', +p.dataset.step===step)); window.scrollTo({top:0,behavior:'smooth'}); }
+function renderGrid(target, rows, cols, cells, mode){
+  const grid=$(target); grid.style.gridTemplateColumns='repeat('+cols+', 1fr)'; grid.innerHTML='';
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const key=r+','+c, div=document.createElement('div');
+      const cell=cells[key];
+      div.className='sq '+(cell?cell:'empty')+(mode?' pop':'');
+      div.textContent=cell?'1':'';
+      grid.appendChild(div);
+    }
+  }
+}
+function rectCells(split){ const out={}; for(let r=0;r<4;r++) for(let c=0;c<5;c++) out[r+','+c]=split?(c<2?'a':'b'):'a'; return out; }
+function lCells(split){ const out={}; for(let r=0;r<4;r++) for(let c=0;c<4;c++){ if(r<2 || c<2) out[r+','+c]=split?(r<2?'a':'b'):'a'; } return out; }
+function waysCells(mode){ const out={}; for(let r=0;r<3;r++) for(let c=0;c<5;c++){ if(!(r===2&&c>2)) out[r+','+c]=mode==='horizontal'?(r<2?'a':'b'):(c<3?'a':'b'); } return out; }
+let rectDone=false, lDone=false, waysSeen={vertical:false,horizontal:false};
+function resetVisuals(){ renderGrid('#rectGrid',4,5,rectCells(false)); $('#rectFormula').textContent='4 × 5 = 20'; renderGrid('#lGrid',4,4,lCells(false)); $('#lFormula').textContent='先数一数，一共有几个方格？'; renderGrid('#waysGrid',3,5,waysCells('vertical')); $('#waysFormula').textContent='选择一种切法'; }
+$('#cutRectBtn').addEventListener('click',()=>{ sClick(); rectDone=true; renderGrid('#rectGrid',4,5,rectCells(true),true); $('#rectFormula').textContent='4×2 + 4×3 = 8 + 12 = 20'; $('#rectNote').textContent='切成两块后，加起来还是 20。'; $('#toLShape').disabled=false; $('#toLShape').classList.add('ready'); $('#rectUnlock').textContent='🎉 长方形切开，面积不变！'; sGood(); say('切成两块后，加起来还是二十。'); });
+$('#countRectBtn').addEventListener('click',()=>{ sClick(); $('#rectNote').textContent='4 行，每行 5 个，一共 20 个方格。'; say($('#rectNote').textContent); });
+$('#splitLBtn').addEventListener('click',()=>{ sClick(); lDone=true; renderGrid('#lGrid',4,4,lCells(true),true); $('#lFormula').textContent='上面 2×4 = 8，下面 2×2 = 4'; $('#lNote').textContent='8 加 4，一共 12。'; $('#toWays').disabled=false; $('#toWays').classList.add('ready'); $('#lUnlock').textContent='🎉 L 形拆开就好算啦！'; sGood(); say('L形拆成两块，八加四，一共十二。'); });
+$('#countLBtn').addEventListener('click',()=>{ sClick(); $('#lFormula').textContent='总面积 = 12'; $('#lNote').textContent='数方格也能验证：一共 12 个。'; say($('#lNote').textContent); });
+$$('[data-way]').forEach(b=>b.addEventListener('click',()=>{ sClick(); const way=b.dataset.way; waysSeen[way]=true; renderGrid('#waysGrid',3,5,waysCells(way),true); if(way==='vertical'){ $('#waysFormula').textContent='竖切：3×3 + 2×2 = 9 + 4 = 13'; $('#waysNote').textContent='竖着切，也能算出 13。'; }else{ $('#waysFormula').textContent='横切：2×5 + 1×3 = 10 + 3 = 13'; $('#waysNote').textContent='横着切，答案还是 13。'; } say($('#waysNote').textContent); if(waysSeen.vertical&&waysSeen.horizontal){ $('#toPractice').disabled=false; $('#toPractice').classList.add('ready'); $('#waysUnlock').textContent='🎉 两种切法都看懂啦！'; sWin(); } }));
+const LEVELS=[
+  {q:'长方形 3 行 4 列，面积是多少？', ans:'12', opts:['7','12','14'], hint:'3 乘 4。'},
+  {q:'4×2 和 4×3 拼起来，面积是多少？', ans:'20', opts:['12','20','24'], hint:'8 加 12。'},
+  {q:'一个图形拆成 6 和 5 两块，总面积是多少？', ans:'11', opts:['11','30','1'], hint:'分块后要相加。'},
+  {q:'L 形上面 8 格，下面 4 格，总面积是多少？', ans:'12', opts:['8','12','16'], hint:'8 加 4。'},
+  {q:'同一个图形换一种切法，总面积会变吗？', ans:'不会', opts:['不会','一定会','看颜色'], hint:'切法变了，图形没变。'},
+  {q:'2×5 + 1×3 = ?', ans:'13', opts:['13','10','8'], hint:'10 加 3。'},
+  {q:'复杂图形最好先做什么？', ans:'切成简单图形', opts:['切成简单图形','闭眼猜','只看颜色'], hint:'先切，再算。'},
+  {q:'数方格和分块相加，结果应该怎样？', ans:'一样', opts:['一样','越大越好','不一定'], hint:'算的是同一个面积。'}
+];
+let pi=0, answered=false;
+function startPractice(){ pi=0; answered=false; show('practice',4); renderLevel(); }
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+function renderLevel(){ const P=LEVELS[pi]; $('#levelTag').textContent='第 '+(pi+1)+' / '+LEVELS.length+' 关'; setQHint('💡 '+P.hint); $('#ask').textContent=P.q+' 👇'; $('#feedback').textContent=''; $('#nextLevel').style.display='none'; const box=$('#options'); box.innerHTML=''; shuffle(P.opts.slice()).forEach(v=>{ const btn=document.createElement('button'); btn.className='opt'; btn.textContent=v; btn.addEventListener('click',()=>choose(btn,v,P.ans)); box.appendChild(btn); }); say(P.q); }
+function choose(btn,v,ans){ if(answered) return; if(v===ans){ answered=true; btn.classList.add('correct'); sGood(); $('#feedback').innerHTML='<span class="gr">答对啦！🎉</span><div class="stars">⭐⭐⭐</div>'; say('答对啦。'); $$('.opt').forEach(o=>o.disabled=true); $('#nextLevel').textContent=pi<LEVELS.length-1?'下一关 →':'完成啦 🎉'; $('#nextLevel').style.display='block'; }else{ btn.classList.add('wrong'); sBad(); $('#feedback').innerHTML='<span class="or">再想想～ '+LEVELS[pi].hint+'</span>'; say('再想想，'+LEVELS[pi].hint); setTimeout(()=>btn.classList.remove('wrong'),400); } }
+$('#nextLevel').addEventListener('click',()=>{ sClick(); answered=false; if(pi===LEVELS.length-1) finish(); else{ pi++; renderLevel(); } });
+function finish(){ show('done',5); sWin(); say('太厉害啦，你已经是图形分割小达人啦。'); confetti(); }
+function resetAll(){ rectDone=false; lDone=false; waysSeen={vertical:false,horizontal:false}; answered=false; pi=0; $('#toLShape').disabled=true; $('#toLShape').classList.remove('ready'); $('#toWays').disabled=true; $('#toWays').classList.remove('ready'); $('#toPractice').disabled=true; $('#toPractice').classList.remove('ready'); $('#rectUnlock').textContent=''; $('#lUnlock').textContent=''; $('#waysUnlock').textContent=''; $('#rectNote').textContent='先看整个长方形：4 行，每行 5 个方格。'; $('#lNote').textContent='不要被缺口吓到，先切成两个长方形。'; $('#waysNote').textContent='切法可以不同，但总面积不会变。'; resetVisuals(); }
+function confetti(){ const cv=$('#confetti'), ctx=cv.getContext('2d'); cv.width=innerWidth; cv.height=innerHeight; cv.style.display='block'; const colors=['#2563EB','#F97316','#16A34A','#EAB308','#EC4899','#7C3AED']; const P=[]; for(let i=0;i<150;i++) P.push({x:innerWidth/2+(Math.random()-0.5)*120,y:innerHeight*0.28,vx:(Math.random()-0.5)*13,vy:Math.random()*-13-3,g:0.32,s:7+Math.random()*9,c:colors[i%colors.length],rot:Math.random()*6,vr:(Math.random()-0.5)*0.4}); let t=0; (function anim(){ t++; ctx.clearRect(0,0,cv.width,cv.height); P.forEach(p=>{p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.fillStyle=p.c;ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6);ctx.restore();}); if(t<150) requestAnimationFrame(anim); else cv.style.display='none'; })(); }
+$('#startBtn').addEventListener('click',()=>{ ac(); sClick(); show('rectScreen',1); say('先看长方形。切成两块以后，面积加起来还是原来的面积。'); });
+$('#toLShape').addEventListener('click',()=>{ sClick(); show('lScreen',2); say('现在拆L形。不要被缺口吓到，先切成两个长方形。'); });
+$('#toWays').addEventListener('click',()=>{ sClick(); show('waysScreen',3); say('现在看不同切法。切法不一样，总面积还是一样。'); });
+$('#toPractice').addEventListener('click',()=>{ sClick(); startPractice(); });
+$('#again').addEventListener('click',()=>{ sClick(); resetAll(); show('rectScreen',1); say('我们再玩一次图形分割。'); });
+$('#muteBtn').addEventListener('click',()=>{ muted=!muted; $('#muteBtn').textContent=muted?'🔇':'🔊'; if(muted&&'speechSynthesis'in window) speechSynthesis.cancel(); else sClick(); });
+$('#homeBtn').addEventListener('click',()=>{ sClick(); if('speechSynthesis'in window)speechSynthesis.cancel(); location.href='index.html'; });
+resetAll();
+(function(){ var pills=[].slice.call(document.querySelectorAll('.pill')); var maxStep=0, lastStep=5, _show=show; show=function(id,step){ _show(id,step); if(typeof step==='number'){ if(step>maxStep) maxStep=step; sync(); } }; function sync(){ pills.forEach(function(p){ var s=+p.dataset.step; p.classList.toggle('nav-on',s<=maxStep); p.classList.toggle('nav-locked',s>maxStep); }); } function go(s){ if(s>maxStep) return; if(s===1) show('rectScreen',1); else if(s===2) show('lScreen',2); else if(s===3) show('waysScreen',3); else if(s===4) startPractice(); else if(s===lastStep) show('done',lastStep); } pills.forEach(function(p){ p.addEventListener('click',function(){ go(+p.dataset.step); }); }); sync(); })();
+(function(){var ID='fenge51';try{var d=document.getElementById('done');if(d){var mark=function(){if(d.classList.contains('on')){try{localStorage.setItem('yswg:done:'+ID,'1');}catch(e){}}};new MutationObserver(mark).observe(d,{attributes:true,attributeFilter:['class']});mark();}}catch(e){}})();
+</script>
+</body>
+</html>

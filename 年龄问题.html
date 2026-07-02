@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>年龄问题 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-batch-61-66.css">
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'nianling67',
+  title:'年龄问题',
+  emoji:'🎂🎂',
+  heading:'年龄问题',
+  pinyin:'nián líng wèn tí · 谁比谁大几岁',
+  intro:'小明今年 <b class="bl">8 岁</b>，爸爸今年 <b class="or">35 岁</b>。<br>过了 3 年，小明长几岁？爸爸长几岁？<br>他们相差几岁？<br>这就是年龄问题的<b class="pu">小秘密</b>：一起长大，差不变化！',
+  parentNote:'年龄问题的核心是「年龄差永远不变」：爸爸比小明大 27 岁，3 年后还是大 27 岁。陪玩时让孩子先算现在的差，再算几年后各自的年龄，最后验证差还是一样。注意「几年前」是减，「几年后」是加。',
+  explore:{
+    title:'🎂 一起长大，差不变化',
+    lead:'小明 <b class="bl">8 岁</b>，爸爸 <b class="or">35 岁</b>。<br>爸爸比小明大几岁？过 3 年呢？',
+    visual:{type:'row',items:[{text:'爸爸35',cls:'orange'},'-',{text:'小明8',cls:'blue'},'=',{text:'27',cls:'purple'}]},
+    note:'点卡片，看看 3 年后会发生什么。',
+    voice:'小明 8 岁，爸爸 35 岁。爸爸比小明大几岁？过了 3 年呢？',
+    unlock:'🎉 你发现了：两个人一起长 3 岁，相差还是 27 岁！',
+    unlockVoice:'你发现了！两个人一起长 3 岁，相差还是 27 岁！',
+    reveals:[
+      {pic:'➖',title:'现在的差',answer:'爸爸 35 减小明 8，<b>相差 27 岁</b>。',voice:'先算现在的差：35 减 8，相差 27 岁。'},
+      {pic:'🎂',title:'3 年后',answer:'小明 8 加 3 = <b>11 岁</b>；爸爸 35 加 3 = <b>38 岁</b>。',voice:'3 年后，小明 11 岁，爸爸 38 岁，都长了 3 岁。'},
+      {pic:'✅',title:'差还是一样',answer:'38 减 11 还是 <b>27</b>！两个人一起长，差不变化。',voice:'38 减 11 还是 27，两个人一起长，差不变化。'}
+    ]
+  },
+  practice:[
+    {q:'姐姐 12 岁，弟弟 7 岁。姐姐比弟弟大几岁？',hint:'用减法，现在的年龄相减。',visual:{type:'row',items:[{text:'姐姐12',cls:'orange'},'-',{text:'弟弟7',cls:'blue'}]},answer:'5',options:['4','5','6'],winVoice:'答对啦！12 减 7 等于 5，姐姐大 5 岁。',wrong:'用大数减去小数。'},
+    {q:'小红 9 岁，妈妈 33 岁。5 年后小红几岁？',hint:'几年后就是加几。',visual:{type:'row',items:[{text:'9',cls:'blue'},'+',{text:'5',cls:'green'}]},answer:'14',options:['13','14','15'],winVoice:'答对啦！9 加 5 等于 14。',wrong:'过了 5 年，就是把年龄加 5。'},
+    {q:'小红 9 岁，妈妈 33 岁。5 年后妈妈几岁？',hint:'妈妈也长 5 岁。',visual:{type:'row',items:[{text:'33',cls:'orange'},'+',{text:'5',cls:'green'}]},answer:'38',options:['37','38','39'],winVoice:'答对啦！33 加 5 等于 38。',wrong:'妈妈和小红一样，也长 5 岁。'},
+    {q:'小红 9 岁，妈妈 33 岁。5 年后两人相差几岁？',hint:'先算现在的差，差不会变。',visual:{type:'row',items:[{text:'33',cls:'orange'},'-',{text:'9',cls:'blue'}]},answer:'24',options:['19','24','29'],winVoice:'答对啦！差不会变，还是 24 岁。',wrong:'年龄差永远不变，算现在的差就行。'},
+    {q:'哥哥 15 岁，比妹妹大 4 岁。妹妹几岁？',hint:'哥哥大，妹妹小，用减法。',visual:{type:'row',items:[{text:'15',cls:'orange'},'-',{text:'4',cls:'green'}]},answer:'11',options:['11','12','19'],winVoice:'答对啦！15 减 4 等于 11。',wrong:'「大 4 岁」就是相差 4，小的用减法。'},
+    {q:'小刚 6 岁，爸爸 32 岁。几年后爸爸是小刚的 3 倍？',hint:'差是 26 不变；倍数时小刚 1 份、爸爸 3 份，差是 2 份。',visual:{type:'row',items:[{text:'爸爸32',cls:'orange'},{text:'小刚6',cls:'blue'}]},answer:'7',options:['6','7','8'],winVoice:'答对啦！差 26 不变，2 份是 26，一份 13，所以 7 年后小刚 13 岁。',wrong:'年龄差不变；倍数差对应的就是年龄差。'}
+  ],
+  challenge:[
+    {q:'挑战：妈妈比小丽大 25 岁，今年妈妈 30 岁。5 年后小丽几岁？',hint:'先算今年小丽，再加 5。',visual:{type:'row',items:[{text:'30-25',cls:'orange'},'+',{text:'5',cls:'green'}]},answer:'10',options:['10','15','30'],winVoice:'答对啦！今年小丽 5 岁，5 年后 10 岁。',wrong:'先用妈妈今年年龄减差，得小丽今年几岁。',hard:true},
+    {q:'挑战：父子相差 28 岁，5 年后爸爸是儿子的 5 倍。儿子今年几岁？',hint:'差不变还是 28；5 年后 4 份是 28。',visual:{type:'row',items:[{text:'相差28',cls:'purple'}]},answer:'2',options:['2','3','7'],winVoice:'答对啦！5 年后儿子 7 岁，今年 2 岁。',wrong:'差不变；倍数差对应年龄差，先算 5 年后儿子几岁。',hard:true},
+    {q:'终极挑战：姐姐今年 14 岁，弟弟今年 8 岁。几年前姐姐的年龄是弟弟的 2 倍？',hint:'差是 6 不变；2 倍时差是 1 份 = 6，弟弟那时 6 岁。',visual:{type:'row',items:[{text:'姐姐14',cls:'orange'},{text:'弟弟8',cls:'blue'}]},answer:'2',options:['1','2','3'],winVoice:'太厉害啦！差 6 不变，2 倍时弟弟 6 岁，所以是 2 年前。',wrong:'年龄差不变；2 倍时差恰好等于弟弟的年龄。',hard:true}
+  ],
+  done:{badge:'🎂',title:'🎂 年龄问题 徽章',text:'你通过了第 67 关！<br>你学会了：年龄差不变化，<br>一起长大、一起变小。',extra:'🌟 记住口诀：年龄差，永远不变；过几年，两边都加。',voice:'太厉害啦！你通过了第 67 关年龄问题！'},
+  nextText:'🎉 回到地图',
+  nextHref:'index.html'
+};
+</script>
+<script src="lesson-batch-61-66.js"></script>
+</body>
+</html>

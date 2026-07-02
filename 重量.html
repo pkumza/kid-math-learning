@@ -179,6 +179,11 @@
   .pill.nav-on:active{transform:scale(.93);}
   .pill.nav-locked{opacity:.45;}
   .pill{transition:transform .1s, opacity .2s;}
+
+  .hint-btn{border:none; cursor:pointer; font-weight:900; font-size:1rem; color:#fff; background:linear-gradient(135deg,#FDBA74,#F97316); padding:8px 16px; border-radius:999px; box-shadow:0 4px 10px rgba(249,115,22,.25);}
+  .hint-btn:active{transform:scale(.95);}
+  .hint-text{display:inline-block; color:var(--orange);}
+  .hint-text[hidden]{display:none;}
 </style>
 </head>
 <body>
@@ -291,6 +296,28 @@
 
 <script>
 "use strict";
+function setQHint(text){
+  const el=document.getElementById('qHint');
+  if(!el) return;
+  const hint=String(text||'').replace(/^💡\s*/, '');
+  el.innerHTML='';
+  const btn=document.createElement('button');
+  btn.type='button'; btn.className='hint-btn'; btn.textContent='💡 提示';
+  const span=document.createElement('span');
+  span.className='hint-text'; span.hidden=true; span.textContent='💡 '+hint;
+  btn.addEventListener('click',()=>{
+    btn.hidden=true; span.hidden=false;
+    if(typeof say==='function') say(hint);
+  });
+  el.appendChild(btn); el.appendChild(span);
+}
+function speakQuestion(item){
+  if(!item || typeof say!=='function') return;
+  const text = item.voiceQuestion || item.q || item.ask || item.qBig || item.question || '';
+  const clean = String(text).replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();
+  if(clean) say(clean);
+}
+
 const $=(s,el=document)=>el.querySelector(s);
 const $$=(s,el=document)=>[...el.querySelectorAll(s)];
 
@@ -328,7 +355,7 @@ if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pic
 function say(text){
   if(muted||!('speechSynthesis'in window)) return;
   try{ if(!zhVoice) pickVoice(); speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(text+'　。');
+    const u=new SpeechSynthesisUtterance(text);
     u.lang='zh-CN'; if(zhVoice)u.voice=zhVoice; u.rate=0.95; u.pitch=1.1;
     speechSynthesis.speak(u);
   }catch(e){}
@@ -480,7 +507,7 @@ function renderLevel(){
   if(p.type==='side'){
     const heavy = p.left.w>p.right.w ? '左边' : '右边';
     $('#qBig').textContent='天平哪边更重？';
-    $('#qHint').textContent='哪边压下去了，哪边就更重 👀';
+    setQHint('哪边压下去了，哪边就更重 👀');
     $('#stageP').innerHTML=scaleSVG(p.left,p.right);
     $('#ask').textContent='点一点：哪边更重？';
     shuffle([
@@ -495,7 +522,7 @@ function renderLevel(){
     say('天平哪边更重？哪边压下去了，哪边就更重。');
   } else if(p.type==='unit'){
     $('#qBig').textContent='1 千克 = 多少克？';
-    $('#qHint').textContent='千克和克的好朋友约定 🤝';
+    setQHint('千克和克的好朋友约定 🤝');
     $('#stageP').innerHTML='';
     $('#ask').innerHTML=`<span class="or">1 千克</span> = ? <span class="bl">克</span>`;
     shuffle([
@@ -511,7 +538,7 @@ function renderLevel(){
     say('1 千克等于多少克？');
   } else {
     $('#qBig').textContent='下面哪个最重？';
-    $('#qHint').textContent='想一想：谁最沉？ 🤔';
+    setQHint('想一想：谁最沉？ 🤔');
     $('#stageP').innerHTML='';
     $('#ask').textContent='点一点：哪个最重？';
     shuffle([

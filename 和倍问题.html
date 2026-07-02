@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>和倍问题 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-batch-61-66.css">
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'hebei64',
+  title:'和倍问题',
+  emoji:'🧩➕',
+  heading:'和倍问题',
+  pinyin:'hé bèi wèn tí · 合起来分几份',
+  intro:'如果知道两个数<b class="pu">合起来多少</b>，<br>还知道一个是另一个的<b class="or">几倍</b>，<br>就把总数分成几份一样大的小盒子！',
+  parentNote:'这一关继续线段图。差倍问题看「多出来的份」，和倍问题看「一共几份」。例如哥哥是弟弟 2 倍，一共 12 颗，那么弟弟 1 份、哥哥 2 份，一共 3 份，12 ÷ 3 = 4。先让孩子摆 3 个小盒子，再平均放糖。',
+  explore:{
+    title:'🧩 合起来有几份？',
+    lead:'哥哥的糖是弟弟的 <b class="pu">2 倍</b>。<br>两个人一共 <b class="or">12</b> 颗糖。<br>弟弟有几颗？哥哥有几颗？',
+    visual:{type:'row',items:[{text:'弟弟 1份',cls:'green'},'+',{text:'哥哥 2份',cls:'purple'},'=',{text:'12',cls:'orange'}]},
+    note:'点卡片看一看：总数要分成几份。',
+    voice:'哥哥的糖是弟弟的 2 倍，两个人一共 12 颗。弟弟有几颗，哥哥有几颗？',
+    unlock:'🎉 你会看总份数啦：1 份 + 2 份 = 3 份！',
+    reveals:[
+      {pic:'🟩',title:'弟弟 1 份',answer:'弟弟是 <b>1 份</b>。',voice:'弟弟是 1 份。'},
+      {pic:'🟪🟪',title:'哥哥 2 份',answer:'哥哥是弟弟的 2 倍，所以是 <b>2 份</b>。',voice:'哥哥是弟弟的 2 倍，所以是 2 份。'},
+      {pic:'➗',title:'总共 3 份',answer:'12 ÷ 3 = <b>4</b>，弟弟 4 颗，哥哥 8 颗。',voice:'一共 3 份，12 除以 3 等于 4，弟弟 4 颗，哥哥 8 颗。'}
+    ]
+  },
+  practice:[
+    {q:'大袋糖是小袋的 2 倍，两袋一共 15 颗。小袋有几颗？',hint:'小袋 1 份，大袋 2 份，一共 3 份，15 ÷ 3。',visual:{type:'row',items:[{text:'小袋1份',cls:'green'},'+',{text:'大袋2份',cls:'purple'},'=',{text:'15',cls:'orange'}]},answer:'5',options:['5','10','15'],winVoice:'答对啦！15 分成 3 份，每份 5。',wrong:'先数总份数：1 份加 2 份。'},
+    {q:'红球是蓝球的 3 倍，一共 20 个。蓝球有几个？',hint:'蓝 1 份，红 3 份，一共 4 份。',visual:{type:'row',items:[{text:'蓝1份',cls:'blue'},'+',{text:'红3份',cls:'red'},'=',{text:'20',cls:'orange'}]},answer:'5',options:['4','5','15'],winVoice:'答对啦！20 除以 4 等于 5。',wrong:'一共是 1 份加 3 份，也就是 4 份。'},
+    {q:'大盒是小盒的 4 倍，一共 25 块。小盒有几块？',hint:'小盒 1 份，大盒 4 份，一共 5 份。',visual:{type:'row',items:[{text:'小1份',cls:'green'},'+',{text:'大4份',cls:'purple'},'=',{text:'25',cls:'orange'}]},answer:'5',options:['5','10','20'],winVoice:'答对啦！25 除以 5 等于 5。',wrong:'4 倍再加小盒自己的 1 份，一共 5 份。'},
+    {q:'姐姐贝壳是妹妹的 2 倍，两人一共 18 个。妹妹有几个？',hint:'妹妹 1 份，姐姐 2 份，一共 3 份。',visual:{type:'row',items:[{text:'妹1份',cls:'green'},'+',{text:'姐2份',cls:'purple'},'=',{text:'18',cls:'orange'}]},answer:'6',options:['6','9','12'],winVoice:'答对啦！18 分成 3 份，每份 6。',wrong:'先把总数分成 1 份加 2 份。'},
+    {q:'大篮苹果是小篮的 5 倍，一共 30 个。小篮有几个？',hint:'小篮 1 份，大篮 5 份，一共 6 份。',visual:{type:'row',items:[{text:'小1份',cls:'green'},'+',{text:'大5份',cls:'red'},'=',{text:'30',cls:'orange'}]},answer:'5',options:['5','6','25'],winVoice:'答对啦！30 除以 6 等于 5。',wrong:'5 倍还要加上小篮自己的 1 份。'},
+    {q:'长绳是短绳的 3 倍，两根一共 28 米。短绳几米？',hint:'短绳 1 份，长绳 3 份，一共 4 份。',visual:{type:'row',items:[{text:'短1份',cls:'blue'},'+',{text:'长3份',cls:'purple'},'=',{text:'28',cls:'orange'}]},answer:'7',options:['7','14','21'],winVoice:'答对啦！28 除以 4 等于 7。',wrong:'先数总份数，再求一份。'}
+  ],
+  challenge:[
+    {q:'挑战：甲是乙的 4 倍，甲乙一共 45 个。甲有几个？',hint:'先求乙 1 份，再用 1 份乘 4 求甲。',visual:{type:'row',items:[{text:'乙1份',cls:'green'},'+',{text:'甲4份',cls:'purple'},'=',{text:'45',cls:'orange'}]},answer:'36',options:['9','36','45'],winVoice:'答对啦！一共 5 份，45 除以 5 等于 9，甲是 4 份，就是 36。',wrong:'这题问的是甲，不是问一份。',hard:true},
+    {q:'挑战：哥哥积木是妹妹的 3 倍，一共 32 块。哥哥有几块？',hint:'妹妹 1 份，哥哥 3 份，一共 4 份；先求妹妹，再求哥哥。',visual:{type:'clues',items:['妹妹：1 份','哥哥：3 份','合起来：32 块']},answer:'24',options:['8','16','24'],winVoice:'答对啦！32 分成 4 份，每份 8，哥哥 3 份就是 24。',wrong:'先求一份，再看哥哥有 3 份。',hard:true}
+  ],
+  done:{badge:'🏆',title:'🏆 总份数小队长',text:'你学会了<b class="pu">和倍问题</b>：<br>先找一共几份，<br>再用总数除以总份数，找到一份。',extra:'🌟 「一共多少」和「几倍」同时出现，就想总份数。'},
+  nextHref:'植树问题.html'
+};
+</script>
+<script src="lesson-batch-61-66.js"></script>
+</body>
+</html>

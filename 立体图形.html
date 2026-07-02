@@ -364,10 +364,16 @@ if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pic
 function say(text){
   if(muted||!('speechSynthesis'in window)) return;
   try{ if(!zhVoice) pickVoice(); speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(text+'　。');
+    const u=new SpeechSynthesisUtterance(text);
     u.lang='zh-CN'; if(zhVoice)u.voice=zhVoice; u.rate=0.95; u.pitch=1.1;
     speechSynthesis.speak(u);
   }catch(e){}
+}
+function speakQuestion(item){
+  if(!item || typeof say!=='function') return;
+  const text = item.voiceQuestion || item.q || item.ask || item.qBig || item.question || '';
+  const clean = String(text).replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();
+  if(clean) say(clean);
 }
 
 /* ---------- 屏幕切换 ---------- */
@@ -449,7 +455,7 @@ function renderLevel(){
     btn.addEventListener('click',()=>choose(btn,v,p.ans));
     box.appendChild(btn);
   });
-  say(p.voice);
+  speakQuestion(p);
 }
 
 function choose(btn,v,ans){
