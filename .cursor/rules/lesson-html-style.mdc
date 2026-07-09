@@ -1,0 +1,14 @@
+---
+description: Style rules for lesson html files
+globs: "*.html"
+alwaysApply: false
+---
+
+# Lesson HTML Style Rules
+
+- Use clear section progression: intro -> explore -> practice -> challenge -> done.
+- Keep prompts short and concrete for elementary students.
+- Prefer practical contexts (time, money, sharing, route, shapes).
+- Wrong options should be plausible, not random noise.
+- Challenge questions may be two-step, but avoid off-syllabus logic jumps.
+- Do not reveal answers before user interaction.

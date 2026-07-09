@@ -1,0 +1,21 @@
+---
+description: Core constraints for new math level generation
+alwaysApply: true
+---
+
+# Math Level Core Rules
+
+- Every new level must include `explore`, `practice`, and `challenge`.
+- `practice` count must be 3-6 questions.
+- `challenge` count must be 1-2 questions.
+- Every question must provide a `hint`.
+- Hints are hidden by default and shown only after clicking `💡`.
+- Exploration content and practice/challenge content must not be near-duplicate.
+- Keep wording child-friendly and concise.
+- Ensure the 6-level cadence includes at least 1 hard level.
+
+# Delivery Requirements
+
+- Add/update the level file.
+- Add/update entry in `index.html`.
+- Provide a short self-check against all rules above.
