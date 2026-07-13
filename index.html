@@ -132,7 +132,7 @@
   <div class="progress-card">
     <div class="progress-top">
       <span class="progress-label">🏆 闯关进度</span>
-      <span class="progress-count"><b id="doneCount">0</b> / <b id="totalCount">66</b> 关</span>
+      <span class="progress-count"><b id="doneCount">0</b> / <b id="totalCount">69</b> 关</span>
       <button id="resetBtn" class="reset-btn">重置进度</button>
     </div>
     <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
@@ -484,6 +484,13 @@
         <div class="desc">一起长大，差不变化！过了几年，两人都长几岁？</div></div>
       <span class="go">→</span>
     </a>
+    <a class="stop nums" href="估算.html" data-id="gusuan69">
+      <span class="visited-star">⭐</span>
+      <div class="num">69</div><span class="emoji">🎯</span>
+      <div class="body"><div class="title">估算 <span class="tag js-status">新</span></div>
+        <div class="desc">把数凑成整十、整百，很快估出大概答案！</div></div>
+      <span class="go">→</span>
+    </a>
   </div>
 
   <!-- 图形与生活 -->
@@ -536,6 +543,13 @@
       <div class="num">41</div><span class="emoji">🧭</span>
       <div class="body"><div class="title">方向与位置 <span class="tag js-status">新</span></div>
         <div class="desc">上北下南、左西右东，太阳从东边升起！</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop life" href="认识圆.html" data-id="yuan68">
+      <span class="visited-star">⭐</span>
+      <div class="num">68</div><span class="emoji">⭕</span>
+      <div class="body"><div class="title">认识圆 <span class="tag js-status">新</span></div>
+        <div class="desc">圆心、半径、直径 —— 圆圆的秘密零件！</div></div>
       <span class="go">→</span>
     </a>
   </div>
@@ -694,7 +708,7 @@
 <script>
 "use strict";
 /* 通关进度（存在浏览器本地 localStorage；通关一节课会自动点亮） */
-const LESSON_IDS=['fenpei','jiehe','liangwei','chufa','yushu','fenshu','qiou','guilv','beishu','weizhi','duicheng','shijian','liangwei2','jifen','renminbi','pingfang','tongji','liti','zhishu','changdu','mianji','zhouchang','jishi','kenengxing','yinshu','dashu','zhongliang','shijianjisuan','xuanzhuan','gengkeneng','jiao','rongliang','sanjiaoxing','ershisi','shutuxing','shushi','yunsuan','gongbei','sanwei','chushu','fangwei','rili','shuzhou','nianyueri','pingjun','xiaoshu','zhouqi','jitu','ditu49','dengshi50','fenge51','fuhao52','dengcha53','shuang54','nixiang55','kuohao56','dailiang57','tuxingsuanshi58','jiqi59','boss60','meiju61','dengdai62','chabei63','hebei64','zhishu65','luoji66','nianling67'];
+const LESSON_IDS=['fenpei','jiehe','liangwei','chufa','yushu','fenshu','qiou','guilv','beishu','weizhi','duicheng','shijian','liangwei2','jifen','renminbi','pingfang','tongji','liti','zhishu','changdu','mianji','zhouchang','jishi','kenengxing','yinshu','dashu','zhongliang','shijianjisuan','xuanzhuan','gengkeneng','jiao','rongliang','sanjiaoxing','ershisi','shutuxing','shushi','yunsuan','gongbei','sanwei','chushu','fangwei','rili','shuzhou','nianyueri','pingjun','xiaoshu','zhouqi','jitu','ditu49','dengshi50','fenge51','fuhao52','dengcha53','shuang54','nixiang55','kuohao56','dailiang57','tuxingsuanshi58','jiqi59','boss60','meiju61','dengdai62','chabei63','hebei64','zhishu65','luoji66','nianling67','yuan68','gusuan69'];
 function isDone(id){ try{ return localStorage.getItem('yswg:done:'+id)==='1'; }catch(e){ return false; } }
 /* 首次打开：默认把前 36 关设为已完成（只跑一次；之后可用重置按钮清空） */
 (function seedDone(){ try{
