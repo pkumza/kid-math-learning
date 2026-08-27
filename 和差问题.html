@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>和差问题 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-engine.css">
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'hecha70',
+  title:'和差问题',
+  emoji:'⚖️🍎',
+  heading:'和差问题',
+  pinyin:'hé chā wèn tí · 知道和与差，两数都能求',
+  intro:'两个数，告诉你<b class="bl">一共多少</b>，<br>还告诉你<b class="or">谁比谁多几</b>。<br>两个数各是多少？<br>学会<b class="pu">补一补、砍一砍</b>，马上算出来！',
+  parentNote:'和差问题的核心是两个公式：大数=（和+差）÷2，小数=（和-差）÷2。孩子不必死背公式，陪玩时重点讲透两种直观方法：「补上差，两人一样多」求大数；「砍掉差，两人一样多」求小数。算完记得带回原题验算：和对不对、差对不对。',
+  explore:{
+    title:'⚖️ 补一补，砍一砍',
+    lead:'小明和小红一共 <b class="bl">12 岁</b>，<br>小明比小红大 <b class="or">2 岁</b>。<br>他们各几岁？<br><b>有两种好办法，都试试！</b>',
+    visual:{type:'row',items:[{text:'小明',cls:'blue'},'+',{text:'小红',cls:'orange'},'=',{text:'12',cls:'purple'}]},
+    note:'点卡片，学两种办法。',
+    voice:'小明和小红一共 12 岁，小明比小红大 2 岁。他们各几岁呢？',
+    unlock:'🎉 你会啦：补差求大数，砍差求小数！',
+    unlockVoice:'你会啦！补上差能求大数，砍掉差能求小数。',
+    reveals:[
+      {pic:'➕',title:'补一补',answer:'给小红补上 2 岁，两人一样大：<br>12+2=14，14÷2=<b>7</b>，小明 7 岁。',voice:'给小红补上 2 岁，两人就一样大。12 加 2 等于 14，14 除以 2 等于 7，小明 7 岁。'},
+      {pic:'➖',title:'砍一砍',answer:'小明拿走 2 岁，两人一样大：<br>12-2=10，10÷2=<b>5</b>，小红 5 岁。',voice:'小明拿走 2 岁，两人也一样大。12 减 2 等于 10，10 除以 2 等于 5，小红 5 岁。'},
+      {pic:'✅',title:'验算一下',answer:'7+5=12 ✓ 和对了；<br>7-5=2 ✓ 差也对了！',voice:'验算一下：7 加 5 等于 12，7 减 5 等于 2，都对啦！'}
+    ]
+  },
+  practice:[
+    {q:'两个数合起来是 10，大数比小数多 2。大数是几？',hint:'补上差：10+2=12，再除以 2。',visual:{type:'row',items:[{text:'和10',cls:'blue'},{text:'差2',cls:'orange'}]},answer:'6',options:['5','6','7'],winVoice:'答对啦！10 加 2 等于 12，12 除以 2 等于 6。',wrong:'先把差补上，让两个数一样大，再除以 2。'},
+    {q:'两个数合起来是 20，一个比另一个多 4。小数是几？',hint:'砍掉差：20-4=16，再除以 2。',visual:{type:'row',items:[{text:'和20',cls:'blue'},{text:'差4',cls:'orange'}]},answer:'8',options:['6','8','10'],winVoice:'答对啦！20 减 4 等于 16，16 除以 2 等于 8。',wrong:'求小数用砍的办法：和先减差，再除以 2。'},
+    {q:'苹果和梨共 16 个，苹果比梨多 4 个。苹果有几个？',hint:'苹果是大数，用补的办法。',visual:{type:'row',items:[{text:'🍎+🍐=16',cls:'green'},{text:'多4',cls:'orange'}]},answer:'10',options:['8','10','12'],winVoice:'答对啦！16 加 4 等于 20，20 除以 2 等于 10 个苹果。',wrong:'苹果多，是大数。和加差，再除以 2。'},
+    {q:'哥哥和弟弟共 18 岁，哥哥比弟弟大 2 岁。弟弟几岁？',hint:'弟弟是小数，用砍的办法。',visual:{type:'row',items:[{text:'哥+弟=18',cls:'blue'},{text:'差2',cls:'orange'}]},answer:'8',options:['7','8','9'],winVoice:'答对啦！18 减 2 等于 16，16 除以 2 等于 8 岁。',wrong:'弟弟小，是小数。和减差，再除以 2。'}
+  ],
+  challenge:[
+    {q:'挑战：甲、乙共有 25 元，甲比乙多 5 元。甲有几元？',hint:'甲是大数：和 25 加差 5，再除以 2。',visual:{type:'row',items:[{text:'甲+乙=25',cls:'purple'},{text:'多5',cls:'orange'}]},answer:'15',options:['10','15','20'],winVoice:'答对啦！25 加 5 等于 30，30 除以 2 等于 15 元。',wrong:'甲多乙少，甲是大数。和加差除以 2。',hard:true},
+    {q:'挑战：爸爸和妈妈今年共 70 岁，爸爸比妈妈大 4 岁。5 年后爸爸几岁？',hint:'分两步：先求爸爸今年的岁数，再加上 5。',visual:{type:'clues',items:['第一步：和 70、差 4，求爸爸今年几岁','第二步：过 5 年，爸爸也长 5 岁']},answer:'42',options:['37','42','44'],winVoice:'答对啦！爸爸今年 37 岁，5 年后 42 岁。',wrong:'先算今年：(70+4)÷2=37；别忘了再加上 5 年。',hard:true}
+  ],
+  done:{badge:'⚖️',title:'⚖️ 和差小能手',text:'你学会了<b class="pu">和差问题</b>：<br>补差求大数，砍差求小数，<br>算完再验算，稳稳不翻车！',extra:'🌟 两人分东西、比年龄，都能用这个办法。',voice:'太棒了！你学会和差问题啦！'},
+  nextText:'进入下一关：归一问题 →',
+  nextHref:'归一问题.html'
+};
+</script>
+<script src="lesson-engine.js"></script>
+</body>
+</html>

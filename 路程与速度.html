@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>路程与速度 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-engine.css">
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'lucheng72',
+  title:'路程与速度',
+  emoji:'🚲🛣️',
+  heading:'路程与速度',
+  pinyin:'lù chéng yǔ sù dù · 每小时走多远',
+  intro:'小狐狸骑车，<b class="bl">每小时行 8 千米</b>。<br>2 小时能骑多远？<br><b class="pu">速度 × 时间 = 路程</b>，<br>记住这个好朋友！',
+  parentNote:'行程问题的核心是三个量的关系：路程=速度×时间，速度=路程÷时间，时间=路程÷速度。本关只练最基础的一步计算和简单逆向。陪玩时多用生活例子：走路、骑车、坐车，让孩子感受「每小时几千米」是什么意思。',
+  explore:{
+    title:'🚲 速度、时间、路程',
+    lead:'小狐狸骑车，每小时行 <b class="bl">8 千米</b>。<br>骑 <b class="or">2 小时</b>，一共行几千米？',
+    visual:{type:'row',items:[{text:'每小时8千米',cls:'blue'},'×',{text:'2小时',cls:'orange'}]},
+    note:'点卡片，看看三个量的关系。',
+    voice:'小狐狸骑车每小时行 8 千米，骑 2 小时，一共行几千米？',
+    unlock:'🎉 你会啦：速度乘时间，就是路程！',
+    unlockVoice:'你会啦！速度乘时间等于路程。',
+    reveals:[
+      {pic:'🚲',title:'求路程',answer:'8×2=<b>16 千米</b>。<br>速度 × 时间 = 路程。',voice:'8 乘 2 等于 16 千米。速度乘时间等于路程。'},
+      {pic:'⏱️',title:'求速度',answer:'如果 2 小时行 16 千米，<br>每小时：16÷2=<b>8 千米</b>。',voice:'反过来，知道路程和时间，用除法求速度。'},
+      {pic:'🛣️',title:'求时间',answer:'如果每小时 8 千米，行 16 千米，<br>要：16÷8=<b>2 小时</b>。',voice:'知道路程和速度，用除法求时间。'}
+    ]
+  },
+  practice:[
+    {q:'小明走路每小时行 4 千米，3 小时行几千米？',hint:'速度乘时间等于路程。',visual:{type:'row',items:[{text:'每小时4',cls:'blue'},'×',{text:'3小时',cls:'orange'}]},answer:'12',options:['7','12','16'],winVoice:'答对啦！4 乘 3 等于 12 千米。',wrong:'求路程，用速度乘时间。'},
+    {q:'汽车每小时行 50 千米，4 小时行几千米？',hint:'50 乘 4，先算 5×4 再添 0。',visual:{type:'row',items:[{text:'每小时50',cls:'red'},'×',{text:'4小时',cls:'orange'}]},answer:'200',options:['100','150','200'],winVoice:'答对啦！50 乘 4 等于 200 千米。',wrong:'求路程用乘法：50×4。'},
+    {q:'小狐狸 3 小时行了 18 千米，每小时行几千米？',hint:'求速度，用路程除以时间。',visual:{type:'row',items:[{text:'18千米',cls:'purple'},'÷',{text:'3小时',cls:'orange'}]},answer:'6',options:['5','6','9'],winVoice:'答对啦！18 除以 3 等于 6 千米。',wrong:'求每小时多少，用除法。'},
+    {q:'骑车每小时行 7 千米，行 21 千米要几小时？',hint:'求时间，用路程除以速度。',visual:{type:'row',items:[{text:'21千米',cls:'purple'},'÷',{text:'每小时7',cls:'blue'}]},answer:'3',options:['2','3','4'],winVoice:'答对啦！21 除以 7 等于 3 小时。',wrong:'求几小时，用路程除以速度。'}
+  ],
+  challenge:[
+    {q:'挑战：每小时行 6 千米，走了 2 小时后还剩 5 千米。全程几千米？',hint:'先算走了多少，再加上剩下的。',visual:{type:'clues',items:['第一步：6×2，求已经走的','第二步：加上还剩的 5 千米']},answer:'17',options:['12','17','22'],winVoice:'答对啦！走了 12 千米，加剩下 5 千米，全程 17 千米。',wrong:'先算走了的：6×2=12；别忘了加上还剩的 5。',hard:true},
+    {q:'挑战：全程 24 千米，每小时行 8 千米。行了几小时后，还剩 8 千米？',hint:'先算已经行了几千米，再求时间。',visual:{type:'clues',items:['第一步：24-8，求已经行的','第二步：÷8，求行了几小时']},answer:'2',options:['2','3','4'],winVoice:'答对啦！已经行了 16 千米，16 除以 8 等于 2 小时。',wrong:'先算行了多少：24-8=16；再算时间：16÷8。',hard:true}
+  ],
+  done:{badge:'🚲',title:'🚲 行程小司机',text:'你学会了<b class="pu">路程与速度</b>：<br>速度 × 时间 = 路程，<br>反过来用除法！',extra:'🌟 出门旅行前，可以算算要多久。',voice:'太棒了！你学会路程与速度啦！'},
+  nextText:'进入下一关：分数比大小 →',
+  nextHref:'分数比大小.html'
+};
+</script>
+<script src="lesson-engine.js"></script>
+</body>
+</html>

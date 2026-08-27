@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>面积与周长 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-engine.css">
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'mianji80',
+  title:'面积与周长',
+  hard:true,
+  emoji:'📐🏆',
+  heading:'面积与周长',
+  pinyin:'miàn jī yǔ zhōu cháng · 一圈和一片',
+  intro:'边长 4 的正方形：<br>周长是 <b class="bl">16 厘米</b>，面积是 <b class="or">16 平方厘米</b>。<br>数字一样，意思<b class="pu">完全不一样</b>！<br>这是<b class="pu">困难关 Boss</b>，稳住！',
+  parentNote:'周长是「一圈的长度」，面积是「铺满的方格数」，孩子最容易混淆。本关用边长 4 的正方形（周长 16、面积 16）制造认知冲突，强调单位不同：厘米 vs 平方厘米。挑战题练互推：周长→边长→面积，面积→宽→周长，都是两步推理。陪玩时让孩子用手指沿着书边「走一圈」（周长），再用手掌「铺满封面」（面积）。',
+  explore:{
+    title:'📐 一圈 vs 一片',
+    lead:'边长 <b class="bl">4 厘米</b>的正方形。<br>周长是多少？面积是多少？<br><b>先猜一猜，再点卡片。</b>',
+    visual:{type:'grid',rows:4,cols:4},
+    note:'点卡片，分清「一圈」和「一片」。',
+    voice:'边长 4 厘米的正方形，周长是多少？面积是多少？',
+    unlock:'🎉 你分清了：周长算边，面积数格！',
+    unlockVoice:'你分清了！周长算一圈的边，面积数铺满的格子。',
+    reveals:[
+      {pic:'🚶',title:'周长：走一圈',answer:'4 条边，每条 4 厘米：<br>4×4=<b>16 厘米</b>。',voice:'周长是走一圈：4 条边，每条 4 厘米，4 乘 4 等于 16 厘米。'},
+      {pic:'🟦',title:'面积：铺满格',answer:'每行 4 格，有 4 行：<br>4×4=<b>16 平方厘米</b>。',voice:'面积是铺满格子：每行 4 格，有 4 行，4 乘 4 等于 16 平方厘米。'},
+      {pic:'⚠️',title:'不一样！',answer:'数字碰巧都是 16，<br>但<b>厘米</b>和<b>平方厘米</b>不是一回事！',voice:'注意！数字碰巧都是 16，但厘米和平方厘米不是一回事！'}
+    ]
+  },
+  practice:[
+    {q:'边长 5 厘米的正方形，周长是几厘米？',hint:'周长是 4 条边相加。',visual:{type:'row',items:[{text:'边长5',cls:'blue'},{text:'周长?',cls:'purple'}]},answer:'20',options:['15','20','25'],winVoice:'答对啦！5 乘 4 等于 20 厘米。',wrong:'周长 = 边长 × 4。'},
+    {q:'边长 5 厘米的正方形，面积是几平方厘米？',hint:'面积是边长乘边长。',visual:{type:'row',items:[{text:'边长5',cls:'blue'},{text:'面积?',cls:'orange'}]},answer:'25',options:['20','25','30'],winVoice:'答对啦！5 乘 5 等于 25 平方厘米。',wrong:'面积 = 边长 × 边长。'},
+    {q:'长 6 厘米、宽 3 厘米的长方形，周长是几厘米？',hint:'长加宽，再乘 2。',visual:{type:'row',items:[{text:'长6',cls:'blue'},{text:'宽3',cls:'green'},{text:'周长?',cls:'purple'}]},answer:'18',options:['12','18','21'],winVoice:'答对啦！6 加 3 等于 9，9 乘 2 等于 18 厘米。',wrong:'周长 =（长+宽）× 2。'},
+    {q:'长 7 厘米、宽 2 厘米的长方形，面积是几平方厘米？',hint:'面积是长乘宽。',visual:{type:'row',items:[{text:'长7',cls:'blue'},{text:'宽2',cls:'green'},{text:'面积?',cls:'orange'}]},answer:'14',options:['9','14','18'],winVoice:'答对啦！7 乘 2 等于 14 平方厘米。',wrong:'面积 = 长 × 宽。'},
+    {q:'正方形周长 24 厘米，边长是几厘米？',hint:'倒过来：周长除以 4。',visual:{type:'row',items:[{text:'周长24',cls:'purple'},{text:'边长?',cls:'blue'}]},answer:'6',options:['4','6','8'],winVoice:'答对啦！24 除以 4 等于 6 厘米。',wrong:'4 条边一样长，24÷4。'}
+  ],
+  challenge:[
+    {q:'挑战：正方形周长 36 厘米，面积是几平方厘米？',hint:'先求边长，再求面积。',visual:{type:'clues',items:['第一步：36÷4，求边长','第二步：边长×边长，求面积']},answer:'81',options:['36','72','81'],winVoice:'答对啦！边长 9 厘米，面积 9 乘 9 等于 81 平方厘米。',wrong:'先算边长：36÷4=9；再算面积：9×9。',hard:true},
+    {q:'挑战：长方形面积 24 平方厘米，长 6 厘米。周长是几厘米？',hint:'先求宽，再求周长。',visual:{type:'clues',items:['第一步：24÷6，求宽','第二步：（长+宽）×2，求周长']},answer:'20',options:['20','24','28'],winVoice:'答对啦！宽 4 厘米，周长 6 加 4 乘 2 等于 20 厘米。',wrong:'先算宽：24÷6=4；再算周长：(6+4)×2。',hard:true}
+  ],
+  done:{badge:'🏆',title:'🏆 测量小冠军',text:'你通关了<b class="pu">困难关 Boss</b>！<br>周长是一圈，面积是一片，<br>互推也难不倒你！',extra:'🌟 量量自己的书桌：周长多少？面积多少？',voice:'太厉害啦！你战胜了面积与周长大 Boss！'},
+  nextText:'回到冒险地图 🗺️',
+  nextHref:'index.html'
+};
+</script>
+<script src="lesson-engine.js"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>幻方入门 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-engine.css">
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'huanfang78',
+  title:'幻方入门',
+  emoji:'🔮🔢',
+  heading:'幻方入门',
+  pinyin:'huàn fāng rù mén · 神奇的九宫格',
+  intro:'九宫格里填 1~9，<br>每行、每列、每条对角线，<br>加起来<b class="pu">都是 15</b>！<br>这就是古老的<b class="bl">幻方</b>，一起来探秘！',
+  parentNote:'幻方是经典的数阵游戏。本关不追求独立填出整个幻方，只练一个核心技能：知道幻和（15）与一行中的两个数，用连减求第三个数。陪玩时先让孩子验证每行每列都是 15，建立「幻和」概念，再玩「缺一个数」的填空。',
+  explore:{
+    title:'🔮 每行每列都一样',
+    lead:'这个九宫格好神奇：<br>每行、每列、对角线，<br>三个数加起来<b class="pu">都是 15</b>！',
+    visual:{html:'<div style="display:grid;grid-template-columns:repeat(3,54px);gap:6px">'+
+      [2,7,6,9,5,1,4,3,8].map(n=>'<div style="background:#fff;border:3px solid #DDD6FE;border-radius:12px;height:54px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:900;color:#7C3AED">'+n+'</div>').join('')+'</div>'},
+    note:'点卡片，验证一下有多神奇。',
+    voice:'这个九宫格好神奇，每行每列对角线，加起来都是 15！',
+    unlock:'🎉 你发现了：知道两个数，就能求第三个！',
+    unlockVoice:'你发现了！知道一行里的两个数，用 15 减一减，就能求第三个。',
+    reveals:[
+      {pic:'➡️',title:'横着看',answer:'2+7+6=<b>15</b>；<br>9+5+1=<b>15</b>；4+3+8=<b>15</b>。',voice:'横着看：2 加 7 加 6 等于 15，每一行都是 15。'},
+      {pic:'⬇️',title:'竖着、斜着看',answer:'2+9+4=<b>15</b>；<br>对角线 2+5+8=<b>15</b>。',voice:'竖着看、斜着看，也都是 15。'},
+      {pic:'✅',title:'小秘诀',answer:'幻和是 15。<br>知道两个数：15 减它们，<br>就是<b>第三个数</b>！',voice:'小秘诀：幻和是 15，知道两个数，用 15 减去它们，就是第三个数。'}
+    ]
+  },
+  practice:[
+    {q:'幻和是 15。一行有 4 和 6，第三格是几？',hint:'15 减 4 再减 6。',visual:{html:'<div style="display:grid;grid-template-columns:repeat(3,54px);gap:6px">'+['4','6','?'].map(n=>'<div style="background:#fff;border:3px solid #BFDBFE;border-radius:12px;height:54px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:900;color:#2563EB">'+n+'</div>').join('')+'</div>'},answer:'5',options:['3','5','7'],winVoice:'答对啦！15 减 4 减 6 等于 5。',wrong:'用幻和 15 减去知道的两个数。'},
+    {q:'幻和是 15。一行有 9 和 2，第三格是几？',hint:'15-9-2。',visual:{html:'<div style="display:grid;grid-template-columns:repeat(3,54px);gap:6px">'+['9','2','?'].map(n=>'<div style="background:#fff;border:3px solid #BFDBFE;border-radius:12px;height:54px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:900;color:#2563EB">'+n+'</div>').join('')+'</div>'},answer:'4',options:['3','4','5'],winVoice:'答对啦！15 减 9 减 2 等于 4。',wrong:'15 先减 9，再减 2。'},
+    {q:'幻和是 15。一列有 8 和 1，缺的数是几？',hint:'列也一样，和是 15。',visual:{html:'<div style="display:grid;grid-template-columns:repeat(1,54px);gap:6px">'+['8','1','?'].map(n=>'<div style="background:#fff;border:3px solid #BBF7D0;border-radius:12px;height:54px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:900;color:#16A34A">'+n+'</div>').join('')+'</div>'},answer:'6',options:['5','6','7'],winVoice:'答对啦！15 减 8 减 1 等于 6。',wrong:'列的和也是 15，15-8-1。'},
+    {q:'幻和是 15。对角线有 3 和 7，缺的数是几？',hint:'对角线的和也是 15。',visual:{type:'row',items:[{text:'3',cls:'purple'},{text:'7',cls:'purple'},{text:'?',cls:'red'}]},answer:'5',options:['4','5','6'],winVoice:'答对啦！15 减 3 减 7 等于 5。',wrong:'对角线同样满足幻和 15。'}
+  ],
+  challenge:[
+    {q:'挑战：幻和是 15。一行有 2 和 6，第三格是几？',hint:'15-2-6。',visual:{html:'<div style="display:grid;grid-template-columns:repeat(3,54px);gap:6px">'+['2','6','?'].map(n=>'<div style="background:#fff;border:3px solid #FED7AA;border-radius:12px;height:54px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:900;color:#EA580C">'+n+'</div>').join('')+'</div>'},answer:'7',options:['5','6','7'],winVoice:'答对啦！15 减 2 减 6 等于 7。',wrong:'用 15 减去 2 和 6。',hard:true},
+    {q:'挑战：用 2~10 填幻方，幻和变成 18。一行有 9 和 3，缺的数是几？',hint:'幻和变了，用 18 来减。',visual:{type:'clues',items:['新幻和是 18','18-9-3 = ?']},answer:'6',options:['5','6','7'],winVoice:'答对啦！18 减 9 减 3 等于 6。',wrong:'注意幻和是 18 不是 15，18-9-3。',hard:true}
+  ],
+  done:{badge:'🔮',title:'🔮 幻方小法师',text:'你学会了<b class="pu">幻方</b>的秘密：<br>每行每列对角线，和都一样；<br>知道两个，减出第三个！',extra:'🌟 试试自己填一个完整的幻方吧！',voice:'太棒了！你学会幻方啦！'},
+  nextText:'进入下一关：优惠满减 →',
+  nextHref:'优惠满减.html'
+};
+</script>
+<script src="lesson-engine.js"></script>
+</body>
+</html>

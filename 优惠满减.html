@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>优惠满减 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-engine.css">
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'manjian79',
+  title:'优惠满减',
+  emoji:'🏷️🛍️',
+  heading:'优惠满减',
+  pinyin:'yōu huì mǎn jiǎn · 凑单的小智慧',
+  intro:'书店搞活动：<b class="or">满 50 减 10</b>。<br>小狐狸的书 <b class="bl">48 元</b>，差 2 元不到 50！<br>怎么办？<b class="pu">凑一凑</b>，说不定更便宜！',
+  parentNote:'满减问题练两步：先判断「够不够满减门槛」，再算「减完付多少」。最妙的是凑单情形：48 元的书不能减，加 3 元笔凑到 51 元，减 10 元后只付 41 元，多买反而少花钱。陪玩时可以聊聊：什么时候凑单划算？多买的东西是不是真的需要？这也是财商启蒙。',
+  explore:{
+    title:'🏷️ 凑一凑，更便宜',
+    lead:'书店<b class="or">满 50 减 10</b>。<br>想买的书 <b class="bl">48 元</b>，还差 2 元才满 50。<br>直接买，还是再凑一点？',
+    visual:{type:'row',items:[{text:'书48元',cls:'blue'},{text:'满50减10',cls:'orange'}]},
+    note:'点卡片，看看两种买法。',
+    voice:'书店满 50 减 10。想买的书 48 元，还差 2 元才满 50。怎么买划算？',
+    unlock:'🎉 你发现了：凑满门槛，多买反而少花钱！',
+    unlockVoice:'你发现了！凑满门槛，多买反而少花钱。',
+    reveals:[
+      {pic:'📕',title:'直接买',answer:'48 元<b>不到 50</b>，不能减，<br>就付 <b>48 元</b>。',voice:'直接买：48 元不到 50，不能减，付 48 元。'},
+      {pic:'✏️',title:'凑一凑',answer:'加一支 3 元的笔：48+3=51 元，<br>满 50 啦！51-10=<b>41 元</b>。',voice:'加一支 3 元的笔，51 元满 50 啦，减 10 元，只付 41 元。'},
+      {pic:'✅',title:'比一比',answer:'41 元 < 48 元！<br>多买了一支笔，<b>还少花 7 元</b>！',voice:'比一比：41 比 48 少！多买一支笔，还少花 7 元！'}
+    ]
+  },
+  practice:[
+    {q:'满 30 减 5。买 35 元的东西，要付几元？',hint:'35 满 30 了，可以减 5。',visual:{type:'row',items:[{text:'35元',cls:'blue'},{text:'满30减5',cls:'orange'}]},answer:'30',options:['25','30','35'],winVoice:'答对啦！35 减 5 等于 30 元。',wrong:'够 30 元就能减 5。'},
+    {q:'满 50 减 10。买 48 元的东西，要付几元？',hint:'48 满 50 了吗？',visual:{type:'row',items:[{text:'48元',cls:'blue'},{text:'满50减10',cls:'orange'}]},answer:'48',options:['38','43','48'],winVoice:'答对啦！48 不到 50，不能减，付 48 元。',wrong:'先判断够不够门槛：48 比 50 小，不能减。'},
+    {q:'满 50 减 10。买 62 元的东西，要付几元？',hint:'62 满 50，减 10。',visual:{type:'row',items:[{text:'62元',cls:'blue'},{text:'满50减10',cls:'orange'}]},answer:'52',options:['50','52','62'],winVoice:'答对啦！62 减 10 等于 52 元。',wrong:'62 超过 50，直接减 10。'},
+    {q:'满 100 减 25。买 120 元的东西，要付几元？',hint:'120 满 100，减 25。',visual:{type:'row',items:[{text:'120元',cls:'purple'},{text:'满100减25',cls:'orange'}]},answer:'95',options:['90','95','100'],winVoice:'答对啦！120 减 25 等于 95 元。',wrong:'120 减 25，慢慢算：120-20=110，再减 5。'}
+  ],
+  challenge:[
+    {q:'挑战：满 60 减 15。想买 55 元的玩具，再加一本 8 元的书凑单，一共付几元？',hint:'先算凑单后的总价，够 60 就减 15。',visual:{type:'clues',items:['第一步：55+8，算总价','第二步：满 60 了吗？减 15']},answer:'48',options:['48','55','63'],winVoice:'答对啦！55 加 8 等于 63，63 减 15 等于 48 元，比单买玩具还便宜！',wrong:'先加：55+8=63；满 60 减 15：63-15。',hard:true}
+  ],
+  done:{badge:'🏷️',title:'🏷️ 凑单小达人',text:'你学会了<b class="pu">优惠满减</b>：<br>先看够不够门槛，<br>再算减完付多少！',extra:'🌟 凑单很妙，但不需要的东西别乱买哦。',voice:'太棒了！你学会优惠满减啦！'},
+  nextText:'进入下一关：面积与周长 →',
+  nextHref:'面积与周长.html'
+};
+</script>
+<script src="lesson-engine.js"></script>
+</body>
+</html>

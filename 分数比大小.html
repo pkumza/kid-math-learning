@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>分数比大小 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-engine.css">
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'fenbi73',
+  title:'分数比大小',
+  emoji:'🍕⚖️',
+  heading:'分数比大小',
+  pinyin:'fēn shù bǐ dà xiǎo · 谁吃得多',
+  intro:'一个披萨切 8 块，<br>小狐狸吃 <b class="bl">3 块</b>，小熊吃 <b class="or">5 块</b>。<br>谁吃得多？<br>分数也能<b class="pu">比大小</b>，秘诀很简单！',
+  parentNote:'本关只练两条规则：分母相同比分子，分子大的分数大；分子相同比分母，分母小的分数大（切得越碎，每块越小）。陪玩时多用「切披萨、分西瓜」的画面感，避免让孩子背口诀不理解。最后一题出现等值分数（3/6=1/2），答对要大力表扬。',
+  explore:{
+    title:'🍕 切一切，比一比',
+    lead:'同样一个披萨：<br>切 <b class="bl">8 块</b>吃 3 块，是 3/8；<br>吃 5 块，是 5/8。<br>哪个多？',
+    visual:{type:'row',items:[{text:'3/8',cls:'blue'},{text:'5/8',cls:'orange'}]},
+    note:'点卡片，学两条比大小的秘诀。',
+    voice:'同样一个披萨，切 8 块，吃 3 块是八分之三，吃 5 块是八分之五。哪个多呢？',
+    unlock:'🎉 你会啦：同分母比分子，同分子比分母！',
+    unlockVoice:'你会啦！分母相同比分子，分子相同比分母。',
+    reveals:[
+      {pic:'🍕',title:'分母相同',answer:'3/8 和 5/8，都是切 8 块。<br>5 块比 3 块多，所以 <b>5/8 大</b>！',voice:'分母相同，都是切 8 块，吃 5 块当然比吃 3 块多。'},
+      {pic:'🔪',title:'分子相同',answer:'1/4 和 1/8，都吃 1 块。<br>切 4 块的每块大，所以 <b>1/4 大</b>！',voice:'分子相同，都吃 1 块。切 4 块的每块大，切 8 块的每块小。'},
+      {pic:'✅',title:'口诀',answer:'分母相同，<b>分子大的大</b>；<br>分子相同，<b>分母小的大</b>。',voice:'口诀：分母相同，分子大的大；分子相同，分母小的大。'}
+    ]
+  },
+  practice:[
+    {q:'2/7 和 5/7，哪个大？',hint:'分母都是 7，比分子。',visual:{type:'row',items:[{text:'2/7',cls:'blue'},{text:'5/7',cls:'orange'}]},answer:'5/7',options:['2/7','5/7','一样大'],winVoice:'答对啦！分母相同，5 比 2 大，所以 5/7 大。',wrong:'分母相同，分子大的分数大。'},
+    {q:'4/9 和 7/9，哪个大？',hint:'分母都是 9，比分子。',visual:{type:'row',items:[{text:'4/9',cls:'blue'},{text:'7/9',cls:'orange'}]},answer:'7/9',options:['4/9','7/9','一样大'],winVoice:'答对啦！7 比 4 大，7/9 大。',wrong:'分母相同，分子大的分数大。'},
+    {q:'1/3 和 1/5，哪个大？',hint:'分子都是 1，比分母；分母小，每块大。',visual:{type:'row',items:[{text:'1/3',cls:'green'},{text:'1/5',cls:'purple'}]},answer:'1/3',options:['1/3','1/5','一样大'],winVoice:'答对啦！切 3 块比切 5 块，每块更大。',wrong:'分子相同，分母小的分数大。'},
+    {q:'1/2 和 1/4，哪个大？',hint:'分子都是 1，比分母。',visual:{type:'row',items:[{text:'1/2',cls:'green'},{text:'1/4',cls:'purple'}]},answer:'1/2',options:['1/2','1/4','一样大'],winVoice:'答对啦！一半比四分之一大。',wrong:'切 2 块的每块，比切 4 块的每块大。'},
+    {q:'3/6 和 1/2，哪个大？',hint:'切 6 块吃 3 块，正好是一半。',visual:{type:'row',items:[{text:'3/6',cls:'blue'},{text:'1/2',cls:'green'}]},answer:'一样大',options:['3/6','1/2','一样大'],winVoice:'答对啦！3/6 就是一半，和 1/2 一样大！',wrong:'切 6 块吃 3 块，正好一半；1/2 也是一半。'}
+  ],
+  challenge:[
+    {q:'挑战：一杯果汁，小明喝了 1/2，小红喝了 1/3。谁剩得多？',hint:'先比谁喝得多，喝得少的人剩得多。',visual:{type:'clues',items:['第一步：比 1/2 和 1/3，谁喝得多','第二步：喝得少，剩得才多']},answer:'小红',options:['小明','小红','一样多'],winVoice:'答对啦！小红喝得少，所以剩得多。',wrong:'先比喝的：1/2 比 1/3 大，小明喝得多；喝得少的人剩得多。',hard:true}
+  ],
+  done:{badge:'🍕',title:'🍕 分数裁判员',text:'你学会了<b class="pu">分数比大小</b>：<br>同分母比分子，<br>同分子比分母！',extra:'🌟 还发现了 3/6 和 1/2 是好朋友——一样大！',voice:'太棒了！你会给分数比大小啦！'},
+  nextText:'进入下一关：小数加减法 →',
+  nextHref:'小数加减法.html'
+};
+</script>
+<script src="lesson-engine.js"></script>
+</body>
+</html>

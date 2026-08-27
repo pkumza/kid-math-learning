@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>归一问题 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-engine.css">
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'guiyi71',
+  title:'归一问题',
+  emoji:'✏️📏',
+  heading:'归一问题',
+  pinyin:'guī yī wèn tí · 先算一份是多少',
+  intro:'3 支笔 9 元，5 支笔几元？<br>别急着乘！<b class="pu">先算 1 支多少钱</b>，<br>再算 5 支——<br>这就是<b class="bl">归一</b>：先回到「一份」！',
+  parentNote:'归一问题的核心是「先求单一量，再求总量」：单价=总价÷数量，再乘新数量。陪玩时强调「先归一，再扩大」的节奏，让孩子说出每一步在算什么。注意辨别什么时候该除（求一份）、什么时候该乘（求几份）。',
+  explore:{
+    title:'✏️ 先回到「一份」',
+    lead:'小狐狸买 <b class="bl">3 支笔</b>，花了 <b class="or">9 元</b>。<br>买 <b class="pu">5 支笔</b> 要几元？<br><b>先算 1 支，再算 5 支。</b>',
+    visual:{type:'row',items:[{text:'3支',cls:'blue'},'→',{text:'9元',cls:'orange'}]},
+    note:'点卡片，跟着两步走。',
+    voice:'小狐狸买 3 支笔花了 9 元，买 5 支笔要几元呢？',
+    unlock:'🎉 你会啦：先归一，再扩大！',
+    unlockVoice:'你会啦！先算一份是多少，再算几份是多少。',
+    reveals:[
+      {pic:'1️⃣',title:'先归一',answer:'1 支笔：9÷3=<b>3 元</b>。',voice:'先算 1 支笔多少钱：9 除以 3 等于 3 元。'},
+      {pic:'2️⃣',title:'再扩大',answer:'5 支笔：3×5=<b>15 元</b>。',voice:'再算 5 支笔：3 乘 5 等于 15 元。'},
+      {pic:'✅',title:'口诀',answer:'先除后乘：<b>除以份数得一份，乘上份数得几份</b>。',voice:'口诀：先除后乘。除以份数得一份，乘上份数得几份。'}
+    ]
+  },
+  practice:[
+    {q:'4 个苹果 8 元，1 个苹果几元？',hint:'求一份，用除法。',visual:{type:'row',items:[{text:'4个',cls:'red'},'→',{text:'8元',cls:'orange'}]},answer:'2',options:['2','3','4'],winVoice:'答对啦！8 除以 4 等于 2 元。',wrong:'求「一个多少钱」，把总价除以个数。'},
+    {q:'3 盒牛奶 9 元，6 盒牛奶几元？',hint:'先算 1 盒，再算 6 盒。',visual:{type:'row',items:[{text:'3盒→9元',cls:'blue'},{text:'6盒→?',cls:'purple'}]},answer:'18',options:['12','15','18'],winVoice:'答对啦！1 盒 3 元，6 盒 18 元。',wrong:'先归一：9÷3=3；再扩大：3×6。'},
+    {q:'小狐狸 5 天读了 20 页书，平均每天读几页？',hint:'求一天读的，用除法。',visual:{type:'row',items:[{text:'5天',cls:'green'},'→',{text:'20页',cls:'blue'}]},answer:'4',options:['3','4','5'],winVoice:'答对啦！20 除以 5 等于 4 页。',wrong:'平均一天，就是把总数除以天数。'},
+    {q:'2 袋糖有 10 颗，7 袋糖有几颗？',hint:'先算 1 袋几颗，再算 7 袋。',visual:{type:'row',items:[{text:'2袋→10颗',cls:'orange'},{text:'7袋→?',cls:'purple'}]},answer:'35',options:['25','30','35'],winVoice:'答对啦！1 袋 5 颗，7 袋 35 颗。',wrong:'先归一：10÷2=5；再扩大：5×7。'}
+  ],
+  challenge:[
+    {q:'挑战：6 个面包 18 元，买 9 个面包要几元？',hint:'先算 1 个面包几元，再乘 9。',visual:{type:'row',items:[{text:'6个→18元',cls:'orange'},{text:'9个→?',cls:'purple'}]},answer:'27',options:['24','27','30'],winVoice:'答对啦！1 个 3 元，9 个 27 元。',wrong:'先归一：18÷6=3；再扩大：3×9。',hard:true},
+    {q:'挑战：小明 4 天背了 12 个单词。照这样，一星期（7 天）能背几个？',hint:'先算 1 天背几个，再算 7 天。',visual:{type:'clues',items:['第一步：12÷4，求 1 天背几个','第二步：乘 7，求一星期背几个']},answer:'21',options:['18','21','24'],winVoice:'答对啦！1 天 3 个，7 天 21 个。',wrong:'先归一：12÷4=3；再扩大：3×7。',hard:true}
+  ],
+  done:{badge:'📏',title:'📏 归一小达人',text:'你学会了<b class="pu">归一问题</b>：<br>先算一份是多少，<br>再算几份是多少！',extra:'🌟 买东西、读书、做手工，都能先归一。',voice:'太棒了！你学会归一问题啦！'},
+  nextText:'进入下一关：路程与速度 →',
+  nextHref:'路程与速度.html'
+};
+</script>
+<script src="lesson-engine.js"></script>
+</body>
+</html>

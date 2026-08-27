@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小数加减法 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-engine.css">
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'xsjj74',
+  title:'小数加减法',
+  emoji:'🛒💰',
+  heading:'小数加减法',
+  pinyin:'xiǎo shù jiā jiǎn fǎ · 小数点对对齐',
+  intro:'橡皮 <b class="bl">1.5 元</b>，铅笔 <b class="or">2.3 元</b>。<br>一共几元？<br>只要<b class="pu">小数点对齐</b>，<br>小数加减和整数一样简单！',
+  parentNote:'一位小数加减的关键是「小数点对齐」，也就是个位对个位、角对角。本关全部用购物语境，孩子可以想成「几元几角」来算：1.5 元就是 1 元 5 角。陪玩时提醒：得数的小数点要和题目对齐，别丢掉。',
+  explore:{
+    title:'🛒 小数点对对齐',
+    lead:'橡皮 <b class="bl">1.5 元</b>，铅笔 <b class="or">2.3 元</b>。<br>一共要付几元？',
+    visual:{type:'row',items:[{text:'1.5',cls:'blue'},'+',{text:'2.3',cls:'orange'}]},
+    note:'点卡片，看看小数怎么加。',
+    voice:'橡皮 1 块 5，铅笔 2 块 3，一共要付几元？',
+    unlock:'🎉 你会啦：小数点对齐，一位一位算！',
+    unlockVoice:'你会啦！小数点对齐，一位一位算。',
+    reveals:[
+      {pic:'🪙',title:'换成角',answer:'1.5 元 = 15 角，2.3 元 = 23 角。<br>15+23=38 角 = <b>3.8 元</b>。',voice:'1 块 5 是 15 角，2 块 3 是 23 角。15 加 23 等于 38 角，就是 3 块 8。'},
+      {pic:'📐',title:'对齐算',answer:'小数点对齐：<br>5 角+3 角=8 角，1 元+2 元=3 元，<br>得 <b>3.8 元</b>。',voice:'小数点对齐，角加角，元加元，得 3 块 8。'},
+      {pic:'✅',title:'减法也一样',answer:'3.8-2.3：角减角、元减元，<br>得 <b>1.5 元</b>。',voice:'减法也一样，角减角，元减元。'}
+    ]
+  },
+  practice:[
+    {q:'0.4 + 0.3 = ?',hint:'4 角加 3 角。',visual:{type:'row',items:[{text:'0.4',cls:'blue'},'+',{text:'0.3',cls:'orange'}]},answer:'0.7',options:['0.1','0.7','0.12'],winVoice:'答对啦！4 角加 3 角等于 7 角，就是 0.7。',wrong:'小数点对齐，4 加 3 等于 7，写在角的位置。'},
+    {q:'2.5 + 1.4 = ?',hint:'元加元，角加角。',visual:{type:'row',items:[{text:'2.5',cls:'blue'},'+',{text:'1.4',cls:'orange'}]},answer:'3.9',options:['3.9','3.09','4.9'],winVoice:'答对啦！2 元加 1 元是 3 元，5 角加 4 角是 9 角。',wrong:'元加元得 3，角加角得 9，小数点别丢。'},
+    {q:'5.6 - 2.3 = ?',hint:'元减元，角减角。',visual:{type:'row',items:[{text:'5.6',cls:'green'},'-',{text:'2.3',cls:'orange'}]},answer:'3.3',options:['3.3','3.03','2.3'],winVoice:'答对啦！5 减 2 是 3，6 减 3 是 3。',wrong:'小数点对齐，一位一位减。'},
+    {q:'4.8 - 1.5 = ?',hint:'8 角减 5 角，4 元减 1 元。',visual:{type:'row',items:[{text:'4.8',cls:'green'},'-',{text:'1.5',cls:'orange'}]},answer:'3.3',options:['2.3','3.3','3.5'],winVoice:'答对啦！4 减 1 是 3，8 减 5 是 3。',wrong:'元减元得 3，角减角得 3。'},
+    {q:'3.2 + 2.6 = ?',hint:'2 角加 6 角，3 元加 2 元。',visual:{type:'row',items:[{text:'3.2',cls:'blue'},'+',{text:'2.6',cls:'purple'}]},answer:'5.8',options:['5.8','5.08','6.8'],winVoice:'答对啦！3 加 2 是 5，2 加 6 是 8。',wrong:'小数点对齐再相加，得数是 5.8 不是 5.08。'}
+  ],
+  challenge:[
+    {q:'挑战：苹果 2.5 元，香蕉 1.8 元。付 5 元，找回几元？',hint:'先算一共几元，再用 5 元减。',visual:{type:'clues',items:['第一步：2.5+1.8，算总价','第二步：5 减总价，算找零']},answer:'0.7',options:['0.3','0.7','1.7'],winVoice:'答对啦！一共 4.3 元，5 减 4.3 等于 0.7 元。',wrong:'先加：2.5+1.8=4.3；再减：5-4.3。5 角加 8 角满 10 要进 1 元哦。',hard:true}
+  ],
+  done:{badge:'💰',title:'💰 收银小能手',text:'你学会了<b class="pu">小数加减法</b>：<br>小数点对齐，<br>元算元，角算角！',extra:'🌟 下次买东西，可以帮爸爸妈妈算钱啦。',voice:'太棒了！你会小数加减法啦！'},
+  nextText:'进入下一关：盈亏问题 →',
+  nextHref:'盈亏问题.html'
+};
+</script>
+<script src="lesson-engine.js"></script>
+</body>
+</html>

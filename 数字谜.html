@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数字谜 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-engine.css">
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'shuzimi77',
+  title:'数字谜',
+  emoji:'🕵️🔢',
+  heading:'数字谜',
+  pinyin:'shù zì mí · 竖式里找失踪的数字',
+  intro:'竖式里有数字<b class="or">躲起来了</b>！<br>看个位、看十位，<br>像小侦探一样<b class="pu">把它们找出来</b>！',
+  parentNote:'数字谜（虫食算）锻炼的是竖式结构和进退位理解。方法是从个位开始逐位推理，特别注意「满十进一」和「退位」。陪玩时让孩子先说「这一位上应该几加几等于几」，再填数。本关只涉及两位数加减，答案都是唯一确定的。',
+  explore:{
+    title:'🕵️ 从个位开始找',
+    lead:'竖式里有两个 □：<br><b>3□ + □4 = 61</b><br>它们各是几？',
+    visual:{html:'<div style="font-family:monospace;font-size:1.9rem;font-weight:900;text-align:right;line-height:1.5;background:#fff;padding:10px 22px;border-radius:14px;border:3px solid #DDD6FE">&nbsp;3□<br>+□4<br>———<br>&nbsp;61</div>'},
+    note:'点卡片，跟着侦探一步步找。',
+    voice:'3 十几加几 14 等于 61。两个方框里各是几？',
+    unlock:'🎉 你会啦：从个位开始，一位一位推！',
+    unlockVoice:'你会啦！从个位开始，一位一位推。',
+    reveals:[
+      {pic:'1️⃣',title:'先看个位',answer:'□+4 的个位是 1？<br>只能是 11！所以 □=<b>7</b>，<b>进 1</b>。',voice:'先看个位：几加 4 个位是 1？只能是 11，所以填 7，向十位进 1。'},
+      {pic:'2️⃣',title:'再看十位',answer:'3+□+进位 1=6，<br>所以 □=<b>2</b>。',voice:'再看十位：3 加几加进位 1 等于 6？填 2。'},
+      {pic:'✅',title:'验算',answer:'37+24=<b>61</b> ✓ 对啦！',voice:'验算：37 加 24 等于 61，对啦！'}
+    ]
+  },
+  practice:[
+    {q:'□ + 6 = 13，□ 里是几？',hint:'想：几加 6 等于 13？用减法。',visual:{type:'row',items:[{text:'□',cls:'purple'},'+',{text:'6',cls:'orange'},'=',{text:'13',cls:'blue'}]},answer:'7',options:['6','7','8'],winVoice:'答对啦！13 减 6 等于 7。',wrong:'知道和与一个加数，用减法求另一个。'},
+    {q:'15 - □ = 8，□ 里是几？',hint:'想：15 减几等于 8？',visual:{type:'row',items:[{text:'15',cls:'blue'},'-',{text:'□',cls:'purple'},'=',{text:'8',cls:'green'}]},answer:'7',options:['6','7','8'],winVoice:'答对啦！15 减 7 等于 8。',wrong:'15 减 8 就知道方框里是几。'},
+    {q:'竖式 2□ + 14 = 39，个位的 □ 是几？',hint:'个位：□+4=9。',visual:{html:'<div style="font-family:monospace;font-size:1.9rem;font-weight:900;text-align:right;line-height:1.5;background:#fff;padding:10px 22px;border-radius:14px;border:3px solid #BFDBFE">&nbsp;2□<br>+14<br>———<br>&nbsp;39</div>'},answer:'5',options:['4','5','6'],winVoice:'答对啦！5 加 4 等于 9，填 5。',wrong:'看个位：几加 4 等于 9？'},
+    {q:'竖式 □6 - 23 = 33，十位的 □ 是几？',hint:'先想几 16 减 23 等于 33？用 33+23 倒推。',visual:{html:'<div style="font-family:monospace;font-size:1.9rem;font-weight:900;text-align:right;line-height:1.5;background:#fff;padding:10px 22px;border-radius:14px;border:3px solid #BBF7D0">&nbsp;□6<br>-23<br>———<br>&nbsp;33</div>'},answer:'5',options:['4','5','6'],winVoice:'答对啦！56 减 23 等于 33，填 5。',wrong:'倒推：33 加 23 等于 56，十位是 5。'}
+  ],
+  challenge:[
+    {q:'挑战：4□ + □6 = 83，个位的 □ 是几？',hint:'个位：□+6 的个位是 3，只能是 13。',visual:{html:'<div style="font-family:monospace;font-size:1.9rem;font-weight:900;text-align:right;line-height:1.5;background:#fff;padding:10px 22px;border-radius:14px;border:3px solid #FED7AA">&nbsp;4□<br>+□6<br>———<br>&nbsp;83</div>'},answer:'7',options:['6','7','8'],winVoice:'答对啦！7 加 6 等于 13，写 3 进 1。',wrong:'几加 6 个位是 3？只能是 13，所以填 7。',hard:true},
+    {q:'挑战：□4 - 2□ = 31，十位的 □ 是几？',hint:'个位 4-3=1，所以减数个位是 3；再想几十减 23 等于 31。',visual:{html:'<div style="font-family:monospace;font-size:1.9rem;font-weight:900;text-align:right;line-height:1.5;background:#fff;padding:10px 22px;border-radius:14px;border:3px solid #FECACA">&nbsp;□4<br>-2□<br>———<br>&nbsp;31</div>'},answer:'5',options:['4','5','6'],winVoice:'答对啦！54 减 23 等于 31，十位填 5。',wrong:'先定减数个位是 3，再倒推：31+23=54，十位是 5。',hard:true}
+  ],
+  done:{badge:'🕵️',title:'🕵️ 数字小侦探',text:'你学会了<b class="pu">数字谜</b>：<br>从个位开始推，<br>进退位要留心！',extra:'🌟 遇到谜题别急，一位一位来。',voice:'太棒了！你是数字小侦探！'},
+  nextText:'进入下一关：幻方入门 →',
+  nextHref:'幻方入门.html'
+};
+</script>
+<script src="lesson-engine.js"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>盈亏问题 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-engine.css">
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'yingkui75',
+  title:'盈亏问题',
+  hard:true,
+  emoji:'🍬🎁',
+  heading:'盈亏问题',
+  pinyin:'yíng kuī wèn tí · 分东西的小秘密',
+  intro:'分糖果：每人 2 个，<b class="gr">多 3 个</b>；<br>每人 3 个，<b class="or">刚好分完</b>。<br>几个小朋友？几个糖？<br>这是<b class="pu">困难关</b>，多看线索慢慢来！',
+  parentNote:'盈亏问题的钥匙：两次分法的「总数差」来自「每人差」。每人多拿 1 个，就把多出来的 3 个分完了，所以有 3 个人。陪玩时用小积木实际分一分：先每人 2 个，再把剩下的 3 个一人补 1 个，补完正好——动作比公式更重要。本关是困难关，答错时多鼓励，提示里已经拆好步骤。',
+  explore:{
+    title:'🍬 多出来的糖去哪了',
+    lead:'分糖果：每人 2 个，<b class="gr">多 3 个</b>；<br>每人 3 个，<b class="or">刚好分完</b>。<br>几个小朋友？',
+    visual:{type:'row',items:[{text:'每人2个',cls:'blue'},'→',{text:'多3个',cls:'green'}]},
+    note:'点卡片，跟着想。',
+    voice:'分糖果，每人 2 个多 3 个，每人 3 个刚好分完。几个小朋友呢？',
+    unlock:'🎉 你发现了：多的÷每人多分的=人数！',
+    unlockVoice:'你发现了！多出来的除以每人多分的，就是人数。',
+    reveals:[
+      {pic:'🍬',title:'先每人 2 个',answer:'每人 2 个，手里<b>多 3 个</b>糖。',voice:'先每人分 2 个，手里还多 3 个糖。'},
+      {pic:'➕',title:'每人再补 1 个',answer:'每人 3 个 = 每人<b>多拿 1 个</b>。<br>多的 3 个，一人补 1 个，正好补完！',voice:'每人 3 个，就是每人再多拿 1 个。多出来的 3 个，一人补 1 个正好补完。'},
+      {pic:'✅',title:'算出来啦',answer:'3÷1=<b>3 个小朋友</b>；<br>糖：2×3+3=<b>9 个</b>。',voice:'3 除以 1 等于 3 个小朋友。糖有 2 乘 3 加 3，9 个。'}
+    ]
+  },
+  practice:[
+    {q:'分苹果：每人 2 个多 4 个，每人 3 个刚好。几个小朋友？',hint:'多的 4 个，每人再补 1 个正好补完。',visual:{type:'row',items:[{text:'每人2多4',cls:'green'},{text:'每人3刚好',cls:'blue'}]},answer:'4',options:['3','4','5'],winVoice:'答对啦！4 除以 1 等于 4 个小朋友。',wrong:'每人多拿 1 个，用掉多的 4 个：4÷1。'},
+    {q:'分饼干：每人 3 块多 6 块，每人 4 块刚好。几个小朋友？',hint:'每人多拿 1 块，用掉多的 6 块。',visual:{type:'row',items:[{text:'每人3多6',cls:'green'},{text:'每人4刚好',cls:'blue'}]},answer:'6',options:['5','6','7'],winVoice:'答对啦！6 除以 1 等于 6 个小朋友。',wrong:'多的 6 块除以每人多拿的 1 块。'},
+    {q:'分贴纸：每人 3 张多 2 张，每人 4 张少 3 张。几个小朋友？',hint:'多 2 张又少 3 张，一共差 2+3=5 张。',visual:{type:'row',items:[{text:'每人3多2',cls:'green'},{text:'每人4少3',cls:'red'}]},answer:'5',options:['4','5','6'],winVoice:'答对啦！2 加 3 等于 5，5 除以 1 等于 5 个小朋友。',wrong:'「多 2」加「少 3」，两次一共差 5 张；每人差 1 张，5÷1。'},
+    {q:'上题中，贴纸一共有几张？',hint:'用第一种分法：每人 3 张多 2 张。',visual:{type:'clues',items:['5 个小朋友，每人 3 张','还多 2 张']},answer:'17',options:['15','17','19'],winVoice:'答对啦！3 乘 5 加 2 等于 17 张。',wrong:'5 人每人 3 张是 15 张，再加多的 2 张。'}
+  ],
+  challenge:[
+    {q:'挑战：分糖果，每人 4 块多 5 块，每人 5 块少 2 块。几个小朋友？',hint:'两次一共差 5+2=7 块，每人差 1 块。',visual:{type:'clues',items:['第一步：5+2，算两次相差几块','第二步：÷(5-4)，算人数']},answer:'7',options:['6','7','8'],winVoice:'答对啦！7 除以 1 等于 7 个小朋友。',wrong:'多的加少的：5+2=7；每人差 1 块，7÷1=7。',hard:true},
+    {q:'挑战：上题中，糖果一共有几块？',hint:'用每人 4 块多 5 块来算。',visual:{type:'clues',items:['7 个小朋友，每人 4 块','还多 5 块']},answer:'33',options:['32','33','35'],winVoice:'答对啦！4 乘 7 加 5 等于 33 块。',wrong:'7 人每人 4 块是 28 块，再加多的 5 块。',hard:true}
+  ],
+  done:{badge:'🎁',title:'🎁 盈亏小侦探',text:'你通过了<b class="pu">困难关</b>！<br>多和少加起来，除以每人差，<br>人数一下就出来！',extra:'🌟 分东西分不明白时，想想这一关。',voice:'太厉害啦！你通过了盈亏问题困难关！'},
+  nextText:'进入下一关：统筹安排 →',
+  nextHref:'统筹安排.html'
+};
+</script>
+<script src="lesson-engine.js"></script>
+</body>
+</html>

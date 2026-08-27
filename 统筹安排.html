@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>统筹安排 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-engine.css">
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'tongchou76',
+  title:'统筹安排',
+  hard:true,
+  emoji:'🍳⏰',
+  heading:'统筹安排',
+  pinyin:'tǒng chóu ān pái · 省时间的小魔法',
+  intro:'烙饼啦！锅里能放 <b class="bl">2 张饼</b>，<br>每面要烙 <b class="or">1 分钟</b>。<br>烙 <b class="pu">3 张饼</b>，最少几分钟？<br>这是<b class="pu">困难关</b>，动脑想一想！',
+  parentNote:'统筹安排的核心是「能同时做的事就同时做」和「别让锅空着」。烙 3 张饼的最优解是 3 分钟而不是 4 分钟：第 1 分钟烙 A 正 B 正，第 2 分钟烙 A 反 C 正，第 3 分钟烙 B 反 C 反。陪玩时用 3 张纸片当饼，亲手翻一翻，孩子立刻就懂。本关是困难关，提示已拆好步骤，答错没关系。',
+  explore:{
+    title:'🍳 别让锅空着',
+    lead:'锅里能放 <b class="bl">2 张饼</b>，每面烙 <b class="or">1 分钟</b>。<br>烙 <b class="pu">3 张饼</b>（每张烙两面），最少几分钟？',
+    visual:{type:'row',items:[{text:'🫓',cls:'orange'},{text:'🫓',cls:'orange'},{text:'🫓',cls:'orange'}]},
+    note:'点卡片，看看怎么烙最快。',
+    voice:'锅里能放 2 张饼，每面烙 1 分钟。烙 3 张饼，最少几分钟？',
+    unlock:'🎉 你发现了：锅不空着，3 分钟就烙好！',
+    unlockVoice:'你发现了！不让锅空着，3 分钟就烙好 3 张饼。',
+    reveals:[
+      {pic:'1️⃣',title:'第 1 分钟',answer:'烙 <b>A 正 + B 正</b>。',voice:'第 1 分钟，烙 A 的正面和 B 的正面。'},
+      {pic:'2️⃣',title:'第 2 分钟',answer:'拿出 B，放进 C：<br>烙 <b>A 反 + C 正</b>。A 完成！',voice:'第 2 分钟，拿出 B，放进 C，烙 A 的反面和 C 的正面。A 烙好了！'},
+      {pic:'3️⃣',title:'第 3 分钟',answer:'烙 <b>B 反 + C 反</b>。<br>全部完成，只要 <b>3 分钟</b>！',voice:'第 3 分钟，烙 B 的反面和 C 的反面。全部完成，只要 3 分钟！'}
+    ]
+  },
+  practice:[
+    {q:'煮鸡蛋要 8 分钟，煮的同时可以刷牙（3 分钟）。做完两件事至少几分钟？',hint:'刷牙可以在煮鸡蛋的时候做。',visual:{type:'row',items:[{text:'煮蛋8分',cls:'orange'},{text:'刷牙3分',cls:'blue'}]},answer:'8',options:['5','8','11'],winVoice:'答对啦！边煮蛋边刷牙，8 分钟全做完。',wrong:'能同时做的就同时做，不用加起来。'},
+    {q:'锅里放 2 张饼，每面 1 分钟。烙 2 张饼最少几分钟？',hint:'2 张饼正好放满锅，一起烙。',visual:{type:'row',items:[{text:'🫓🫓',cls:'orange'},{text:'每面1分',cls:'blue'}]},answer:'2',options:['2','3','4'],winVoice:'答对啦！正面 1 分钟，反面 1 分钟，共 2 分钟。',wrong:'2 张饼一起烙正面，再一起烙反面。'},
+    {q:'锅里放 2 张饼，每面 1 分钟。烙 3 张饼最少几分钟？',hint:'想想探索里的办法：别让锅空着。',visual:{type:'row',items:[{text:'🫓🫓🫓',cls:'orange'},{text:'每面1分',cls:'blue'}]},answer:'3',options:['3','4','6'],winVoice:'答对啦！3 分钟，锅一直没空着。',wrong:'第 2 分钟时换一张饼，别让锅空着。'},
+    {q:'烧水要 10 分钟，烧的同时扫地 6 分钟、擦桌 4 分钟。全部做完至少几分钟？',hint:'扫地和擦桌都能在烧水时做。',visual:{type:'clues',items:['烧水 10 分钟','同时：扫地 6 分 + 擦桌 4 分 = 10 分']},answer:'10',options:['10','16','20'],winVoice:'答对啦！烧水时把活都干完，只要 10 分钟。',wrong:'6 加 4 正好 10，烧水时刚好做完。'}
+  ],
+  challenge:[
+    {q:'挑战：锅里放 2 张饼，每面 2 分钟。烙 3 张饼最少几分钟？',hint:'还是 3 锅，但每锅要 2 分钟。',visual:{type:'clues',items:['3 张饼要烙 3 锅（想想探索）','每锅 2 分钟']},answer:'6',options:['6','8','12'],winVoice:'答对啦！3 锅乘 2 分钟等于 6 分钟。',wrong:'烙法和探索一样要 3 锅，每锅 2 分钟，3×2。',hard:true},
+    {q:'挑战：小明早晨：穿衣 3 分钟 → 煮粥 15 分钟（同时洗脸 4 分钟、听故事 10 分钟）→ 吃粥 5 分钟。最少几分钟？',hint:'洗脸和听故事都在煮粥时做，不用另算。',visual:{type:'clues',items:['穿衣 3 分（不能同时）','煮粥 15 分（同时洗脸+听故事）','吃粥 5 分（不能同时）']},answer:'23',options:['23','33','37'],winVoice:'答对啦！3 加 15 加 5 等于 23 分钟。',wrong:'只把不能同时做的加起来：3+15+5。',hard:true}
+  ],
+  done:{badge:'⏰',title:'⏰ 时间小管家',text:'你通过了<b class="pu">困难关</b>！<br>能同时做的同时做，<br>锅不空着最省时间！',extra:'🌟 明天早晨，试试给自己安排一下？',voice:'太厉害啦！你学会统筹安排啦！'},
+  nextText:'进入下一关：数字谜 →',
+  nextHref:'数字谜.html'
+};
+</script>
+<script src="lesson-engine.js"></script>
+</body>
+</html>
