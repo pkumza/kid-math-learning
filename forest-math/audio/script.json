@@ -10,6 +10,11 @@
     "file": "audio/5478e50c9306ea96.mp3"
   },
   {
+    "text": "全部任务完成啦！兔兔说，谢谢你！你帮菜摊找到了藏起来的数量。",
+    "lesson": "rabbit",
+    "file": "audio/b563f7b9eec6b6a1.mp3"
+  },
+  {
     "text": "小盒子里的胡萝卜，加上四根，一共九根。",
     "lesson": "rabbit",
     "file": "audio/967b782b98214f57.mp3"
@@ -23,6 +28,11 @@
     "text": "小盒子里藏着几根？",
     "lesson": "rabbit",
     "file": "audio/770903589e1034d4.mp3"
+  },
+  {
+    "text": "答对啦！盒子里有 5 根。5 加 4，刚好是 9。",
+    "lesson": "rabbit",
+    "file": "audio/48aadc985b044c3f.mp3"
   },
   {
     "text": "把九根分成两部分。已经知道一部分是四根。",
@@ -60,6 +70,11 @@
     "file": "audio/3cd168477a227581.mp3"
   },
   {
+    "text": "答对啦！盖住了 5 根。7 加 5 等于 12。",
+    "lesson": "rabbit",
+    "file": "audio/21cb08416dbe81b5.mp3"
+  },
+  {
     "text": "看得见的和盖住的，合起来是十二根。",
     "lesson": "rabbit",
     "file": "audio/d3b85f9e104a5718.mp3"
@@ -90,6 +105,11 @@
     "file": "audio/6684631f83f8aa36.mp3"
   },
   {
+    "text": "答对啦！再补 25 根，35 加 25 就是 60。",
+    "lesson": "rabbit",
+    "file": "audio/f59f75b37e1f2ca1.mp3"
+  },
+  {
     "text": "补来的和已经有的，合起来要够六十根。",
     "lesson": "rabbit",
     "file": "audio/13c78c53613b7f04.mp3"
@@ -118,6 +138,11 @@
     "text": "仓库原来有多少根？",
     "lesson": "rabbit",
     "file": "audio/1401fea822430512.mp3"
+  },
+  {
+    "text": "答对啦！原来有 120 根。送走 40 根，还剩 80 根。",
+    "lesson": "rabbit",
+    "file": "audio/969b70992c5761e5.mp3"
   },
   {
     "text": "正在找的是送货以前的数量。",
@@ -155,6 +180,11 @@
     "file": "audio/1565680ad3827123.mp3"
   },
   {
+    "text": "挑战成功！新来 55 根。拿走 20 根后，这批还剩 35 根。",
+    "lesson": "rabbit",
+    "file": "audio/85159ce9e2ecb60a.mp3"
+  },
+  {
     "text": "先找新来这批，原本有多少根。",
     "lesson": "rabbit",
     "file": "audio/8708107ff32a2fe6.mp3"
@@ -180,6 +210,11 @@
     "file": "audio/84f6461225c02528.mp3"
   },
   {
+    "text": "全部任务完成啦！仓库整理好啦！你发现了：装法变了，数量可以一样。",
+    "lesson": "squirrel",
+    "file": "audio/9e2f6a44c1656b8f.mp3"
+  },
+  {
     "text": "两个相同袋子，一共装十颗栗子。",
     "lesson": "squirrel",
     "file": "audio/42cc1985477c990b.mp3"
@@ -193,6 +228,11 @@
     "text": "一袋装几颗？",
     "lesson": "squirrel",
     "file": "audio/61ee8e26f9bda465.mp3"
+  },
+  {
+    "text": "答对啦！每袋 5 颗，两袋合起来是 10 颗。",
+    "lesson": "squirrel",
+    "file": "audio/8c96f9e1dacc1dd7.mp3"
   },
   {
     "text": "把十颗分成一样多的两份。",
@@ -218,6 +258,11 @@
     "text": "这一袋有几颗？",
     "lesson": "squirrel",
     "file": "audio/b999b7b041824ed3.mp3"
+  },
+  {
+    "text": "答对啦！一袋有 5 颗。5 加 3 等于 8。",
+    "lesson": "squirrel",
+    "file": "audio/ec3d5c98b241d806.mp3"
   },
   {
     "text": "一边有一袋和三颗，另一边有八颗。",
@@ -250,6 +295,11 @@
     "file": "audio/24fd750530125b7c.mp3"
   },
   {
+    "text": "答对啦！一样多！两边都是 6 颗。",
+    "lesson": "squirrel",
+    "file": "audio/565eee5b83c8b7e8.mp3"
+  },
+  {
     "text": "先数清左边合起来有多少。",
     "lesson": "squirrel",
     "file": "audio/f0308454bdcd129b.mp3"
@@ -273,6 +323,11 @@
     "text": "哪张卡能换掉一袋？",
     "lesson": "squirrel",
     "file": "audio/dc903b61bf74cf64.mp3"
+  },
+  {
+    "text": "答对啦！10 加 10 是 20，刚好能换掉一袋。",
+    "lesson": "squirrel",
+    "file": "audio/aab0e059eb0bef9b.mp3"
   },
   {
     "text": "换成散装以后，数量要和一袋相同。",
@@ -305,6 +360,11 @@
     "file": "audio/d8bc655a2af44d4f.mp3"
   },
   {
+    "text": "挑战成功！一袋 5 颗。两袋是 10 颗，再加 1 颗，共 11 颗。",
+    "lesson": "squirrel",
+    "file": "audio/f1d90a7c9d520625.mp3"
+  },
+  {
     "text": "先找到一袋装了几颗。",
     "lesson": "squirrel",
     "file": "audio/0669082e2468735a.mp3"
@@ -330,6 +390,11 @@
     "file": "audio/ab6a6a4e6d221a56.mp3"
   },
   {
+    "text": "全部任务完成啦！机器的小秘密，找到了！你会顺着想，也会倒着想。",
+    "lesson": "cat",
+    "file": "audio/afccfa76afb116b8.mp3"
+  },
+  {
     "text": "盒里先放七个点心。",
     "lesson": "cat",
     "file": "audio/6ee8cf4d17812a38.mp3"
@@ -348,6 +413,11 @@
     "text": "包装后有几个？",
     "lesson": "cat",
     "file": "audio/6115955198ed4414.mp3"
+  },
+  {
+    "text": "答对啦！包装后有 10 个点心。",
+    "lesson": "cat",
+    "file": "audio/81615d0c5bafeaf1.mp3"
   },
   {
     "text": "机器把点心添进来了，数量会变多。",
@@ -380,6 +450,11 @@
     "file": "audio/d2b88a5300867f4b.mp3"
   },
   {
+    "text": "答对啦！开始放了 30 个。机器添 10 个后，变成 40 个。",
+    "lesson": "cat",
+    "file": "audio/c21e0ceac706a847.mp3"
+  },
+  {
     "text": "要找机器还没添点心的时候。",
     "lesson": "cat",
     "file": "audio/fd3986b20f63c1fc.mp3"
@@ -410,6 +485,11 @@
     "file": "audio/c29874815e270aff.mp3"
   },
   {
+    "text": "答对啦！每次添 3 个，两份记录都对得上。",
+    "lesson": "cat",
+    "file": "audio/f70690fe4d4e774c.mp3"
+  },
+  {
     "text": "每次添的数量，要能解释两份记录。",
     "lesson": "cat",
     "file": "audio/59ebce1b335e4360.mp3"
@@ -438,6 +518,11 @@
     "text": "哪份订单打包对了？",
     "lesson": "cat",
     "file": "audio/abce8a1868ad2816.mp3"
+  },
+  {
+    "text": "答对啦！包装后 80 个，订单正确！",
+    "lesson": "cat",
+    "file": "audio/5f28c1e98cfa7c8e.mp3"
   },
   {
     "text": "订单上的数量要包含机器添的二十个。",
@@ -475,6 +560,11 @@
     "file": "audio/687c17ea98c38d2a.mp3"
   },
   {
+    "text": "挑战成功！机器每次添 20 个。另一盒开始放了 70 个。",
+    "lesson": "cat",
+    "file": "audio/4440593c56c9c430.mp3"
+  },
+  {
     "text": "先用两份记录，找机器每次添多少。",
     "lesson": "cat",
     "file": "audio/b3b762b661070cc9.mp3"
@@ -500,6 +590,11 @@
     "file": "audio/32d8dcea275bc005.mp3"
   },
   {
+    "text": "全部任务完成啦！点心送到了！你看清了送来和拿走，每一步都算得明白。",
+    "lesson": "bear",
+    "file": "audio/f4c60a9188be357f.mp3"
+  },
+  {
     "text": "小熊端来一盘四个点心。",
     "lesson": "bear",
     "file": "audio/5ecbd6cb676a5e1a.mp3"
@@ -518,6 +613,11 @@
     "text": "拼到一起，共有几个？",
     "lesson": "bear",
     "file": "audio/0f27681a8b565d86.mp3"
+  },
+  {
+    "text": "答对啦！两盘合起来有 7 个点心。",
+    "lesson": "bear",
+    "file": "audio/193cd85399054903.mp3"
   },
   {
     "text": "把两盘的点心放到一起。",
@@ -550,6 +650,11 @@
     "file": "audio/021cbc59750ed9fc.mp3"
   },
   {
+    "text": "答对啦！柜台还剩 7 个点心。",
+    "lesson": "bear",
+    "file": "audio/ecefd65c4ae6039e.mp3"
+  },
+  {
     "text": "买走的已经离开柜台了。",
     "lesson": "bear",
     "file": "audio/5f459c46cf0ec226.mp3"
@@ -580,6 +685,11 @@
     "file": "audio/ef02c0e3983d51e2.mp3"
   },
   {
+    "text": "答对啦！客人买走了 30 个。30 和剩下的 50 合起来是 80。",
+    "lesson": "bear",
+    "file": "audio/cc43dea5be75643c.mp3"
+  },
+  {
     "text": "要找的是离开柜台的那部分。",
     "lesson": "bear",
     "file": "audio/c4a587f8c2a0f9e6.mp3"
@@ -608,6 +718,11 @@
     "text": "哪张算式卡能算出剩下的？",
     "lesson": "bear",
     "file": "audio/964c7aa51f0487f0.mp3"
+  },
+  {
+    "text": "答对啦！用 120 减 35。仓库还剩 85 个。",
+    "lesson": "bear",
+    "file": "audio/212ab5fe676a139e.mp3"
   },
   {
     "text": "送给邻居的点心，已经不在仓库里了。",
@@ -645,6 +760,11 @@
     "file": "audio/4689113fb48c1ce6.mp3"
   },
   {
+    "text": "挑战成功！收到后有 70 个。卖掉 25 个，现在有 45 个。",
+    "lesson": "bear",
+    "file": "audio/744b71a2a2548dd8.mp3"
+  },
+  {
     "text": "先跟着故事，看第一件事发生后有多少。",
     "lesson": "bear",
     "file": "audio/ecdf36aba3b711c8.mp3"
@@ -670,6 +790,11 @@
     "file": "audio/9b38a73273263535.mp3"
   },
   {
+    "text": "全部任务完成啦！小巴顺利到站！原来、变化、现在，你都看清楚啦。",
+    "lesson": "bus",
+    "file": "audio/a8f3a820e665707c.mp3"
+  },
+  {
     "text": "车上原来有四位乘客。",
     "lesson": "bus",
     "file": "audio/5fee196f616db8e6.mp3"
@@ -688,6 +813,11 @@
     "text": "现在有几位乘客？",
     "lesson": "bus",
     "file": "audio/7ef496d802a7dd78.mp3"
+  },
+  {
+    "text": "答对啦！现在有 7 位乘客。",
+    "lesson": "bus",
+    "file": "audio/7f340fd4f4692f7f.mp3"
   },
   {
     "text": "原来的乘客还在车上，新乘客也上来了。",
@@ -713,6 +843,11 @@
     "text": "有四位乘客下车了。现在有几位乘客？",
     "lesson": "bus",
     "file": "audio/b46251190be6066e.mp3"
+  },
+  {
+    "text": "答对啦！车上还剩 5 位乘客。",
+    "lesson": "bus",
+    "file": "audio/a980eafab210d782.mp3"
   },
   {
     "text": "下车的乘客已经离开小巴了。",
@@ -745,6 +880,11 @@
     "file": "audio/608f4f40421f7130.mp3"
   },
   {
+    "text": "答对啦！这一站上来了 3 位乘客。",
+    "lesson": "bus",
+    "file": "audio/b984aa88bdd3806a.mp3"
+  },
+  {
     "text": "要找的是车上新增加的乘客。",
     "lesson": "bus",
     "file": "audio/b93380334d2ba4f7.mp3"
@@ -773,6 +913,11 @@
     "text": "到站前有几位乘客？",
     "lesson": "bus",
     "file": "audio/1928752d1e011a95.mp3"
+  },
+  {
+    "text": "答对啦！到站前有 8 位。下车 2 位以后，剩下 6 位。",
+    "lesson": "bus",
+    "file": "audio/dd5ef59c3702c8c3.mp3"
   },
   {
     "text": "要回到下车以前。",
@@ -810,6 +955,11 @@
     "file": "audio/e6bf3ab28dacf50b.mp3"
   },
   {
+    "text": "挑战成功！第一站后有 5 位，再上来 4 位，最后有 9 位。",
+    "lesson": "bus",
+    "file": "audio/bc2e66121f403e3f.mp3"
+  },
+  {
     "text": "按站点顺序想，别漏掉中间的一站。",
     "lesson": "bus",
     "file": "audio/d9193372826a0928.mp3"
@@ -835,6 +985,11 @@
     "file": "audio/162808f5906dc5c2.mp3"
   },
   {
+    "text": "全部任务完成啦！野餐准备好啦！你跟住了好多条线索。大家一起出发吧！",
+    "lesson": "picnic",
+    "file": "audio/e9241f30eddc4bfe.mp3"
+  },
+  {
     "text": "野餐清单要十个苹果。",
     "lesson": "picnic",
     "file": "audio/6946b877712b89d4.mp3"
@@ -853,6 +1008,11 @@
     "text": "还需要放几个苹果？",
     "lesson": "picnic",
     "file": "audio/037bc502d3266e7a.mp3"
+  },
+  {
+    "text": "答对啦！再放 4 个，刚好凑够 10 个。",
+    "lesson": "picnic",
+    "file": "audio/68502b98808cff65.mp3"
   },
   {
     "text": "篮里已有的，加上你放的，要够十个。",
@@ -885,6 +1045,11 @@
     "file": "audio/e21011182a2765ea.mp3"
   },
   {
+    "text": "答对啦！两盒是 6 加 6，一共有 12 个。",
+    "lesson": "picnic",
+    "file": "audio/b66804d7cbea49c4.mp3"
+  },
+  {
     "text": "两盒一样多，都要算进去。",
     "lesson": "picnic",
     "file": "audio/90f4195c386e11d7.mp3"
@@ -915,6 +1080,11 @@
     "file": "audio/614afad694d5d385.mp3"
   },
   {
+    "text": "答对啦！刚才用了 40 个纸杯。",
+    "lesson": "picnic",
+    "file": "audio/46093f6e284e799a.mp3"
+  },
+  {
     "text": "原来的纸杯分成了用掉的和剩下的。",
     "lesson": "picnic",
     "file": "audio/e518f757dd56679b.mp3"
@@ -943,6 +1113,11 @@
     "text": "哪种装法刚好够？",
     "lesson": "picnic",
     "file": "audio/18f304b2c282ae6c.mp3"
+  },
+  {
+    "text": "答对啦！每篮 6 个，两篮共 12 个，正好够。",
+    "lesson": "picnic",
+    "file": "audio/08d8dd1449242874.mp3"
   },
   {
     "text": "既要合起来够十二个，也要两篮一样多。",
@@ -983,6 +1158,11 @@
     "text": "两袋吃掉一些，还剩几个？",
     "lesson": "picnic",
     "file": "audio/6c678ed61abe6459.mp3"
+  },
+  {
+    "text": "挑战成功！一盒 6 个，一袋 4 个。两袋有 8 个，吃掉 3 个，还剩 5 个。",
+    "lesson": "picnic",
+    "file": "audio/f8fa481c47fb88ee.mp3"
   },
   {
     "text": "先只看第一张卡，找一盒有几个。",
@@ -1033,6 +1213,11 @@
     "text": "最后，每篮有多少个苹果？",
     "lesson": "picnic",
     "file": "audio/9499b5708f9d2ce1.mp3"
+  },
+  {
+    "text": "挑战成功！送走后剩 100 个。平均装两篮，每篮 50 个。再添 10 个，每篮 60 个。",
+    "lesson": "picnic",
+    "file": "audio/e952faee0ff72eff.mp3"
   },
   {
     "text": "先算送走以后，仓库剩多少个苹果。",

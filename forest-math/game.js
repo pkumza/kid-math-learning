@@ -42,6 +42,7 @@
     if (phase === 'explore') resetSandbox();
     else if (phase !== 'done') resetQuestion();
     F.current(cfg.id, phase, index); render();
+    if (phase === 'done') say(cfg.done.speech);
     const heading = play.querySelector('h2');
     if (heading) { heading.setAttribute('tabindex', '-1'); heading.focus({ preventScroll: true }); }
   }
@@ -99,7 +100,7 @@
     return `<div class="answer-layout"><div class="answer-display" aria-live="polite" aria-label="我的答案"><span${answer === '' ? ' class="placeholder"' : ''}>${answer === '' ? '?' : answer}</span><small>${q.unit}</small></div><div class="keypad" aria-label="数字键盘">${[1, 2, 3, 4, 5, 6, 7, 8, 9, 'clear', 0, 'delete'].map(n => `<button class="key${typeof n === 'string' ? ' utility' : ''}" data-action="key" data-key="${n}" aria-label="${n === 'delete' ? '删除最后一位' : n === 'clear' ? '清空答案' : n}" ${solvedNow ? 'disabled' : ''}>${n === 'delete' ? '⌫' : n === 'clear' ? '清空' : n}</button>`).join('')}</div></div>`;
   }
   function questionArea(q) {
-    return `<section class="question-area" aria-label="回答任务"><h3>${e(q.q)} <button class="replay-line" data-action="question-replay" aria-label="重听要回答的问题">🔊</button></h3>${answerHTML(q)}<div class="answer-actions">${solvedNow ? '<button class="button sunshine" data-action="next">' + (index === cfg[phase].length - 1 ? phase === 'practice' ? '去挑战一下 →' : '看看完成了没 →' : '下一个小任务 →') + '</button>' : `<button class="button" data-action="submit" ${answer === '' ? 'disabled' : ''}>我准备好了 ✓</button>`}</div><div class="feedback ${feedbackType}" role="status" ${feedback ? '' : 'hidden'}>${e(feedback)}</div></section>`;
+    return `<section class="question-area" aria-label="回答任务"><h3>${e(q.q)} <button class="replay-line" data-action="question-replay" aria-label="重听要回答的问题">🔊</button></h3>${answerHTML(q)}<div class="answer-actions">${solvedNow ? '<button class="button sunshine" data-action="next">' + (index === cfg[phase].length - 1 ? phase === 'practice' ? '去挑战一下 →' : '看看完成了没 →' : '下一个小任务 →') + '</button>' : `<button class="button" data-action="submit" ${answer === '' ? 'disabled' : ''}>我准备好了 ✓</button>`}</div><div class="feedback ${feedbackType}" role="status" ${feedback ? '' : 'hidden'}>${e(feedback)}${solvedNow ? ' <button class="replay-line" data-action="feedback-replay" aria-label="重听答对反馈">🔊</button>' : ''}</div></section>`;
   }
   function renderQuestion() {
     cancelDrag();
@@ -147,6 +148,7 @@
     refreshAnswer(); updateChrome();
     const dots = play.querySelector('.progress-dots');
     if (dots) dots.outerHTML = statusDots(cfg[phase]);
+    if (solvedNow) say(q.successSpeech);
   }
   function clearFeedback() { feedback = ''; feedbackType = ''; }
   function enterKey(key) {
@@ -246,6 +248,7 @@
     if (action === 'story-next' && shown < q.story.length) { const line = q.story[shown++]; renderQuestion(); say(line.text + (shown === q.story.length ? q.q : '')); return; }
     if (action === 'story-restart') { F.stopSpeech(); shown = 1; renderQuestion(); say(q.story[0].text + (q.story.length === 1 ? q.q : '')); return; }
     if (action === 'story-replay') { say(q.story[Number(button.dataset.line)].text); return; }
+    if (action === 'feedback-replay' && solvedNow) { say(q.successSpeech); return; }
     if (action === 'question-replay') { say(q.q); return; }
     if (action === 'next' && solvedNow) {
       if (index + 1 < cfg[phase].length) setPhase(phase, index + 1);

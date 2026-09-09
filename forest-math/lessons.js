@@ -97,4 +97,10 @@
       done: { badge: '🧺', title: '野餐准备好啦！', text: '你跟住了好多条线索。大家一起出发吧！' }
     }
   ];
+  for (const lesson of window.FOREST_LESSONS) {
+    for (const phase of ['practice', 'challenge']) {
+      for (const q of lesson[phase]) q.successSpeech = (phase === 'challenge' ? '挑战成功！' : '答对啦！') + q.solution;
+    }
+    lesson.done.speech = '全部任务完成啦！' + lesson.done.title + lesson.done.text;
+  }
 })();

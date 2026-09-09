@@ -153,7 +153,8 @@ test('旧首页所有已有入口、顺序和关卡进度统计保留', () => {
   const before = execFileSync('git', ['show', 'HEAD:index.html'], { cwd: path.dirname(dir), encoding: 'utf8' });
   const after = fs.readFileSync(path.join(dir, '../index.html'), 'utf8');
   const links = html => [...html.matchAll(/<a\b[^>]*href="([^"]+)"/g)].map(m => m[1]);
-  const oldLinks = links(before), newLinks = links(after).filter(l => l !== 'forest-math/index.html');
+  const oldLinks = links(before).filter(l => l !== 'forest-math/index.html'), newLinks = links(after).filter(l => l !== 'forest-math/index.html');
+  assert(links(after).includes('forest-math/index.html'));
   assert.deepEqual(newLinks, oldLinks);
 });
 console.log(`\n${checks} 项核验通过。`);
