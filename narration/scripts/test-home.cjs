@@ -1,0 +1,11 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const {JSDOM,VirtualConsole}=require('../../.tts-tools/node_modules/jsdom');
+const root=path.resolve(__dirname,'../..');
+let html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+html=html.replace(/<script src="([^"]+)"><\/script>/g,(_,src)=>'<script>'+fs.readFileSync(path.join(root,src),'utf8')+'</script>');
+const errors=[],played=[];const vc=new VirtualConsole();vc.on('jsdomError',e=>{if(e.type!=='not-implemented')errors.push(e.message);});
+const dom=new JSDOM(html,{runScripts:'dangerously',url:'http://local.test/',virtualConsole:vc,beforeParse(w){w.setTimeout=()=>0;w.scrollTo=()=>{};w.requestAnimationFrame=()=>0;w.Audio=class{constructor(src){assert(fs.existsSync(path.join(root,src)));this.src=src;}play(){played.push(this);return Promise.resolve();}pause(){this.paused=true;}};w.speechSynthesis={getVoices:()=>[],cancel(){},speak(){throw Error('System voice should never play');}};}});
+const w=dom.window;w.document.dispatchEvent(new w.Event('pointerdown',{bubbles:true}));
+assert.equal(played.length,1);assert.equal(played[0].src,w.LESSON_AUDIO['欢迎来到运算王国！点一张卡片，开始冒险吧！']);
+w.document.getElementById('muteBtn').click();assert(played[0].paused);assert.equal(played.length,1);
+assert.deepEqual(errors,[]);dom.window.close();console.log('Homepage: welcome uses voice A, mute cancels it, no system speech.');

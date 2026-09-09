@@ -94,6 +94,10 @@
   .hint-text{display:inline-block; color:var(--orange);}
   .hint-text[hidden]{display:none;}
 </style>
+<script src="narration/manifest.js"></script>
+<script src="narration/parts.js"></script>
+<script src="narration/resolver.js"></script>
+<script src="narration/player.js"></script>
 </head>
 <body>
 <canvas id="confetti"></canvas>
@@ -245,8 +249,8 @@ let zhVoice=null;
 function pickVoice(){ if(!('speechSynthesis'in window)) return; const vs=speechSynthesis.getVoices(); if(!vs||!vs.length) return; const zh=vs.filter(v=>/zh|cmn|chinese|普通话|国语|中文/i.test((v.lang||'')+' '+(v.name||''))); zhVoice=zh.find(v=>/zh[-_]?CN/i.test(v.lang))||zh[0]||null; }
 if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; setTimeout(pickVoice,300); }
 function normalizeSpeechText(text){ return String(text).replace(/□/g,'空格').replace(/=/g,'等于').replace(/\+/g,'加').replace(/−/g,'减').replace(/→/g,'，').replace(/[⚖️🧩🎖️🎉⭐👇]/g,'').replace(/\s+/g,' ').trim(); }
-function say(text){ if(muted||!('speechSynthesis'in window)) return; try{ if(!zhVoice) pickVoice(); speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(normalizeSpeechText(text)+'。'); u.lang='zh-CN'; if(zhVoice)u.voice=zhVoice; u.rate=0.95; u.pitch=1.08; speechSynthesis.speak(u); }catch(e){} }
-function show(id,step){ $$('.screen').forEach(s=>s.classList.remove('on')); $('#'+id).classList.add('on'); $$('.pill').forEach(p=>p.classList.toggle('active', +p.dataset.step===step)); window.scrollTo({top:0,behavior:'smooth'}); }
+function say(text){ if(!muted && window.LessonNarrator) window.LessonNarrator.say(text); }
+function show(id,step){if(window.LessonNarrator)window.LessonNarrator.stop(); $$('.screen').forEach(s=>s.classList.remove('on')); $('#'+id).classList.add('on'); $$('.pill').forEach(p=>p.classList.toggle('active', +p.dataset.step===step)); window.scrollTo({top:0,behavior:'smooth'}); }
 function weights(nums, cls){ return nums.map(n=>'<div class="weight '+(cls||'')+'">'+n+'</div>').join(''); }
 function renderScale(target,leftNums,rightNums,leftText,rightText){
   const l=leftNums.reduce((a,b)=>a+b,0), r=rightNums.reduce((a,b)=>a+b,0);

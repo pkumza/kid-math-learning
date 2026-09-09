@@ -181,6 +181,10 @@
   .pill.nav-locked{opacity:.45;}
   .pill{transition:transform .1s, opacity .2s;}
 </style>
+<script src="narration/manifest.js"></script>
+<script src="narration/parts.js"></script>
+<script src="narration/resolver.js"></script>
+<script src="narration/player.js"></script>
 </head>
 <body>
 <canvas id="confetti"></canvas>
@@ -327,16 +331,9 @@ function pickVoice(){
          || zh[0] || null;
 }
 if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; setTimeout(pickVoice,300); setTimeout(pickVoice,1200); }
-function say(text){
-  if(muted||!('speechSynthesis'in window)) return;
-  try{ if(!zhVoice) pickVoice(); speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(text+'　。');
-    u.lang='zh-CN'; if(zhVoice)u.voice=zhVoice; u.rate=0.95; u.pitch=1.1;
-    speechSynthesis.speak(u);
-  }catch(e){}
-}
+function say(text){ if(!muted && window.LessonNarrator) window.LessonNarrator.say(text); }
 
-function show(id,step){
+function show(id,step){if(window.LessonNarrator)window.LessonNarrator.stop();
   $$('.screen').forEach(s=>s.classList.remove('on'));
   $('#'+id).classList.add('on');
   $$('.pill').forEach(p=>p.classList.toggle('active', +p.dataset.step===step));
@@ -362,7 +359,7 @@ function exactAns(M){
   return M.a*M.b;
 }
 function approxAns(M){
-  const ra=round10(M.a), rb=round10(M.b);
+  const ra=round10(M.a), rb=M.op==='×'?M.b:round10(M.b);
   if(M.op==='+') return ra+rb;
   if(M.op==='−') return ra-rb;
   return ra*rb;
@@ -371,7 +368,7 @@ function approxAns(M){
 function pickMode(key){
   curMode=key; revealed=false;
   const M=MODES[key];
-  const ra=round10(M.a), rb=round10(M.b), approx=approxAns(M);
+  const ra=round10(M.a), rb=M.op==='×'?M.b:round10(M.b), approx=approxAns(M);
   $$('.mode-btn').forEach(b=>b.classList.toggle('sel', b.dataset.mode===key));
 
   numRow.innerHTML=
@@ -388,7 +385,7 @@ function pickMode(key){
   eq.style.display='none';
   note.textContent='先估一估，再点「揭晓精确答案」比一比差多少～';
   sClick();
-  say(`这是${M.name}。${M.a}大约是${ra}，${M.b}大约是${rb}。你先估估答案是多少？`);
+  say(`这是${M.name}。${M.a}大约是${ra}，${M.op==='×'?'乘数'+M.b+'不变':M.b+'大约是'+rb}。你先估估答案是多少？`);
 }
 
 function doReveal(){
@@ -396,7 +393,7 @@ function doReveal(){
   revealed=true;
   const M=MODES[curMode];
   const exact=exactAns(M), approx=approxAns(M);
-  const ra=round10(M.a), rb=round10(M.b);
+  const ra=round10(M.a), rb=M.op==='×'?M.b:round10(M.b);
 
   numRow.innerHTML=
     `<div class="chip exact">${M.a}</div><span class="op">${M.op}</span>`+
@@ -442,7 +439,7 @@ function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.
 function renderLevel(){
   const P=PROB[pi];
   answered=false;
-  const ra=round10(P.a), rb=round10(P.b);
+  const ra=round10(P.a), rb=P.op==='×'?P.b:round10(P.b);
   $('#levelTag').textContent=`第 ${pi+1} / 3 关`;
   $('#qHint').textContent=P.hint+' ✨';
   $('#numRowP').innerHTML=

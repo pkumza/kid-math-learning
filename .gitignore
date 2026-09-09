@@ -1,2 +1,9 @@
 .claude/
 .DS_Store
+.tts-venv/
+.tts-cache/
+.tts-tools/
+__pycache__/
+narration/**/*.wav
+narration/**/*.tmp.mp3
+narration/*.tmp.js

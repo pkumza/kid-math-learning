@@ -112,6 +112,10 @@
   details p{color:#374151; line-height:1.75; font-size:.95rem;}
   details b{color:var(--ink);}
 </style>
+<script src="narration/manifest.js"></script>
+<script src="narration/parts.js"></script>
+<script src="narration/resolver.js"></script>
+<script src="narration/player.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -127,6 +131,12 @@
     <p>跟着小狐狸，一关一关闯！<br>每一关都是一个有趣的数学小魔法 ✨</p>
     <div class="guide">🦊 点一张卡片，开始冒险 →</div>
   </div>
+
+  <a href="forest-math/index.html" style="display:flex;align-items:center;gap:14px;padding:20px;margin:0 0 20px;background:#17584f;color:#fff;border-radius:22px;text-decoration:none;min-height:80px;">
+    <span style="font-size:2rem" aria-hidden="true">🐰</span>
+    <span style="flex:1"><strong style="display:block;font-size:1.2rem">森林小店长 · 全新玩法</strong><span style="display:block;margin-top:5px;color:#def1e5;font-size:.95rem">听故事、摆实物，和动物小伙伴一起开店。</span></span>
+    <span aria-hidden="true">↗</span>
+  </a>
 
   <!-- 进度 -->
   <div class="progress-card">
@@ -846,12 +856,7 @@ function pickVoice(){
          || zh[0] || null;
 }
 if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; setTimeout(pickVoice,300); setTimeout(pickVoice,1200); }
-function say(t){
-  if(muted||!('speechSynthesis'in window)) return;
-  try{ if(!zhVoice) pickVoice(); speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t+'　。');
-    u.lang='zh-CN'; if(zhVoice)u.voice=zhVoice; u.rate=0.95; u.pitch=1.1; speechSynthesis.speak(u);
-  }catch(e){}
-}
+function say(t){ if(!muted && window.LessonNarrator) window.LessonNarrator.say(t); }
 document.getElementById('muteBtn').addEventListener('click',function(){
   muted=!muted; this.textContent=muted?'🔇':'🔊';
   if(muted&&'speechSynthesis'in window) speechSynthesis.cancel();

@@ -1,0 +1,15 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+const root=path.resolve(__dirname,'../..');
+const full=JSON.parse(fs.readFileSync(path.join(root,'narration/script.json'))),parts=JSON.parse(fs.readFileSync(path.join(root,'narration/parts.json')));
+const window={LESSON_AUDIO:Object.fromEntries(full.map(c=>[c.text,c.file])),LESSON_AUDIO_PARTS:Object.fromEntries(parts.map(c=>[c.text,c.file]))};
+vm.runInNewContext(fs.readFileSync(path.join(root,'narration/resolver.js'),'utf8'),{window});
+const r=window.NarrationResolver;
+for(const [n,word] of [[0,'零'],[10,'十'],[19,'十九'],[100,'一百'],[101,'一百零一'],[110,'一百一十'],[1001,'一千零一'],[10001,'一万零一'],[10100,'一万零一百'],[100010,'十万零一十'],[100000001,'一亿零一']])assert.equal(r.integer(n),word);
+assert.equal(r.canonical('A × 2 ÷ 3'),'诶乘以二除以三');
+assert.equal(r.canonical('ABCABC'),'诶比西诶比西');
+assert.equal(r.canonical('1/2 + 0.5 = 1'),'二分之一加零点五等于一');
+assert.equal(r.canonical('这是直角，zhí jiǎo。'),'这是直角');
+assert.equal(r.resolve('未收录的奇怪外星语句'),null);
+for(let n=0;n<100000;n++)assert(r.resolve(String(n)),'Unrecorded number '+n);
+for(const text of ['100元，一共100099元','9个百，8个十，7个一，是 987','12 时 55 分','从1点半到12点，经过了10小时30分钟。'])assert(r.resolve(text),text);
+console.log('Resolver: 0–99999, large-number zero placement, decimals, fractions, dynamic amounts and missing text passed.');

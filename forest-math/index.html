@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#17584f">
+  <meta name="description" content="听一听，摆一摆。和森林里的小伙伴一起开店，发现数学。">
+  <title>森林小店长 · 今天开哪家小店？</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="lessons.js" defer></script>
+  <script src="core.js" defer></script>
+  <script src="home.js" defer></script>
+</head>
+<body class="home-page">
+  <div class="shell">
+    <header class="site-header">
+      <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">✿</span><span>森林小店长<small>一起把小日子算明白</small></span></a>
+      <div class="header-actions"><span class="collection-count" id="collectionCount">我的贴纸 · 0 / 6</span><a class="quiet-link" href="#parent-note">陪玩小纸条</a></div>
+    </header>
+    <main>
+      <section class="welcome-board" aria-labelledby="welcome-title">
+        <div class="welcome-copy"><span class="eyebrow">森林小镇 · 今天也营业</span><h1 id="welcome-title">今天，开哪家<br>小店？</h1><p>听一听，摆一摆。<br>小伙伴们等你来帮忙。</p><a class="button sunshine" id="continueLink" href="兔兔菜摊.html">去兔兔菜摊 <span aria-hidden="true">↗</span></a></div>
+        <div class="village-art" id="villageArt" role="img" aria-label="森林小镇里的动物店铺"></div>
+      </section>
+      <section class="shops-section" aria-labelledby="shops-title">
+        <div class="section-heading"><h2 id="shops-title">小店开门啦</h2><span>挑一家，慢慢玩</span></div>
+        <div class="shop-grid" id="shopGrid">
+          <a class="shop-card mint" href="兔兔菜摊.html"><span class="shop-icon">🐰</span><span class="shop-name">兔兔菜摊</span><span>找找缺了多少 <b>↗</b></span></a>
+          <a class="shop-card peach" href="松鼠仓库.html"><span class="shop-icon">🐿️</span><span class="shop-name">松鼠仓库</span><span>让两边一样多 <b>↗</b></span></a>
+          <a class="shop-card blue" href="小猫打包屋.html"><span class="shop-icon">🐱</span><span class="shop-name">小猫打包屋</span><span>发现机器的小秘密 <b>↗</b></span></a>
+          <a class="shop-card yellow" href="小熊点心屋.html"><span class="shop-icon">🐻</span><span class="shop-name">小熊点心屋</span><span>送来多少，拿走多少 <b>↗</b></span></a>
+          <a class="shop-card lilac" href="森林小巴.html"><span class="shop-icon">🚌</span><span class="shop-name">森林小巴</span><span>一起出发去森林 <b>↗</b></span></a>
+          <a class="shop-card rose" href="动物野餐.html"><span class="shop-icon">🧺</span><span class="shop-name">动物野餐</span><span>多想几步，准备野餐 <b>↗</b></span></a>
+        </div>
+      </section>
+      <section class="sticker-shelf" aria-labelledby="sticker-title"><div><span class="eyebrow">慢慢收集</span><h2 id="sticker-title">我的动物贴纸</h2></div><div class="stickers" id="stickers" aria-label="完成小店后获得贴纸"></div></section>
+      <details class="parent-note" id="parent-note"><summary>给一起玩的爸爸妈妈</summary><p>先陪他选一家喜欢的小店。没听清时，点信息卡上的小喇叭；不确定怎么算时，再点 💡。可以问：“哪张卡说的是原来有多少？”</p><p>一次玩一关就好，也可以随时停下。贴纸会等他，不用赶时间。</p><p id="storageNote">进度保存在当前浏览器。换设备或清除浏览器数据后，需要重新收集。</p><a href="../index.html" class="quiet-link">回原版数学小课堂 ↗</a></details>
+      <p class="site-footer">今天帮了一点忙，也是一件很棒的事。<span>✿</span></p>
+    </main>
+  </div>
+  <noscript><p class="notice">请开启 JavaScript，才能和动物小伙伴一起玩。</p></noscript>
+</body>
+</html>

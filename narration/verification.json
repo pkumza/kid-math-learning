@@ -1,0 +1,11 @@
+{
+  "clips": 5564,
+  "sentences": 2082,
+  "fragments": 3482,
+  "seconds": 15605,
+  "bytes": 113087700,
+  "voice": "zf_001",
+  "model": "Kokoro-82M-v1.1-zh",
+  "speed": 0.9,
+  "format": "MP3 / 24000 Hz / mono"
+}

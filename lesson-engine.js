@@ -48,16 +48,7 @@
            || zh[0] || null;
   }
   if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; setTimeout(pickVoice,300); setTimeout(pickVoice,1200); }
-  function say(text){
-    if(muted||!text||!('speechSynthesis'in window)) return;
-    try{
-      if(!zhVoice) pickVoice();
-      speechSynthesis.cancel();
-      const u=new SpeechSynthesisUtterance(text+'　。');
-      u.lang='zh-CN'; if(zhVoice) u.voice=zhVoice; u.rate=0.95; u.pitch=1.1;
-      speechSynthesis.speak(u);
-    }catch(e){}
-  }
+  function say(text){ if(!muted && window.LessonNarrator) window.LessonNarrator.say(text); }
 
   function visualHTML(v){
     if(!v) return '';
@@ -149,7 +140,7 @@
       '</div>';
   }
 
-  function show(id,step){
+  function show(id,step){if(window.LessonNarrator)window.LessonNarrator.stop();
     $$('.screen').forEach(s=>s.classList.remove('on'));
     const screen=$('#'+id);
     screen.classList.add('on');
