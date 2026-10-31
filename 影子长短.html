@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>影子长短</title>
+<link rel="stylesheet" href="lab-kit.css">
+<style>
+  #stage { color: #1F2937; }
+  #stage * { box-sizing: border-box; }
+  #stage input { font-family: inherit; touch-action: manipulation; }
+  .scene { width: 100%; height: auto; display: block; border-radius: 20px; background: #E0F2FE; }
+  .pair { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 0; }
+  .chip {
+    flex: 1; min-width: 140px; text-align: center; font-weight: 900; font-size: 1.2rem;
+    background: #fff; border-radius: 16px; padding: 12px 10px; box-shadow: inset 0 0 0 3px #E5E7EB;
+  }
+  .chip.match { box-shadow: inset 0 0 0 3px #16A34A; background: #F0FDF4; color: #166534; }
+  .chip.noon { box-shadow: inset 0 0 0 3px #EA580C; background: #FFF7ED; color: #9A3412; }
+  .goal-line { margin: 8px 0 0; font-weight: 900; color: #166534; font-size: 1.12rem; line-height: 1.45; min-height: 1.4em; white-space: pre-line; }
+  .slabel { display: flex; flex-direction: column; gap: 4px; font-weight: 800; font-size: 1.05rem; margin: 12px 0 0; }
+  .ang { margin: 4px 0 0; text-align: center; font-weight: 900; font-size: 1.35rem; }
+  input[type=range] {
+    -webkit-appearance: none; appearance: none; width: 100%; height: 44px;
+    background: transparent; margin: 0; cursor: pointer;
+  }
+  input[type=range]:focus { outline: none; }
+  input[type=range]:focus-visible { outline: 3px solid #7C3AED; outline-offset: 2px; }
+  input[type=range]::-webkit-slider-runnable-track {
+    height: 14px; border-radius: 999px; background: linear-gradient(90deg, #FB923C, #38BDF8);
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 44px; height: 44px; margin-top: -15px; border-radius: 50%;
+    background: #fff; border: 3px solid #7C3AED; box-shadow: 0 3px 8px rgba(0,0,0,.25); cursor: pointer;
+  }
+  input[type=range]::-moz-range-track {
+    height: 14px; border-radius: 999px; background: linear-gradient(90deg, #FB923C, #38BDF8);
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 44px; height: 44px; border-radius: 50%; background: #fff; border: 3px solid #7C3AED;
+    box-shadow: 0 3px 8px rgba(0,0,0,.25); cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<script src="lab-kit.js"></script>
+<script>
+(function () {
+  var GOALS = ['same', 'noon'];
+  var SAME_LINE = '太阳在半空，影子和棍子一样长。';
+  var NOON_LINE = '太阳在正上方，影子最短。';
+  var W = 660, H = 390, GROUND = 310, STICK_X = 220, STICK_H = 64, SUN_DIST = 180, SUN_R = 26;
+  var slider, scene, lenEl, angEl, msgEl;
+  var said = { same: '', noon: '' };
+
+  function shadowCm(angle) {
+    if (angle >= 90) return 0;
+    var t = Math.tan(angle * Math.PI / 180);
+    if (!(t > 0)) return 0;
+    return 100 / t;
+  }
+  function mix(a, b, t) { return Math.round(a + (b - a) * t); }
+  function hex(rgb) {
+    return '#' + rgb.map(function (v) { return v.toString(16).padStart(2, '0'); }).join('');
+  }
+
+  function mark(id, line) {
+    var newly = Lab.goal(id);
+    if (said[id] !== line) {
+      said[id] = line;
+      Lab.toast(line);
+    }
+    paintMsg();
+    if (!newly) return;
+    var all = GOALS.every(function (k) { return Lab.isGoal(k); });
+    if (!all) Lab.say(line);
+  }
+  function paintMsg() {
+    var bits = [];
+    if (said.same) bits.push(said.same);
+    if (said.noon) bits.push(said.noon);
+    msgEl.textContent = bits.join('\n');
+  }
+
+  function draw() {
+    var angle = Number(slider.value);
+    var cmExact = shadowCm(angle);
+    var cm = Math.round(cmExact);
+    var rad = angle * Math.PI / 180;
+    var topY = GROUND - STICK_H;
+    var sunX = STICK_X - Math.cos(rad) * SUN_DIST;
+    var sunY = topY - Math.sin(rad) * SUN_DIST;
+    var shadowPx = cmExact / 100 * STICK_H;
+    var endX = STICK_X + shadowPx;
+    var t = Math.max(0, Math.min(1, (angle - 10) / 80));
+    var skyTop = hex([mix(251, 56, t), mix(146, 189, t), mix(60, 248, t)]);
+    var skyBot = hex([mix(254, 224, t), mix(230, 242, t), mix(138, 254, t)]);
+    var rays = '';
+    for (var i = 0; i < 8; i++) {
+      var a = i * Math.PI / 4;
+      rays += '<line x1="' + sunX.toFixed(1) + '" y1="' + sunY.toFixed(1)
+        + '" x2="' + (sunX + Math.cos(a) * (SUN_R + 12)).toFixed(1)
+        + '" y2="' + (sunY + Math.sin(a) * (SUN_R + 12)).toFixed(1)
+        + '" stroke="#FDBA74" stroke-width="4" stroke-linecap="round"/>';
+    }
+    var shadow = '';
+    if (shadowPx >= 1) {
+      var rr = Math.min(9, shadowPx / 2);
+      shadow = '<rect x="' + STICK_X + '" y="' + (GROUND - 9) + '" width="' + shadowPx.toFixed(2)
+        + '" height="18" rx="' + rr.toFixed(2) + '" fill="rgba(30,41,59,.42)"/>';
+    }
+    var ar = 42;
+    var ax = STICK_X - Math.cos(rad) * ar;
+    var ay = GROUND - Math.sin(rad) * ar;
+    scene.innerHTML = ''
+      + '<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">'
+      + '<stop offset="0%" stop-color="' + skyTop + '"/><stop offset="100%" stop-color="' + skyBot + '"/>'
+      + '</linearGradient></defs>'
+      + '<rect width="' + W + '" height="' + GROUND + '" fill="url(#sky)"/>'
+      + '<rect y="' + GROUND + '" width="' + W + '" height="' + (H - GROUND) + '" fill="#65A30D"/>'
+      + '<ellipse cx="330" cy="' + GROUND + '" rx="340" ry="18" fill="#4ADE80"/>'
+      + shadow
+      + '<line x1="' + sunX.toFixed(1) + '" y1="' + sunY.toFixed(1) + '" x2="' + endX.toFixed(1) + '" y2="' + GROUND
+      + '" stroke="#FDE68A" stroke-width="3" stroke-dasharray="7 6"/>'
+      + '<rect x="' + (STICK_X - 4) + '" y="' + topY + '" width="8" height="' + STICK_H + '" rx="4" fill="#9A3412"/>'
+      + '<path d="M ' + (STICK_X - ar) + ' ' + GROUND + ' A ' + ar + ' ' + ar + ' 0 0 1 ' + ax.toFixed(1) + ' ' + ay.toFixed(1)
+      + '" fill="none" stroke="#7C3AED" stroke-width="3"/>'
+      + rays
+      + '<circle cx="' + sunX.toFixed(1) + '" cy="' + sunY.toFixed(1) + '" r="' + SUN_R + '" fill="#FBBF24"/>'
+      + '<circle cx="' + (sunX - 8).toFixed(1) + '" cy="' + (sunY - 4).toFixed(1) + '" r="3" fill="#9A3412"/>'
+      + '<circle cx="' + (sunX + 8).toFixed(1) + '" cy="' + (sunY - 4).toFixed(1) + '" r="3" fill="#9A3412"/>'
+      + '<path d="M ' + (sunX - 8).toFixed(1) + ' ' + (sunY + 6).toFixed(1) + ' Q ' + sunX.toFixed(1) + ' ' + (sunY + 14).toFixed(1)
+      + ' ' + (sunX + 8).toFixed(1) + ' ' + (sunY + 6).toFixed(1) + '" fill="none" stroke="#9A3412" stroke-width="2" stroke-linecap="round"/>';
+
+    lenEl.textContent = '影子大约 ' + cm + ' 厘米';
+    lenEl.dataset.cm = String(cm);
+    lenEl.dataset.exact = cmExact.toFixed(2);
+    lenEl.dataset.angle = String(angle);
+    lenEl.className = 'chip' + (cmExact >= 95 && cmExact <= 105 ? ' match' : '') + (angle >= 90 ? ' noon' : '');
+    angEl.textContent = '太阳高度 ' + angle + '°';
+    slider.setAttribute('aria-valuetext', angle + '度，影子大约 ' + cm + ' 厘米');
+
+    if (cmExact >= 95 && cmExact <= 105) mark('same', SAME_LINE);
+    if (angle >= 90) mark('noon', NOON_LINE);
+  }
+
+  function resetPlay() {
+    if (!slider) return;
+    said.same = '';
+    said.noon = '';
+    msgEl.textContent = '';
+    slider.value = '25';
+    draw();
+  }
+
+  Lab.mount({
+    id: 'lab-shadow',
+    title: '影子长短',
+    emoji: '🌅',
+    lead: '太阳低一点，影子就拉长。',
+    parent: '<p>棍子长 100 厘米，竖直立在地上。影长 = 棍长 ÷ tan(太阳高度角)。角度要先换成弧度，再算正切。</p>'
+      + '<p>高度角 45° 时，tan 是 1，影长 = 100 厘米，和棍子一样长。</p>'
+      + '<p>高度角 90° 时太阳在正上方，影子长度是 0。这时不要用 100 去除以 0，直接当作 0。</p>'
+      + '<p>太阳越低，影子越长。10° 时影长大约是 567 厘米。</p>',
+    goals: [
+      { id: 'same', text: '让影子和棍子一样长' },
+      { id: 'noon', text: '找到影子最短的时候' }
+    ],
+    hints: [
+      { id: 'h1', text: '影子和棍子一样长时，太阳在半空，大约 45 度。' },
+      { id: 'h2', text: '把太阳升到最高，影子就最短。' }
+    ],
+    onReset: resetPlay
+  });
+
+  var stage = document.getElementById('stage');
+  stage.innerHTML = ''
+    + '<svg id="scene" class="scene" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="太阳、棍子和影子"></svg>'
+    + '<div class="pair">'
+    + '<span class="chip">棍子 100 厘米</span>'
+    + '<span class="chip" id="len"></span>'
+    + '</div>'
+    + '<p class="goal-line" id="shadow-msg"></p>'
+    + '<label class="slabel">太阳高度'
+    + '<input id="alt" type="range" min="10" max="90" step="1" value="25" aria-label="太阳高度角">'
+    + '</label>'
+    + '<p class="ang" id="ang"></p>';
+
+  slider = document.getElementById('alt');
+  scene = document.getElementById('scene');
+  lenEl = document.getElementById('len');
+  angEl = document.getElementById('ang');
+  msgEl = document.getElementById('shadow-msg');
+  slider.addEventListener('input', draw);
+  draw();
+})();
+</script>
+</body>
+</html>

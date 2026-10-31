@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>太阳系比例尺</title>
+<link rel="stylesheet" href="lab-kit.css">
+<style>
+  #stage { color: #1F2937; }
+  #stage * { box-sizing: border-box; }
+  #stage button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
+  #stage button:focus-visible { outline: 3px solid #7C3AED; outline-offset: 2px; }
+  .modes { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 12px; }
+  .modes button {
+    flex: 1; min-width: 140px; min-height: 48px; border: none; border-radius: 16px;
+    font-size: 1.15rem; font-weight: 800; padding: 10px 14px;
+  }
+  #stage .modes button[aria-pressed="true"] { background: #16A34A; color: #fff; }
+  #stage .modes button[aria-pressed="false"] {
+    background: #fff; color: #1F2937; box-shadow: inset 0 0 0 3px #E5E7EB;
+  }
+  .modes button:active { transform: scale(.98); }
+  .hint-line { margin: 0 0 10px; font-weight: 800; color: #6B7280; }
+  .size-layout { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
+  .sun-col { flex: 0 0 auto; }
+  .sun-btn {
+    display: block; border: 4px solid transparent; background: transparent; padding: 0;
+    border-radius: 24px; min-width: 48px; min-height: 48px;
+  }
+  .sun-btn svg { display: block; width: 200px; height: 200px; }
+  .sun-btn .sun-name { display: block; text-align: center; font-weight: 900; font-size: 1.15rem; margin-top: 4px; }
+  .sun-btn[aria-pressed="true"] { border-color: #7C3AED; }
+  .scale-tip { margin: 8px 0 0; font-weight: 800; color: #92400E; max-width: 220px; }
+  .planet-col { flex: 1 1 200px; min-width: 180px; }
+  .prow { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+  .dot-slot {
+    width: 44px; height: 44px; flex: 0 0 44px; display: grid; place-items: center;
+    border-radius: 12px;
+  }
+  .prow.on .dot-slot { box-shadow: inset 0 0 0 3px #7C3AED; }
+  .dot-slot svg { width: 44px; height: 44px; overflow: visible; }
+  .name-btn {
+    flex: 1; min-height: 48px; min-width: 72px; border-radius: 14px; border: 3px solid #E5E7EB;
+    background: #fff; font-weight: 800; font-size: 1.08rem; padding: 8px 12px;
+  }
+  .name-btn[aria-pressed="true"] { border-color: #7C3AED; background: #F5F3FF; }
+  .name-btn:active { transform: scale(.98); }
+  .lens { flex: 0 1 230px; width: min(100%, 230px); }
+  .lens-title { margin: 0 0 4px; font-weight: 900; font-size: 1.15rem; text-align: center; }
+  .lens svg { width: 100%; height: auto; display: block; }
+  .lens-note { margin: 4px 0 0; text-align: center; color: #6B7280; font-weight: 700; font-size: .95rem; }
+  .feedback { margin: 8px 0 0; text-align: center; font-weight: 900; font-size: 1.15rem; line-height: 1.45; min-height: 1.45em; }
+  .feedback.soft { color: #6B7280; font-weight: 800; }
+  .feedback.bad { color: #C2410C; }
+  .feedback.good { color: #166534; }
+  .sun-fact { margin: 6px 0 0; text-align: center; font-weight: 900; font-size: 1.12rem; color: #166534; line-height: 1.45; }
+  .banner {
+    background: #FEF3C7; color: #92400E; font-weight: 800; border-radius: 14px;
+    padding: 10px 12px; margin: 0 0 10px; line-height: 1.45;
+  }
+  .slabel { display: flex; flex-direction: column; gap: 4px; font-weight: 800; font-size: 1.05rem; margin: 8px 0; }
+  input[type=range] {
+    -webkit-appearance: none; appearance: none; width: 100%; height: 44px;
+    background: transparent; margin: 0; touch-action: manipulation;
+  }
+  input[type=range]:focus { outline: none; }
+  input[type=range]:focus-visible { outline: 3px solid #7C3AED; outline-offset: 2px; }
+  input[type=range]::-webkit-slider-runnable-track {
+    height: 14px; border-radius: 999px; background: linear-gradient(90deg, #FDE68A, #60A5FA);
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 44px; height: 44px; margin-top: -15px; border-radius: 50%;
+    background: #fff; border: 3px solid #7C3AED; box-shadow: 0 3px 8px rgba(0,0,0,.25); cursor: pointer;
+  }
+  input[type=range]::-moz-range-track {
+    height: 14px; border-radius: 999px; background: linear-gradient(90deg, #FDE68A, #60A5FA);
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 44px; height: 44px; border-radius: 50%; background: #fff; border: 3px solid #7C3AED;
+    box-shadow: 0 3px 8px rgba(0,0,0,.25); cursor: pointer;
+  }
+  .orbit-scroll {
+    width: 100%; max-width: 540px; overflow-x: auto; overflow-y: hidden;
+    border-radius: 18px; background: #0B1026; -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
+  }
+  .orbit-track { position: relative; height: 320px; }
+  .orbit-line {
+    position: absolute; height: 3px; border-radius: 99px; background: rgba(255,255,255,.4);
+  }
+  .sun-mark { position: absolute; width: 0; height: 0; }
+  .sun-glow {
+    position: absolute; left: 0; top: 0; width: 20px; height: 20px; border-radius: 50%;
+    background: radial-gradient(circle, #FEF9C3 0%, #F59E0B 55%, #EA580C 100%);
+    transform: translate(-50%, -50%);
+  }
+  .sun-tag {
+    position: absolute; left: 0; top: -34px; transform: translate(-50%, -100%);
+    color: #FDE68A; font-weight: 900; font-size: 1rem; white-space: nowrap;
+  }
+  .anchor { position: absolute; top: 0; width: 0; height: 0; }
+  .far-btn {
+    position: absolute; transform: translateX(-50%); height: 48px; min-height: 48px; min-width: 64px;
+    padding: 0 12px; border-radius: 999px; border: 3px solid transparent; background: #fff;
+    color: #1F2937; font-weight: 800; font-size: 1.05rem; white-space: nowrap; z-index: 2;
+  }
+  .far-btn[aria-pressed="true"] { border-color: #FDE68A; background: #FEF3C7; }
+  .far-btn:active { filter: brightness(.95); }
+  .far-dot {
+    position: absolute; width: 14px; height: 14px; border-radius: 50%; background: #F8FAFC;
+    transform: translate(-50%, -50%); box-shadow: 0 0 0 2px rgba(255,255,255,.35); z-index: 1;
+  }
+  .anchor:focus-within .far-dot { box-shadow: 0 0 0 4px #FDE68A; }
+  .far-msg { margin: 8px 0 0; font-weight: 900; font-size: 1.15rem; color: #166534; min-height: 1.4em; }
+</style>
+</head>
+<body>
+<script src="lab-kit.js"></script>
+<script>
+(function () {
+  var SUN_D = 1392700;
+  var SUN_PX = 200;
+  var FACT = '太阳的直径大约是地球的 109 倍。';
+  var BIG_LINE = '木星是最大的行星。';
+  var MISS = '再比比圆圈。';
+  var FAR_LINE = '海王星大约是日地距离的 30 倍。';
+  var PROMPT = '点一个名字，放大来看。';
+  var GOALS = ['big', 'sun', 'far'];
+  var PLANETS = [
+    { id: 'mercury', name: '水星', d: 4879, au: 0.39, color: '#9CA3AF' },
+    { id: 'venus', name: '金星', d: 12104, au: 0.72, color: '#EAB308' },
+    { id: 'earth', name: '地球', d: 12742, au: 1, color: '#2563EB' },
+    { id: 'mars', name: '火星', d: 6779, au: 1.52, color: '#DC2626' },
+    { id: 'jupiter', name: '木星', d: 139820, au: 5.2, color: '#F97316' },
+    { id: 'saturn', name: '土星', d: 116460, au: 9.6, color: '#FBBF24' },
+    { id: 'uranus', name: '天王星', d: 50724, au: 19.2, color: '#22D3EE' },
+    { id: 'neptune', name: '海王星', d: 49244, au: 30.1, color: '#4F46E5' }
+  ];
+  var LANE_TOP = [8, 62, 196, 250];
+  var LINE_Y = 168;
+  var SUN_X = 48;
+  var AU_PX = 40;
+  var JUP_PX = 139820 / SUN_D * SUN_PX;
+  var LENS_ZOOM = 136 / JUP_PX;
+  var selected = null;
+  var revealed = false;
+  var latest = PROMPT;
+  var latestKind = 'soft';
+  var pendingScrollReset = true;
+
+  function diamPx(d) { return d / SUN_D * SUN_PX; }
+
+  function speakUnlessWin(newly, line) {
+    var all = GOALS.every(function (id) { return Lab.isGoal(id); });
+    if (newly && all) return;
+    Lab.say(line);
+  }
+
+  function resetPlay() {
+    selected = null;
+    revealed = false;
+    latest = PROMPT;
+    latestKind = 'soft';
+    pendingScrollReset = true;
+    var fact = document.getElementById('sun-fact');
+    var farMsg = document.getElementById('far-msg');
+    var scroller = document.getElementById('orbit-scroll');
+    var pan = document.getElementById('pan');
+    if (!fact || !scroller) return;
+    fact.hidden = true;
+    fact.textContent = '';
+    farMsg.textContent = '';
+    Array.prototype.forEach.call(document.querySelectorAll('.far-btn'), function (b) {
+      b.setAttribute('aria-pressed', 'false');
+    });
+    scroller.scrollLeft = 0;
+    pan.value = '0';
+    paintSelection();
+    drawLens();
+    renderText();
+    setMode('size', true);
+  }
+
+  Lab.mount({
+    id: 'lab-solar',
+    title: '太阳系比例尺',
+    emoji: '☀️',
+    lead: '大小用一把尺，距离用另一把尺。',
+    parent: '<p>直径（千米）：太阳 1392700，水星 4879，金星 12104，地球 12742，火星 6779，木星 139820，土星 116460，天王星 50724，海王星 49244。</p>'
+      + '<p>到太阳的距离，把日地距离当作 1：水星 0.39，金星 0.72，地球 1，火星 1.52，木星 5.2，土星 9.6，天王星 19.2，海王星 30.1。</p>'
+      + '<p>太阳的直径大约是地球的 109 倍（1392700 ÷ 12742 ≈ 109）。木星大约是地球的 11 倍（139820 ÷ 12742 ≈ 11），它是最大的行星。</p>'
+      + '<p>为什么大小、距离要分开画？行星之间直径最多差几十倍，海王星却大约是日地距离的 30 倍。日地距离又是地球直径的一万多倍。用同一把尺，要么行星小到看不见，要么距离长出屏幕。所以大小用一把尺，距离用另一把尺。</p>',
+    goals: [
+      { id: 'big', text: '找出最大的行星' },
+      { id: 'sun', text: '看看太阳是地球的多少倍' },
+      { id: 'far', text: '看看海王星有多远' }
+    ],
+    hints: [
+      { id: 'h1', text: '比比行星的圆，不要把太阳算进去。' },
+      { id: 'h2', text: '点一点地球，看它和太阳差多少。' },
+      { id: 'h3', text: '往右滑，最远的那颗就是海王星。' }
+    ],
+    onReset: resetPlay
+  });
+
+  var stage = document.getElementById('stage');
+  stage.innerHTML = ''
+    + '<div class="modes">'
+    + '<button type="button" class="lab-btn" id="mode-size" aria-pressed="true">谁更大</button>'
+    + '<button type="button" class="lab-btn" id="mode-far" aria-pressed="false">谁更远</button>'
+    + '</div>'
+    + '<div id="panel-size">'
+    + '<p class="hint-line">点名字，比比圆圈。</p>'
+    + '<div class="size-layout">'
+    + '<div class="sun-col">'
+    + '<button type="button" class="sun-btn" id="btn-sun" data-pick="sun" aria-pressed="false" aria-label="太阳">'
+    + '<svg viewBox="0 0 200 200" aria-hidden="true">'
+    + '<defs><radialGradient id="sunDisk" cx="38%" cy="36%">'
+    + '<stop offset="0%" stop-color="#FEF9C3"/><stop offset="55%" stop-color="#FBBF24"/><stop offset="100%" stop-color="#EA580C"/>'
+    + '</radialGradient></defs>'
+    + '<circle cx="100" cy="100" r="100" fill="url(#sunDisk)"/>'
+    + '</svg><span class="sun-name">太阳</span></button>'
+    + '<p class="scale-tip">这些圆和太阳用同一把尺。</p>'
+    + '</div>'
+    + '<div class="planet-col" id="planet-col"></div>'
+    + '<div class="lens">'
+    + '<p class="lens-title">放大镜</p>'
+    + '<svg viewBox="0 0 210 230" aria-hidden="true">'
+    + '<defs><radialGradient id="lensSun" cx="38%" cy="36%">'
+    + '<stop offset="0%" stop-color="#FEF9C3"/><stop offset="60%" stop-color="#FBBF24"/><stop offset="100%" stop-color="#EA580C"/>'
+    + '</radialGradient><clipPath id="glassClip"><circle cx="92" cy="92" r="76"/></clipPath></defs>'
+    + '<circle cx="92" cy="92" r="76" fill="#F8FAFC"/>'
+    + '<g id="lens-g" clip-path="url(#glassClip)"></g>'
+    + '<circle cx="92" cy="92" r="76" fill="none" stroke="#1F2937" stroke-width="8"/>'
+    + '<line x1="150" y1="150" x2="196" y2="204" stroke="#1F2937" stroke-width="12" stroke-linecap="round"/>'
+    + '</svg>'
+    + '<p class="lens-note">放大镜只是拉近，不改大小。</p>'
+    + '<p class="feedback soft" id="feedback"></p>'
+    + '<p class="sun-fact" id="sun-fact" hidden></p>'
+    + '</div></div></div>'
+    + '<div id="panel-far" hidden>'
+    + '<p class="banner">这里只比距离，圆点不是真实大小。</p>'
+    + '<label class="slabel">往右看'
+    + '<input id="pan" type="range" min="0" max="1000" step="1" value="0" aria-label="往右看">'
+    + '</label>'
+    + '<div class="orbit-scroll" id="orbit-scroll"><div class="orbit-track" id="orbit-track"></div></div>'
+    + '<p class="far-msg" id="far-msg"></p>'
+    + '</div>';
+
+  function bodyGraphic(p, r, cx, cy, key, lens) {
+    var clip = 'clip-' + key + '-' + p.id;
+    var ring = '';
+    if (p.id === 'saturn' && r > 2) {
+      ring = '<ellipse cx="' + cx + '" cy="' + cy + '" rx="' + (r * 1.12).toFixed(2)
+        + '" ry="' + (r * 0.42).toFixed(2) + '" fill="none" stroke="#D97706" stroke-width="'
+        + Math.max(1.2, r * 0.1).toFixed(2) + '"/>';
+    }
+    var bands = '';
+    if (p.id === 'jupiter' && r > 8) {
+      bands = '<rect x="' + (cx - r) + '" y="' + (cy - r * 0.22) + '" width="' + (r * 2)
+        + '" height="' + (r * 0.16) + '" fill="#C2410C"/>'
+        + '<rect x="' + (cx - r) + '" y="' + (cy + r * 0.18) + '" width="' + (r * 2)
+        + '" height="' + (r * 0.12) + '" fill="#FDE68A"/>';
+    }
+    var outline = (lens && r < 18)
+      ? '<circle cx="' + cx + '" cy="' + cy + '" r="' + r.toFixed(2) + '" fill="none" stroke="#1F2937" stroke-width="2"/>'
+      : '';
+    return '<defs><clipPath id="' + clip + '"><circle cx="' + cx + '" cy="' + cy + '" r="' + r.toFixed(2) + '"/></clipPath></defs>'
+      + ring
+      + '<g clip-path="url(#' + clip + ')">'
+      + '<circle cx="' + cx + '" cy="' + cy + '" r="' + r.toFixed(2) + '" fill="' + p.color + '"/>'
+      + bands
+      + '</g>' + outline;
+  }
+
+  var col = document.getElementById('planet-col');
+  PLANETS.forEach(function (p) {
+    var r = diamPx(p.d) / 2;
+    var row = document.createElement('div');
+    row.className = 'prow';
+    row.dataset.body = p.id;
+    var slot = document.createElement('div');
+    slot.className = 'dot-slot';
+    slot.dataset.px = diamPx(p.d).toFixed(2);
+    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '-22 -22 44 44');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.innerHTML = bodyGraphic(p, r, 0, 0, 'main', false);
+    slot.appendChild(svg);
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'name-btn';
+    btn.dataset.pick = p.id;
+    btn.textContent = p.name;
+    btn.setAttribute('aria-pressed', 'false');
+    row.appendChild(slot);
+    row.appendChild(btn);
+    col.appendChild(row);
+  });
+
+  function drawLens() {
+    var g = document.getElementById('lens-g');
+    if (!selected) { g.innerHTML = ''; return; }
+    if (selected === 'sun') {
+      g.innerHTML = '<circle cx="92" cy="92" r="68" fill="url(#lensSun)"/>';
+      return;
+    }
+    var p = PLANETS.filter(function (x) { return x.id === selected; })[0];
+    var r = diamPx(p.d) * LENS_ZOOM / 2;
+    g.innerHTML = bodyGraphic(p, r, 92, 92, 'lens', true);
+  }
+
+  function renderText() {
+    var feedback = document.getElementById('feedback');
+    var fact = document.getElementById('sun-fact');
+    feedback.className = 'feedback ' + latestKind;
+    feedback.textContent = latest;
+    var showFact = revealed && latest !== FACT;
+    fact.hidden = !showFact;
+    fact.textContent = showFact ? FACT : '';
+  }
+
+  function paintSelection() {
+    document.getElementById('btn-sun').setAttribute('aria-pressed', selected === 'sun' ? 'true' : 'false');
+    Array.prototype.forEach.call(document.querySelectorAll('.prow'), function (row) {
+      var on = row.dataset.body === selected;
+      row.classList.toggle('on', on);
+      row.querySelector('.name-btn').setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+
+  function selectBody(id) {
+    selected = id;
+    paintSelection();
+    drawLens();
+    if (id === 'jupiter') {
+      latest = BIG_LINE;
+      latestKind = 'good';
+      renderText();
+      var newlyBig = Lab.goal('big');
+      Lab.toast(BIG_LINE);
+      speakUnlessWin(newlyBig, BIG_LINE);
+      return;
+    }
+    if (id === 'earth' || id === 'sun') {
+      revealed = true;
+      latest = FACT;
+      latestKind = 'good';
+      renderText();
+      var newlySun = Lab.goal('sun');
+      Lab.toast(FACT);
+      speakUnlessWin(newlySun, FACT);
+      return;
+    }
+    latest = MISS;
+    latestKind = 'bad';
+    renderText();
+    Lab.bad();
+    Lab.toast(MISS);
+    Lab.say(MISS);
+  }
+
+  stage.addEventListener('click', function (e) {
+    var pick = e.target.closest('[data-pick]');
+    if (!pick || document.getElementById('panel-size').hidden) return;
+    selectBody(pick.dataset.pick);
+  });
+
+  var track = document.getElementById('orbit-track');
+  track.style.width = '1420px';
+  var line = document.createElement('div');
+  line.className = 'orbit-line';
+  line.style.left = SUN_X + 'px';
+  line.style.top = (LINE_Y - 1) + 'px';
+  line.style.width = (30.1 * AU_PX + 36) + 'px';
+  track.appendChild(line);
+
+  var sunMark = document.createElement('div');
+  sunMark.className = 'sun-mark';
+  sunMark.style.left = SUN_X + 'px';
+  sunMark.style.top = LINE_Y + 'px';
+  var glow = document.createElement('div');
+  glow.className = 'sun-glow';
+  var tag = document.createElement('div');
+  tag.className = 'sun-tag';
+  tag.textContent = '太阳';
+  tag.style.top = '-36px';
+  sunMark.appendChild(glow);
+  sunMark.appendChild(tag);
+  track.appendChild(sunMark);
+
+  var farBtns = {};
+  PLANETS.forEach(function (p, i) {
+    var x = SUN_X + p.au * AU_PX;
+    var anchor = document.createElement('div');
+    anchor.className = 'anchor';
+    anchor.style.left = x + 'px';
+    anchor.style.top = '0';
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'far-btn';
+    btn.textContent = p.name;
+    btn.style.top = LANE_TOP[i % 4] + 'px';
+    btn.dataset.far = p.id;
+    btn.dataset.x = x.toFixed(1);
+    btn.setAttribute('aria-pressed', 'false');
+    var dot = document.createElement('div');
+    dot.className = 'far-dot';
+    dot.style.top = LINE_Y + 'px';
+    anchor.appendChild(btn);
+    anchor.appendChild(dot);
+    track.appendChild(anchor);
+    farBtns[p.id] = btn;
+  });
+
+  function mostlyVisible(el, scroller) {
+    var er = el.getBoundingClientRect();
+    var sr = scroller.getBoundingClientRect();
+    if (er.width < 2 || sr.width < 2) return false;
+    var overlap = Math.min(er.right, sr.right) - Math.max(er.left, sr.left);
+    return overlap >= er.width * 0.6;
+  }
+
+  track.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-far]');
+    if (!btn) return;
+    Array.prototype.forEach.call(track.querySelectorAll('.far-btn'), function (b) {
+      b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+    });
+    if (btn.dataset.far !== 'neptune') {
+      Lab.click();
+      return;
+    }
+    var scroller = document.getElementById('orbit-scroll');
+    if (!mostlyVisible(btn, scroller)) {
+      Lab.bad();
+      Lab.toast('再往右滑一点。');
+      Lab.say('再往右滑一点。');
+      return;
+    }
+    document.getElementById('far-msg').textContent = FAR_LINE;
+    var newlyFar = Lab.goal('far');
+    Lab.toast(FAR_LINE);
+    speakUnlessWin(newlyFar, FAR_LINE);
+  });
+
+  var scroller = document.getElementById('orbit-scroll');
+  var pan = document.getElementById('pan');
+  function maxScroll() {
+    return Math.max(0, scroller.scrollWidth - scroller.clientWidth);
+  }
+  pan.addEventListener('input', function () {
+    scroller.scrollLeft = maxScroll() * (Number(pan.value) / 1000);
+  });
+  scroller.addEventListener('scroll', function () {
+    var m = maxScroll();
+    pan.value = m <= 0 ? '0' : String(Math.round(scroller.scrollLeft / m * 1000));
+  });
+
+  function setMode(mode, silent) {
+    var sizeOn = mode === 'size';
+    document.getElementById('panel-size').hidden = !sizeOn;
+    document.getElementById('panel-far').hidden = sizeOn;
+    document.getElementById('mode-size').setAttribute('aria-pressed', sizeOn ? 'true' : 'false');
+    document.getElementById('mode-far').setAttribute('aria-pressed', sizeOn ? 'false' : 'true');
+    if (!silent) Lab.click();
+    if (!sizeOn && pendingScrollReset) {
+      pendingScrollReset = false;
+      requestAnimationFrame(function () {
+        scroller.scrollLeft = 0;
+        pan.value = '0';
+      });
+    }
+  }
+
+  document.getElementById('mode-size').addEventListener('click', function () { setMode('size'); });
+  document.getElementById('mode-far').addEventListener('click', function () { setMode('far'); });
+
+  renderText();
+  drawLens();
+  setMode('size', true);
+})();
+</script>
+</body>
+</html>

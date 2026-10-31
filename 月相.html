@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>月相</title>
+<link rel="stylesheet" href="lab-kit.css">
+<style>
+  #stage { color: #1F2937; }
+  #stage * { box-sizing: border-box; }
+  #stage button, #stage input { font-family: inherit; touch-action: manipulation; }
+  .moon-grid {
+    display: grid; grid-template-columns: minmax(0, 1fr) 210px; gap: 10px; align-items: start;
+  }
+  @media (max-width: 700px) {
+    .moon-grid { grid-template-columns: 1fr; }
+    .big-card { order: -1; justify-self: end; }
+  }
+  .orbit-svg { width: 100%; height: auto; display: block; border-radius: 20px; touch-action: none; background: #0B1026; }
+  .orbit-svg text { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; }
+  .big-card { width: 210px; text-align: center; }
+  .big-card svg { width: 200px; height: 200px; display: block; margin: 0 auto; }
+  .seen { margin: 6px 0 0; font-weight: 900; font-size: 1.02rem; line-height: 1.4; }
+  .phase { margin: 4px 0 0; font-weight: 900; font-size: 1.7rem; min-height: 1.3em; }
+  .side { margin: 2px 0 0; font-weight: 800; color: #6B7280; min-height: 1.3em; }
+  .goal-line { margin: 6px 0 0; font-weight: 900; color: #166534; line-height: 1.45; min-height: 1.4em; }
+  .drag-tip { margin: 10px 0 0; font-weight: 800; color: #6B7280; }
+  .slabel { display: flex; flex-direction: column; gap: 4px; font-weight: 800; font-size: 1.05rem; margin: 8px 0 0; }
+  .deg { margin: 4px 0 0; font-weight: 900; font-size: 1.2rem; text-align: center; }
+  input[type=range] {
+    -webkit-appearance: none; appearance: none; width: 100%; height: 44px;
+    background: transparent; margin: 0; cursor: pointer;
+  }
+  input[type=range]:focus { outline: none; }
+  input[type=range]:focus-visible { outline: 3px solid #7C3AED; outline-offset: 2px; }
+  input[type=range]::-webkit-slider-runnable-track {
+    height: 14px; border-radius: 999px; background: linear-gradient(90deg, #1E293B, #FDE68A, #1E293B);
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 44px; height: 44px; margin-top: -15px; border-radius: 50%;
+    background: #fff; border: 3px solid #7C3AED; box-shadow: 0 3px 8px rgba(0,0,0,.25); cursor: pointer;
+  }
+  input[type=range]::-moz-range-track {
+    height: 14px; border-radius: 999px; background: linear-gradient(90deg, #1E293B, #FDE68A, #1E293B);
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 44px; height: 44px; border-radius: 50%; background: #fff; border: 3px solid #7C3AED;
+    box-shadow: 0 3px 8px rgba(0,0,0,.25); cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<script src="lab-kit.js"></script>
+<script>
+(function () {
+  /* 北半球，不要改左右：
+     太阳在左，光从左往右。
+     0° 月亮在地球左侧（太阳和地球中间），逆时针：90° 在上，180° 在右，270° 在下。
+     0–180 渐盈，大月亮亮边在右；180–360 渐亏，亮边在左。
+     上弦 90° 右半亮，下弦 270° 左半亮。
+     轨道上的小月亮始终左半边亮（朝向左边的太阳）。 */
+  var EARTH_X = 268, EARTH_Y = 230, ORBIT_R = 120, MOON_R = 22;
+  var GOALS = ['new', 'full', 'half'];
+  var LINES = {
+    new: '月亮跑到太阳这一边，就是新月。',
+    full: '月亮跑到太阳对面，就是满月。',
+    half: '右边亮一半，是上弦月。'
+  };
+  var angle = 40;
+  var dragging = false;
+  var svg, slider, phaseEl, sideEl, msgEl, lit, big;
+
+  function norm(d) { return ((d % 360) + 360) % 360; }
+  function angDist(a, target) {
+    var d = Math.abs(norm(a) - target);
+    if (d > 180) d = 360 - d;
+    return d;
+  }
+  function phaseName(deg) {
+    var a = norm(deg);
+    if (angDist(a, 0) <= 25) return '新月';
+    if (angDist(a, 90) <= 25) return '上弦月';
+    if (angDist(a, 180) <= 25) return '满月';
+    if (angDist(a, 270) <= 25) return '下弦月';
+    if (a > 25 && a < 65) return '蛾眉月';
+    if (a > 115 && a < 155) return '盈凸月';
+    if (a > 205 && a < 245) return '亏凸月';
+    return '残月';
+  }
+  function sideText(deg) {
+    var a = norm(deg);
+    var b = (1 - Math.cos(a * Math.PI / 180)) / 2;
+    if (b < 0.08) return '几乎全黑';
+    if (b > 0.92) return '整个都亮';
+    if (a < 180) return '亮边在右边';
+    return '亮边在左边';
+  }
+
+  /* 亮区用折线围出来，避免椭圆弧在 180° 时左右画反。 */
+  function litPoints(cx, cy, r, deg) {
+    var a = norm(deg);
+    if (a < 0.2 || a > 359.8) return [];
+    var rx = Math.abs(Math.cos(a * Math.PI / 180)) * r;
+    var N = 64;
+    var pts = [];
+    var i, t, sign;
+    if (a <= 180) {
+      for (i = 0; i <= N; i++) {
+        t = Math.PI * i / N;
+        pts.push([cx + r * Math.sin(t), cy - r * Math.cos(t)]);
+      }
+      sign = a <= 90 ? 1 : -1;
+      for (i = N; i >= 0; i--) {
+        t = Math.PI * i / N;
+        pts.push([cx + sign * rx * Math.sin(t), cy - r * Math.cos(t)]);
+      }
+    } else {
+      for (i = 0; i <= N; i++) {
+        t = Math.PI * i / N;
+        pts.push([cx - r * Math.sin(t), cy - r * Math.cos(t)]);
+      }
+      sign = a <= 270 ? 1 : -1;
+      for (i = N; i >= 0; i--) {
+        t = Math.PI * i / N;
+        pts.push([cx + sign * rx * Math.sin(t), cy - r * Math.cos(t)]);
+      }
+    }
+    return pts;
+  }
+  function pathFrom(pts) {
+    if (!pts.length) return '';
+    var d = 'M ' + pts[0][0].toFixed(2) + ' ' + pts[0][1].toFixed(2);
+    for (var i = 1; i < pts.length; i++) d += ' L ' + pts[i][0].toFixed(2) + ' ' + pts[i][1].toFixed(2);
+    return d + ' Z';
+  }
+
+  function mark(id) {
+    var line = LINES[id];
+    var newly = Lab.goal(id);
+    if (msgEl.textContent !== line) {
+      msgEl.textContent = line;
+      Lab.toast(line);
+    }
+    if (!newly) return;
+    var all = GOALS.every(function (k) { return Lab.isGoal(k); });
+    if (!all) Lab.say(line);
+  }
+
+  function checkGoals(deg) {
+    if (angDist(deg, 0) <= 25) mark('new');
+    if (angDist(deg, 180) <= 25) mark('full');
+    if (angDist(deg, 90) <= 25) mark('half');
+  }
+
+  function draw() {
+    var rad = angle * Math.PI / 180;
+    var x = EARTH_X - ORBIT_R * Math.cos(rad);
+    var y = EARTH_Y - ORBIT_R * Math.sin(rad);
+    var mini = document.getElementById('mini');
+    if (mini) mini.setAttribute('transform', 'translate(' + x.toFixed(2) + ' ' + y.toFixed(2) + ')');
+    var cx = 100, cy = 100, r = 72;
+    var pts = litPoints(cx, cy, r, angle);
+    lit.setAttribute('d', pathFrom(pts));
+    var minX = Infinity, maxX = -Infinity;
+    pts.forEach(function (p) { minX = Math.min(minX, p[0]); maxX = Math.max(maxX, p[0]); });
+    var right = pts.length && maxX > cx + r * 0.92;
+    var left = pts.length && minX < cx - r * 0.92;
+    big.dataset.right = right ? '1' : '0';
+    big.dataset.left = left ? '1' : '0';
+    big.dataset.angle = String(angle);
+    var name = phaseName(angle);
+    var side = sideText(angle);
+    phaseEl.textContent = name;
+    sideEl.textContent = side;
+    phaseEl.dataset.phase = name;
+    big.setAttribute('aria-label', '从地球看到的月亮，现在是' + name + '，' + side);
+    slider.value = String(angle);
+    slider.setAttribute('aria-valuetext', angle + '度，' + name);
+    document.getElementById('deg').textContent = angle + '°  ' + name;
+  }
+
+  function setAngle(next) {
+    var a = Math.round(Number(next));
+    if (isNaN(a)) a = 40;
+    if (a < 0) a = 0;
+    if (a > 360) a = 360;
+    angle = a;
+    draw();
+    checkGoals(a);
+  }
+
+  function angleFromEvent(e) {
+    var pt = svg.createSVGPoint();
+    pt.x = e.clientX;
+    pt.y = e.clientY;
+    var m = svg.getScreenCTM();
+    if (!m) return null;
+    var p = pt.matrixTransform(m.inverse());
+    var dx = p.x - EARTH_X;
+    var dy = p.y - EARTH_Y;
+    if (dx * dx + dy * dy < 36) return null;
+    var deg = Math.atan2(-dy, -dx) * 180 / Math.PI;
+    if (deg < 0) deg += 360;
+    return deg;
+  }
+
+  function resetPlay() {
+    if (!slider) return;
+    if (msgEl) msgEl.textContent = '';
+    setAngle(40);
+  }
+
+  Lab.mount({
+    id: 'lab-moon',
+    title: '月相',
+    emoji: '🌙',
+    lead: '拖着月亮绕地球走，看它怎么亮。',
+    parent: '<p>太阳在画面左边，光从左照到右。角度从地球左侧算起，逆时针增加：0° 月亮在太阳和地球中间，是新月；90° 在地球上方，是上弦月；180° 在地球右侧、太阳对面，是满月；270° 在地球下方，是下弦月。</p>'
+      + '<p>北半球看月亮：0° 到 180° 是渐盈，亮的一边在右边。上弦月（90°）右半边亮。180° 到 360° 是渐亏，亮的一边在左边。下弦月（270°）左半边亮。</p>'
+      + '<p>亮度用 (1 − cos 角度) / 2，角度要先换成弧度。新月是 0，满月是 1，上弦和下弦大约一半。</p>'
+      + '<p>轨道上的小月亮，亮的是朝向太阳的左半边。这不是眼睛里的月相。右上角的大月亮，才是从地球看到的样子。</p>',
+    goals: [
+      { id: 'new', text: '转到新月' },
+      { id: 'full', text: '转到满月' },
+      { id: 'half', text: '转到上弦月' }
+    ],
+    hints: [
+      { id: 'h1', text: '新月时，月亮在太阳和地球中间。' },
+      { id: 'h2', text: '满月时，地球在太阳和月亮中间。' },
+      { id: 'h3', text: '上弦月在圆圈的最上面，右边亮。' }
+    ],
+    onReset: resetPlay
+  });
+
+  var stage = document.getElementById('stage');
+  stage.innerHTML = ''
+    + '<div class="moon-grid">'
+    + '<svg id="orbit" class="orbit-svg" viewBox="0 0 500 460" role="img" aria-label="月亮绕地球的轨道，可以拖动"></svg>'
+    + '<div class="big-card">'
+    + '<svg id="big" viewBox="0 0 200 200" role="img" aria-label="从地球看到的月亮">'
+    + '<defs><clipPath id="moonClip"><circle cx="100" cy="100" r="72"/></clipPath></defs>'
+    + '<circle cx="100" cy="100" r="96" fill="#020617"/>'
+    + '<circle cx="100" cy="100" r="72" fill="#0f172a"/>'
+    + '<path id="lit" fill="#FEF9C3" clip-path="url(#moonClip)"/>'
+    + '<circle cx="100" cy="100" r="72" fill="none" stroke="#E2E8F0" stroke-width="2"/>'
+    + '</svg>'
+    + '<p class="seen">大图是我们看到的月亮</p>'
+    + '<p class="phase" id="phase"></p>'
+    + '<p class="side" id="side"></p>'
+    + '<p class="goal-line" id="moon-msg"></p>'
+    + '</div></div>'
+    + '<p class="drag-tip">按住拖一拖，或拉下面的滑块。</p>'
+    + '<label class="slabel">月亮转到几度'
+    + '<input id="ang" type="range" min="0" max="360" step="1" value="40" aria-label="月亮绕地球的角度">'
+    + '</label>'
+    + '<p class="deg" id="deg"></p>';
+
+  svg = document.getElementById('orbit');
+  slider = document.getElementById('ang');
+  phaseEl = document.getElementById('phase');
+  sideEl = document.getElementById('side');
+  msgEl = document.getElementById('moon-msg');
+  lit = document.getElementById('lit');
+  big = document.getElementById('big');
+
+  var ns = 'http://www.w3.org/2000/svg';
+  function el(name, attrs) {
+    var node = document.createElementNS(ns, name);
+    Object.keys(attrs).forEach(function (k) { node.setAttribute(k, attrs[k]); });
+    return node;
+  }
+  svg.appendChild(el('text', { x: '16', y: '32', fill: '#FDE68A', 'font-size': '16', 'font-weight': '800' })).textContent = '阳光从左边来 →';
+  var orbitRing = el('circle', { cx: EARTH_X, cy: EARTH_Y, r: ORBIT_R, fill: 'none', stroke: 'rgba(255,255,255,.45)', 'stroke-width': '2', 'stroke-dasharray': '6 7' });
+  svg.appendChild(orbitRing);
+  [[70, 70], [420, 60], [450, 300], [40, 360], [200, 40], [380, 400]].forEach(function (s) {
+    svg.appendChild(el('circle', { cx: s[0], cy: s[1], r: '1.6', fill: '#fff' }));
+  });
+  var sun = el('g', {});
+  for (var i = 0; i < 8; i++) {
+    var t = i * Math.PI / 4;
+    sun.appendChild(el('line', {
+      x1: '58', y1: '230',
+      x2: String(58 + Math.cos(t) * 44),
+      y2: String(230 + Math.sin(t) * 44),
+      stroke: '#FDBA74', 'stroke-width': '4', 'stroke-linecap': 'round'
+    }));
+  }
+  sun.appendChild(el('circle', { cx: '58', cy: '230', r: '32', fill: '#FBBF24' }));
+  sun.appendChild(el('circle', { cx: '58', cy: '230', r: '22', fill: '#FDE68A' }));
+  svg.appendChild(sun);
+  svg.appendChild(el('text', { x: '58', y: '286', fill: '#FDE68A', 'font-size': '16', 'font-weight': '800', 'text-anchor': 'middle' })).textContent = '太阳';
+  svg.appendChild(el('circle', { cx: EARTH_X, cy: EARTH_Y, r: '36', fill: '#2563EB' }));
+  svg.appendChild(el('ellipse', { cx: EARTH_X - 8, cy: EARTH_Y - 4, rx: '14', ry: '10', fill: '#22C55E' }));
+  svg.appendChild(el('text', { x: EARTH_X, y: EARTH_Y + 58, fill: '#fff', 'font-size': '16', 'font-weight': '800', 'text-anchor': 'middle' })).textContent = '地球';
+
+  var mini = el('g', { id: 'mini' });
+  var clip = el('clipPath', { id: 'miniClip' });
+  clip.appendChild(el('circle', { r: MOON_R }));
+  var defs = el('defs', {});
+  defs.appendChild(clip);
+  svg.appendChild(defs);
+  var disk = el('g', { 'clip-path': 'url(#miniClip)' });
+  disk.appendChild(el('circle', { r: MOON_R, fill: '#334155' }));
+  disk.appendChild(el('rect', { x: -MOON_R, y: -MOON_R, width: MOON_R, height: MOON_R * 2, fill: '#FEF9C3' }));
+  mini.appendChild(disk);
+  mini.appendChild(el('circle', { r: MOON_R, fill: 'none', stroke: '#fff', 'stroke-width': '2' }));
+  svg.appendChild(mini);
+
+  svg.addEventListener('pointerdown', function (e) {
+    dragging = true;
+    svg.setPointerCapture(e.pointerId);
+    Lab.click();
+    var deg = angleFromEvent(e);
+    if (deg != null) setAngle(deg);
+  });
+  svg.addEventListener('pointermove', function (e) {
+    if (!dragging) return;
+    e.preventDefault();
+    var deg = angleFromEvent(e);
+    if (deg != null) setAngle(deg);
+  }, { passive: false });
+  function endDrag() { dragging = false; }
+  svg.addEventListener('pointerup', endDrag);
+  svg.addEventListener('pointercancel', endDrag);
+  slider.addEventListener('input', function () { setAngle(slider.value); });
+
+  setAngle(40);
+})();
+</script>
+</body>
+</html>
