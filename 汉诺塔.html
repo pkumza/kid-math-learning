@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>汉诺塔</title>
+<link rel="stylesheet" href="lab-kit.css">
+<style>
+  #stage, #stage *{box-sizing:border-box;}
+  #stage button{
+    font:inherit;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    touch-action:manipulation;
+  }
+  #stage .toolbar{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:8px;
+  }
+  #stage .kicker{
+    font-weight:900;
+    font-size:1.05rem;
+  }
+  #stage .toolbar .lab-btn{
+    min-width:52px;
+    min-height:48px;
+    padding:10px 14px;
+  }
+  #stage .toolbar .lab-btn[aria-pressed="true"]{
+    box-shadow:inset 0 0 0 3px #7C3AED;
+  }
+  #stage .reset{margin-left:auto;}
+
+  #stage .status{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:baseline;
+    gap:8px 16px;
+    margin:10px 0 0;
+  }
+  #stage .steps{
+    margin:0;
+    font-size:1.45rem;
+    font-weight:900;
+    font-variant-numeric:tabular-nums;
+  }
+  #stage .best{
+    margin:0;
+    color:#6B7280;
+    font-weight:800;
+  }
+  #stage .help,
+  #stage .banner{
+    margin:6px 0 0;
+    min-height:1.45em;
+    font-weight:800;
+    line-height:1.45;
+  }
+  #stage .help{color:#6B7280; font-weight:700;}
+  #stage .banner.good{color:#15803D;}
+  #stage .banner.bad{color:#B91C1C;}
+  #stage .help[hidden],
+  #stage .banner[hidden],
+  #stage .best[hidden],
+  #stage .ask[hidden],
+  #stage caption.rule-note[hidden]{display:none !important;}
+
+  #stage .layout{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    margin-top:8px;
+  }
+  #stage .board{
+    width:100%;
+    display:flex;
+    gap:8px;
+    touch-action:none;
+    user-select:none;
+    -webkit-user-select:none;
+    -webkit-touch-callout:none;
+  }
+  #stage .peg{
+    flex:1;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
+    touch-action:none;
+  }
+  #stage .peg-name{
+    min-height:44px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:900;
+    font-size:1.08rem;
+  }
+  #stage .peg.start .peg-name{color:#1D4ED8;}
+  #stage .peg.mid .peg-name{color:#4B5563;}
+  #stage .peg.goal .peg-name{color:#C2410C;}
+  #stage .well{
+    position:relative;
+    height:min(340px, 46vh);
+    min-height:320px;
+    border-radius:20px;
+    border:3px solid #E2E8F0;
+    background:linear-gradient(180deg, #F8FAFC, #EEF2FF);
+    touch-action:none;
+  }
+  #stage .peg.goal .well{
+    border-color:#FDBA74;
+    background:linear-gradient(180deg, #FFF7ED, #FFEDD5);
+  }
+  #stage .peg.hot .well{
+    border-color:#2563EB;
+    box-shadow:inset 0 0 0 3px #93C5FD;
+  }
+  #stage .peg.from .well{border-color:#7C3AED;}
+  #stage .pole{
+    position:absolute;
+    left:50%;
+    bottom:18px;
+    width:14px;
+    height:calc(100% - 36px);
+    transform:translateX(-50%);
+    border-radius:8px;
+    background:linear-gradient(90deg, #92400E, #FDE68A, #92400E);
+    pointer-events:none;
+    z-index:1;
+  }
+  #stage .base{
+    position:absolute;
+    left:8px;
+    right:8px;
+    bottom:8px;
+    height:14px;
+    border-radius:8px;
+    background:#92400E;
+    pointer-events:none;
+    z-index:1;
+  }
+  #stage .disk{
+    position:absolute;
+    left:50%;
+    bottom:calc(16px + var(--i) * 50px);
+    width:var(--w);
+    min-width:48px;
+    max-width:calc(100% - 8px);
+    height:48px;
+    transform:translateX(-50%);
+    border-radius:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:900;
+    font-size:1.15rem;
+    box-shadow:inset 0 3px 0 rgba(255,255,255,.35), 0 4px 0 rgba(0,0,0,.16);
+    touch-action:none;
+    user-select:none;
+    -webkit-user-select:none;
+    -webkit-touch-callout:none;
+    z-index:2;
+    pointer-events:none;
+  }
+  #stage .disk.top{
+    pointer-events:auto;
+    cursor:grab;
+  }
+  #stage .disk.top::after{
+    content:"";
+    position:absolute;
+    left:-8px;
+    right:-8px;
+    top:-10px;
+    bottom:-4px;
+  }
+  #stage .disk.is-held{
+    transform:translateX(-50%) translateY(-24px) scale(1.04);
+    z-index:4;
+    outline:3px solid #7C3AED;
+    outline-offset:2px;
+    box-shadow:0 16px 18px rgba(37,99,235,.25);
+  }
+  #stage .disk.dragging{
+    cursor:grabbing;
+    box-shadow:0 16px 22px rgba(15,23,42,.28);
+  }
+  #stage .d1{background:#E11D48; color:#fff;}
+  #stage .d2{background:#F97316; color:#fff;}
+  #stage .d3{background:#EAB308; color:#713F12;}
+  #stage .d4{background:#16A34A; color:#fff;}
+  #stage .d5{background:#2563EB; color:#fff;}
+  #stage .d6{background:#7C3AED; color:#fff;}
+  #stage .board.frozen .disk.top{cursor:default;}
+
+  #stage .side{
+    width:100%;
+    background:#fff;
+    border-radius:20px;
+    padding:12px;
+    box-shadow:0 8px 20px rgba(80,90,130,.08);
+  }
+  #stage .rec-title{
+    margin:0 0 8px;
+    font-weight:900;
+    font-size:1.08rem;
+  }
+  #stage .rec-wrap{overflow-x:auto;}
+  #stage .rec{
+    width:100%;
+    table-layout:fixed;
+    border-collapse:separate;
+    border-spacing:4px;
+  }
+  #stage .rec th,
+  #stage .rec td{
+    width:auto;
+    min-width:0;
+    height:48px;
+    text-align:center;
+    font-weight:800;
+    background:#F8FAFC;
+    border-radius:12px;
+    padding:4px;
+    font-variant-numeric:tabular-nums;
+  }
+  #stage .rec th:first-child{
+    min-width:72px;
+    white-space:nowrap;
+  }
+  #stage .rec th{background:#EEF2FF; color:#4338CA;}
+  #stage .rec td.perfect{background:#DCFCE7; color:#166534;}
+  #stage .rec td.empty{color:#9CA3AF;}
+  #stage .rec .now{box-shadow:inset 0 0 0 2px #7C3AED;}
+  #stage caption.rule-note{
+    caption-side:bottom;
+    text-align:left;
+    margin-top:8px;
+    padding:12px 14px;
+    border-radius:14px;
+    background:#F5F3FF;
+    color:#6D28D9;
+    font-weight:800;
+    line-height:1.45;
+  }
+  #stage .ask{margin-top:12px;}
+  #stage .ask p{
+    margin:0 0 8px;
+    font-weight:900;
+    font-size:1.15rem;
+  }
+  #stage .ask-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  #stage .ask-row .lab-btn{
+    min-width:76px;
+    min-height:48px;
+    font-size:1.35rem;
+  }
+
+  @keyframes hanoi-shake{
+    0%,100%{transform:translateX(0);}
+    25%{transform:translateX(-6px);}
+    75%{transform:translateX(6px);}
+  }
+  #stage .peg.shake{animation:hanoi-shake .35s linear;}
+  @media (prefers-reduced-motion:reduce){
+    #stage .peg.shake{animation:none;}
+    #stage .disk.is-held{transform:translateX(-50%) translateY(-24px);}
+  }
+</style>
+</head>
+<body>
+<script src="lab-kit.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  var MIN = {1:1, 2:3, 3:7, 4:15, 5:31, 6:63};
+  var NAMES = ["起点", "中间", "目标"];
+  var LEVELS = [2, 3, 4, 5, 6];
+  var GUESSES = [21, 31, 16];
+  var TAP_SLOP = 18;
+  var MSG_BIG = "大的不能放在小的上面。";
+  var MSG_RETRY = "搬完啦！再试一次，看看能不能更少。";
+  var MSG_RULE_NO = "下一层是再翻倍，再加 1 步。";
+  var MSG_RULE_YES = "对啦，每多一层，步数是两倍加 1。";
+  var MSG_RULE_NOTE = "就是 2 的层数次方，再减 1。";
+
+  var n = 3;
+  var pegs = [];
+  var moves = 0;
+  var held = null;
+  var solved = false;
+  var best = {1:1, 2:null, 3:null, 4:null, 5:null, 6:null};
+  var ruleFound = false;
+  var banner = null;
+  var drag = null;
+  var shakePeg = null;
+
+  var stepsEl, bestEl, helpEl, bannerEl, board, askEl, noteEl;
+  var pegEls = [];
+  var wellEls = [];
+  var levelBtns = [];
+  var headEls = {};
+  var cellEls = {};
+
+  function makeStack(k){
+    var stack = [];
+    var size;
+    for(size = k; size >= 1; size--) stack.push(size);
+    return stack;
+  }
+
+  function diskPct(size){
+    var t = (size - 1) / (n - 1);
+    return Math.round(52 + t * 44);
+  }
+
+  function isSolved(){
+    var i;
+    if(pegs[2].length !== n) return false;
+    for(i = 0; i < n; i++){
+      if(pegs[2][i] !== n - i) return false;
+    }
+    return true;
+  }
+
+  function sayLine(kind, text){
+    banner = {kind:kind, text:text};
+    Lab.toast(text);
+    Lab.say(text);
+  }
+
+  function award(id, text){
+    var already = Lab.isGoal(id);
+    Lab.goal(id);
+    if(already) Lab.good();
+    sayLine("good", text);
+  }
+
+  function celebrate(){
+    if(n === 3 && moves === 7){
+      award("d3", "3 层，7 步，最少啦！");
+      return;
+    }
+    if(n === 4 && moves === 15){
+      award("d4", "4 层，15 步，最少啦！");
+      return;
+    }
+    if(moves > MIN[n]){
+      Lab.good();
+      sayLine("good", MSG_RETRY);
+      return;
+    }
+    Lab.good();
+    sayLine("good", n + " 层，" + moves + " 步，最少啦！");
+  }
+
+  function tryMove(from, to){
+    var src, dst, disk, top;
+    held = null;
+    if(solved){
+      paint();
+      return;
+    }
+    if(from === to){
+      if(banner && banner.kind === "bad") banner = null;
+      paint();
+      return;
+    }
+    src = pegs[from];
+    dst = pegs[to];
+    if(!src.length){
+      paint();
+      return;
+    }
+    disk = src[src.length - 1];
+    top = dst.length ? dst[dst.length - 1] : null;
+    if(top !== null && disk > top){
+      shakePeg = from;
+      Lab.bad();
+      banner = {kind:"bad", text:MSG_BIG};
+      Lab.toast(MSG_BIG);
+      Lab.say(MSG_BIG);
+      paint();
+      return;
+    }
+    src.pop();
+    dst.push(disk);
+    moves += 1;
+    Lab.click();
+    if(banner && banner.kind === "bad") banner = null;
+    if(isSolved()){
+      solved = true;
+      if(best[n] == null || moves < best[n]) best[n] = moves;
+      celebrate();
+    }
+    paint();
+  }
+
+  function onTapDisk(peg, size){
+    if(held && held.peg === peg && held.size === size){
+      held = null;
+      if(banner && banner.kind === "bad") banner = null;
+      paint();
+      return;
+    }
+    if(held){
+      tryMove(held.peg, peg);
+      return;
+    }
+    held = {peg:peg, size:size};
+    if(banner && banner.kind === "bad") banner = null;
+    paint();
+  }
+
+  function onGuess(value){
+    var already;
+    if(ruleFound) return;
+    if(best[3] !== 7 || best[4] !== 15) return;
+    if(value === 31){
+      ruleFound = true;
+      already = Lab.isGoal("rule");
+      Lab.goal("rule");
+      if(already) Lab.good();
+      sayLine("good", MSG_RULE_YES);
+    }else{
+      Lab.bad();
+      banner = {kind:"bad", text:MSG_RULE_NO};
+      Lab.toast(MSG_RULE_NO);
+      Lab.say(MSG_RULE_NO);
+    }
+    paint();
+  }
+
+  function pegAt(x, y, ignore){
+    var list, i, node, peg;
+    if(document.elementsFromPoint) list = document.elementsFromPoint(x, y);
+    else list = [document.elementFromPoint(x, y)];
+    for(i = 0; i < list.length; i++){
+      node = list[i];
+      if(!node || !node.closest) continue;
+      if(ignore && (node === ignore || ignore.contains(node))) continue;
+      peg = node.closest(".peg");
+      if(peg && board.contains(peg)) return Number(peg.dataset.peg);
+    }
+    return null;
+  }
+
+  function setHot(dest){
+    var i;
+    for(i = 0; i < pegEls.length; i++){
+      pegEls[i].classList.toggle("hot", dest !== null && i === dest);
+    }
+  }
+
+  function clearDrag(){
+    var d = drag;
+    drag = null;
+    setHot(null);
+    if(d && d.el){
+      try{ d.el.releasePointerCapture(d.pointerId); }catch(err){}
+    }
+  }
+
+  function placeDrag(e){
+    var el = drag.el;
+    el.classList.add("dragging");
+    el.classList.remove("is-held");
+    el.style.position = "fixed";
+    el.style.left = (e.clientX - drag.offX) + "px";
+    el.style.top = (e.clientY - drag.offY) + "px";
+    el.style.width = drag.w + "px";
+    el.style.height = drag.h + "px";
+    el.style.bottom = "auto";
+    el.style.right = "auto";
+    el.style.transform = "none";
+    el.style.margin = "0";
+    el.style.zIndex = "1000";
+  }
+
+  function onPointerDown(e){
+    var pegEl, disk, peg, size, top, rect;
+    if(solved || drag) return;
+    if(e.isPrimary === false) return;
+    if(typeof e.button === "number" && e.button !== 0) return;
+    pegEl = e.target.closest(".peg");
+    if(!pegEl || !board.contains(pegEl)) return;
+    disk = e.target.closest(".disk.top");
+    peg = Number(pegEl.dataset.peg);
+    if(!disk){
+      if(!held) return;
+      e.preventDefault();
+      drag = {
+        kind:"drop",
+        pointerId:e.pointerId,
+        peg:peg,
+        el:pegEl,
+        x:e.clientX,
+        y:e.clientY
+      };
+      try{ pegEl.setPointerCapture(e.pointerId); }catch(err){}
+      return;
+    }
+    size = Number(disk.dataset.size);
+    top = pegs[peg][pegs[peg].length - 1];
+    if(top !== size) return;
+    e.preventDefault();
+    rect = disk.getBoundingClientRect();
+    drag = {
+      kind:"disk",
+      pointerId:e.pointerId,
+      peg:peg,
+      size:size,
+      el:disk,
+      x:e.clientX,
+      y:e.clientY,
+      offX:e.clientX - rect.left,
+      offY:e.clientY - rect.top,
+      w:rect.width,
+      h:rect.height,
+      moved:false
+    };
+    try{ disk.setPointerCapture(e.pointerId); }catch(err){}
+  }
+
+  function onPointerMove(e){
+    var dist, dest;
+    if(!drag || drag.pointerId !== e.pointerId || drag.kind !== "disk") return;
+    dist = Math.hypot(e.clientX - drag.x, e.clientY - drag.y);
+    if(!drag.moved && dist < TAP_SLOP) return;
+    drag.moved = true;
+    placeDrag(e);
+    dest = pegAt(e.clientX, e.clientY, drag.el);
+    setHot(dest);
+  }
+
+  function onPointerUp(e){
+    var d, dist, dest;
+    if(!drag || drag.pointerId !== e.pointerId) return;
+    d = drag;
+    drag = null;
+    setHot(null);
+    try{ d.el.releasePointerCapture(e.pointerId); }catch(err){}
+    if(d.kind === "drop"){
+      dist = Math.hypot(e.clientX - d.x, e.clientY - d.y);
+      dest = dist < TAP_SLOP ? d.peg : pegAt(e.clientX, e.clientY, null);
+      if(held && dest !== null) tryMove(held.peg, dest);
+      else paint();
+      return;
+    }
+    if(!d.moved){
+      onTapDisk(d.peg, d.size);
+      return;
+    }
+    dest = pegAt(e.clientX, e.clientY, d.el);
+    held = null;
+    if(dest === null || dest === d.peg) paint();
+    else tryMove(d.peg, dest);
+  }
+
+  function onPointerCancel(e){
+    if(!drag || drag.pointerId !== e.pointerId) return;
+    drag = null;
+    setHot(null);
+    paint();
+  }
+
+  function onLostCapture(e){
+    var lostId;
+    if(!drag || drag.pointerId !== e.pointerId) return;
+    lostId = e.pointerId;
+    setTimeout(function(){
+      if(!drag || drag.pointerId !== lostId) return;
+      drag = null;
+      setHot(null);
+      paint();
+    }, 0);
+  }
+
+  function paintDisks(){
+    var p, well, old, i, stack, size, top, disk, node;
+    for(p = 0; p < 3; p++){
+      well = wellEls[p];
+      old = well.querySelectorAll(".disk");
+      for(i = 0; i < old.length; i++) old[i].remove();
+      stack = pegs[p];
+      for(i = 0; i < stack.length; i++){
+        size = stack[i];
+        top = i === stack.length - 1;
+        disk = document.createElement("div");
+        disk.className = "disk d" + size + (top ? " top" : "");
+        if(held && held.peg === p && held.size === size) disk.classList.add("is-held");
+        disk.dataset.size = String(size);
+        disk.style.setProperty("--i", String(i));
+        disk.style.setProperty("--w", diskPct(size) + "%");
+        disk.textContent = String(size);
+        disk.setAttribute("draggable", "false");
+        if(top) disk.setAttribute("aria-label", "最上面，" + size + " 号盘");
+        else disk.setAttribute("aria-hidden", "true");
+        well.appendChild(disk);
+      }
+      node = pegEls[p];
+      node.classList.toggle("from", !!(held && held.peg === p));
+      node.classList.remove("hot");
+      node.classList.remove("shake");
+    }
+    if(shakePeg !== null){
+      node = pegEls[shakePeg];
+      shakePeg = null;
+      node.classList.remove("shake");
+      void node.offsetWidth;
+      node.classList.add("shake");
+    }
+  }
+
+  function paint(){
+    var k, btn, on, value, perfect;
+    if(!stepsEl) return;
+    stepsEl.textContent = "已走 " + moves + " 步";
+    if(best[n] == null){
+      bestEl.hidden = true;
+      bestEl.textContent = "";
+    }else{
+      bestEl.hidden = false;
+      bestEl.textContent = "这层最好 " + best[n] + " 步";
+    }
+    if(banner){
+      bannerEl.hidden = false;
+      bannerEl.textContent = banner.text;
+      bannerEl.className = "banner " + banner.kind;
+      helpEl.hidden = true;
+    }else{
+      bannerEl.hidden = true;
+      bannerEl.textContent = "";
+      bannerEl.className = "banner";
+      helpEl.hidden = false;
+      if(solved) helpEl.textContent = "";
+      else if(held) helpEl.textContent = "再点一根柱子放下。";
+      else helpEl.textContent = "点一下拿起，或拖到别的柱子。";
+    }
+    for(k = 0; k < levelBtns.length; k++){
+      btn = levelBtns[k];
+      on = Number(btn.dataset.n) === n;
+      btn.className = "lab-btn" + (on ? "" : " ghost");
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+    }
+    board.classList.toggle("frozen", solved);
+    paintDisks();
+    for(k = 1; k <= 6; k++){
+      value = best[k];
+      perfect = value != null && value === MIN[k];
+      headEls[k].classList.toggle("now", k === n);
+      cellEls[k].classList.toggle("now", k === n);
+      cellEls[k].classList.toggle("perfect", perfect);
+      cellEls[k].classList.toggle("empty", value == null);
+      if(value == null){
+        cellEls[k].textContent = "—";
+        cellEls[k].setAttribute("aria-label", k + " 层还没有");
+      }else{
+        cellEls[k].textContent = String(value);
+        cellEls[k].setAttribute("aria-label", k + " 层 " + value + " 步");
+      }
+    }
+    noteEl.hidden = !ruleFound;
+    askEl.hidden = !(best[3] === 7 && best[4] === 15 && !ruleFound);
+  }
+
+  function resetRound(){
+    clearDrag();
+    held = null;
+    solved = false;
+    moves = 0;
+    banner = null;
+    shakePeg = null;
+    pegs = [makeStack(n), [], []];
+    paint();
+  }
+
+  function setDisks(k){
+    if(k === n) return;
+    n = k;
+    resetRound();
+  }
+
+  function fullReset(){
+    n = 3;
+    best = {1:1, 2:null, 3:null, 4:null, 5:null, 6:null};
+    ruleFound = false;
+    resetRound();
+  }
+
+  Lab.mount({
+    id:"lab-hanoi",
+    title:"汉诺塔",
+    emoji:"🏰",
+    lead:"大盘不能压在小盘上面。试试最少几步。",
+    parent:"<p>n 层最少 2 的 n 次方减 1 步。1 层 1，2 层 3，3 层 7，4 层 15，5 层 31，6 层 63。</p>"
+      + "<p>规则是一次只搬一个最上面的盘，且不能把大盘放到小盘上。目标是全部搬到右边那根柱子。</p>",
+    goals:[
+      {id:"d3", text:"3 层，7 步搬完"},
+      {id:"d4", text:"4 层，15 步搬完"},
+      {id:"rule", text:"在记录表里发现步数规律"}
+    ],
+    hints:[
+      {id:"h1", text:"先把上面的小塔整体搬到旁边，再动最大的盘。"},
+      {id:"h2", text:"3 层最少 7 步，4 层最少 15 步。下一层是再翻倍，再加 1 步。"}
+    ],
+    onReset:fullReset
+  });
+
+  var stage = document.getElementById("stage");
+  var play = document.createElement("div");
+  var toolbar = document.createElement("div");
+  var kicker = document.createElement("span");
+  var resetBtn = document.createElement("button");
+  var status = document.createElement("div");
+  var layout = document.createElement("div");
+  var side = document.createElement("div");
+  var recTitle = document.createElement("p");
+  var recWrap = document.createElement("div");
+  var table = document.createElement("table");
+  var thead = document.createElement("thead");
+  var headRow = document.createElement("tr");
+  var corner = document.createElement("th");
+  var tbody = document.createElement("tbody");
+  var bodyRow = document.createElement("tr");
+  var rowHead = document.createElement("th");
+  var askTitle = document.createElement("p");
+  var askRow = document.createElement("div");
+  var i, peg, name, well, pole, base, th, td, guessBtn;
+
+  play.className = "play";
+  toolbar.className = "toolbar";
+  kicker.className = "kicker";
+  kicker.textContent = "几层？";
+  toolbar.appendChild(kicker);
+  for(i = 0; i < LEVELS.length; i++){
+    (function(level){
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "lab-btn";
+      btn.dataset.n = String(level);
+      btn.textContent = level + " 层";
+      btn.addEventListener("click", function(){ setDisks(level); });
+      levelBtns.push(btn);
+      toolbar.appendChild(btn);
+    })(LEVELS[i]);
+  }
+  resetBtn.type = "button";
+  resetBtn.className = "lab-btn orange reset";
+  resetBtn.id = "hanoi-reset";
+  resetBtn.textContent = "重新摆";
+  resetBtn.addEventListener("click", resetRound);
+  toolbar.appendChild(resetBtn);
+
+  status.className = "status";
+  stepsEl = document.createElement("p");
+  stepsEl.className = "steps";
+  stepsEl.id = "hanoi-steps";
+  bestEl = document.createElement("p");
+  bestEl.className = "best";
+  bestEl.hidden = true;
+  status.appendChild(stepsEl);
+  status.appendChild(bestEl);
+
+  helpEl = document.createElement("p");
+  helpEl.className = "help";
+  bannerEl = document.createElement("p");
+  bannerEl.className = "banner";
+  bannerEl.id = "hanoi-banner";
+  bannerEl.setAttribute("aria-live", "polite");
+  bannerEl.hidden = true;
+
+  layout.className = "layout";
+  board = document.createElement("div");
+  board.className = "board";
+  board.setAttribute("role", "group");
+  board.setAttribute("aria-label", "三根柱子");
+  for(i = 0; i < 3; i++){
+    peg = document.createElement("div");
+    peg.className = "peg" + (i === 0 ? " start" : i === 1 ? " mid" : " goal");
+    peg.dataset.peg = String(i);
+    name = document.createElement("div");
+    name.className = "peg-name";
+    name.textContent = NAMES[i];
+    well = document.createElement("div");
+    well.className = "well";
+    pole = document.createElement("div");
+    pole.className = "pole";
+    pole.setAttribute("aria-hidden", "true");
+    base = document.createElement("div");
+    base.className = "base";
+    base.setAttribute("aria-hidden", "true");
+    well.appendChild(pole);
+    well.appendChild(base);
+    peg.appendChild(name);
+    peg.appendChild(well);
+    board.appendChild(peg);
+    pegEls.push(peg);
+    wellEls.push(well);
+  }
+
+  side.className = "side";
+  recTitle.className = "rec-title";
+  recTitle.textContent = "记录表";
+  recWrap.className = "rec-wrap";
+  table.className = "rec";
+  table.id = "hanoi-table";
+  corner.textContent = "层数";
+  corner.scope = "row";
+  headRow.appendChild(corner);
+  for(i = 1; i <= 6; i++){
+    th = document.createElement("th");
+    th.scope = "col";
+    th.textContent = String(i);
+    headEls[i] = th;
+    headRow.appendChild(th);
+  }
+  thead.appendChild(headRow);
+  rowHead.textContent = "最少步";
+  rowHead.scope = "row";
+  bodyRow.appendChild(rowHead);
+  for(i = 1; i <= 6; i++){
+    td = document.createElement("td");
+    cellEls[i] = td;
+    bodyRow.appendChild(td);
+  }
+  tbody.appendChild(bodyRow);
+  noteEl = document.createElement("caption");
+  noteEl.className = "rule-note";
+  noteEl.id = "hanoi-note";
+  noteEl.textContent = MSG_RULE_NOTE;
+  noteEl.hidden = true;
+  table.appendChild(noteEl);
+  table.appendChild(thead);
+  table.appendChild(tbody);
+  recWrap.appendChild(table);
+
+  askEl = document.createElement("div");
+  askEl.className = "ask";
+  askEl.id = "hanoi-ask";
+  askEl.hidden = true;
+  askTitle.textContent = "5 层最少几步？";
+  askRow.className = "ask-row";
+  for(i = 0; i < GUESSES.length; i++){
+    (function(value){
+      guessBtn = document.createElement("button");
+      guessBtn.type = "button";
+      guessBtn.className = "lab-btn purple";
+      guessBtn.dataset.guess = String(value);
+      guessBtn.textContent = String(value);
+      guessBtn.setAttribute("aria-label", value + " 步");
+      guessBtn.addEventListener("click", function(){ onGuess(value); });
+      askRow.appendChild(guessBtn);
+    })(GUESSES[i]);
+  }
+  askEl.appendChild(askTitle);
+  askEl.appendChild(askRow);
+
+  side.appendChild(recTitle);
+  side.appendChild(recWrap);
+  side.appendChild(askEl);
+  layout.appendChild(board);
+  layout.appendChild(side);
+
+  play.appendChild(toolbar);
+  play.appendChild(status);
+  play.appendChild(helpEl);
+  play.appendChild(bannerEl);
+  play.appendChild(layout);
+  stage.appendChild(play);
+
+  board.addEventListener("pointerdown", onPointerDown, {passive:false});
+  board.addEventListener("pointermove", onPointerMove);
+  board.addEventListener("pointerup", onPointerUp);
+  board.addEventListener("pointercancel", onPointerCancel);
+  board.addEventListener("contextmenu", function(e){ e.preventDefault(); });
+  board.addEventListener("dragstart", function(e){ e.preventDefault(); });
+  window.addEventListener("pointermove", onPointerMove);
+  window.addEventListener("pointerup", onPointerUp);
+  window.addEventListener("pointercancel", onPointerCancel);
+  window.addEventListener("lostpointercapture", onLostCapture);
+
+  fullReset();
+})();
+</script>
+</body>
+</html>

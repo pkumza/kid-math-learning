@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>八皇后</title>
+<link rel="stylesheet" href="lab-kit.css">
+<style>
+  #stage .q-wrap{max-width:520px;margin:0 auto;}
+  #stage .q-sizes{display:flex;gap:8px;margin:0 0 8px;}
+  #stage .q-size{
+    flex:1;min-width:44px;min-height:52px;padding:8px 6px;
+    border:3px solid #E5E7EB;border-radius:16px;background:#fff;color:#1F2937;
+    font:inherit;font-weight:800;font-size:1.12rem;cursor:pointer;
+    touch-action:manipulation;
+  }
+  #stage .q-size[aria-pressed="true"]{background:#7C3AED;border-color:#7C3AED;color:#fff;}
+  #stage .q-size:active{transform:scale(.97);}
+  #stage .q-size:focus-visible{outline:3px solid #7C3AED;outline-offset:2px;}
+  #stage .q-help,#stage .q-count{
+    margin:0 0 8px;text-align:center;color:#6B7280;
+    font-size:.98rem;font-weight:700;line-height:1.45;
+  }
+  #stage .q-frame{
+    box-sizing:border-box;width:100%;max-width:520px;margin:0 auto;
+    padding:8px;border-radius:20px;background:#E7CBA6;
+    overflow-x:auto;-webkit-overflow-scrolling:touch;
+  }
+  #stage .q-board{
+    --n:4;
+    display:grid;
+    grid-template-columns:repeat(var(--n),minmax(48px,1fr));
+    gap:4px;width:100%;
+  }
+  #stage .q-cell{
+    box-sizing:border-box;appearance:none;-webkit-appearance:none;
+    width:100%;aspect-ratio:1;min-width:48px;min-height:48px;
+    margin:0;padding:0;border:none;border-radius:12px;
+    background:#FFF7EA;color:#5B21B6;
+    font:inherit;font-weight:800;line-height:1;
+    font-size:clamp(22px,6.4vw,36px);
+    display:grid;place-items:center;cursor:pointer;position:relative;
+    touch-action:manipulation;
+  }
+  #stage .q-cell.dark{background:#F0D2A6;}
+  #stage .q-cell.hit{
+    background-color:#FDE8E8;
+    background-image:repeating-linear-gradient(-45deg,rgba(220,80,80,.16) 0 6px,rgba(255,255,255,0) 6px 12px);
+  }
+  #stage .q-cell.dark.hit{
+    background-color:#F6D5D5;
+    background-image:repeating-linear-gradient(-45deg,rgba(180,60,60,.18) 0 6px,rgba(255,255,255,0) 6px 12px);
+  }
+  #stage .q-cell.has-q{background:#EFE6FF;box-shadow:inset 0 0 0 3px #7C3AED;}
+  #stage .q-cell.dark.has-q{background:#E4D4FB;}
+  #stage .q-cell.ghost{box-shadow:inset 0 0 0 3px rgba(124,58,237,.45);}
+  #stage .q-queen{text-shadow:0 1px 0 #fff;pointer-events:none;}
+  #stage .q-ghost{opacity:.34;pointer-events:none;}
+  #stage .q-cell:active{filter:brightness(.96);}
+  #stage .q-cell:focus-visible{outline:3px solid #7C3AED;outline-offset:2px;}
+  #stage .q-cell.shake{animation:q-shake .32s linear;}
+  @keyframes q-shake{
+    0%,100%{transform:translateX(0);}
+    20%{transform:translateX(-7px);}
+    40%{transform:translateX(7px);}
+    60%{transform:translateX(-5px);}
+    80%{transform:translateX(5px);}
+  }
+  @media (prefers-reduced-motion:reduce){
+    #stage .q-cell.shake{animation:none;outline:3px solid #B91C1C;}
+  }
+  #stage .big-note{
+    margin:10px 0 0;padding:12px;border-radius:16px;text-align:center;
+    font-weight:900;font-size:1.15rem;line-height:1.45;color:#15803D;background:#ECFDF3;
+  }
+  #stage .big-note.big{
+    font-size:clamp(1.25rem,4.6vw,1.55rem);color:#6D28D9;background:#F5F3FF;padding:16px 12px;
+  }
+  #stage .big-note[hidden]{display:none !important;}
+  #stage .q-actions{display:flex;gap:10px;margin-top:12px;}
+  #stage .q-actions .lab-btn{flex:1 1 0;min-width:44px;min-height:48px;font-size:1.08rem;}
+</style>
+</head>
+<body>
+<script src="lab-kit.js"></script>
+<script>
+Lab.mount({
+  id: 'lab-queens',
+  title: '八皇后',
+  emoji: '♛',
+  lead: '皇后吃整行、整列，还吃斜线。让它们谁也别吃谁。',
+  parent: '<p>皇后会攻击同一行、同一列，还有两条斜线上的所有格子。所以皇后之间不能同行、不能同列，也不能落在同一条斜线上。</p><p>4×4 棋盘有 2 种放法，5×5 有 10 种，8×8 有 92 种。92 这个数字，等孩子自己放完 8 皇后后再告诉他。</p>',
+  goals: [
+    { id: 'q4', text: '先在 4 ×4 棋盘放好' },
+    { id: 'q5', text: '再在 5 ×5 棋盘放好' },
+    { id: 'q8', text: '挑战 8 ×8 棋盘' }
+  ],
+  hints: [
+    { id: 'h1', text: '每一行放一个，斜着也不要碰上。' },
+    { id: 'h2', text: '太难就按棋盘下面的「看一步」，一次只看一个可以放的位置。' }
+  ],
+  onReset: function () { resetBoard(); }
+});
+
+var STEPS = {
+  4: [1, 3, 0, 2],
+  5: [0, 2, 4, 1, 3],
+  8: [0, 4, 7, 5, 2, 6, 1, 3]
+};
+var EIGHT_WIN = '8 皇后一共有 92 种放法，你找到了 1 种。';
+
+var size = 4;
+var queens = [];
+var ghost = null;
+var hintFrom = 0;
+var wasSolved = false;
+
+var stage = document.getElementById('stage');
+var wrap = document.createElement('div');
+wrap.className = 'q-wrap';
+
+var sizes = document.createElement('div');
+sizes.className = 'q-sizes';
+sizes.setAttribute('role', 'group');
+sizes.setAttribute('aria-label', '选择棋盘大小');
+
+var sizeButtons = {};
+[4, 5, 8].forEach(function (n) {
+  var b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'q-size';
+  b.textContent = n + ' × ' + n;
+  b.addEventListener('click', function () { setSize(n); });
+  sizes.appendChild(b);
+  sizeButtons[n] = b;
+});
+
+var help = document.createElement('p');
+help.className = 'q-help';
+help.textContent = '点空格放上皇后，再点一次拿走。粉色格子会被吃掉。';
+
+var countEl = document.createElement('p');
+countEl.className = 'q-count';
+
+var frame = document.createElement('div');
+frame.className = 'q-frame';
+
+var board = document.createElement('div');
+board.className = 'q-board';
+board.setAttribute('role', 'grid');
+frame.appendChild(board);
+
+var banner = document.createElement('p');
+banner.className = 'big-note';
+banner.hidden = true;
+banner.setAttribute('aria-live', 'polite');
+
+var actions = document.createElement('div');
+actions.className = 'q-actions';
+
+var peekBtn = document.createElement('button');
+peekBtn.type = 'button';
+peekBtn.className = 'lab-btn purple';
+peekBtn.textContent = '看一步';
+peekBtn.addEventListener('click', showStep);
+
+var clearBtn = document.createElement('button');
+clearBtn.type = 'button';
+clearBtn.className = 'lab-btn ghost';
+clearBtn.textContent = '拿走全部';
+clearBtn.addEventListener('click', clearQueens);
+
+actions.appendChild(peekBtn);
+actions.appendChild(clearBtn);
+wrap.appendChild(sizes);
+wrap.appendChild(help);
+wrap.appendChild(countEl);
+wrap.appendChild(banner);
+wrap.appendChild(frame);
+wrap.appendChild(actions);
+stage.appendChild(wrap);
+render();
+
+function resetBoard() {
+  size = 4;
+  queens = [];
+  ghost = null;
+  hintFrom = 0;
+  wasSolved = false;
+  if (typeof board === 'undefined' || !board) return;
+  render();
+}
+
+function setSize(n) {
+  if (n === size) return;
+  size = n;
+  queens = [];
+  ghost = null;
+  hintFrom = 0;
+  wasSolved = false;
+  Lab.click();
+  Lab.toast('换成 ' + n + ' × ' + n + ' 啦。');
+  render();
+}
+
+function clearQueens() {
+  Lab.click();
+  queens = [];
+  ghost = null;
+  hintFrom = 0;
+  wasSolved = false;
+  Lab.toast('皇后都拿走啦。');
+  render();
+}
+
+function queenAt(r, c) {
+  for (var i = 0; i < queens.length; i++) {
+    if (queens[i].r === r && queens[i].c === c) return true;
+  }
+  return false;
+}
+
+function attacked(r, c) {
+  for (var i = 0; i < queens.length; i++) {
+    var q = queens[i];
+    if (q.r === r && q.c === c) continue;
+    if (q.r === r || q.c === c) return true;
+    if (Math.abs(q.r - r) === Math.abs(q.c - c)) return true;
+  }
+  return false;
+}
+
+function isSolved() {
+  if (queens.length !== size) return false;
+  for (var i = 0; i < queens.length; i++) {
+    for (var j = i + 1; j < queens.length; j++) {
+      var a = queens[i], b = queens[j];
+      if (a.r === b.r || a.c === b.c) return false;
+      if (Math.abs(a.r - b.r) === Math.abs(a.c - b.c)) return false;
+    }
+  }
+  return true;
+}
+
+function hideWinText() {
+  banner.hidden = true;
+  banner.textContent = '';
+  banner.className = 'big-note';
+}
+
+function render() {
+  var solved = isSolved();
+  board.style.setProperty('--n', String(size));
+  board.setAttribute('aria-label', size + ' 乘 ' + size + ' 棋盘');
+  var frag = document.createDocumentFragment();
+  for (var r = 0; r < size; r++) {
+    for (var c = 0; c < size; c++) {
+      var has = queenAt(r, c);
+      var hit = !has && attacked(r, c);
+      var showGhost = !has && ghost && ghost.r === r && ghost.c === c;
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'q-cell';
+      if ((r + c) % 2 === 1) btn.classList.add('dark');
+      if (has) btn.classList.add('has-q');
+      if (hit) btn.classList.add('hit');
+      if (showGhost) btn.classList.add('ghost');
+      btn.setAttribute('aria-rowindex', String(r + 1));
+      btn.setAttribute('aria-colindex', String(c + 1));
+      if (has) btn.setAttribute('aria-label', '第 ' + (r + 1) + ' 行第 ' + (c + 1) + ' 列，有皇后，点一下拿走');
+      else if (hit) btn.setAttribute('aria-label', '第 ' + (r + 1) + ' 行第 ' + (c + 1) + ' 列，会被吃掉');
+      else if (showGhost) btn.setAttribute('aria-label', '第 ' + (r + 1) + ' 行第 ' + (c + 1) + ' 列，这里可以放');
+      else btn.setAttribute('aria-label', '第 ' + (r + 1) + ' 行第 ' + (c + 1) + ' 列，空格');
+      if (has) {
+        var queen = document.createElement('span');
+        queen.className = 'q-queen';
+        queen.textContent = '♛';
+        queen.setAttribute('aria-hidden', 'true');
+        btn.appendChild(queen);
+      } else if (showGhost) {
+        var mark = document.createElement('span');
+        mark.className = 'q-ghost';
+        mark.textContent = '♛';
+        mark.setAttribute('aria-hidden', 'true');
+        btn.appendChild(mark);
+      }
+      btn.addEventListener('click', onCell.bind(null, r, c));
+      frag.appendChild(btn);
+    }
+  }
+  board.replaceChildren(frag);
+  [4, 5, 8].forEach(function (n) {
+    sizeButtons[n].setAttribute('aria-pressed', n === size ? 'true' : 'false');
+  });
+  countEl.textContent = solved ? '谁也不吃谁。' : ('现在放了 ' + queens.length + ' 个。');
+  if (solved && size === 8) {
+    banner.className = 'big-note big';
+    banner.hidden = false;
+    banner.textContent = EIGHT_WIN;
+  } else if (solved && size === 4) {
+    banner.className = 'big-note';
+    banner.hidden = false;
+    banner.textContent = '4 个皇后都放好啦！';
+  } else if (solved && size === 5) {
+    banner.className = 'big-note';
+    banner.hidden = false;
+    banner.textContent = '5 个皇后也放好啦！';
+  } else {
+    hideWinText();
+  }
+}
+
+function onCell(r, c, ev) {
+  var btn = ev.currentTarget;
+  if (queenAt(r, c)) {
+    queens = queens.filter(function (q) { return q.r !== r || q.c !== c; });
+    Lab.click();
+    afterMove();
+    return;
+  }
+  if (attacked(r, c)) {
+    Lab.bad();
+    Lab.toast('这里会被吃掉。');
+    Lab.say('这里会被吃掉。');
+    btn.classList.remove('shake');
+    void btn.offsetWidth;
+    btn.classList.add('shake');
+    return;
+  }
+  queens.push({ r: r, c: c });
+  if (ghost && ghost.r === r && ghost.c === c) ghost = null;
+  Lab.click();
+  afterMove();
+}
+
+function afterMove() {
+  var solved = isSolved();
+  if (solved) ghost = null;
+  render();
+  if (solved && !wasSolved) {
+    celebrate();
+    revealNote();
+  }
+  wasSolved = solved;
+}
+
+function revealNote() {
+  if (!banner || banner.hidden || typeof banner.scrollIntoView !== 'function') return;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  try {
+    banner.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
+  } catch (e) {
+    banner.scrollIntoView();
+  }
+}
+
+function celebrate() {
+  if (size === 4) {
+    var done4 = Lab.isGoal('q4');
+    Lab.goal('q4');
+    if (done4) Lab.good();
+    Lab.toast('4 个皇后都放好啦！');
+    Lab.say('4 个皇后都放好啦！');
+  } else if (size === 5) {
+    var done5 = Lab.isGoal('q5');
+    Lab.goal('q5');
+    if (done5) Lab.good();
+    Lab.toast('5 个皇后也放好啦！');
+    Lab.say('5 个皇后也放好啦！');
+  } else if (size === 8) {
+    var done8 = Lab.isGoal('q8');
+    Lab.goal('q8');
+    if (done8) Lab.good();
+    Lab.win();
+    Lab.toast(EIGHT_WIN);
+    Lab.say(EIGHT_WIN);
+  }
+}
+
+function showStep() {
+  Lab.click();
+  if (isSolved()) {
+    Lab.toast('已经放好啦。');
+    return;
+  }
+  var cols = STEPS[size];
+  for (var k = 0; k < size; k++) {
+    var r = (hintFrom + k) % size;
+    var c = cols[r];
+    if (!queenAt(r, c)) {
+      ghost = { r: r, c: c };
+      hintFrom = (r + 1) % size;
+      render();
+      if (attacked(r, c)) {
+        Lab.toast('这一格现在会被吃掉，先拿走挡住的皇后。');
+        Lab.say('先拿走挡住的皇后。');
+      } else {
+        Lab.toast('淡淡的影子，是可以放的地方。');
+        Lab.say('看这一格。');
+      }
+      return;
+    }
+  }
+  ghost = null;
+  render();
+  Lab.toast('这一步的皇后都在啦。');
+}
+</script>
+</body>
+</html>

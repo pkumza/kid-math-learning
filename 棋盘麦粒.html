@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>棋盘麦粒 · 数学实验室</title>
+<link rel="stylesheet" href="lab-kit.css">
+<script src="lab-kit.js"></script>
+<style>
+  #stage .play{
+    width:100%;
+    max-width:100%;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:12px;
+  }
+  #stage .tip,
+  #stage .guess-title{
+    width:min(100%, 520px);
+    margin:0;
+    text-align:center;
+    font-weight:800;
+    line-height:1.45;
+  }
+  #stage .tip{color:#6B7280; font-size:.95rem;}
+  #stage .guess-title{color:#1F2937; font-size:1.08rem;}
+
+  #stage .board{
+    box-sizing:border-box;
+    width:min(100%, 520px);
+    max-width:100%;
+    display:grid;
+    grid-template-columns:repeat(8, 1fr);
+    gap:1px;
+    background:#6B4423;
+    border:4px solid #6B4423;
+    border-radius:12px;
+    overflow:hidden;
+  }
+  #stage .cell{
+    box-sizing:border-box;
+    appearance:none;
+    -webkit-appearance:none;
+    border:0;
+    margin:0;
+    padding:0;
+    width:100%;
+    aspect-ratio:1;
+    min-width:44px;
+    min-height:44px;
+    font:inherit;
+    font-weight:800;
+    font-size:1.02rem;
+    line-height:1;
+    color:#24160C;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    touch-action:manipulation;
+  }
+  #stage .cell.light{background:#F0D9B5;}
+  #stage .cell.dark{background:#B58863;}
+  #stage .cell:active{filter:brightness(.94);}
+  #stage .cell.on{
+    box-shadow:inset 0 0 0 3px #6D28D9;
+    z-index:1;
+  }
+  #stage .cell:focus-visible{
+    outline:3px solid #6D28D9;
+    outline-offset:-4px;
+    z-index:1;
+  }
+
+  #stage .readout,
+  #stage .guesses,
+  #stage .sum-box{
+    width:min(100%, 520px);
+  }
+  #stage .readout{
+    min-height:128px;
+    background:#fff;
+    border:3px solid #F0D9B5;
+    border-radius:22px;
+    box-shadow:0 8px 20px rgba(80,90,130,.1);
+    padding:12px 14px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+  }
+  #stage .wait{
+    margin:0;
+    font-weight:800;
+    color:#6B7280;
+    font-size:1.05rem;
+  }
+  #stage .detail{width:100%;}
+  #stage .detail[hidden],
+  #stage .nudge[hidden],
+  #stage .sum-box[hidden]{display:none !important;}
+  #stage .cell-no{
+    margin:0;
+    font-weight:900;
+    font-size:1.2rem;
+  }
+  #stage .digits,
+  #stage .sum-digits{
+    margin:4px 0 0;
+    font-weight:900;
+    font-size:clamp(1.05rem, 3.2vw, 1.65rem);
+    letter-spacing:.01em;
+    font-variant-numeric:tabular-nums;
+    color:#9A3412;
+    overflow-wrap:anywhere;
+    line-height:1.35;
+  }
+  #stage .units,
+  #stage .sum-units{
+    margin:4px 0 0;
+    font-weight:800;
+    font-size:1.05rem;
+    color:#166534;
+    overflow-wrap:anywhere;
+    line-height:1.45;
+  }
+  #stage .compare{
+    margin:8px 0 0;
+    font-weight:900;
+    font-size:1.08rem;
+  }
+  #stage .compare.under{color:#1D4ED8;}
+  #stage .compare.over{color:#C2410C;}
+  #stage .nudge{
+    margin:6px 0 0;
+    font-weight:800;
+    color:#9A3412;
+    line-height:1.45;
+  }
+
+  #stage .guesses{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  #stage .guesses .lab-btn{
+    display:block;
+    width:100%;
+    min-height:48px;
+    font:inherit;
+    font-weight:800;
+    font-size:1.08rem;
+    line-height:1.35;
+    touch-action:manipulation;
+  }
+  @keyframes maili-shake{
+    0%,100%{transform:translateX(0);}
+    20%{transform:translateX(-5px);}
+    40%{transform:translateX(5px);}
+    60%{transform:translateX(-3px);}
+    80%{transform:translateX(3px);}
+  }
+  #stage .lab-btn.shake{animation:maili-shake .4s linear;}
+  @media (prefers-reduced-motion:reduce){
+    #stage .lab-btn.shake{animation:none;}
+  }
+
+  #stage .sum-box{
+    background:#F0FDF4;
+    border:3px solid #86EFAC;
+    border-radius:22px;
+    padding:12px 14px;
+    text-align:center;
+  }
+  #stage .sum-kicker,
+  #stage .sum-note{
+    margin:0;
+    font-weight:900;
+    color:#166534;
+    line-height:1.45;
+  }
+  #stage .sum-note{margin-top:6px;}
+</style>
+</head>
+<body>
+<script>
+(function(){
+  'use strict';
+
+  const YI = 100000000n;
+  let cells = [];
+  let wait, detail, cellNo, digitsEl, unitsEl, compareEl, nudge;
+  let sumBox, sumDigits, sumUnits, guessBtns;
+
+  function resetPlay(){
+    if(!wait) return;
+    cells.forEach(function(btn){
+      btn.classList.remove('on');
+      btn.setAttribute('aria-pressed', 'false');
+    });
+    wait.hidden = false;
+    detail.hidden = true;
+    cellNo.textContent = '';
+    digitsEl.textContent = '';
+    unitsEl.textContent = '';
+    compareEl.textContent = '';
+    compareEl.className = 'compare';
+    nudge.hidden = true;
+    nudge.textContent = '';
+    sumBox.hidden = true;
+    sumDigits.textContent = '';
+    sumUnits.textContent = '';
+    guessBtns.forEach(function(btn){
+      btn.disabled = false;
+      btn.classList.remove('shake');
+    });
+    Lab.toast('再点一格看看吧。');
+  }
+
+  Lab.mount({
+    id: 'lab-maili',
+    title: '棋盘麦粒',
+    emoji: '🌾',
+    lead: '点一格，麦粒就翻一倍。',
+    goals: [
+      {id:'yi', text:'找出第几格开始超过 1 亿'},
+      {id:'sum', text:'猜一猜 64 格加起来有多少'}
+    ],
+    hints: [
+      {id:'h1', text:'先点第 27 格，再点它后面那一格，跟 1 亿比比。'},
+      {id:'h2', text:'最后一格几乎是一半。全部加起来，是最后一格的 2 倍再减 1。'}
+    ],
+    parent: [
+      '<p>第 n 格是 2 的 (n-1) 次方。第 1 格是 1 粒，后一格总是前一格的 2 倍。</p>',
+      '<p>第 27 格是 67,108,864，还不到 1 亿；第 28 格是 134,217,728，第一次超过 1 亿。</p>',
+      '<p>64 格总和是 2 的 64 次方减 1，也就是 18,446,744,073,709,551,615（读作 1844亿亿6744万亿737亿955万1615）。</p>',
+      '<p>请先别把总和说破，让孩子自己点三个猜测。</p>'
+    ].join(''),
+    onReset: resetPlay
+  });
+
+  const stage = document.getElementById('stage');
+  const play = document.createElement('div');
+  play.className = 'play';
+
+  const tip = document.createElement('p');
+  tip.className = 'tip';
+  tip.textContent = '第 1 格在左上角，从左往右、从上往下数到 64。';
+  play.appendChild(tip);
+
+  const board = document.createElement('div');
+  board.className = 'board';
+  board.setAttribute('role', 'group');
+  board.setAttribute('aria-label', '麦粒棋盘，第 1 格到第 64 格');
+
+  function grainsAt(n){
+    return 2n ** BigInt(n - 1);
+  }
+
+  function voiceFor(n, grains){
+    if(n === 28 && grains > YI) return '第 28 格，第一次超过 1 亿！';
+    if(n === 1) return '第 1 格，只有 1 粒。';
+    if(grains > YI) return '第 ' + n + ' 格，一亿多。';
+    return '第 ' + n + ' 格，还不到 1 亿。';
+  }
+
+  function showCell(n, grains){
+    const cn = Lab.formatCn(grains);
+    const over = grains > YI;
+    const first = n === 28 && over;
+    wait.hidden = true;
+    detail.hidden = false;
+    cellNo.textContent = '第 ' + n + ' 格';
+    digitsEl.textContent = cn.digits;
+    unitsEl.textContent = cn.units + '粒';
+    if(first){
+      compareEl.textContent = '第一次超过 1 亿！';
+      compareEl.className = 'compare over';
+    }else if(over){
+      compareEl.textContent = '已经超过 1 亿啦。';
+      compareEl.className = 'compare over';
+    }else{
+      compareEl.textContent = '还不到 1 亿。';
+      compareEl.className = 'compare under';
+    }
+    if(n >= 29 && !Lab.isGoal('yi')){
+      nudge.hidden = false;
+      nudge.textContent = '再往前找找，哪一格是第一个超过 1 亿的？';
+    }else{
+      nudge.hidden = true;
+      nudge.textContent = '';
+    }
+    detail.scrollIntoView({block:'nearest', inline:'nearest'});
+  }
+
+  function onCell(n, btn){
+    Lab.click();
+    cells.forEach(function(el){
+      el.classList.remove('on');
+      el.setAttribute('aria-pressed', 'false');
+    });
+    btn.classList.add('on');
+    btn.setAttribute('aria-pressed', 'true');
+
+    const grains = grainsAt(n);
+    showCell(n, grains);
+
+    if(n === 28 && grains > YI){
+      Lab.goal('yi');
+      Lab.toast('第 28 格，第一次超过 1 亿！');
+      Lab.say('第 28 格，第一次超过 1 亿！');
+      return;
+    }
+    if(n >= 29 && !Lab.isGoal('yi')){
+      Lab.toast('这一格已经很大啦。再往前找找，哪一格是第一个超过 1 亿的？');
+      Lab.say(voiceFor(n, grains));
+      return;
+    }
+    const line = voiceFor(n, grains);
+    Lab.toast(line);
+    Lab.say(line);
+  }
+
+  for(let n = 1; n <= 64; n++){
+    const row = Math.floor((n - 1) / 8);
+    const col = (n - 1) % 8;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'cell ' + ((row + col) % 2 === 0 ? 'light' : 'dark');
+    btn.textContent = String(n);
+    btn.setAttribute('aria-label', '第 ' + n + ' 格');
+    btn.setAttribute('aria-pressed', 'false');
+    btn.addEventListener('click', function(){ onCell(n, btn); });
+    cells.push(btn);
+    board.appendChild(btn);
+  }
+  play.appendChild(board);
+
+  const readout = document.createElement('div');
+  readout.className = 'readout';
+  readout.setAttribute('aria-live', 'polite');
+  readout.setAttribute('aria-atomic', 'true');
+
+  wait = document.createElement('p');
+  wait.className = 'wait';
+  wait.textContent = '点一格，麦粒数字出现在这里。';
+
+  detail = document.createElement('div');
+  detail.className = 'detail';
+  detail.hidden = true;
+
+  cellNo = document.createElement('p');
+  cellNo.className = 'cell-no';
+  digitsEl = document.createElement('p');
+  digitsEl.className = 'digits';
+  unitsEl = document.createElement('p');
+  unitsEl.className = 'units';
+  compareEl = document.createElement('p');
+  compareEl.className = 'compare';
+  nudge = document.createElement('p');
+  nudge.className = 'nudge';
+  nudge.hidden = true;
+
+  detail.appendChild(cellNo);
+  detail.appendChild(digitsEl);
+  detail.appendChild(unitsEl);
+  detail.appendChild(compareEl);
+  detail.appendChild(nudge);
+  readout.appendChild(wait);
+  readout.appendChild(detail);
+  play.appendChild(readout);
+
+  const guesses = document.createElement('div');
+  guesses.className = 'guesses';
+  guesses.setAttribute('role', 'group');
+  guesses.setAttribute('aria-label', '猜 64 格加起来有多少');
+
+  const guessTitle = document.createElement('p');
+  guessTitle.className = 'guess-title';
+  guessTitle.textContent = '64 格加起来，有多少麦粒？点一个试试。';
+  guesses.appendChild(guessTitle);
+
+  function shake(btn){
+    btn.classList.remove('shake');
+    void btn.offsetWidth;
+    btn.classList.add('shake');
+    setTimeout(function(){ btn.classList.remove('shake'); }, 450);
+  }
+
+  function makeGuess(text, onPick){
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'lab-btn';
+    btn.textContent = text;
+    btn.addEventListener('animationend', function(){ btn.classList.remove('shake'); });
+    btn.addEventListener('click', function(){ onPick(btn); });
+    guesses.appendChild(btn);
+    return btn;
+  }
+
+  const btnA = makeGuess('只有 64 粒', function(btn){
+    shake(btn);
+    Lab.bad();
+    const msg = '每一格都有麦粒，不只是数格子。';
+    Lab.toast(msg);
+    Lab.say(msg);
+  });
+  const btnB = makeGuess('只算最后一格那么多', function(btn){
+    shake(btn);
+    Lab.bad();
+    const msg = '前面的格子也要加进去。';
+    Lab.toast(msg);
+    Lab.say(msg);
+  });
+  const btnC = makeGuess('比最后一格的两倍少 1 粒', function(){
+    Lab.goal('sum');
+    const cn = Lab.formatCn('18446744073709551615');
+    sumDigits.textContent = cn.digits;
+    sumUnits.textContent = cn.units + '粒';
+    sumBox.hidden = false;
+    sumBox.scrollIntoView({block:'nearest', inline:'nearest'});
+    Lab.say('64 格加起来，是 2 的 64 次方减 1。');
+  });
+  guessBtns = [btnA, btnB, btnC];
+  play.appendChild(guesses);
+
+  sumBox = document.createElement('div');
+  sumBox.className = 'sum-box';
+  sumBox.hidden = true;
+  sumBox.setAttribute('aria-live', 'polite');
+  const sumKicker = document.createElement('p');
+  sumKicker.className = 'sum-kicker';
+  sumKicker.textContent = '猜对啦！64 格加起来';
+  sumDigits = document.createElement('p');
+  sumDigits.className = 'sum-digits';
+  sumUnits = document.createElement('p');
+  sumUnits.className = 'sum-units';
+  const sumNote = document.createElement('p');
+  sumNote.className = 'sum-note';
+  sumNote.textContent = '是 2 的 64 次方减 1。';
+  sumBox.appendChild(sumKicker);
+  sumBox.appendChild(sumDigits);
+  sumBox.appendChild(sumUnits);
+  sumBox.appendChild(sumNote);
+  play.appendChild(sumBox);
+
+  stage.appendChild(play);
+})();
+</script>
+</body>
+</html>

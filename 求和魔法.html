@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>求和魔法</title>
+<link rel="stylesheet" href="lab-kit.css">
+<style>
+  #stage{ --sq:clamp(14px, 4vw, 30px); --gap:4px; }
+  #stage, #stage *{ box-sizing:border-box; }
+  #stage button{ font-family:inherit; cursor:pointer; }
+  #stage button:focus-visible{ outline:3px solid #7C3AED; outline-offset:2px; }
+  #stage button:active{ transform:scale(.98); }
+
+  .modes{
+    display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;
+  }
+  .modes button{
+    min-height:52px; padding:12px 8px;
+    border-radius:16px; border:3px solid #E5E7EB;
+    background:#fff; color:#1F2937;
+    font-size:1.12rem; font-weight:800;
+  }
+  .modes button[aria-pressed="true"]{
+    color:#fff; border-color:#7C3AED;
+    background:linear-gradient(135deg,#A78BFA,#7C3AED);
+    box-shadow:0 6px 14px rgba(124,58,237,.28);
+  }
+
+  .sub{
+    text-align:center; margin:2px 0 0;
+    color:#6B7280; font-weight:700; font-size:1rem;
+  }
+  .prompt{
+    text-align:center; margin:2px 0 4px;
+    font-size:1.45rem; font-weight:900; color:#1F2937;
+  }
+
+  .slide-wrap{ max-width:520px; margin:0 auto; padding:2px 26px 0; }
+  .ends{
+    max-width:520px; margin:0 auto;
+    display:flex; justify-content:space-between;
+    padding:0 26px; color:#6B7280; font-weight:800; font-size:.95rem;
+  }
+  #stage input[type=range]{
+    -webkit-appearance:none; appearance:none;
+    display:block; width:100%; height:48px;
+    margin:0; background:transparent; cursor:pointer;
+    touch-action:none;
+  }
+  #stage input[type=range]:focus{ outline:none; }
+  #stage input[type=range]::-webkit-slider-runnable-track{
+    height:16px; border-radius:999px;
+    background:linear-gradient(90deg,#60A5FA,#FB923C);
+  }
+  #stage input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; appearance:none;
+    width:48px; height:48px; margin-top:-16px;
+    border-radius:50%; background:#fff;
+    border:4px solid #7C3AED;
+    box-shadow:0 3px 8px rgba(0,0,0,.25);
+    cursor:pointer;
+  }
+  #stage input[type=range]::-moz-range-track{
+    height:16px; border-radius:999px; border:none;
+    background:linear-gradient(90deg,#60A5FA,#FB923C);
+  }
+  #stage input[type=range]::-moz-range-thumb{
+    width:48px; height:48px; border-radius:50%;
+    background:#fff; border:4px solid #7C3AED;
+    box-shadow:0 3px 8px rgba(0,0,0,.25); cursor:pointer;
+  }
+  #stage input[type=range]:focus-visible::-webkit-slider-thumb{
+    outline:3px solid #7C3AED; outline-offset:3px;
+  }
+
+  .board{
+    margin-top:12px; padding:14px 10px;
+    background:#F8FAFF; border:2px dashed #DBE3F4; border-radius:18px;
+    overflow-x:auto;
+  }
+  .stair, .loose{
+    display:flex; flex-direction:column; align-items:flex-start;
+    width:max-content; margin:0 auto;
+  }
+  .stair{ gap:4px; }
+  .loose{ gap:14px; }
+  .srow{ display:flex; align-items:center; gap:8px; }
+  .tag{
+    min-width:1.4em; text-align:right;
+    font-weight:900; color:#6B7280; font-size:.95rem;
+  }
+  .cells{ display:flex; gap:var(--gap); }
+  .sq{
+    width:var(--sq); height:var(--sq); border-radius:5px;
+    display:block; flex:0 0 auto;
+    box-shadow:inset 0 -2px 0 rgba(0,0,0,.16), inset 0 2px 0 rgba(255,255,255,.4);
+  }
+  .sq.stair, .sq.o0{ background:linear-gradient(160deg,#93C5FD,#2563EB); }
+  .sq.flip, .sq.o1{ background:linear-gradient(160deg,#FDBA74,#EA580C); }
+  .sq.o2{ background:linear-gradient(160deg,#86EFAC,#16A34A); }
+  .sq.o3{ background:linear-gradient(160deg,#C4B5FD,#7C3AED); }
+  .sq.o4{ background:linear-gradient(160deg,#F9A8D4,#DB2777); }
+  .sq.o5{ background:linear-gradient(160deg,#67E8F9,#0891B2); }
+  .sq.o6{ background:linear-gradient(160deg,#FDE68A,#CA8A04); }
+  .sq.o7{ background:linear-gradient(160deg,#A5B4FC,#4F46E5); }
+
+  .rect{
+    display:grid; gap:var(--gap);
+    width:max-content; margin:0 auto;
+    padding:6px; background:#fff; border-radius:12px;
+    box-shadow:0 6px 16px rgba(80,90,130,.12);
+  }
+  .cols-1{ grid-template-columns:repeat(1, var(--sq)); }
+  .cols-2{ grid-template-columns:repeat(2, var(--sq)); }
+  .cols-3{ grid-template-columns:repeat(3, var(--sq)); }
+  .cols-4{ grid-template-columns:repeat(4, var(--sq)); }
+  .cols-5{ grid-template-columns:repeat(5, var(--sq)); }
+  .cols-6{ grid-template-columns:repeat(6, var(--sq)); }
+  .cols-7{ grid-template-columns:repeat(7, var(--sq)); }
+  .cols-8{ grid-template-columns:repeat(8, var(--sq)); }
+  .cols-9{ grid-template-columns:repeat(9, var(--sq)); }
+
+  .legend{
+    display:flex; justify-content:center; flex-wrap:wrap;
+    gap:8px 16px; margin-top:10px;
+    font-weight:800; color:#374151; font-size:.98rem;
+  }
+  .legend span{ display:inline-flex; align-items:center; gap:6px; min-height:28px; }
+  .legend .sq{ width:18px; height:18px; border-radius:4px; }
+  .size{
+    text-align:center; margin:8px 0 0;
+    font-weight:800; color:#6B7280;
+  }
+
+  .eq{
+    text-align:center; margin:12px 0 0;
+    font-size:clamp(1.15rem, 3.6vw, 1.5rem);
+    font-weight:900; line-height:1.55; letter-spacing:.02em;
+  }
+  .count{
+    text-align:center; margin:4px 0 0;
+    font-size:1.15rem; font-weight:800; color:#1F2937;
+  }
+  .found{
+    margin:10px 0 0; padding:10px 12px;
+    background:#F0FDF4; border-radius:14px;
+    color:#166534; font-weight:800;
+    font-size:1.12rem; line-height:1.65; text-align:center;
+  }
+  #stage .lab-btn{
+    display:block; width:100%; margin-top:12px;
+    min-height:48px; padding:12px 16px;
+    border:none; border-radius:16px;
+    font-size:1.12rem; font-weight:800; color:#fff;
+    background:linear-gradient(135deg,#34D399,#10B981);
+    box-shadow:0 8px 16px rgba(16,185,129,.28);
+  }
+  #stage .lab-btn.purple{
+    background:linear-gradient(135deg,#A78BFA,#7C3AED);
+    box-shadow:0 8px 16px rgba(124,58,237,.28);
+  }
+  #stage .lab-btn.orange{
+    background:linear-gradient(135deg,#FDBA74,#F97316);
+    box-shadow:0 8px 16px rgba(249,115,22,.28);
+  }
+</style>
+</head>
+<body>
+<script src="lab-kit.js"></script>
+<script>
+(function(){
+  'use strict';
+  var mode = 'stair';
+  var n = 4;
+  var joined = false;
+  var k = 4;
+  var squared = false;
+  var stage = null;
+
+  Lab.mount({
+    id: 'lab-sum',
+    title: '求和魔法',
+    emoji: '🧱',
+    lead: '楼梯复制一份，就能拼成长方形。',
+    parent: '1+2+…+n = n(n+1)/2，因为两条楼梯拼成 n 乘 (n+1) 的长方形。前 k 个奇数之和是 k 的平方：1+3+5+…+(2k−1) = k²。',
+    goals: [
+      { id: 'rect', text: '拼出长方形，看出楼梯是一半' },
+      { id: 'odd', text: '把奇数加起来，拼成正方形' }
+    ],
+    hints: [
+      { id: 'hint-rect', text: '再拼一条倒过来的楼梯，长是 n，宽是 n 加 1。' },
+      { id: 'hint-odd', text: '第 1 个奇数是 1，前 2 个是 1 加 3。它们能拼成方块。' }
+    ],
+    onReset: function(){
+      mode = 'stair';
+      n = 4;
+      joined = false;
+      k = 4;
+      squared = false;
+      ensure();
+      renderPanel();
+    }
+  });
+
+  stage = document.getElementById('stage');
+
+  function stairTotal(num){
+    var s = 0;
+    for(var i = 1; i <= num; i++) s += i;
+    return s;
+  }
+  function oddTotal(num){
+    var s = 0;
+    for(var i = 1; i <= num; i++) s += (2 * i - 1);
+    return s;
+  }
+  function cells(cls, count){
+    var html = '';
+    for(var i = 0; i < count; i++) html += '<i class="sq ' + cls + '" aria-hidden="true"></i>';
+    return html;
+  }
+
+  function stairBoard(){
+    if(!joined){
+      var rows = '';
+      for(var r = 1; r <= n; r++){
+        rows += '<div class="srow"><span class="tag">' + r + '</span><span class="cells">' + cells('stair', r) + '</span></div>';
+      }
+      return '<div class="stair" role="img" aria-label="' + n + ' 级楼梯，一共 ' + stairTotal(n) + ' 格">' + rows + '</div>';
+    }
+    var cols = n + 1;
+    var blocks = '';
+    for(var row = 1; row <= n; row++){
+      for(var col = 1; col <= cols; col++){
+        blocks += '<i class="sq ' + (col <= row ? 'stair' : 'flip') + '" aria-hidden="true"></i>';
+      }
+    }
+    return '<div class="rect cols-' + cols + '" role="img" aria-label="长方形，' + n + ' 行 ' + cols + ' 列">' + blocks + '</div>'
+      + '<div class="legend"><span><i class="sq stair" aria-hidden="true"></i>原来的楼梯</span><span><i class="sq flip" aria-hidden="true"></i>倒过来的楼梯</span></div>'
+      + '<p class="size">' + n + ' 行，' + cols + ' 列</p>';
+  }
+
+  function oddBoard(){
+    if(!squared){
+      var rows = '';
+      for(var i = 1; i <= k; i++){
+        var count = 2 * i - 1;
+        rows += '<div class="srow"><span class="tag">' + count + '</span><span class="cells">' + cells('o' + (i - 1), count) + '</span></div>';
+      }
+      return '<div class="loose" role="img" aria-label="前 ' + k + ' 个奇数，一行一行散开">' + rows + '</div>';
+    }
+    var blocks = '';
+    for(var r = 0; r < k; r++){
+      for(var c = 0; c < k; c++){
+        blocks += '<i class="sq o' + Math.max(r, c) + '" aria-hidden="true"></i>';
+      }
+    }
+    return '<div class="rect cols-' + k + '" role="img" aria-label="' + k + ' 乘 ' + k + ' 的正方形，一共 ' + (k * k) + ' 格">' + blocks + '</div>'
+      + '<p class="size">同一种颜色，是同一个奇数。' + k + ' 行，' + k + ' 列。</p>';
+  }
+
+  function stairMath(){
+    var parts = [];
+    for(var i = 1; i <= n; i++) parts.push(String(i));
+    var total = stairTotal(n);
+    var html = '<p class="eq">' + parts.join(' + ') + '</p>';
+    html += '<p class="count">' + (joined ? '原来的楼梯一共 ' : '数一数，一共 ') + total + ' 格。</p>';
+    if(joined){
+      var cols = n + 1;
+      var rect = n * cols;
+      var half = rect / 2;
+      html += '<p class="found">长方形有 ' + n + '×' + cols + '=' + rect + ' 格。楼梯是一半，所以是 ' + n + '×' + cols + '÷2=' + half + '。</p>';
+    }
+    return html;
+  }
+
+  function oddMath(){
+    var parts = [];
+    for(var i = 1; i <= k; i++) parts.push(String(2 * i - 1));
+    var html = '<p class="eq">' + parts.join(' + ') + '</p>';
+    if(squared){
+      var prod = k * k;
+      html += '<p class="found">前 ' + k + ' 个奇数加起来，正好是 ' + k + '×' + k + '=' + prod + '。</p>';
+    }
+    return html;
+  }
+
+  function actionsHtml(){
+    if(mode === 'stair'){
+      if(!joined) return '<button type="button" class="lab-btn" data-act="join">复制一份，拼成长方形</button>';
+      return '<button type="button" class="lab-btn purple" data-act="got">我看懂了：楼梯是一半</button>';
+    }
+    if(!squared) return '<button type="button" class="lab-btn orange" data-act="square">拼成正方形</button>';
+    return '';
+  }
+
+  function syncModes(){
+    var stairBtn = document.getElementById('mode-stair');
+    var oddBtn = document.getElementById('mode-odd');
+    if(!stairBtn || !oddBtn) return;
+    var onStair = mode === 'stair';
+    stairBtn.setAttribute('aria-pressed', onStair ? 'true' : 'false');
+    oddBtn.setAttribute('aria-pressed', onStair ? 'false' : 'true');
+  }
+
+  function refresh(){
+    syncModes();
+    var cap = document.getElementById('slide-cap');
+    if(cap) cap.textContent = mode === 'stair' ? (n + ' 级楼梯') : ('前 ' + k + ' 个奇数');
+    var board = document.getElementById('board');
+    var math = document.getElementById('math');
+    var actions = document.getElementById('actions');
+    if(!board || !math || !actions) return;
+    board.innerHTML = mode === 'stair' ? stairBoard() : oddBoard();
+    math.innerHTML = mode === 'stair' ? stairMath() : oddMath();
+    actions.innerHTML = actionsHtml();
+  }
+
+  function renderPanel(){
+    var panel = document.getElementById('sum-panel');
+    if(!panel) return;
+    var isStair = mode === 'stair';
+    var value = isStair ? n : k;
+    var label = isStair ? '楼梯有几级' : '前几个奇数';
+    var sub = isStair ? '拖一拖，选楼梯有几级。' : '拖一拖，选前几个奇数。';
+    panel.innerHTML = ''
+      + '<p class="sub">' + sub + '</p>'
+      + '<p class="prompt" id="slide-cap"></p>'
+      + '<div class="slide-wrap"><input id="sum-range" type="range" min="1" max="8" step="1" value="' + value + '" aria-label="' + label + '"></div>'
+      + '<div class="ends"><span>1</span><span>8</span></div>'
+      + '<div class="board" id="board"></div>'
+      + '<div id="math" aria-live="polite"></div>'
+      + '<div id="actions"></div>';
+    refresh();
+  }
+
+  function ensure(){
+    if(!stage.querySelector('.modes')){
+      stage.innerHTML = ''
+        + '<div class="modes" role="group" aria-label="两种玩法">'
+        + '<button type="button" id="mode-stair" data-act="mode-stair" aria-pressed="true">楼梯求和</button>'
+        + '<button type="button" id="mode-odd" data-act="mode-odd" aria-pressed="false">奇数拼方</button>'
+        + '</div>'
+        + '<div id="sum-panel"></div>';
+    }
+    if(!stage.dataset.bound){
+      stage.dataset.bound = '1';
+      stage.addEventListener('click', onClick);
+      stage.addEventListener('input', onInput);
+      stage.addEventListener('change', onChange);
+    }
+  }
+
+  function onInput(ev){
+    if(!ev.target || ev.target.id !== 'sum-range') return;
+    var v = Number(ev.target.value);
+    if(mode === 'stair') n = v;
+    else k = v;
+    refresh();
+  }
+  function onChange(ev){
+    if(!ev.target || ev.target.id !== 'sum-range') return;
+    Lab.click();
+  }
+  function onClick(ev){
+    var btn = ev.target && ev.target.closest ? ev.target.closest('button') : null;
+    if(!btn || !stage.contains(btn)) return;
+    var act = btn.getAttribute('data-act');
+    if(act === 'mode-stair' || act === 'mode-odd'){
+      var next = act === 'mode-stair' ? 'stair' : 'odd';
+      if(next === mode) return;
+      mode = next;
+      Lab.click();
+      renderPanel();
+      return;
+    }
+    if(act === 'join'){
+      if(joined) return;
+      joined = true;
+      Lab.click();
+      Lab.toast('两条楼梯拼好了。');
+      refresh();
+      return;
+    }
+    if(act === 'got'){
+      if(!joined) return;
+      Lab.click();
+      Lab.goal('rect');
+      Lab.say('楼梯是长方形的一半。');
+      Lab.toast('楼梯是长方形的一半。');
+      return;
+    }
+    if(act === 'square'){
+      if(squared) return;
+      squared = true;
+      Lab.click();
+      Lab.goal('odd');
+      Lab.say('奇数加起来，拼成了正方形。');
+      Lab.toast('奇数加起来，拼成了正方形。');
+      refresh();
+    }
+  }
+
+  ensure();
+  renderPanel();
+})();
+</script>
+</body>
+</html>

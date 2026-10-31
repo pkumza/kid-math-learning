@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>二进制灯泡</title>
+<link rel="stylesheet" href="lab-kit.css">
+<style>
+  #stage .board{padding:6px 2px 12px; text-align:center;}
+  #stage p{margin:0;}
+  #stage button{
+    font:inherit; color:inherit; cursor:pointer;
+    -webkit-tap-highlight-color:transparent; touch-action:manipulation;
+  }
+  #stage .kicker{color:#6B7280; font-weight:700; font-size:.95rem;}
+  #stage .sum{
+    margin:2px 0 8px;
+    font-weight:900;
+    font-size:clamp(3.4rem, 10vw, 4.8rem);
+    line-height:.95;
+    letter-spacing:-.03em;
+    font-variant-numeric:tabular-nums;
+    color:#1F2937;
+  }
+  #stage .sum.hot{color:#EA580C;}
+  #stage .bits,
+  #stage .lamps{
+    display:grid;
+    grid-template-columns:repeat(4, minmax(64px, 1fr));
+    gap:12px 8px;
+    width:min(100%, 720px);
+    margin:8px auto 0;
+    justify-items:center;
+  }
+  #stage .bits{
+    background:#F8FAFC;
+    border-radius:16px;
+    padding:8px 6px;
+  }
+  #stage .bit{
+    font-weight:900;
+    font-size:clamp(1.45rem, 4vw, 1.9rem);
+    line-height:1;
+    font-variant-numeric:tabular-nums;
+    color:#6B7280;
+    min-height:36px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  #stage .bit.on{color:#EA580C;}
+  #stage .formula{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    align-items:center;
+    gap:6px;
+    min-height:48px;
+    margin:12px auto 14px;
+  }
+  #stage .chip{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-height:36px;
+    padding:2px 12px;
+    border-radius:999px;
+    background:#FFF7ED;
+    color:#C2410C;
+    font-weight:800;
+    font-size:1.2rem;
+  }
+  #stage .plus{
+    white-space:pre;
+    font-weight:800;
+    font-size:1.15rem;
+    color:#6B7280;
+  }
+  #stage .empty{color:#6B7280; font-weight:700; font-size:1.05rem;}
+  #stage .bulb{
+    appearance:none;
+    -webkit-appearance:none;
+    border:0;
+    background:transparent;
+    width:100%;
+    max-width:96px;
+    min-width:64px;
+    min-height:96px;
+    padding:2px 0 0;
+    border-radius:18px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+  }
+  #stage .bulb:focus-visible{
+    outline:3px solid #7C3AED;
+    outline-offset:2px;
+  }
+  #stage .face{
+    position:relative;
+    display:block;
+    width:100%;
+    max-width:80px;
+    min-width:64px;
+    min-height:64px;
+    aspect-ratio:1;
+    border-radius:50%;
+    background:radial-gradient(circle at 32% 28%, #f8fafc 0%, #d1d5db 46%, #9ca3af 80%);
+    box-shadow:inset 0 -8px 10px rgba(75,85,99,.28), 0 4px 8px rgba(15,23,42,.08);
+    transition:transform .08s ease, box-shadow .12s ease;
+  }
+  #stage .face::before{
+    content:"";
+    position:absolute;
+    width:28%;
+    height:18%;
+    left:22%;
+    top:16%;
+    border-radius:50%;
+    background:rgba(255,255,255,.8);
+  }
+  #stage .bulb.on .face{
+    background:radial-gradient(circle at 32% 28%, #fffce8 0%, #fde047 36%, #f59e0b 70%, #ea580c 100%);
+    box-shadow:
+      0 0 0 4px rgba(253,224,71,.35),
+      0 0 18px 8px rgba(251,191,36,.9),
+      inset 0 -8px 12px rgba(194,65,12,.28);
+  }
+  #stage .bulb:active .face{transform:scale(.94);}
+  #stage .num{
+    font-weight:800;
+    font-size:1.05rem;
+    line-height:1.2;
+    color:#1F2937;
+  }
+  #stage .bulb.on .num{color:#C2410C;}
+  #stage .actions{display:flex; justify-content:center; margin-top:16px;}
+  #stage .actions .lab-btn{min-height:48px; min-width:168px;}
+  @media (min-width:720px){
+    #stage .bits,
+    #stage .lamps{grid-template-columns:repeat(8, minmax(64px, 1fr));}
+  }
+  @media (prefers-reduced-motion:reduce){
+    #stage .face{transition:none;}
+  }
+</style>
+</head>
+<body>
+<script src="lab-kit.js"></script>
+<script>
+(function(){
+  "use strict";
+  var VALUES = [128, 64, 32, 16, 8, 4, 2, 1];
+  var lit = [false, false, false, false, false, false, false, false];
+  var prevSum = 0;
+  var prevCount = 0;
+  var sumEl = null;
+  var bitsEl = null;
+  var bitEls = [];
+  var formulaEl = null;
+  var lampEls = [];
+
+  function totals(){
+    var sum = 0, count = 0, bits = [], parts = [], i;
+    for(i = 0; i < VALUES.length; i++){
+      if(lit[i]){
+        sum += VALUES[i];
+        count += 1;
+        bits.push("1");
+        parts.push(String(VALUES[i]));
+      }else{
+        bits.push("0");
+      }
+    }
+    return {sum:sum, count:count, bits:bits, parts:parts};
+  }
+
+  function render(){
+    if(!sumEl) return;
+    var now = totals();
+    var i, on, plus, chip, empty;
+    sumEl.textContent = String(now.sum);
+    sumEl.classList.toggle("hot", now.sum === 100 || now.sum === 255 || now.count === 1);
+    sumEl.setAttribute("aria-label", "总和 " + now.sum);
+    for(i = 0; i < bitEls.length; i++){
+      on = lit[i];
+      bitEls[i].textContent = on ? "1" : "0";
+      bitEls[i].classList.toggle("on", on);
+    }
+    bitsEl.setAttribute("aria-label", "二进制 " + now.bits.join(""));
+    while(formulaEl.firstChild) formulaEl.removeChild(formulaEl.firstChild);
+    if(!now.parts.length){
+      empty = document.createElement("span");
+      empty.className = "empty";
+      empty.textContent = "还没亮灯";
+      formulaEl.appendChild(empty);
+      formulaEl.setAttribute("aria-label", "还没亮灯");
+    }else{
+      for(i = 0; i < now.parts.length; i++){
+        if(i > 0){
+          plus = document.createElement("span");
+          plus.className = "plus";
+          plus.textContent = " + ";
+          formulaEl.appendChild(plus);
+        }
+        chip = document.createElement("span");
+        chip.className = "chip";
+        chip.textContent = now.parts[i];
+        formulaEl.appendChild(chip);
+      }
+      formulaEl.setAttribute("aria-label", now.parts.join(" + "));
+    }
+    for(i = 0; i < lampEls.length; i++){
+      on = lit[i];
+      lampEls[i].classList.toggle("on", on);
+      lampEls[i].setAttribute("aria-pressed", on ? "true" : "false");
+      lampEls[i].setAttribute("aria-label", VALUES[i] + (on ? "，亮着" : "，灭了"));
+    }
+  }
+
+  function celebrate(now){
+    if(now.sum === 100 && prevSum !== 100){
+      Lab.goal("n100");
+      Lab.say("拼出 100 啦，亮了 3 盏灯。");
+    }
+    if(now.sum === 255 && prevSum !== 255){
+      Lab.goal("n255");
+      Lab.say("八盏全亮，是 255。");
+    }
+    if(now.count === 1 && prevCount !== 1){
+      Lab.goal("few");
+      Lab.say("只亮一盏，就是用灯最少的拼法。");
+    }
+    prevSum = now.sum;
+    prevCount = now.count;
+  }
+
+  function extinguish(){
+    var i;
+    for(i = 0; i < lit.length; i++) lit[i] = false;
+    prevSum = 0;
+    prevCount = 0;
+    render();
+  }
+
+  Lab.mount({
+    id:"lab-binary",
+    title:"二进制灯泡",
+    emoji:"💡",
+    lead:"灯亮了，就把它的数加进去。",
+    parent:"<p>八盏灯是 2 的幂，从左到右 128、64、32、16、8、4、2、1。</p>"
+      + "<p>每个 0 到 255 的数都只有一种开法。</p>"
+      + "<p>100 = 64+32+4，二进制 1100100，三盏灯。</p>"
+      + "<p>255 是八盏全亮。</p>"
+      + "<p>只亮一盏时，数字是 2 的幂，这就是用灯最少的拼法。</p>",
+    goals:[
+      {id:"n100", text:"拼出 100"},
+      {id:"n255", text:"拼出 255"},
+      {id:"few", text:"找出只用 1 盏灯的拼法"}
+    ],
+    hints:[
+      {id:"h1", text:"100 可以拆成 64、32 和 4。"},
+      {id:"h2", text:"八盏灯全亮，就是 255。"},
+      {id:"h3", text:"只开一盏灯，看看它代表几。"}
+    ],
+    onReset:function(){ extinguish(); }
+  });
+
+  var stage = document.getElementById("stage");
+  var board = document.createElement("div");
+  var readout = document.createElement("div");
+  var sumLabel = document.createElement("p");
+  var bitLabel = document.createElement("p");
+  var lamps = document.createElement("div");
+  var actions = document.createElement("div");
+  var offBtn = document.createElement("button");
+  var i;
+
+  board.className = "board";
+  readout.className = "readout";
+
+  sumLabel.className = "kicker";
+  sumLabel.textContent = "加起来";
+  sumEl = document.createElement("p");
+  sumEl.className = "sum";
+  sumEl.id = "sum";
+
+  bitLabel.className = "kicker";
+  bitLabel.textContent = "亮是 1";
+  bitsEl = document.createElement("div");
+  bitsEl.className = "bits";
+  bitsEl.id = "bits";
+  bitsEl.setAttribute("role", "group");
+  for(i = 0; i < VALUES.length; i++){
+    bitEls[i] = document.createElement("span");
+    bitEls[i].className = "bit";
+    bitEls[i].textContent = "0";
+    bitEls[i].setAttribute("aria-hidden", "true");
+    bitsEl.appendChild(bitEls[i]);
+  }
+
+  formulaEl = document.createElement("div");
+  formulaEl.className = "formula";
+  formulaEl.id = "formula";
+  formulaEl.setAttribute("role", "group");
+
+  lamps.className = "lamps";
+  lamps.setAttribute("role", "group");
+  lamps.setAttribute("aria-label", "八盏灯");
+
+  for(i = 0; i < VALUES.length; i++){
+    (function(index){
+      var btn = document.createElement("button");
+      var face = document.createElement("span");
+      var num = document.createElement("span");
+      btn.type = "button";
+      btn.className = "bulb";
+      btn.setAttribute("aria-pressed", "false");
+      face.className = "face";
+      face.setAttribute("aria-hidden", "true");
+      num.className = "num";
+      num.textContent = String(VALUES[index]);
+      btn.appendChild(face);
+      btn.appendChild(num);
+      btn.addEventListener("click", function(){
+        lit[index] = !lit[index];
+        Lab.click();
+        render();
+        celebrate(totals());
+      });
+      lamps.appendChild(btn);
+      lampEls[index] = btn;
+    })(i);
+  }
+
+  actions.className = "actions";
+  offBtn.type = "button";
+  offBtn.className = "lab-btn ghost";
+  offBtn.id = "all-off";
+  offBtn.textContent = "全部熄灭";
+  offBtn.addEventListener("click", function(){
+    Lab.click();
+    extinguish();
+  });
+  actions.appendChild(offBtn);
+
+  readout.appendChild(sumLabel);
+  readout.appendChild(sumEl);
+  readout.appendChild(bitLabel);
+  readout.appendChild(bitsEl);
+  readout.appendChild(formulaEl);
+  board.appendChild(readout);
+  board.appendChild(lamps);
+  board.appendChild(actions);
+  render();
+  stage.appendChild(board);
+  readout.setAttribute("aria-live", "polite");
+  readout.setAttribute("aria-atomic", "true");
+})();
+</script>
+</body>
+</html>

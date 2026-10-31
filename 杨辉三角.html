@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>数学实验室 · 杨辉三角</title>
+<link rel="stylesheet" href="lab-kit.css">
+<style>
+  #stage .intro{
+    margin:0 0 8px;
+    text-align:center;
+    color:var(--soft,#6B7280);
+    font-weight:700;
+    font-size:1rem;
+    line-height:1.5;
+  }
+  #stage .board-scroll,
+  #stage .tri,
+  #stage .prow,
+  #stage .cells,
+  #stage .cell,
+  #stage .sum{
+    word-break:normal;
+    overflow-wrap:normal;
+  }
+  #stage .board-scroll{
+    width:100%;
+    max-width:100%;
+    min-width:0;
+    overflow-x:auto;
+    display:flex;
+    justify-content:center;
+    justify-content:safe center;
+    overscroll-behavior-x:contain;
+    -webkit-overflow-scrolling:touch;
+    padding:6px 0 8px;
+  }
+  #stage .tri{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+    width:max-content;
+    flex:0 0 auto;
+  }
+  #stage .prow{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-wrap:nowrap;
+    gap:6px;
+  }
+  #stage .cells{
+    display:flex;
+    flex-wrap:nowrap;
+    gap:6px;
+    justify-content:center;
+  }
+  #stage .sum{
+    flex:0 0 48px;
+    width:48px;
+    font-size:20px;
+    font-weight:800;
+    line-height:1;
+    text-align:left;
+    white-space:nowrap;
+    color:var(--purple,#7C3AED);
+    font-variant-numeric:tabular-nums;
+  }
+  #stage button{
+    font-family:inherit;
+    cursor:pointer;
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+  }
+  #stage .cell{
+    box-sizing:border-box;
+    flex:0 0 auto;
+    width:48px;
+    height:48px;
+    min-width:48px;
+    min-height:48px;
+    padding:0;
+    border-radius:16px;
+    border:2px dashed #DDD6FE;
+    background:#fff;
+    color:var(--ink,#1F2937);
+    font-size:20px;
+    font-weight:800;
+    line-height:1;
+    letter-spacing:0;
+    white-space:nowrap;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    appearance:none;
+    -webkit-appearance:none;
+    -webkit-touch-callout:none;
+  }
+  #stage .cell.ready{
+    border-style:dashed;
+    border-color:#7C3AED;
+    background:#fff;
+  }
+  #stage .cell.wait{opacity:.8;background:#F8FAFC;}
+  #stage .cell.ready::after,
+  #stage .cell.wait::after{
+    content:"";
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#C4B5FD;
+  }
+  #stage .cell.wait::after{background:#E9D5FF;}
+  #stage .cell.filled{
+    border-style:solid;
+    border-color:#93C5FD;
+    background:#fff;
+    color:var(--ink,#1F2937);
+    box-shadow:0 3px 0 #DBEAFE;
+  }
+  #stage .cell.filled.odd{
+    background:#7C3AED;
+    border-color:#6D28D9;
+    color:#fff;
+    box-shadow:0 3px 0 #5B21B6;
+  }
+  #stage .cell.filled.even{
+    background:#F8FAFC;
+    border-color:#E2E8F0;
+    color:#64748B;
+    box-shadow:none;
+  }
+  #stage .cell:active{transform:scale(.96);}
+  #stage .cell:focus-visible{
+    outline:3px solid var(--purple,#7C3AED);
+    outline-offset:2px;
+  }
+  #stage .tools{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:14px;
+  }
+  #stage .tools .lab-btn{
+    flex:1 1 200px;
+    width:auto;
+    min-height:48px;
+    min-width:44px;
+    margin:0;
+  }
+  #stage #paintOdd[aria-pressed="true"]{
+    box-shadow:inset 0 0 0 3px #5B21B6;
+  }
+  #stage .ask{
+    margin-top:14px;
+    background:#F5F3FF;
+    border-radius:20px;
+    padding:14px 12px;
+  }
+  #stage .q{
+    margin:0 0 10px;
+    text-align:center;
+    font-size:1.2rem;
+    font-weight:800;
+    line-height:1.4;
+    color:var(--ink,#1F2937);
+  }
+  #stage .choices{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  #stage .choices .lab-btn{
+    flex:1 1 140px;
+    width:auto;
+    min-height:48px;
+    min-width:44px;
+    margin:0;
+    padding:12px 10px;
+    font-size:1.05rem;
+  }
+  #stage .choices .lab-btn.picked,
+  #stage .choices .lab-btn.picked:disabled{
+    background:linear-gradient(135deg,#34D399,#10B981);
+    color:#fff;
+    -webkit-text-fill-color:#fff;
+    opacity:1;
+    filter:none;
+  }
+  #stage .note{
+    margin:10px 0 0;
+    text-align:center;
+    font-weight:800;
+    font-size:1rem;
+    line-height:1.45;
+    color:var(--ink,#1F2937);
+  }
+  #stage .ask[hidden],
+  #stage #nextRow[hidden],
+  #stage .note[hidden]{display:none !important;}
+  @keyframes popin{
+    0%{transform:scale(.6);}
+    70%{transform:scale(1.06);}
+    100%{transform:scale(1);}
+  }
+  @keyframes fadeup{
+    from{opacity:0;transform:translateY(4px);}
+    to{opacity:1;transform:none;}
+  }
+  @keyframes shake{
+    0%,100%{transform:translateX(0);}
+    25%{transform:translateX(-4px);}
+    50%{transform:translateX(4px);}
+    75%{transform:translateX(-2px);}
+  }
+  #stage .cell.fresh{animation:popin .22s ease;}
+  #stage .sum.in{animation:fadeup .3s ease;}
+  #stage .cell.shake,
+  #stage .choices .shake{animation:shake .28s ease;}
+  @media (min-width:768px) and (max-width:899px){
+    #stage .cell{width:54px;height:54px;font-size:22px;}
+  }
+  @media (min-width:900px){
+    #stage .cell{width:50px;height:50px;font-size:21px;}
+  }
+  @media (min-width:1280px){
+    #stage .cell{width:56px;height:56px;font-size:22px;}
+  }
+  @media (hover:hover){
+    #stage .cell.ready:hover{transform:translateY(-1px);}
+  }
+  @media (prefers-reduced-motion:reduce){
+    #stage .cell.fresh,
+    #stage .cell.shake,
+    #stage .choices .shake,
+    #stage .sum.in{animation:none;}
+  }
+</style>
+</head>
+<body>
+<script src="lab-kit.js"></script>
+<script>
+(function(){
+  "use strict";
+  const ROWS = 9;
+
+  let cells, colorOn, powDone, questionSpoken, askMsg, fresh, seenFull;
+  let stage, tri, ask, note, nextRow, paintOdd, choiceButtons;
+
+  function makeCells(){
+    const g = [];
+    for(let r = 0; r < ROWS; r++){
+      g[r] = [];
+      for(let c = 0; c <= r; c++) g[r][c] = null;
+    }
+    g[0][0] = 1;
+    return g;
+  }
+
+  function rowFull(r){
+    for(let c = 0; c <= r; c++) if(cells[r][c] == null) return false;
+    return true;
+  }
+
+  function through(n){
+    for(let r = 0; r <= n; r++) if(!rowFull(r)) return false;
+    return true;
+  }
+
+  function rowSum(r){
+    let s = 0;
+    for(let c = 0; c <= r; c++) s += cells[r][c];
+    return s;
+  }
+
+  /* 两边是 1。中间要上一行 (c-1) 和 c 都有数，才填它们的和。整行和是 2 的 r 次方。 */
+  function canFill(r, c){
+    if(cells[r][c] != null) return false;
+    if(c === 0 || c === r) return true;
+    return cells[r - 1][c - 1] != null && cells[r - 1][c] != null;
+  }
+
+  function valueOf(r, c){
+    if(c === 0 || c === r) return 1;
+    return cells[r - 1][c - 1] + cells[r - 1][c];
+  }
+
+  function resetData(){
+    cells = makeCells();
+    colorOn = false;
+    powDone = false;
+    questionSpoken = false;
+    askMsg = "";
+    fresh = new Set();
+    seenFull = Array(ROWS).fill(false);
+    seenFull[0] = true;
+  }
+
+  function resetAll(){
+    resetData();
+    render();
+    Lab.toast("");
+  }
+
+  Lab.mount({
+    id: "lab-pascal",
+    title: "杨辉三角",
+    emoji: "△",
+    lead: "每一格，都是脚下两个数加起来。",
+    parent: "杨辉三角每格等于上方两格之和，两边是 1。第 r 行（从 0 数）的和是 2 的 r 次方：1，2，4，8，16… 把奇数涂色会看到谢尔宾斯基三角形。",
+    goals: [
+      {id: "pow", text: "发现每一行加起来会翻倍"},
+      {id: "sier", text: "把单数涂色，看出大三角里的小三角"}
+    ],
+    hints: [
+      {id: "h1", text: "一行填满以后，把这一行的数加加，再和上一行比。"},
+      {id: "h2", text: "只给单数涂颜色，往远处看。"}
+    ],
+    onReset: resetAll
+  });
+
+  stage = document.getElementById("stage");
+  if(!stage) return;
+
+  const intro = document.createElement("p");
+  intro.className = "intro";
+  intro.textContent = "点空格，把数字填进去。";
+
+  const scroll = document.createElement("div");
+  scroll.className = "board-scroll";
+  tri = document.createElement("div");
+  tri.className = "tri";
+  tri.setAttribute("role", "group");
+  tri.setAttribute("aria-label", "杨辉三角");
+  scroll.appendChild(tri);
+
+  const tools = document.createElement("div");
+  tools.className = "tools";
+  nextRow = document.createElement("button");
+  nextRow.type = "button";
+  nextRow.id = "nextRow";
+  nextRow.className = "lab-btn";
+  nextRow.textContent = "填下一行";
+  nextRow.hidden = true;
+  paintOdd = document.createElement("button");
+  paintOdd.type = "button";
+  paintOdd.id = "paintOdd";
+  paintOdd.className = "lab-btn purple";
+  paintOdd.textContent = "把单数涂色";
+  paintOdd.setAttribute("aria-pressed", "false");
+  tools.appendChild(nextRow);
+  tools.appendChild(paintOdd);
+
+  ask = document.createElement("div");
+  ask.className = "ask";
+  ask.hidden = true;
+  const q = document.createElement("p");
+  q.className = "q";
+  q.textContent = "这些和有什么规律？";
+  const choices = document.createElement("div");
+  choices.className = "choices";
+  choiceButtons = [
+    ["add3", "每次多 3"],
+    ["x2", "每次翻倍"],
+    ["odd", "都是单数"]
+  ].map(function(pair){
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "lab-btn ghost";
+    b.dataset.choice = pair[0];
+    b.textContent = pair[1];
+    choices.appendChild(b);
+    return b;
+  });
+  note = document.createElement("p");
+  note.className = "note";
+  note.hidden = true;
+  note.setAttribute("aria-live", "polite");
+  ask.appendChild(q);
+  ask.appendChild(choices);
+  ask.appendChild(note);
+
+  stage.appendChild(intro);
+  stage.appendChild(scroll);
+  stage.appendChild(tools);
+  stage.appendChild(ask);
+
+  function renderTri(){
+    tri.textContent = "";
+    for(let r = 0; r < ROWS; r++){
+      const prow = document.createElement("div");
+      prow.className = "prow";
+      const left = document.createElement("span");
+      left.className = "sum";
+      left.setAttribute("aria-hidden", "true");
+      const wrap = document.createElement("div");
+      wrap.className = "cells";
+      for(let c = 0; c <= r; c++){
+        const n = cells[r][c];
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "cell";
+        b.dataset.r = String(r);
+        b.dataset.c = String(c);
+        if(n == null){
+          b.classList.add(canFill(r, c) ? "ready" : "wait");
+          b.setAttribute("aria-label", "第" + (r + 1) + "行第" + (c + 1) + "格，空的");
+        }else{
+          b.classList.add("filled");
+          if(colorOn) b.classList.add(n % 2 ? "odd" : "even");
+          b.textContent = String(n);
+          b.dataset.n = String(n);
+          b.setAttribute("aria-label", "第" + (r + 1) + "行第" + (c + 1) + "格，" + n);
+          if(fresh.has(r + ":" + c)) b.classList.add("fresh");
+        }
+        wrap.appendChild(b);
+      }
+      const right = document.createElement("span");
+      right.className = "sum";
+      if(rowFull(r)){
+        const s = rowSum(r);
+        right.textContent = String(s);
+        right.dataset.sum = String(s);
+        right.setAttribute("aria-label", "加起来是" + s);
+        if(!seenFull[r]){
+          right.classList.add("in");
+          seenFull[r] = true;
+        }
+      }else{
+        right.setAttribute("aria-hidden", "true");
+      }
+      prow.appendChild(left);
+      prow.appendChild(wrap);
+      prow.appendChild(right);
+      tri.appendChild(prow);
+    }
+  }
+
+  function render(){
+    renderTri();
+    fresh.clear();
+    ask.hidden = !through(4);
+    nextRow.hidden = !(through(4) && !rowFull(ROWS - 1));
+    paintOdd.setAttribute("aria-pressed", colorOn ? "true" : "false");
+    note.hidden = !askMsg;
+    note.textContent = askMsg;
+    choiceButtons.forEach(function(b){
+      const picked = powDone && b.dataset.choice === "x2";
+      b.className = "lab-btn" + (picked ? " picked" : " ghost");
+      b.disabled = !!powDone;
+    });
+  }
+
+  function maybeAsk(){
+    if(questionSpoken || !through(4)) return;
+    questionSpoken = true;
+    Lab.say("这些和有什么规律？");
+  }
+
+  function maybeSier(){
+    if(!colorOn || !through(7)) return;
+    if(!Lab.goal("sier")) return;
+    Lab.say("单数涂上颜色，里面藏着更小的三角形。");
+    Lab.toast("单数涂上颜色，里面藏着更小的三角形。");
+  }
+
+  function reveal(){
+    render();
+    Lab.toast("");
+    maybeAsk();
+    maybeSier();
+  }
+
+  function shake(el){
+    if(!el) return;
+    el.classList.remove("shake");
+    void el.offsetWidth;
+    el.classList.add("shake");
+  }
+
+  function tap(r, c){
+    Lab.click();
+    if(cells[r][c] != null) return;
+    if(!canFill(r, c)){
+      Lab.toast("先填上面两个格子。");
+      Lab.bad();
+      shake(stage.querySelector('.cell[data-r="' + r + '"][data-c="' + c + '"]'));
+      return;
+    }
+    cells[r][c] = valueOf(r, c);
+    fresh.add(r + ":" + c);
+    reveal();
+  }
+
+  function fillNext(){
+    Lab.click();
+    if(!through(4)) return;
+    for(let r = 5; r < ROWS; r++){
+      if(rowFull(r)) continue;
+      for(let c = 0; c <= r; c++){
+        if(cells[r][c] != null) continue;
+        if(!canFill(r, c)) continue;
+        cells[r][c] = valueOf(r, c);
+        fresh.add(r + ":" + c);
+      }
+      reveal();
+      return;
+    }
+  }
+
+  function toggleColor(){
+    Lab.click();
+    colorOn = !colorOn;
+    render();
+    if(!colorOn){
+      Lab.toast("");
+      return;
+    }
+    if(!through(7)){
+      Lab.toast("先填到更多行。");
+      Lab.say("先填到更多行。");
+      return;
+    }
+    maybeSier();
+  }
+
+  function pick(choice, btn){
+    if(powDone || !through(4)) return;
+    if(choice === "x2"){
+      powDone = true;
+      askMsg = "对啦，每一行的和都是上一行的两倍。";
+      Lab.goal("pow");
+      Lab.say("对啦，每一行的和都是上一行的两倍。");
+      Lab.toast("对啦，每一行的和都是上一行的两倍。");
+      render();
+      return;
+    }
+    askMsg = "再把 1、2、4、8 比一比。";
+    note.hidden = false;
+    note.textContent = askMsg;
+    Lab.bad();
+    Lab.say("再把 1、2、4、8 比一比。");
+    Lab.toast("再把 1、2、4、8 比一比。");
+    shake(btn);
+  }
+
+  stage.addEventListener("click", function(e){
+    const cell = e.target.closest(".cell");
+    if(cell && stage.contains(cell)){
+      tap(+cell.dataset.r, +cell.dataset.c);
+      return;
+    }
+    if(e.target.closest("#nextRow")){
+      fillNext();
+      return;
+    }
+    if(e.target.closest("#paintOdd")){
+      toggleColor();
+      return;
+    }
+    const choice = e.target.closest("[data-choice]");
+    if(choice) pick(choice.dataset.choice, choice);
+  });
+
+  resetData();
+  render();
+})();
+</script>
+</body>
+</html>

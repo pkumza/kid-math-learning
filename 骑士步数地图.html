@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>骑士步数地图 · 数学实验室</title>
+<link rel="stylesheet" href="lab-kit.css">
+<style>
+  #stage { max-width: 640px; margin: 0 auto; }
+  .msg {
+    margin: 0 auto 10px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 1.08rem;
+    line-height: 1.45;
+    color: #1F2937;
+    min-height: 3.1em;
+  }
+  .msg.ask {
+    color: #5B21B6;
+    background: #F5F3FF;
+    border-radius: 14px;
+    padding: 10px 12px;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .scroller {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+  }
+  .chess-outer {
+    display: flex;
+    align-items: stretch;
+    gap: 2px;
+    width: max(calc(8 * 44px + 36px), min(100%, 520px));
+    margin: 0 auto;
+  }
+  .leftcol {
+    width: 28px;
+    flex: 0 0 28px;
+    display: flex;
+    flex-direction: column;
+  }
+  .rank-labels {
+    flex: 1 1 auto;
+    display: grid;
+    grid-template-rows: repeat(8, 1fr);
+    min-height: 0;
+    padding: 3px 0;
+    box-sizing: border-box;
+  }
+  .file-spacer { height: 30px; flex: none; }
+  .rightcol {
+    flex: 1 1 auto;
+    min-width: calc(8 * 44px + 6px);
+    display: flex;
+    flex-direction: column;
+  }
+  .sqgrid {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(44px, 1fr));
+    width: 100%;
+    min-width: calc(8 * 44px);
+    border: 3px solid #5C3A1E;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #5C3A1E;
+  }
+  .file-labels {
+    height: 28px;
+    margin-top: 2px;
+    padding: 0 3px;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: repeat(8, minmax(44px, 1fr));
+  }
+  .coord {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    color: #6B7280;
+    font-size: 0.95rem;
+  }
+  .sq {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    min-width: 44px;
+    min-height: 44px;
+    aspect-ratio: 1 / 1;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    font: inherit;
+    font-weight: 900;
+    line-height: 1;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-appearance: none;
+    appearance: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .sq:active { transform: scale(0.96); }
+  .sq:focus { outline: none; }
+  .sq:focus-visible {
+    outline: 3px solid #7C3AED;
+    outline-offset: -3px;
+    z-index: 2;
+  }
+  .sq.light { background: #F0D9B5; color: #1F2937; }
+  .sq.dark { background: #B58863; color: #1F2937; }
+  .sq.k0 { background: #FFF4CC; color: #1F2937; }
+  .sq.k1 { background: #D7F5E3; color: #1F2937; }
+  .sq.k2 { background: #B6EAD0; color: #1F2937; }
+  .sq.k3 { background: #8AD6B4; color: #1F2937; }
+  .sq.k4 { background: #4FB58A; color: #1F2937; }
+  .sq.k5 { background: #1E7A52; color: #FFFFFF; }
+  .sq.k6 { background: #145C3E; color: #FFFFFF; }
+  .sq .n {
+    font-size: 1.2rem;
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+  }
+  .sq .mark {
+    font-size: 1.35rem;
+    line-height: 1;
+    color: #1F2937;
+    pointer-events: none;
+  }
+  .sq.here .n {
+    position: absolute;
+    right: 3px;
+    bottom: 2px;
+    font-size: 0.85rem;
+  }
+  .sq.here { box-shadow: inset 0 0 0 3px #7C3AED; z-index: 1; }
+  .sq.good { box-shadow: inset 0 0 0 4px #16A34A; z-index: 1; }
+  .sq.badflash { animation: knight-shake .35s ease; }
+  .sq.fresh { animation: knight-pop .28s ease; }
+  @keyframes knight-pop {
+    from { transform: scale(.84); }
+    to { transform: scale(1); }
+  }
+  @keyframes knight-shake {
+    0%, 100% { transform: none; }
+    30% { transform: translateX(-4px); }
+    70% { transform: translateX(4px); }
+  }
+  #stage .lab-btn.go {
+    width: 100%;
+    margin-top: 12px;
+    font-size: 1.15rem;
+  }
+  .legend {
+    margin: 8px 0 0;
+    text-align: center;
+    color: #6B7280;
+    font-weight: 700;
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+</style>
+</head>
+<body>
+<script src="lab-kit.js"></script>
+<script>
+(function () {
+  var FILES = 'abcdefgh';
+  var DELTAS = [[1, 2], [1, -2], [-1, 2], [-1, -2], [2, 1], [2, -1], [-2, 1], [-2, -1]];
+
+  var knight = { file: 0, rank: 0 };
+  var dist = [];
+  var reach = 0;
+  var shown = 0;
+  var askAnnounced = false;
+  var flash = null;
+  var wave = -1;
+
+  function bfs(file, rank) {
+    var board = [];
+    var f, r, i, nf, nr, k;
+    for (f = 0; f < 8; f++) {
+      board[f] = [];
+      for (r = 0; r < 8; r++) board[f][r] = -1;
+    }
+    board[file][rank] = 0;
+    var q = [[file, rank]];
+    for (i = 0; i < q.length; i++) {
+      f = q[i][0];
+      r = q[i][1];
+      for (k = 0; k < DELTAS.length; k++) {
+        nf = f + DELTAS[k][0];
+        nr = r + DELTAS[k][1];
+        if (nf < 0 || nf > 7 || nr < 0 || nr > 7) continue;
+        if (board[nf][nr] !== -1) continue;
+        board[nf][nr] = board[f][r] + 1;
+        q.push([nf, nr]);
+      }
+    }
+    return board;
+  }
+
+  function maxOf(board) {
+    var m = 0, f, r;
+    for (f = 0; f < 8; f++) {
+      for (r = 0; r < 8; r++) {
+        if (board[f][r] > m) m = board[f][r];
+      }
+    }
+    return m;
+  }
+
+  function isCorner(file, rank) {
+    return (file === 0 || file === 7) && (rank === 0 || rank === 7);
+  }
+
+  function opposite(file, rank) {
+    return { file: 7 - file, rank: 7 - rank };
+  }
+
+  function squareName(file, rank) {
+    return FILES.charAt(file) + String(rank + 1);
+  }
+
+  function isLit(file, rank) {
+    return dist[file][rank] >= 0 && dist[file][rank] <= shown;
+  }
+
+  function asking() {
+    return isCorner(knight.file, knight.rank) && shown >= reach && !Lab.isGoal('far');
+  }
+
+  Lab.mount({
+    id: 'lab-knight',
+    title: '骑士步数地图',
+    emoji: '♞',
+    lead: '马走日字。一层一层，看它能到哪。',
+    parent:
+      '<p>马走日字：横着走 1 格、竖着走 2 格，或者横着走 2 格、竖着走 1 格。8 个方向里，走出棋盘的不算。</p>' +
+      '<p>从四个角 a1、a8、h1、h8 走到斜对角，最少都是 6 步。</p>' +
+      '<p>从角落出发，整张棋盘只有斜对角那一格要 6 步，别的格子都不超过 5 步。最远的格子只有这一个，就是斜对角。</p>' +
+      '<p>从 a1 出发，第一步只能到 b3 和 c2。</p>',
+    goals: [
+      { id: 'diag', text: '从角落走到斜对角，看要几步' },
+      { id: 'far', text: '点出最难到达的那一格' }
+    ],
+    hints: [
+      { id: 'h1', text: '马放在左下角，一层层点亮，直到右上角亮起来。' },
+      { id: 'h2', text: '数字最大的格子，就是最远的。先把每一层都点亮。' }
+    ],
+    onReset: function () { resetBoard(true); }
+  });
+
+  var stage = document.getElementById('stage');
+  stage.innerHTML =
+    '<div class="knight">' +
+      '<p class="msg" id="knight-msg" aria-live="polite"></p>' +
+      '<div class="scroller">' +
+        '<div class="chess-outer">' +
+          '<div class="leftcol">' +
+            '<div class="rank-labels" id="knight-ranks"></div>' +
+            '<div class="file-spacer" aria-hidden="true"></div>' +
+          '</div>' +
+          '<div class="rightcol">' +
+            '<div class="sqgrid" id="knight-grid" role="group" aria-label="棋盘，a 在左，h 在右，1 在下，8 在上"></div>' +
+            '<div class="file-labels" id="knight-files"></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<button type="button" class="lab-btn go" id="knight-next">点亮下一层</button>' +
+      '<p class="legend">想换地方，点还没亮的格子。颜色越深，步数越多。</p>' +
+    '</div>';
+
+  var msgEl = document.getElementById('knight-msg');
+  var gridEl = document.getElementById('knight-grid');
+  var nextBtn = document.getElementById('knight-next');
+
+  (function buildCoords() {
+    var ranks = document.getElementById('knight-ranks');
+    var files = document.getElementById('knight-files');
+    var rank, file, cell;
+    for (rank = 7; rank >= 0; rank--) {
+      cell = document.createElement('div');
+      cell.className = 'coord';
+      cell.textContent = String(rank + 1);
+      ranks.appendChild(cell);
+    }
+    for (file = 0; file < 8; file++) {
+      cell = document.createElement('div');
+      cell.className = 'coord';
+      cell.textContent = FILES.charAt(file);
+      files.appendChild(cell);
+    }
+  })();
+
+  function message() {
+    if (asking()) return { text: '点一点最难到达的格子', ask: true };
+    if (shown === 0) return { text: '马标着 0。点「点亮下一层」，看它先到哪。', ask: false };
+    if (shown < reach) return { text: '已经亮到 ' + shown + ' 步。再点一次，看下一层。', ask: false };
+    if (isCorner(knight.file, knight.rank) && Lab.isGoal('far')) {
+      return { text: '这一格最远，要 6 步。', ask: false };
+    }
+    return { text: '每一层都亮了。换个地方，再点亮看看。', ask: false };
+  }
+
+  function render() {
+    var view = message();
+    msgEl.textContent = view.text;
+    msgEl.className = view.ask ? 'msg ask' : 'msg';
+    gridEl.textContent = '';
+    var rank, file, btn, steps, here, lit, name, mark, num;
+    for (rank = 7; rank >= 0; rank--) {
+      for (file = 0; file < 8; file++) {
+        steps = dist[file][rank];
+        here = file === knight.file && rank === knight.rank;
+        lit = steps >= 0 && steps <= shown;
+        name = squareName(file, rank);
+        btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'sq';
+        btn.dataset.file = String(file);
+        btn.dataset.rank = String(rank);
+        if (lit) {
+          btn.classList.add('k' + steps);
+          num = document.createElement('span');
+          num.className = 'n';
+          num.textContent = String(steps);
+          btn.appendChild(num);
+          btn.setAttribute('aria-label', here
+            ? (name + '，马在这里，' + steps + ' 步')
+            : (name + '，' + steps + ' 步'));
+        } else {
+          btn.classList.add((file + rank) % 2 === 0 ? 'dark' : 'light');
+          btn.setAttribute('aria-label', name + '，还没点亮');
+        }
+        if (here) {
+          btn.classList.add('here');
+          mark = document.createElement('span');
+          mark.className = 'mark';
+          mark.setAttribute('aria-hidden', 'true');
+          mark.textContent = '♞';
+          btn.insertBefore(mark, btn.firstChild);
+        }
+        if (wave > 0 && lit && steps === wave) btn.classList.add('fresh');
+        if (flash && flash.file === file && flash.rank === rank) btn.classList.add(flash.kind);
+        gridEl.appendChild(btn);
+      }
+    }
+  }
+
+  function resetBoard(speak) {
+    knight = { file: 0, rank: 0 };
+    dist = bfs(0, 0);
+    reach = maxOf(dist);
+    shown = 0;
+    askAnnounced = false;
+    flash = null;
+    wave = -1;
+    if (gridEl) render();
+    if (speak) Lab.say('马回到左下角了。');
+  }
+
+  function maybeDiag() {
+    if (!isCorner(knight.file, knight.rank)) return false;
+    var opp = opposite(knight.file, knight.rank);
+    var steps = dist[opp.file][opp.rank];
+    if (steps === 6 && shown >= steps && Lab.goal('diag')) {
+      Lab.say('从角落到斜对角，最少 6 步。');
+      return true;
+    }
+    return false;
+  }
+
+  function announceAsk(diagSpoken) {
+    if (!asking()) {
+      askAnnounced = false;
+      return;
+    }
+    if (askAnnounced) return;
+    askAnnounced = true;
+    Lab.toast('点一点最难到达的格子。');
+    if (!diagSpoken) Lab.say('点一点最难到达的格子。');
+  }
+
+  function placeKnight(file, rank) {
+    knight = { file: file, rank: rank };
+    dist = bfs(file, rank);
+    reach = maxOf(dist);
+    shown = 0;
+    askAnnounced = false;
+    flash = null;
+    wave = -1;
+    Lab.click();
+    render();
+    Lab.toast('马到 ' + squareName(file, rank) + ' 了。层数重新算。');
+    Lab.say('马到 ' + squareName(file, rank) + '。');
+  }
+
+  function onSquare(file, rank) {
+    var corner = isCorner(knight.file, knight.rank);
+    var opp = opposite(knight.file, knight.rank);
+    var isOpp = file === opp.file && rank === opp.rank;
+    var steps = dist[file][rank];
+    var farDone = Lab.isGoal('far');
+
+    if (corner && shown >= reach && !farDone) {
+      if (isOpp && steps === 6) {
+        flash = { file: file, rank: rank, kind: 'good' };
+        Lab.goal('far');
+        render();
+        Lab.say('这一格最远，要 6 步。');
+        Lab.toast('这一格最远，要 6 步。');
+        return;
+      }
+      flash = { file: file, rank: rank, kind: 'badflash' };
+      render();
+      Lab.bad();
+      Lab.toast('还有更远的，再找找。');
+      return;
+    }
+
+    if (file === knight.file && rank === knight.rank) {
+      Lab.click();
+      return;
+    }
+
+    if (corner && !farDone && shown < reach && (isLit(file, rank) || isOpp)) {
+      Lab.click();
+      Lab.toast('先点亮下一层。');
+      Lab.say('先点亮下一层。');
+      return;
+    }
+
+    placeKnight(file, rank);
+  }
+
+  function lightNext() {
+    if (shown >= reach) {
+      Lab.click();
+      Lab.toast('每一层都点亮啦。');
+      announceAsk(false);
+      return;
+    }
+    shown += 1;
+    flash = null;
+    wave = shown;
+    Lab.click();
+    var diagSpoken = maybeDiag();
+    render();
+    announceAsk(diagSpoken);
+  }
+
+  gridEl.addEventListener('click', function (event) {
+    var btn = event.target.closest('.sq');
+    if (!btn) return;
+    onSquare(Number(btn.dataset.file), Number(btn.dataset.rank));
+  });
+  nextBtn.addEventListener('click', lightNext);
+
+  resetBoard(false);
+  Lab.say('马在左下角。点一下，点亮下一层。');
+})();
+</script>
+</body>
+</html>
