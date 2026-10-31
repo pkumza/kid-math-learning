@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>同分母加减 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-engine.css">
+<script src="narration/manifest.js"></script>
+<script src="narration/parts.js"></script>
+<script src="narration/resolver.js"></script>
+<script src="narration/player.js"></script>
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'tongfen83',
+  title:'同分母加减',
+  emoji:'🍕',
+  heading:'同分母加减',
+  pinyin:'tóng fēn mǔ jiā jiǎn · 分母不变',
+  intro:'分母一样时，<b class="or">只加减分子</b>，分母<b class="bl">照抄</b>。',
+  parentNote:'分母相同才能直接加减：分母照抄，只把分子相加或相减。这关先不约分，也不做分母不同的题。',
+  explore:{
+    title:'🍕 分母不动，分子相加',
+    lead:'一块饼切成 <b class="or">8 份</b>。<br>先吃 <b class="bl">3 份</b>，再吃 <b class="pu">2 份</b>。<br>一共吃了多少？',
+    visual:{type:'count',count:8,text:'🍕',cls:'orange'},
+    note:'点卡片，看看分母和分子。',
+    voice:'一块饼切成 8 份。先吃 3 份，再吃 2 份。一共吃了多少？',
+    unlock:'🎉 分母不动，分子相加，一共是 5/8！',
+    unlockVoice:'分母不动，分子相加，一共是 5/8。',
+    reveals:[
+      {pic:'🍕',title:'分母不动',answer:'3/8 和 2/8，分母都是 <b>8</b>。<br>分母不动，不要加分母。',voice:'分母不动。3/8 和 2/8，分母都是 8。'},
+      {pic:'➕',title:'分子相加',answer:'先吃 3 份，再吃 2 份，<br>分子 <b>3+2=5</b>。',voice:'分子相加。3 加 2 等于 5。'},
+      {pic:'✅',title:'合在一起',answer:'分母照抄 8，<br>一共吃了 <b>5/8</b>。',voice:'分母照抄 8，一共吃了 5/8。'}
+    ]
+  },
+  practice:[
+    {q:'1/5 加 2/5 是多少？',hint:'分母都是 5，只把分子加起来。',visual:{type:'row',items:[{text:'1/5',cls:'blue'},'+',{text:'2/5',cls:'orange'}]},answer:'3/5',options:['2/5','3/5','3/10'],winVoice:'答对啦！分子相加，是 3/5。',wrong:'分母不要加。只把分子加起来。'},
+    {q:'4/7 减 1/7 是多少？',hint:'分母不变，分子相减。',visual:{type:'row',items:[{text:'4/7',cls:'blue'},'-',{text:'1/7',cls:'orange'}]},answer:'3/7',options:['3/7','3/14','5/7'],winVoice:'答对啦！分子相减，是 3/7。',wrong:'分母照抄。分子要相减。'},
+    {q:'2/9 加 5/9 是多少？',hint:'分母都是 9，分子 2 和 5 相加。',visual:{type:'row',items:[{text:'2/9',cls:'purple'},'+',{text:'5/9',cls:'orange'}]},answer:'7/9',options:['7/9','7/18','10/9'],winVoice:'答对啦！2 加 5，分母还是 9，是 7/9。',wrong:'分母还是 9。把分子 2 和 5 加起来。'},
+    {q:'5/6 减 2/6 是多少？',hint:'不要约分，分母仍然写 6。',visual:{type:'row',items:[{text:'5/6',cls:'blue'},'-',{text:'2/6',cls:'green'}]},answer:'3/6',options:['3/6','3/12','7/6'],winVoice:'答对啦！先不约分，是 3/6。',wrong:'不要约分。分母仍然写 6，分子相减。'}
+  ],
+  challenge:[
+    {q:'挑战：一条绳子用去 2/7，又用去 3/7，还剩几分之几？',hint:'先把用掉的加起来，整条绳子是 7/7，再相减。',visual:{type:'clues',items:['先把用掉的加起来','整条绳子是 7/7，再相减']},answer:'2/7',options:['2/7','5/7','6/7'],winVoice:'答对啦！用掉的加起来，再用整条去减，还剩 2/7。',wrong:'先加用掉的，再用整条 7/7 去减。',hard:true},
+    {q:'挑战：3/10 加 4/10，比 8/10 少多少？',hint:'先算加起来是几分之几，再和 8/10 比。',visual:{type:'clues',items:['先把两个分数加起来','再和 8/10 比一比']},answer:'1/10',options:['1/10','7/10','2/10'],winVoice:'答对啦！先加起来，再和 8/10 比，少了 1/10。',wrong:'先加起来，再看比 8/10 少多少。',hard:true}
+  ],
+  done:{badge:'🍕',title:'🍕 同分母加减',text:'分母一样，<b class="pu">只加减分子</b>，<br>分母照抄！',voice:'太棒了！分母一样，只加减分子。'},
+  nextText:'进入下一关：三角形内角和 →',
+  nextHref:'三角形内角和.html'
+};
+</script>
+<script src="lesson-engine.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>百分数入门 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-engine.css">
+<script src="narration/manifest.js"></script>
+<script src="narration/parts.js"></script>
+<script src="narration/resolver.js"></script>
+<script src="narration/player.js"></script>
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'baifen88',
+  title:'百分数入门',
+  emoji:'💰',
+  heading:'百分数入门',
+  pinyin:'bǎi fēn shù rù mén · 一半就是 50%',
+  intro:'<b class="or">50%</b> 是一半，<b class="bl">25%</b> 是四份里的一份，<b class="pu">10%</b> 是十份里的一份。',
+  parentNote:'这一关只认四个百分数：50% 是一半，25% 是四份里的一份，10% 是十份里的一份，100% 是全部。八折就是付 80%，可以先找出 10%，再取 8 份。先别讲小数，也别套百分数乘法公式。',
+  explore:{
+    title:'🖍️ 一盒彩笔',
+    lead:'一盒 <b class="bl">10 支</b>彩笔，<b class="or">50%</b> 是红色，就是一半，<b class="pu">5 支</b>。',
+    visual:{type:'count',count:10,text:'🖍️',cls:'orange'},
+    note:'点卡片，看看一半、一份和整盒。',
+    voice:'一盒 10 支彩笔，50% 是红色，就是一半，5 支。',
+    unlock:'🎉 你看懂了：一半、一份，还有整盒！',
+    unlockVoice:'你看懂了！一半是 5 支，十份里的一份是 1 支，100% 是整盒。',
+    reveals:[
+      {pic:'🖍️',title:'一半',answer:'50% 就是一半。<br>红色有 <b>5 支</b>。',voice:'50% 就是一半，红色有 5 支。'},
+      {pic:'1️⃣',title:'十份里的一份',answer:'10% 是十份里的一份，<br>就是 <b>1 支</b>。',voice:'10% 是十份里的一份，就是 1 支。'},
+      {pic:'📦',title:'整盒',answer:'100% 就是全部，<br><b>整盒 10 支</b>都算上。',voice:'100% 就是全部，整盒 10 支都算上。'}
+    ]
+  },
+  practice:[
+    {q:'20 的 50% 是几？',hint:'50% 就是一半。',visual:{type:'row',items:[{text:'20',cls:'blue'},{text:'50%',cls:'orange'}]},answer:'10',options:['5','10','15'],winVoice:'答对啦！20 的一半是 10。',wrong:'50% 就是一半，把 20 分成两份。'},
+    {q:'40 的 25% 是几？',hint:'25% 是把整体平均分成 4 份，取 1 份。',visual:{type:'row',items:[{text:'40',cls:'blue'},{text:'25%',cls:'green'}]},answer:'10',options:['8','10','20'],winVoice:'答对啦！40 分成 4 份，1 份是 10。',wrong:'把 40 平均分成 4 份，取 1 份。'},
+    {q:'80 的 10% 是几？',hint:'10% 是把整体平均分成 10 份，取 1 份。',visual:{type:'row',items:[{text:'80',cls:'purple'},{text:'10%',cls:'orange'}]},answer:'8',options:['8','10','18'],winVoice:'答对啦！80 分成 10 份，1 份是 8。',wrong:'把 80 平均分成 10 份，取 1 份。'},
+    {q:'30 的 100% 是几？',hint:'100% 就是全部。',visual:{type:'row',items:[{text:'30',cls:'blue'},{text:'100%',cls:'green'}]},answer:'30',options:['0','30','60'],winVoice:'答对啦！100% 就是全部，还是 30。',wrong:'100% 就是全部，一个也不少。'}
+  ],
+  challenge:[
+    {q:'挑战：原价 50 元，打八折（付 80%），要付几元？',hint:'先算 50 的 10%，八折是 8 份这样的 10%。',visual:{type:'clues',items:['先算 50 的 10%','八折是 8 份这样的 10%']},answer:'40',options:['30','40','45'],winVoice:'答对啦！八折付 80%，要付 40 元。',wrong:'先算 50 的 10%，八折是 8 份。',hard:true},
+    {q:'挑战：全班 40 人，25% 戴眼镜。又来了 3 个戴眼镜的同学，现在戴眼镜的有几人？',hint:'先算原来戴眼镜的人数，再加上新来的。',visual:{type:'clues',items:['先算原来戴眼镜的人数','再加上新来的 3 人']},answer:'13',options:['10','13','28'],winVoice:'答对啦！原来的人数加上 3，现在是 13 人。',wrong:'先算原来戴眼镜的人数，再加上新来的。',hard:true}
+  ],
+  done:{badge:'💰',title:'💰 百分数入门',text:'你认识了 <b class="pu">50%、25%、10%、100%</b>。<br>八折，就是付 80%。',voice:'太棒了！你学会百分数入门啦！'},
+  nextText:'进入下一关：折线统计图 →',
+  nextHref:'折线统计图.html'
+};
+</script>
+<script src="lesson-engine.js"></script>
+</body>
+</html>

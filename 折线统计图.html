@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>折线统计图 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-engine.css">
+<script src="narration/manifest.js"></script>
+<script src="narration/parts.js"></script>
+<script src="narration/resolver.js"></script>
+<script src="narration/player.js"></script>
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'zhexian89',
+  title:'折线统计图',
+  emoji:'📈',
+  heading:'折线统计图',
+  pinyin:'zhé xiàn tǒng jì tú · 看升降',
+  intro:'折线往上，数字变大；<br>往下，数字变小。<br>比一比相差多少。',
+  parentNote:'折线统计图先看升降：往上是变大，往下是变小，再比相差多少。探索用小苗的高度，闯关换成四天气温，避免孩子只记住同一组数。',
+  explore:{
+    title:'🌱 小苗长高了',
+    lead:'小苗在长。<br>周一 <b class="bl">2 厘米</b>，周二 <b class="or">5 厘米</b>，周三 <b class="pu">4 厘米</b>。<br>折线会怎么走？',
+    visual:{type:'clues',items:['周一：2 厘米','周二：5 厘米','周三：4 厘米']},
+    note:'点卡片，看看升降。',
+    voice:'小苗周一 2 厘米，周二 5 厘米，周三 4 厘米。折线会怎么走？',
+    unlock:'🎉 你发现了：往上变大，往下变小，还能比相差多少！',
+    unlockVoice:'你发现了！往上变大，往下变小，还能比相差多少。',
+    reveals:[
+      {pic:'📈',title:'先上后下',answer:'周一到周二，2 变 5，折线<b>往上</b>。<br>周二到周三，5 变 4，折线<b>往下</b>。',voice:'周一到周二往上，周二到周三往下。'},
+      {pic:'🌟',title:'谁最高',answer:'三天里，<b>周二</b>最高，<br>有 5 厘米。',voice:'三天里周二最高，有 5 厘米。'},
+      {pic:'📏',title:'矮 1 厘米',answer:'周三 4 厘米，<br>比周二<b>矮 1 厘米</b>。',voice:'周三 4 厘米，比周二矮 1 厘米。'}
+    ]
+  },
+  practice:[
+    {q:'这四天里，哪天气温最高？',hint:'比一比四个数，找最大的那一天。',visual:{type:'clues',items:['周一：12 度','周二：15 度','周三：11 度','周四：16 度']},answer:'周四',options:['周二','周三','周四'],winVoice:'答对啦！周四 16 度，是这四天里最高的。',wrong:'四个数比一比，最大的那天就是最高。'},
+    {q:'周二比周一高几度？',hint:'用周二的气温减周一的气温。',visual:{type:'clues',items:['周一：12 度','周二：15 度','周三：11 度','周四：16 度']},answer:'3',options:['2','3','5'],winVoice:'答对啦！15 减 12 等于 3 度。',wrong:'用周二减周一。别减反了。'},
+    {q:'周三比周二低几度？',hint:'用较高的减较低的。',visual:{type:'clues',items:['周一：12 度','周二：15 度','周三：11 度','周四：16 度']},answer:'4',options:['3','4','11'],winVoice:'答对啦！15 减 11 等于 4 度。',wrong:'周三更低。用较高的减较低的。'},
+    {q:'从周一到周四，气温升高的天有几天？（和前一天比，变高算升高）',hint:'周一到周二、周二到周三、周三到周四，分别看是升还是降。',visual:{type:'clues',items:['周一：12 度','周二：15 度','周三：11 度','周四：16 度']},answer:'2',options:['1','2','3'],voice:'从周一到周四，和前一天比，变高的有几天？',winVoice:'答对啦！周二和周四升高了，一共 2 天。',wrong:'一格一格看：升、降、升。数一数升高的有几天。'}
+  ],
+  challenge:[
+    {q:'挑战：周四 16 度，周五降到 9 度，周六又升了 5 度。周六是几度？',hint:'先看周五是几度，再往上加。',visual:{type:'clues',items:['周四：16 度','周五：降到 9 度','周六：再升 5 度']},answer:'14',options:['11','14','21'],winVoice:'答对啦！周五 9 度，再加 5，周六是 14 度。',wrong:'先记住周五降到几度，再往上加。别从周四直接加。',hard:true},
+    {q:'挑战：周一到周四这四天，最高和最低相差几度？',hint:'先找出最高的一天，再找最低的一天，用大的减小的。',visual:{type:'clues',items:['周一：12 度','周二：15 度','周三：11 度','周四：16 度']},answer:'5',options:['4','5','16'],winVoice:'答对啦！最高 16 度，最低 11 度，相差 5 度。',wrong:'先找最大的，再找最小的，用大的减小的。',hard:true}
+  ],
+  done:{badge:'📈',title:'📈 升降小达人',text:'往上变大，往下变小。',extra:'比一比，就知道相差多少。',voice:'你学会看折线啦！'},
+  nextText:'进入下一关：方阵问题 →',
+  nextHref:'方阵问题.html'
+};
+</script>
+<script src="lesson-engine.js"></script>
+</body>
+</html>

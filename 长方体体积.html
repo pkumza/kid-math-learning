@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>长方体体积 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-engine.css">
+<script src="narration/manifest.js"></script>
+<script src="narration/parts.js"></script>
+<script src="narration/resolver.js"></script>
+<script src="narration/player.js"></script>
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'tiji85',
+  title:'长方体体积',
+  emoji:'📦',
+  heading:'长方体体积',
+  pinyin:'cháng fāng tǐ tǐ jī · 长乘宽乘高',
+  intro:'用一样大的小正方块把盒子填满，块数就是体积。<br><b class="or">长 × 宽 × 高</b>。',
+  parentNote:'体积就是用一样大的小正方块把盒子填满，数一数有几块。算法是长×宽×高。陪玩时先问一层有几块，再问有几层。正方体的长、宽、高一样长。',
+  explore:{
+    title:'📦 小盒子里有几块',
+    lead:'一个 <b class="bl">2×2×2</b> 的盒子，能放 <b class="or">8 块</b>。<br>点卡片，看看这 8 块是怎么来的。',
+    visual:{type:'grid',rows:2,cols:2},
+    note:'点卡片，先看一层，再看有几层。',
+    voice:'2 乘 2 乘 2 的盒子能放 8 块。点卡片看看为什么。',
+    unlock:'🎉 你发现了：一层 4 块，2 层就是 8 块！',
+    unlockVoice:'你发现了！一层 4 块，两层就是 8 块。',
+    reveals:[
+      {pic:'🟦',title:'一层',answer:'一层 <b>2×2=4 块</b>。',voice:'一层是 2 乘 2，等于 4 块。'},
+      {pic:'📚',title:'有 2 层',answer:'这个盒子有 <b>2 层</b>。',voice:'这个盒子有 2 层。'},
+      {pic:'📦',title:'乘起来',answer:'4×2=<b>8 块</b>。',voice:'4 乘 2 等于 8 块。'}
+    ]
+  },
+  practice:[
+    {q:'长 3、宽 2、高 2，能放几块？',hint:'先算一层有几块，再乘层数。',visual:{type:'row',items:[{text:'长3',cls:'blue'},{text:'宽2',cls:'green'},{text:'高2',cls:'orange'}]},answer:'12',options:['7','12','14'],winVoice:'答对啦！一层 6 块，两层是 12 块。',wrong:'先算一层有几块，再乘层数。别把三条棱加在一起。'},
+    {q:'长 4、宽 3、高 2，能放几块？',hint:'长乘宽先算一层，再乘高。',visual:{type:'row',items:[{text:'长4',cls:'blue'},{text:'宽3',cls:'green'},{text:'高2',cls:'orange'}]},answer:'24',options:['18','24','32'],winVoice:'答对啦！一层 12 块，再乘高，是 24 块。',wrong:'长乘宽先算一层，再乘高。'},
+    {q:'正方体每条棱长 3 块，体积是几块？',hint:'长、宽、高都是 3，三个 3 连乘。',visual:{type:'clues',items:['长 3 块','宽 3 块','高 3 块']},answer:'27',options:['9','18','27'],winVoice:'答对啦！3 乘 3 乘 3 等于 27 块。',wrong:'长、宽、高都是 3，要三个 3 连乘。'},
+    {q:'体积是 20 块，长 5、宽 2，高是几？',hint:'先算一层有几块，再看 20 里面有几层。',visual:{type:'clues',items:['体积 20 块','长 5，宽 2','求高有几块']},answer:'2',options:['2','4','10'],winVoice:'答对啦！一层 10 块，20 里面正好 2 层。',wrong:'先算一层有几块，再看 20 里面有几层。'}
+  ],
+  challenge:[
+    {q:'挑战：长 5、宽 4、高 3 的盒子，已经放了 20 块，还能放几块？',hint:'先算盒子一共能放多少块，再减去已经放的。',visual:{type:'clues',items:['长 5，宽 4，高 3','已经放了 20 块','还能放几块']},answer:'40',options:['32','40','60'],winVoice:'答对啦！盒子一共 60 块，减去 20，还能放 40 块。',wrong:'先算盒子一共能放多少块，再减去已经放的。',hard:true},
+    {q:'挑战：体积 36 块，高 3，长 3，宽是几？',hint:'先用体积除以高，得到一层的块数，再除以长。',visual:{type:'row',items:[{text:'36块',cls:'orange'},{text:'高3',cls:'blue'},{text:'长3',cls:'green'}]},answer:'4',options:['3','4','6'],winVoice:'答对啦！一层 12 块，再除以长，宽是 4。',wrong:'先用体积除以高，得到一层的块数，再除以长。',hard:true}
+  ],
+  done:{badge:'📦',title:'📦 体积小达人',text:'块数就是体积。<br>记住 <b class="or">长×宽×高</b>。',voice:'太棒了！你学会长方体体积啦！'},
+  nextText:'进入下一关：追及问题 →',
+  nextHref:'追及问题.html'
+};
+</script>
+<script src="lesson-engine.js"></script>
+</body>
+</html>

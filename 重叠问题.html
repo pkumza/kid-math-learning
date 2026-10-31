@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>重叠问题 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-engine.css">
+<script src="narration/manifest.js"></script>
+<script src="narration/parts.js"></script>
+<script src="narration/resolver.js"></script>
+<script src="narration/player.js"></script>
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'chongdie87',
+  title:'重叠问题',
+  emoji:'👥',
+  heading:'重叠问题',
+  pinyin:'chóng dié wèn tí · 两边都算过要减一次',
+  intro:'两样都喜欢的人，加两边时被算了<b class="or">两次</b>，要<b class="pu">减回一次</b>。',
+  parentNote:'两边人数相加时，两样都参加的人被算了两次，要减回一次。探索例子：踢球 10 人、跳绳 8 人、两样都玩 4 人，一共 10+8-4=14 人。只参加一边，是从这一边里减掉重叠的人。陪玩时先问：谁被算了两次？',
+  explore:{
+    title:'👥 为什么要减一次',
+    lead:'踢球 <b class="bl">10 人</b>，跳绳 <b class="or">8 人</b>，<b class="pu">4 人两样都玩</b>。<br>一共参加的有几人？<br>先想想：谁被算了两次？',
+    visual:{type:'row',items:[{text:'踢球10',cls:'blue'},{text:'跳绳8',cls:'orange'},{text:'都玩4',cls:'purple'}]},
+    note:'点卡片，看看为什么要减。',
+    voice:'10 人踢球，8 人跳绳，4 人两样都玩。加两边时，这 4 人被算了两次。',
+    unlock:'🎉 一共参加的人数是 10+8-4=14！',
+    unlockVoice:'一共参加的人数是 10 加 8 减 4，等于 14。',
+    reveals:[
+      {pic:'➕',title:'加两边',answer:'10+8=<b>18</b>。<br>两样都玩的 4 人，踢球、跳绳<b>各算了一次</b>。',voice:'10 加 8 等于 18。两样都玩的 4 人，两边各算了一次。'},
+      {pic:'👥',title:'多算一次',answer:'这 4 人被加了<b>两次</b>。<br>多出来的那一次，要减回去。',voice:'这 4 人被加了两次。多出来的那一次，要减回去。'},
+      {pic:'✅',title:'减回一次',answer:'18-4=<b>14</b>。<br>一共参加的是 <b>10+8-4=14</b> 人。',voice:'减回一次：10 加 8 减 4 等于 14。一共 14 人参加。'}
+    ]
+  },
+  practice:[
+    {q:'画画的有 12 人，唱歌的有 9 人，两样都参加的有 3 人。至少参加一项的有几人？',hint:'两边相加，再减掉两样都参加的人。',visual:{type:'row',items:[{text:'画画12',cls:'blue'},{text:'唱歌9',cls:'orange'},{text:'都参加3',cls:'purple'}]},answer:'18',options:['15','18','24'],winVoice:'答对啦！12 加 9 减 3 等于 18 人。',wrong:'两边相加，再减掉两样都参加的人。'},
+    {q:'画画 15 人，唱歌 10 人，两样都参加 4 人。只画画、不唱歌的有几人？',hint:'从画画的人里减掉两样都参加的。',visual:{type:'row',items:[{text:'画画15',cls:'blue'},{text:'唱歌10',cls:'orange'},{text:'都参加4',cls:'purple'}]},answer:'11',options:['6','11','15'],winVoice:'答对啦！15 减 4 等于 11 人。',wrong:'从画画的人里减掉两样都参加的。'},
+    {q:'喜欢苹果 14 人，喜欢香蕉 10 人，两种都喜欢 6 人。只喜欢香蕉的有几人？',hint:'从喜欢香蕉的人里减掉两种都喜欢的。',visual:{type:'row',items:[{text:'苹果14',cls:'blue'},{text:'香蕉10',cls:'orange'},{text:'都喜欢6',cls:'purple'}]},answer:'4',options:['4','6','10'],winVoice:'答对啦！10 减 6 等于 4 人。',wrong:'从喜欢香蕉的人里减掉两种都喜欢的。'},
+    {q:'红队 7 人，蓝队 8 人，有 3 人两个队都在。一共有几人？',hint:'两队人数相加，再减掉重复算的那 3 人。',visual:{type:'row',items:[{text:'红队7',cls:'blue'},{text:'蓝队8',cls:'orange'},{text:'都在3',cls:'purple'}]},answer:'12',options:['12','15','18'],winVoice:'答对啦！7 加 8 减 3 等于 12 人。',wrong:'两队人数相加，再减掉两个队都在的人。'}
+  ],
+  challenge:[
+    {q:'挑战：班上 32 人。跳绳 20 人，跑步 18 人，两样都参加 8 人。两样都不参加的有几人？',hint:'先算至少参加一项的人数，再用全班人数去减。',visual:{type:'clues',items:['第一步：先算至少参加一项','第二步：用全班人数去减']},answer:'2',options:['2','4','10'],winVoice:'答对啦！至少参加一项是 30 人，32 减 30 等于 2 人。',wrong:'先算至少参加一项，再用全班人数去减。',hard:true},
+    {q:'挑战：美术 16 人，音乐 13 人，两样都参加 5 人。只参加一样的一共几人？',hint:'先分别算只美术、只音乐，再把两边加起来。',visual:{type:'clues',items:['第一步：只美术、只音乐','第二步：两边加起来']},answer:'19',options:['16','19','24'],winVoice:'答对啦！只美术 11 人，只音乐 8 人，加起来 19 人。',wrong:'先分别算只美术和只音乐，再加起来。',hard:true}
+  ],
+  done:{badge:'👥',title:'👥 重叠小达人',text:'两边相加，<br>重复的要<b class="pu">减一次</b>！',voice:'太棒了！你学会重叠问题啦！'},
+  nextText:'进入下一关：百分数入门 →',
+  nextHref:'百分数入门.html'
+};
+</script>
+<script src="lesson-engine.js"></script>
+</body>
+</html>

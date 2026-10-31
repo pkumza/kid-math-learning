@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小数乘法 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-engine.css">
+<script src="narration/manifest.js"></script>
+<script src="narration/parts.js"></script>
+<script src="narration/resolver.js"></script>
+<script src="narration/player.js"></script>
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'xscheng82',
+  title:'小数乘法',
+  emoji:'✖️',
+  heading:'小数乘法',
+  pinyin:'xiǎo shù chéng fǎ · 小数乘整数',
+  intro:'小数乘整数，就是拿<b class="bl">几份一样长</b>的小数加起来。',
+  parentNote:'本关只练小数乘整数：同一个小数加几份。0.5 可以当成一半来想。不教小数乘小数。挑战题先算总价，再加袋子或算找回。',
+  explore:{
+    title:'🪢 两根跳绳接起来',
+    lead:'一根跳绳 <b class="bl">1.5 米</b>，<b class="or">2 根</b>接起来。<br>有多长呢？',
+    visual:{type:'row',items:[{text:'1.5米',cls:'blue'},{text:'1.5米',cls:'orange'}]},
+    note:'点卡片，看看两根有多长。',
+    voice:'一根跳绳 1.5 米，两根接起来，有多长呢？',
+    unlock:'🎉 你发现了：几份一样的小数，加起来就是乘法！',
+    unlockVoice:'你发现了！几份一样的小数，加起来就是乘法。',
+    reveals:[
+      {pic:'🌗',title:'一半和一半',answer:'一半和一半是 <b>1</b>。',voice:'一半和一半是 1。'},
+      {pic:'🔢',title:'拆开 1.5',answer:'1.5 是 <b>1</b> 再加 <b>0.5</b>。',voice:'1.5 是 1 再加 0.5。'},
+      {pic:'🪢',title:'两根接起来',answer:'1.5 加 1.5 得 3，<br>也就是 1.5×2=<b>3 米</b>。<br>两根就是 <b>3 米</b>。',voice:'1.5 加 1.5 得 3，也就是 1.5 乘 2 等于 3 米。两根就是 3 米。'}
+    ]
+  },
+  practice:[
+    {q:'0.5 乘 6 是多少？',hint:'先想 6 的一半是几。',visual:{type:'count',count:6,text:'0.5',cls:'blue'},answer:'3',options:['2.5','3','6'],winVoice:'答对啦！6 的一半是 3。',wrong:'0.5 是一半。先想 6 的一半。'},
+    {q:'1.2 乘 3 是多少？',hint:'把 1.2 加 3 次，先加整数再加小数。',visual:{type:'count',count:3,text:'1.2',cls:'orange'},answer:'3.6',options:['3.2','3.6','4.2'],winVoice:'答对啦！1.2 加 3 次是 3.6。',wrong:'把 1.2 加 3 次。先加整数，再加小数。'},
+    {q:'2.5 乘 4 是多少？',hint:'2.5 是 2 加 0.5，分开乘再加。',visual:{type:'clues',items:['2.5 是 2 加 0.5','分开乘，再相加']},answer:'10',options:['8','10','12'],winVoice:'答对啦！2.5 乘 4 等于 10。',wrong:'2.5 是 2 加 0.5。分开乘，再加起来。'},
+    {q:'0.4 乘 5 是多少？',hint:'0.4 加 5 次，或者先算 4×5 再看小数点。',visual:{type:'count',count:5,text:'0.4',cls:'purple'},answer:'2',options:['1.5','2','2.5'],winVoice:'答对啦！0.4 乘 5 等于 2。',wrong:'0.4 加 5 次。也可以先算 4 乘 5，再看小数点。'}
+  ],
+  challenge:[
+    {q:'挑战：铅笔每支 1.5 元，买 4 支，再付 1 元袋子，一共几元？',hint:'先算 4 支铅笔多少钱，再加袋子。',visual:{type:'clues',items:['先算 4 支铅笔','再加 1 元袋子']},answer:'7',options:['6','7','8'],winVoice:'答对啦！铅笔再加袋子，一共 7 元。',wrong:'先算 4 支铅笔多少钱，再把袋子加上。',hard:true},
+    {q:'挑战：每盒饼干 2.5 元，买 6 盒，付了 20 元，找回几元？',hint:'先算 6 盒多少钱，再用 20 去减。',visual:{type:'clues',items:['先算 6 盒多少钱','再用 20 去减']},answer:'5',options:['5','10','15'],winVoice:'答对啦！找回 5 元。',wrong:'先算 6 盒多少钱，再用 20 去减。',hard:true}
+  ],
+  done:{badge:'✖️',title:'✖️ 小数乘法',text:'你学会了<b class="pu">小数乘整数</b>：<br>几份一样长，加起来！',voice:'你学会小数乘整数啦！'},
+  nextText:'进入下一关：同分母加减 →',
+  nextHref:'同分母加减.html'
+};
+</script>
+<script src="lesson-engine.js"></script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>追及问题 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-engine.css">
+<script src="narration/manifest.js"></script>
+<script src="narration/parts.js"></script>
+<script src="narration/resolver.js"></script>
+<script src="narration/player.js"></script>
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'zhuiji86',
+  title:'追及问题',
+  hard:true,
+  emoji:'🏃',
+  heading:'追及问题',
+  pinyin:'zhuī jí wèn tí · 谁跑得更快',
+  intro:'同一点出发，<b class="or">快的追慢的</b>。<br>每分钟追上的，是<b class="bl">速度差</b>，不是速度和。<br>这是<b class="pu">困难关 Boss</b>，慢慢想！',
+  parentNote:'追及是同一点出发，快的去追慢的。每分钟追上的只有速度差那一截，不能把两个速度加在一起。本关用哥哥每分钟 80 米、弟弟每分钟 50 米、弟弟领先 90 米：差 30 米，90÷30=3 分钟。挑战要两步：先算已经领先多少再求时间，以及由追上的时间反推慢的速度。陪玩时可以在操场上让孩子快走追慢走，感受每分钟只缩短差出来的那一截。',
+  explore:{
+    title:'🏃 只追上差出来的那一截',
+    lead:'哥哥每分钟 <b class="or">80 米</b>，弟弟每分钟 <b class="bl">50 米</b>。<br>弟弟已经领先 <b class="pu">90 米</b>。<br>哥哥要几分钟追上？<b>先猜一猜，再点卡片。</b>',
+    visual:{type:'row',items:[{text:'哥80',cls:'orange'},{text:'追',cls:'purple'},{text:'弟领先90',cls:'blue'}]},
+    note:'点卡片，看每分钟追上的是哪一截。',
+    voice:'哥哥每分钟 80 米，弟弟每分钟 50 米。弟弟已经领先 90 米。几分钟追上？',
+    unlock:'🎉 你看懂了：每分钟只追上差出来的那一截！',
+    unlockVoice:'你看懂了！每分钟只追上差出来的那一截。',
+    reveals:[
+      {pic:'⚡',title:'速度差',answer:'80-50=<b>30 米</b>。<br>每分钟只追上<b>差出来的那一截</b>。',voice:'80 减 50 等于 30 米。每分钟只追上差出来的那一截。'},
+      {pic:'📏',title:'领先多远',answer:'弟弟已经在前面 <b>90 米</b>。<br>要补上的，就是这一截。',voice:'弟弟已经领先 90 米。要补上的就是这一截。'},
+      {pic:'⏱️',title:'几分钟追上',answer:'90÷30=<b>3</b>。<br><b>3 分钟</b>追上。',voice:'90 除以 30 等于 3。3 分钟追上。'}
+    ]
+  },
+  practice:[
+    {q:'快的每分钟 6 米，慢的每分钟 4 米，慢的领先 10 米，几分钟追上？',hint:'先算每分钟能追上几米，再用领先的距离除以它。',visual:{type:'row',items:[{text:'快6',cls:'orange'},{text:'慢4',cls:'blue'},{text:'领先10',cls:'purple'}]},answer:'5',options:['3','5','10'],winVoice:'答对啦！每分钟追上 2 米，10 除以 2 是 5 分钟。',wrong:'先用快的减去慢的，再用领先的距离去除这个差。'},
+    {q:'快的每小时 12 千米，慢的每小时 8 千米，领先 16 千米，几小时追上？',hint:'用快的速度减慢的速度，再用领先的距离除以这个差。',visual:{type:'row',items:[{text:'快12',cls:'orange'},{text:'慢8',cls:'blue'},{text:'领先16',cls:'green'}]},answer:'4',options:['2','4','8'],winVoice:'答对啦！每小时追上 4 千米，16 除以 4 是 4 小时。',wrong:'先用 12 减 8，再用领先的距离去除这个差。别把两个速度加起来。'},
+    {q:'每分钟能追上 3 米，要追上 15 米的差距，要几分钟？',hint:'这题已经告诉你每分钟追上多少，用差距除以它。',visual:{type:'row',items:[{text:'每分追3',cls:'orange'},{text:'差距15',cls:'purple'}]},answer:'5',options:['3','5','12'],winVoice:'答对啦！15 除以 3 是 5 分钟。',wrong:'用差距去除每分钟追上的米数。'},
+    {q:'快的每分钟 9 米，慢的每分钟 6 米，追了 4 分钟，差距缩小了多少米？',hint:'先算每分钟缩小几米，再乘分钟数。',visual:{type:'row',items:[{text:'快9',cls:'orange'},{text:'慢6',cls:'blue'},{text:'追4分',cls:'green'}]},answer:'12',options:['8','12','36'],winVoice:'答对啦！每分钟缩小 3 米，乘 4 分钟是 12 米。',wrong:'先算每分钟缩小几米，再乘上追了几分钟。'}
+  ],
+  challenge:[
+    {q:'挑战：小兔先跑 3 分钟，每分钟 4 米。小狐狸每分钟 10 米，从同一起点追，几分钟追上？',hint:'先算小兔已经领先多少米，再算每分钟能追上几米。',visual:{type:'clues',items:['第一步：先跑的时间乘小兔的速度','第二步：每分钟追上几米，再用领先去除']},answer:'2',options:['2','3','6'],winVoice:'答对啦！小兔领先 12 米，每分钟追上 6 米，2 分钟追上。',wrong:'先算小兔已经跑出多远，再算狐狸每分钟能多追几米。',hard:true},
+    {q:'挑战：追了 5 分钟才追上，原来领先 20 米。快的每分钟 8 米，慢的每分钟几米？',hint:'先用领先距离除以时间，得到速度差，再用快的速度减去这个差。',visual:{type:'clues',items:['第一步：领先距离除以时间，求速度差','第二步：快的速度减去这个差']},answer:'4',options:['3','4','6'],winVoice:'答对啦！速度差是每分钟 4 米，8 减 4 是 4 米。',wrong:'先用领先除以时间，得到速度差，再用快的速度减去它。',hard:true}
+  ],
+  done:{badge:'🏆',title:'🏆 追及小冠军',text:'你通关了<b class="pu">困难关 Boss</b>！<br>同一点出发，快的追慢的，<br>每分钟只追上速度差！',extra:'🌟 下次跑步，看看你几分钟能追上慢慢走的人。',voice:'太厉害啦！你通关了追及问题困难关 Boss！'},
+  nextText:'进入下一关：重叠问题 →',
+  nextHref:'重叠问题.html'
+};
+</script>
+<script src="lesson-engine.js"></script>
+</body>
+</html>

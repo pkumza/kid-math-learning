@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>方阵问题 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-engine.css">
+<script src="narration/manifest.js"></script>
+<script src="narration/parts.js"></script>
+<script src="narration/resolver.js"></script>
+<script src="narration/player.js"></script>
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'fangzhen90',
+  title:'方阵问题',
+  hard:true,
+  emoji:'🔲',
+  heading:'方阵问题',
+  pinyin:'fāng zhèn wèn tí · 四个角别数两次',
+  intro:'小朋友沿着正方形的<b class="bl">四条边</b>站好。<br>每边人数一样，角上的人<b class="or">不要数两次</b>。<br>这是<b class="pu">困难关 Boss</b>，稳住！',
+  parentNote:'本关只教空心方阵：人站在正方形四条边上，每边 n 人（含两端的角），总人数 = 4×n − 4。四个角各被相邻两边数过一次，所以要减 4。不教实心 n×n 方阵。探索用每边 5 人：5×4=20，再减 4 个角，得 16 人。后面的题换人数。挑战题倒过来：已知总人数，先加回 4 个角，再除以 4，求每边几人。陪玩时可以用硬币围一个空心正方形，指一指四个角只算一次。',
+  explore:{
+    title:'🔲 角上别数两次',
+    lead:'每边站 <b class="bl">5 人</b>（角上也算在边上）。<br>四条边都数一遍，角会不会被数两次？<br><b>先猜一猜，再点卡片。</b>',
+    visual:{type:'count',count:5,text:'🧒',cls:'blue'},
+    note:'这一排是一条边上的 5 人。点卡片看看。',
+    voice:'每边站 5 人。四条边都数一遍，角上的人会不会被数两次？',
+    unlock:'🎉 你发现了：20 减 4，一共 16 人！',
+    unlockVoice:'你发现了！20 减 4，一共 16 人。角上的人不要数两次。',
+    reveals:[
+      {pic:'👥',title:'四条边',answer:'每边 5 人，四条边：<br>5×4=<b>20</b>。',voice:'四条边：每边 5 人，5 乘 4 等于 20。'},
+      {pic:'📐',title:'四个角',answer:'四个角被两条边各数了一次，<br><b>多数了一次</b>。',voice:'四个角被两条边各数了一次，多数了一次。'},
+      {pic:'✅',title:'真正几人',answer:'20 里减掉多数的 4 个角：<br>20−4=<b>16 人</b>。',voice:'20 减 4 等于 16 人。角上的人不要数两次。'}
+    ]
+  },
+  practice:[
+    {q:'每边 4 人，四个角不重复数，一共几人？',hint:'先用每边人数乘 4，再减掉多数的 4 个角。',visual:{type:'row',items:[{text:'每边4人',cls:'blue'},{text:'共几人?',cls:'purple'}]},answer:'12',options:['8','12','16'],winVoice:'答对啦！4 乘 4 等于 16，再减 4，是 12 人。',wrong:'先乘 4，再减掉多数的 4 个角。'},
+    {q:'每边 6 人，一共几人？',hint:'四条边都数一遍，再把四个角减回去。',visual:{type:'row',items:[{text:'每边6人',cls:'blue'},{text:'共几人?',cls:'orange'}]},answer:'20',options:['18','20','24'],winVoice:'答对啦！6 乘 4 等于 24，再减 4，是 20 人。',wrong:'四条边都数一遍，再把四个角减回去。'},
+    {q:'每边 3 人，一共几人？',hint:'先乘 4，再减 4。',visual:{type:'row',items:[{text:'每边3人',cls:'green'},{text:'共几人?',cls:'purple'}]},answer:'8',options:['6','8','12'],winVoice:'答对啦！3 乘 4 等于 12，再减 4，是 8 人。',wrong:'先乘 4，再减 4。'},
+    {q:'每边 8 人，一共几人？',hint:'先算 8×4，再减去四个角。',visual:{type:'row',items:[{text:'每边8人',cls:'blue'},{text:'共几人?',cls:'orange'}]},answer:'28',options:['24','28','32'],winVoice:'答对啦！8 乘 4 等于 32，再减 4，是 28 人。',wrong:'先算每边人数乘 4，再减去四个角。'}
+  ],
+  challenge:[
+    {q:'挑战：最外一圈一共 20 人，每边站几人？',hint:'先把四个角加回去，再除以 4，就是每边的人数。',visual:{type:'clues',items:['第一步：把四个角加回去','第二步：再除以 4，求每边人数']},answer:'6',options:['5','6','20'],winVoice:'答对啦！20 加 4 等于 24，24 除以 4 等于 6 人。',wrong:'先把四个角加回去，再除以 4。',hard:true},
+    {q:'挑战：一共 28 人站成方阵，每边人数相同，角也算在边上。每边几人？',hint:'先把四个角加回去，再除以 4。',visual:{type:'clues',items:['第一步：把四个角加回去','第二步：再除以 4']},answer:'8',options:['7','8','9'],winVoice:'答对啦！先加回四个角，再除以 4，每边 8 人。',wrong:'先把四个角加回去，再除以 4。',hard:true}
+  ],
+  done:{badge:'🏆',title:'🏆 方阵小冠军',text:'你通关了<b class="pu">困难关 Boss</b>！<br>空心方阵：每边一样多，<br>四个角别数两次！',extra:'🌟 用硬币围一个空心正方形，四个角只算一次。',voice:'太厉害啦！你通关了方阵问题困难关 Boss！'},
+  nextText:'回到冒险地图 🗺️',
+  nextHref:'index.html'
+};
+</script>
+<script src="lesson-engine.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>相遇问题 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-engine.css">
+<script src="narration/manifest.js"></script>
+<script src="narration/parts.js"></script>
+<script src="narration/resolver.js"></script>
+<script src="narration/player.js"></script>
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'xiangyu81',
+  title:'相遇问题',
+  emoji:'🤝',
+  heading:'相遇问题',
+  pinyin:'xiāng yù wèn tí · 两人相向走',
+  intro:'两人相向走，速度加起来，就是每分钟一起靠近的距离。',
+  parentNote:'相遇路程 = （速度1+速度2）× 时间。两人相向走，把两个速度加起来，就是每分钟（或每小时）靠近的距离。求时间用路程除以速度和，求路程用速度和乘时间。陪玩时让孩子先说出速度和，再决定是除还是乘。',
+  explore:{
+    title:'🤝 面对面，越走越近',
+    lead:'小鹿和小兔从两头出发，面对面走。<br>小鹿每分钟 <b class="or">30 米</b>，小兔每分钟 <b class="bl">20 米</b>。<br>中间还隔着 <b class="pu">100 米</b>。',
+    visual:{type:'row',items:[{text:'小鹿30米',cls:'orange'},{text:'相距100米',cls:'purple'},{text:'小兔20米',cls:'blue'}]},
+    note:'点卡片，看看他们怎么靠近。',
+    voice:'小鹿每分钟 30 米，小兔 20 米，相向走，相距 100 米。',
+    unlock:'🎉 你发现了：先把速度加起来，再用路程去除！',
+    unlockVoice:'先加速度，再除路程。',
+    reveals:[
+      {pic:'🤝',title:'一起靠近',answer:'每分钟一起靠近：<br>30+20=<b>50 米</b>。',voice:'30 加 20，每分钟靠近 50 米。'},
+      {pic:'⏱️',title:'几分钟相遇',answer:'100÷50=<b>2</b>，<br><b>2 分钟</b>相遇。',voice:'100 除以 50，2 分钟相遇。'},
+      {pic:'📝',title:'口诀',answer:'先把速度<b>加起来</b>，<br>再用路程<b>去除</b>。',voice:'口诀：先加速度，再除路程。'}
+    ]
+  },
+  practice:[
+    {q:'小明每分钟 40 米，小红每分钟 20 米，相向走，相距 180 米。几分钟相遇？',hint:'先把两人的速度加起来，再用距离除以这个和。',visual:{type:'row',items:[{text:'小明40米',cls:'blue'},{text:'小红20米',cls:'orange'},{text:'相距180米',cls:'purple'}]},answer:'3',options:['2','3','4'],winVoice:'答对啦！每分钟靠近 60 米，3 分钟相遇。',wrong:'先把两人速度加起来，再用距离去除。'},
+    {q:'两辆车相向开，每小时 40 千米和 50 千米，2 小时相遇。原来相距几千米？',hint:'先加速度，再乘时间。',visual:{type:'clues',items:['一辆每小时 40 千米','另一辆每小时 50 千米','开了 2 小时']},answer:'180',options:['90','180','200'],winVoice:'答对啦！每小时靠近 90 千米，一共 180 千米。',wrong:'先把两个速度加起来，再乘时间。'},
+    {q:'爸爸每分钟 70 米，孩子每分钟 50 米，相向走，相距 240 米。几分钟相遇？',hint:'两人一分钟一共走多少米，再看 240 里面有几个这样的一分钟。',visual:{type:'row',items:[{text:'爸爸70米',cls:'orange'},{text:'孩子50米',cls:'blue'},{text:'相距240米',cls:'purple'}]},answer:'2',options:['2','3','4'],winVoice:'答对啦！每分钟靠近 120 米，2 分钟相遇。',wrong:'先算两人一分钟一共走多少，再看 240 里有几个。'},
+    {q:'两条船相向开，每小时一共行 30 千米，相距 90 千米。几小时相遇？',hint:'这题已经告诉你一小时一共行多远，用距离除以这个速度。',visual:{type:'clues',items:['每小时一共 30 千米','中间相距 90 千米']},answer:'3',options:['2','3','6'],winVoice:'答对啦！90 除以 30，3 小时相遇。',wrong:'用相距的路程，除以每小时一共行的路程。'}
+  ],
+  challenge:[
+    {q:'挑战：相距 300 米。小狐狸每分钟 40 米，小兔每分钟 20 米，相向走了 3 分钟。还剩多少米？',hint:'先算一分钟一共靠近多少米，再算 3 分钟靠近了多少，最后用总距离去减。',visual:{type:'clues',items:['相距 300 米','小狐狸每分钟 40 米','小兔每分钟 20 米','已经走了 3 分钟']},answer:'120',options:['100','120','180'],winVoice:'答对啦！靠近了 180 米，还剩 120 米。',wrong:'先算 3 分钟靠近了多少，再用总距离去减。',hard:true},
+    {q:'挑战：相距 200 米，2 分钟相遇。小狐狸每分钟 60 米，小兔每分钟多少米？',hint:'先用距离除以时间，得到两人速度之和，再减掉小狐狸的速度。',visual:{type:'row',items:[{text:'相距200米',cls:'purple'},{text:'2分钟',cls:'green'},{text:'小狐狸60米',cls:'orange'}]},answer:'40',options:['30','40','50'],winVoice:'答对啦！速度和是 100，小兔每分钟 40 米。',wrong:'先求两人速度之和，再减掉小狐狸的速度。',hard:true}
+  ],
+  done:{badge:'🤝',title:'🤝 相遇小达人',text:'你学会了<b class="pu">相遇问题</b>：<br>速度加起来，靠近得更快！',extra:'🌟 先加速度，再算时间或路程。',voice:'太棒了！你学会相遇问题啦！'},
+  nextText:'进入下一关：小数乘法 →',
+  nextHref:'小数乘法.html'
+};
+</script>
+<script src="lesson-engine.js"></script>
+</body>
+</html>
