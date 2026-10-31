@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>二进制闯关 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-engine.css">
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'lab-quiz-binary',
+  title:'二进制闯关',
+  emoji:'💡🔢',
+  heading:'二进制闯关',
+  pinyin:'èr jìn zhì · 亮着的灯加一加',
+  intro:'小灯会数数：<b class="bl">1、2、4、8</b>。<br>往左一盏，数字<b class="or">翻一倍</b>。<br>亮着的灯<b class="pu">加一加</b>，就是这个数！',
+  parentNote:'二进制就是每盏灯翻一倍：1、2、4、8、16、32、64、128。亮着的灯相加就是这个数，暗着的不加。小例子是 11=8+2+1（4 那盏暗着）。100=64+32+4。八盏灯全亮是 255=128+64+32+16+8+4+2+1。陪玩时先只用右边几盏小灯，再让孩子自己凑 10、12 这种数。',
+  explore:{
+    title:'💡 小灯亮一亮',
+    lead:'右边起，灯是 <b class="bl">1、2、4、8</b>。<br>这一排：<b class="or">8 亮、4 暗、2 亮、1 亮</b>。<br>暗着的那盏，到底加不加？',
+    visual:{type:'row',items:[{text:'8亮',cls:'orange'},{text:'4暗',cls:'blue'},{text:'2亮',cls:'orange'},{text:'1亮',cls:'orange'}]},
+    note:'点卡片，看亮着的灯怎么相加。',
+    voice:'灯是 1、2、4、8。8 亮着，4 暗着，2 和 1 亮着。暗着的加不加？',
+    unlock:'🎉 你发现了：亮着的加一加，暗着的不算！',
+    unlockVoice:'你发现了！亮着的灯加一加，暗着的不算。',
+    reveals:[
+      {pic:'💡',title:'一盏翻一倍',answer:'从右往左：<b>1、2、4、8</b>。<br>每往左一盏，数字翻一倍。',voice:'从右往左是 1、2、4、8。每往左一盏，数字翻一倍。'},
+      {pic:'➕',title:'亮着才加',answer:'8 亮、2 亮、1 亮。<br>8+2+1=<b>11</b>。',voice:'8、2、1 亮着。8 加 2 加 1 等于 11。'},
+      {pic:'🌙',title:'暗着不加',answer:'4 那盏是暗的。<br>所以<b>不加 4</b>，还是 11。',voice:'4 那盏暗着，不加 4，还是 11。'}
+    ]
+  },
+  practice:[
+    {q:'8 和 2 两盏灯亮着，这个数是几？',hint:'只把亮着的加起来：8 和 2。',visual:{type:'row',items:[{text:'8亮',cls:'orange'},{text:'2亮',cls:'orange'}]},answer:'10',options:['6','10','16'],winVoice:'答对啦！8 加 2 等于 10。',wrong:'亮着才加。8 加 2，不是相减，也不是相乘。'},
+    {q:'想亮出 7，该亮哪几盏灯？',hint:'7 比 8 小，不用 8。从 4 往下凑满 7。',visual:{type:'clues',items:['7 比 8 小','从小灯开始凑']},answer:'4+2+1',options:['4+2','4+2+1','8+1'],winVoice:'答对啦！4 加 2 加 1 等于 7。',wrong:'4 加 2 还差 1。8 又太大了。'},
+    {q:'只亮 16 和 1，读出来是几？',hint:'两盏都亮，就把 16 和 1 相加。',visual:{type:'row',items:[{text:'16亮',cls:'orange'},{text:'1亮',cls:'green'}]},answer:'17',options:['15','17','18'],winVoice:'答对啦！16 加 1 等于 17。',wrong:'是相加，不是用 16 去减，也别加成 2。'},
+    {q:'要写出 12。8 已经亮了，还要再亮哪一盏？',hint:'12 比 8 多出来的那一截，就是还要亮的灯。',visual:{type:'clues',items:['8 已经亮了','还差一截才到 12']},answer:'4',options:['2','4','16'],winVoice:'答对啦！8 加 4 等于 12。',wrong:'用 12 减 8，看差几，就亮那一盏。'}
+  ],
+  challenge:[
+    {q:'挑战：64、32 和 4 这三盏灯同时亮，是几？',hint:'三盏都要加。最小的 4 也别漏。',visual:{type:'row',items:[{text:'64',cls:'orange'},{text:'32',cls:'purple'},{text:'4',cls:'blue'}]},answer:'100',options:['96','100','128'],winVoice:'答对啦！64 加 32 加 4 等于 100。',wrong:'64 加 32 还没完，最小的 4 也要加上。128 是另一盏灯。'},
+    {q:'挑战：从 1 到 128，八盏灯全部亮着，是几？',hint:'最大的灯是 128。比它小的每一盏也都亮着，要全部加上。',visual:{type:'clues',items:['八盏灯全亮','从 1 加到 128，一盏不落']},answer:'255',options:['128','255','256'],winVoice:'答对啦！八盏全亮是 255。',wrong:'不是只看最大的 128，也不是再多 1 变成 256。每一盏都要加。'}
+  ],
+  done:{badge:'💡',title:'💡 亮灯读数小达人',text:'你学会了<b class="pu">二进制小灯</b>！<br>往左一盏，数字翻倍，<br>亮着的加一加！',extra:'🌟 口诀：1、2、4、8，一盏翻一倍。',voice:'太棒了！你学会用小灯读数啦！'},
+  nextText:'进入下一关：汉诺塔 →',
+  nextHref:'汉诺塔.html'
+};
+</script>
+<script src="lesson-engine.js"></script>
+</body>
+</html>

@@ -43,7 +43,7 @@
   .module-head .ic{font-size:1.5rem;}
   .module-head .bar{flex:1; height:3px; border-radius:3px; background:linear-gradient(90deg,currentColor,transparent); opacity:.25;}
   .m-laws{color:var(--purple);} .m-mul{color:var(--blue);} .m-div{color:var(--green);} .m-frac{color:var(--orange);}
-  .m-nums{color:#0D9488;} .m-life{color:#DB2777;} .m-shop{color:#D97706;} .m-meas{color:#4F46E5;}
+  .m-nums{color:#0D9488;} .m-life{color:#DB2777;} .m-shop{color:#D97706;} .m-meas{color:#4F46E5;} .m-lab{color:#0F766E;}
 
   .stop{
     display:flex; align-items:center; gap:14px; text-decoration:none; color:inherit;
@@ -97,6 +97,8 @@
   .life .num{background:linear-gradient(135deg,#F472B6,#DB2777);}
   .shop .num{background:linear-gradient(135deg,#FBBF24,#D97706);}
   .meas .num{background:linear-gradient(135deg,#818CF8,#4F46E5);}
+  .lab .num{background:linear-gradient(135deg,#2DD4BF,#0F766E);}
+  .tag.quiz{background:#0F766E;}
 
   .known-card{
     display:flex; align-items:center; gap:14px; background:#F3F4F6; border-radius:18px; padding:12px 18px; margin-bottom:12px;
@@ -762,6 +764,109 @@
       <span class="go">→</span>
     </a>
   </div>
+
+  <!-- 数学实验室 -->
+  <div class="module">
+    <div class="module-head m-lab"><span class="ic">🧪</span>数学实验室<span class="bar"></span></div>
+    <a class="stop lab" href="棋盘麦粒.html" data-id="lab-maili">
+      <span class="visited-star">⭐</span>
+      <div class="num">101</div><span class="emoji">🌾</span>
+      <div class="body"><div class="title">棋盘麦粒 <span class="tag js-status">新</span></div>
+        <div class="desc">点一格，麦粒翻一倍。第几格超过 1 亿？</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop lab" href="二进制灯泡.html" data-id="lab-binary">
+      <span class="visited-star">⭐</span>
+      <div class="num">102</div><span class="emoji">💡</span>
+      <div class="body"><div class="title">二进制灯泡 <span class="tag js-status">新</span></div>
+        <div class="desc">灯亮代表 128、64…1。拼出你要的数。</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop lab" href="二进制闯关.html" data-id="lab-quiz-binary">
+      <span class="visited-star">⭐</span>
+      <div class="num">103</div><span class="emoji">💡</span>
+      <div class="body"><div class="title">二进制闯关 <span class="tag quiz">闯关</span> <span class="tag js-status">新</span></div>
+        <div class="desc">看灯读数，再把数变成灯。</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop lab" href="汉诺塔.html" data-id="lab-hanoi">
+      <span class="visited-star">⭐</span>
+      <div class="num">104</div><span class="emoji">🏰</span>
+      <div class="body"><div class="title">汉诺塔 <span class="tag js-status">新</span></div>
+        <div class="desc">拖动圆盘，找找最少步数。</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop lab" href="汉诺塔规律.html" data-id="lab-quiz-hanoi">
+      <span class="visited-star">⭐</span>
+      <div class="num">105</div><span class="emoji">🏰</span>
+      <div class="body"><div class="title">汉诺塔规律 <span class="tag hard">🏆 困难</span> <span class="tag quiz">闯关</span> <span class="tag js-status">新</span></div>
+        <div class="desc">层数翻倍再减 1，就是最少步数。</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop lab" href="杨辉三角.html" data-id="lab-pascal">
+      <span class="visited-star">⭐</span>
+      <div class="num">106</div><span class="emoji">△</span>
+      <div class="body"><div class="title">杨辉三角 <span class="tag js-status">新</span></div>
+        <div class="desc">点格子，填上面两个数的和。</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop lab" href="冰雹数.html" data-id="lab-hail">
+      <span class="visited-star">⭐</span>
+      <div class="num">107</div><span class="emoji">❄️</span>
+      <div class="body"><div class="title">冰雹数 <span class="tag js-status">新</span></div>
+        <div class="desc">单数就三倍加一，双数就折半。</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop lab" href="求和魔法.html" data-id="lab-sum">
+      <span class="visited-star">⭐</span>
+      <div class="num">108</div><span class="emoji">🧱</span>
+      <div class="body"><div class="title">求和魔法 <span class="tag js-status">新</span></div>
+        <div class="desc">楼梯拼成长方形，奇数拼成正方形。</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop lab" href="连续求和.html" data-id="lab-quiz-sum">
+      <span class="visited-star">⭐</span>
+      <div class="num">109</div><span class="emoji">🧱</span>
+      <div class="body"><div class="title">连续求和 <span class="tag quiz">闯关</span> <span class="tag js-status">新</span></div>
+        <div class="desc">用公式算 1 加到 n，再认识奇数的平方。</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop lab" href="骑士步数地图.html" data-id="lab-knight">
+      <span class="visited-star">⭐</span>
+      <div class="num">110</div><span class="emoji">♞</span>
+      <div class="body"><div class="title">骑士步数地图 <span class="tag js-status">新</span></div>
+        <div class="desc">马走日字，一层一层点亮能到的格子。</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop lab" href="八皇后.html" data-id="lab-queens">
+      <span class="visited-star">⭐</span>
+      <div class="num">111</div><span class="emoji">♛</span>
+      <div class="body"><div class="title">八皇后 <span class="tag js-status">新</span></div>
+        <div class="desc">皇后不能对脸。先从小棋盘开始。</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop lab" href="太阳系比例尺.html" data-id="lab-solar">
+      <span class="visited-star">⭐</span>
+      <div class="num">112</div><span class="emoji">☀️</span>
+      <div class="body"><div class="title">太阳系比例尺 <span class="tag js-status">新</span></div>
+        <div class="desc">行星有多大？离太阳有多远？</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop lab" href="月相.html" data-id="lab-moon">
+      <span class="visited-star">⭐</span>
+      <div class="num">113</div><span class="emoji">🌙</span>
+      <div class="body"><div class="title">月相 <span class="tag js-status">新</span></div>
+        <div class="desc">拖着月亮绕地球转，看月相怎么变。</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop lab" href="影子长短.html" data-id="lab-shadow">
+      <span class="visited-star">⭐</span>
+      <div class="num">114</div><span class="emoji">🌅</span>
+      <div class="body"><div class="title">影子长短 <span class="tag js-status">新</span></div>
+        <div class="desc">太阳低，影子就拉长。</div></div>
+      <span class="go">→</span>
+    </a>
+  </div>
   </div><!-- /mapBody -->
 
   <details>
@@ -796,6 +901,7 @@
 "use strict";
 /* 通关进度（存在浏览器本地 localStorage；通关一节课会自动点亮） */
 const LESSON_IDS=['fenpei','jiehe','liangwei','chufa','yushu','fenshu','qiou','guilv','beishu','weizhi','duicheng','shijian','liangwei2','jifen','renminbi','pingfang','tongji','liti','zhishu','changdu','mianji','zhouchang','jishi','kenengxing','yinshu','dashu','zhongliang','shijianjisuan','xuanzhuan','gengkeneng','jiao','rongliang','sanjiaoxing','ershisi','shutuxing','shushi','yunsuan','gongbei','sanwei','chushu','fangwei','rili','shuzhou','nianyueri','pingjun','xiaoshu','zhouqi','jitu','ditu49','dengshi50','fenge51','fuhao52','dengcha53','shuang54','nixiang55','kuohao56','dailiang57','tuxingsuanshi58','jiqi59','boss60','meiju61','dengdai62','chabei63','hebei64','zhishu65','luoji66','nianling67','yuan68','gusuan69','hecha70','guiyi71','lucheng72','fenbi73','xsjj74','yingkui75','tongchou76','shuzimi77','huanfang78','manjian79','mianji80'];
+const LAB_IDS=['lab-maili','lab-binary','lab-quiz-binary','lab-hanoi','lab-quiz-hanoi','lab-pascal','lab-hail','lab-sum','lab-quiz-sum','lab-knight','lab-queens','lab-solar','lab-moon','lab-shadow'];
 function isDone(id){ try{ return localStorage.getItem('yswg:done:'+id)==='1'; }catch(e){ return false; } }
 /* 首次打开：默认把前 36 关设为已完成（只跑一次；之后可用重置按钮清空） */
 (function seedDone(){ try{
@@ -821,7 +927,13 @@ window.addEventListener('pageshow', renderProgress);
 document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) renderProgress(); });
 document.getElementById('resetBtn').addEventListener('click', ()=>{
   if(!confirm('确定把所有关卡重置为「没学过」吗？（只清掉本机进度）')) return;
-  try{ LESSON_IDS.forEach(id=>localStorage.removeItem('yswg:done:'+id)); }catch(e){}
+  try{
+    LESSON_IDS.forEach(id=>localStorage.removeItem('yswg:done:'+id));
+    LAB_IDS.forEach(id=>{
+      localStorage.removeItem('yswg:done:'+id);
+      localStorage.removeItem('yswg:labgoals:'+id);
+    });
+  }catch(e){}
   renderProgress();
 });
 

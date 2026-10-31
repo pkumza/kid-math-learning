@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>连续求和 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-engine.css">
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'lab-quiz-sum',
+  title:'连续求和',
+  emoji:'🪜🟦',
+  heading:'连续求和',
+  pinyin:'lián xù qiú hé · 楼梯的一半',
+  intro:'楼梯 <b class="bl">1+2+3+…</b> 加着有点累。<br>复制一份，拼成<b class="or">长方形</b>，和就是一半。<br>还有：前几个<b class="pu">奇数</b>加起来，是平方数！',
+  parentNote:'两个公式：1+2+…+n = n(n+1)/2；前 k 个奇数之和 = k 的平方。探索不用背公式，而是把 1 到 5 的楼梯再复制一份，倒过来拼成 5×6 的长方形（30），一半就是 15。闯关另用 1 到 7（28）、1 到 9（45），以及前 4 个奇数（16）、前 6 个奇数（36）。挑战是 1 加到 20 = 210，前 9 个奇数 = 81。陪玩时让孩子先说「先乘后一半」，再算。',
+  explore:{
+    title:'🟦 楼梯拼成长方形',
+    lead:'楼梯是 <b class="bl">1+2+3+4+5</b>。<br>再复制一份，倒过来拼。<br>能拼成 <b class="or">5 行 6 列</b> 的长方形！',
+    visual:{type:'row',items:[{text:'1+2+3+4+5',cls:'blue'},{text:'5×6',cls:'orange'}]},
+    note:'点卡片，看楼梯怎么变成长方形的一半。',
+    voice:'1 加到 5 的楼梯，再复制一份，能拼成 5 乘 6 的长方形。',
+    unlock:'🎉 你发现了：连续加的和，是长方形的一半！',
+    unlockVoice:'你发现了！连续加起来的和，就是长方形的一半。',
+    reveals:[
+      {pic:'🪜',title:'先数楼梯',answer:'1+2+3+4+5，<br>一级级加，是 <b>15</b>。',voice:'1 加 2 加 3 加 4 加 5，等于 15。'},
+      {pic:'🟦',title:'拼成长方形',answer:'两份楼梯倒着拼：<br><b>5 行 6 列</b>，一共 30。',voice:'两份拼成 5 行 6 列，一共 30。'},
+      {pic:'✂️',title:'取一半',answer:'楼梯是长方形的一半。<br>30÷2=<b>15</b>。口诀：n×(n+1)÷2。',voice:'30 除以 2 还是 15。口诀是 n 乘 n 加 1，再除以 2。'}
+    ]
+  },
+  practice:[
+    {q:'从 1 加到 7，和是多少？',hint:'n 是 7。先算 7×8，再除以 2。',visual:{type:'row',items:[{text:'1…7',cls:'blue'},{text:'7×8÷2',cls:'orange'}]},answer:'28',options:['28','49','56'],winVoice:'答对啦！7 乘 8 等于 56，一半是 28。',wrong:'先乘 7×8，再除以 2。这不是 7 的平方。'},
+    {q:'小明从 1 数到 9，把这些数全加起来，是多少？',hint:'这里 n 是 9。用 9×10，再除以 2。',visual:{type:'clues',items:['从 1 一直数到 9','n×(n+1)÷2']},answer:'45',options:['36','45','90'],winVoice:'答对啦！9 乘 10 再除以 2，等于 45。',wrong:'9 乘 10 之后要除以 2。36 是加到 8 就停了。'},
+    {q:'1、3、5、7 这四个奇数，加起来是几？',hint:'前几个奇数的和，等于「有几个」的平方。这里有 4 个。',visual:{type:'row',items:[{text:'1',cls:'purple'},{text:'3',cls:'purple'},{text:'5',cls:'purple'},{text:'7',cls:'purple'}]},answer:'16',options:['10','16','25'],winVoice:'答对啦！4 个奇数的和是 4 乘 4，等于 16。',wrong:'别加成 1 到 4。个数是 4，就求 4 的平方。'},
+    {q:'前 6 个奇数加起来，会等于几？',hint:'前 6 个，就想 6 的平方，不是 6 乘 7。',visual:{type:'clues',items:['奇数：1、3、5、7、9、11','个数是 6，和是平方数']},answer:'36',options:['30','36','42'],winVoice:'答对啦！6 乘 6 等于 36。',wrong:'奇数和看个数的平方。6 乘 7 是连续数的口诀，这里用不上。'}
+  ],
+  challenge:[
+    {q:'挑战：从 1 一直加到 20，和是多少？',hint:'n 是 20。先用 20 乘 21，再除以 2。',visual:{type:'clues',items:['n = 20','先算 20×21，再 ÷2']},answer:'210',options:['190','210','420'],winVoice:'答对啦！20 乘 21 等于 420，一半是 210。',wrong:'20 乘 21 之后还要除以 2。190 是加到 19 就停了。',hard:true},
+    {q:'挑战：前 9 个奇数加起来，是多少？',hint:'前 k 个奇数的和，等于 k 的平方。这里 k 是 9。',visual:{type:'clues',items:['一共 9 个奇数','和等于个数的平方']},answer:'81',options:['64','81','100'],winVoice:'答对啦！9 乘 9 等于 81。',wrong:'个数是 9，就求 9 的平方。64 少算了一个，100 多算了一个。'}
+  ],
+  done:{badge:'🟦',title:'🟦 求和小巧匠',text:'你学会了<b class="pu">连续求和</b>！<br>1 加到 n，是 n×(n+1)÷2。<br>前几个奇数，加起来是平方数！',extra:'🌟 口诀：楼梯拼成长方形，和是它的一半。',voice:'太棒了！你学会连续求和啦！'},
+  nextText:'进入下一关：骑士步数地图 →',
+  nextHref:'骑士步数地图.html'
+};
+</script>
+<script src="lesson-engine.js"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>汉诺塔规律 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-engine.css">
+</head>
+<body>
+<script>
+window.LESSON_CONFIG={
+  id:'lab-quiz-hanoi',
+  title:'汉诺塔规律',
+  hard:true,
+  emoji:'🗼🏆',
+  heading:'汉诺塔规律',
+  pinyin:'hàn nuò tǎ · 最少要搬几步',
+  intro:'盘子要搬到另一根柱子。<br>一次只搬 <b class="bl">1 个</b>，<br><b class="or">大盘不能压小盘</b>。<br>这是<b class="pu">困难关 Boss</b>，慢慢想！',
+  parentNote:'n 层汉诺塔最少步数是 2^n-1。1 层 1 步，2 层 3 步，3 层 7 步，4 层 15 步，5 层 31 步，6 层 63 步。规律是下一层 = 上一层 ×2 + 1，也就是 2 的 n 次方减 1。大盘不能放在小盘上。陪玩时先让孩子亲手讲清 2 层的 3 步（小盘让路、大盘过去、小盘跟上），再自己推 3 层和 4 层，最后才挑战 5 层、6 层。',
+  explore:{
+    title:'🗼 两层怎么搬',
+    lead:'上面是小盘，下面是大盘。<br>要整座搬到另一根柱子。<br><b class="or">一次一个</b>，大盘不能压小盘。我们拆开看。',
+    visual:{type:'clues',items:['小盘在上，大盘在下','一次只搬一个','大盘不能压住小盘']},
+    note:'点卡片，按顺序看这两层怎么搬。',
+    voice:'两层小塔要搬到另一根柱子。一次搬一个，大盘不能压小盘。',
+    unlock:'🎉 你看完啦：先让路，再搬大盘，小盘跟上！',
+    unlockVoice:'你看完啦！先让小盘让路，再搬大盘，最后小盘跟上。',
+    reveals:[
+      {pic:'1️⃣',title:'小盘让路',answer:'小盘先搬到旁边。<br>大盘这才能出来。',voice:'第一步：小盘先搬到旁边，大盘才能出来。'},
+      {pic:'2️⃣',title:'大盘过去',answer:'大盘一次搬到目标柱。<br>旁边有小盘，所以<b>不能</b>压上去。',voice:'第二步：大盘搬到目标柱。不能压在小盘上。'},
+      {pic:'3️⃣',title:'小盘跟上',answer:'小盘再搬到大盘上面。<br>两层搬完，一共 <b>3 步</b>。',voice:'第三步：小盘搬到大盘上。两层一共 3 步。'}
+    ]
+  },
+  practice:[
+    {q:'两层盘子，从左柱搬到右柱，最少要几步？',hint:'小盘先让路，大盘再搬，小盘最后跟上。数一数有几步。',visual:{type:'row',items:[{text:'小盘',cls:'blue'},{text:'大盘',cls:'orange'}]},answer:'3',options:['2','3','4'],winVoice:'答对啦！两层最少 3 步。',wrong:'不是一层一步。让路、搬大盘、再跟上，再数一次。'},
+    {q:'三层小塔，最少搬几步才搬得完？',hint:'2 层是 3 步。下一层等于上一层的步数乘 2 再加 1。',visual:{type:'clues',items:['2 层只要 3 步','3 层 = 上一层 ×2 + 1']},answer:'7',options:['6','7','9'],winVoice:'答对啦！3 乘 2 再加 1，三层是 7 步。',wrong:'用上一层的 3：先乘 2，再加 1。别只乘，也别用 3 乘 3。'},
+    {q:'大盘可以压在小盘上面吗？',hint:'小盘如果被大盘压住，还拿得出来吗？',visual:{type:'row',items:[{text:'大盘',cls:'orange'},{text:'?',cls:'purple'},{text:'小盘',cls:'blue'}]},answer:'不能',options:['能','不能','空柱上可以压'],winVoice:'答对啦！大盘不能压在小盘上。',wrong:'大盘不能放在小盘上面。空柱子可以接盘子，那不叫压住小盘。'},
+    {q:'四层塔照「上一层乘 2 再加 1」来推，最少是几步？',hint:'3 层是 7 步。四层就用这 7 步，乘 2 再加 1。',visual:{type:'clues',items:['3 层是 7 步','4 层 = 7 ×2 + 1']},answer:'15',options:['14','15','16'],winVoice:'答对啦！7 乘 2 再加 1，四层是 15 步。',wrong:'7 乘 2 以后，还要再加 1。不是 4 乘 4。'}
+  ],
+  challenge:[
+    {q:'挑战：5 层汉诺塔，最少要搬几步？',hint:'4 层最少 15 步。下一层等于上一层的步数乘 2 再加 1。',visual:{type:'clues',items:['先想起 4 层有几步','再乘 2，再加 1']},answer:'31',options:['15','21','31'],winVoice:'答对啦！15 乘 2 再加 1，五层是 31 步。',wrong:'15 是 4 层的步数。要先乘 2 再加 1，不是把 1 到 6 加起来。',hard:true},
+    {q:'挑战：6 层汉诺塔，最少要搬几步？',hint:'4 层是 15 步。先推出 5 层，6 层再用「上一层的步数乘 2 再加 1」。',visual:{type:'clues',items:['先推出 5 层最少几步','6 层再乘 2，再加 1']},answer:'63',options:['31','62','63'],winVoice:'答对啦！五层 31 步，乘 2 再加 1，六层是 63 步。',wrong:'别停在 5 层。上一层的步数乘 2 之后，还要再加 1。',hard:true}
+  ],
+  done:{badge:'🏆',title:'🏆 汉诺塔小英雄',text:'你闯过了<b class="pu">困难关 Boss</b>！<br>下一层 = 上一层 ×2 + 1，<br>大盘永远不压小盘。',extra:'🌟 口诀：步数乘 2，再加 1。',voice:'太厉害啦！你闯过汉诺塔困难关啦！'},
+  nextText:'进入下一关：杨辉三角 →',
+  nextHref:'杨辉三角.html'
+};
+</script>
+<script src="lesson-engine.js"></script>
+</body>
+</html>
