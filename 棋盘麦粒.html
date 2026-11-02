@@ -18,7 +18,7 @@
   }
   #stage .tip,
   #stage .guess-title{
-    width:min(100%, 520px);
+    width:min(100%, 560px);
     margin:0;
     text-align:center;
     font-weight:800;
@@ -27,13 +27,137 @@
   #stage .tip{color:#6B7280; font-size:.95rem;}
   #stage .guess-title{color:#1F2937; font-size:1.08rem;}
 
+  #stage .amount{
+    width:min(100%, 560px);
+    background:#fff;
+    border:3px solid #E7E5E4;
+    border-radius:22px;
+    box-shadow:0 8px 20px rgba(80,90,130,.1);
+    padding:12px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+  }
+  #stage .kicker{
+    margin:0;
+    font-weight:900;
+    color:#9A3412;
+    font-size:1.02rem;
+  }
+  #stage .demo{
+    width:100%;
+  }
+  #stage .frame{
+    position:relative;
+    width:100%;
+    border-radius:18px;
+    overflow:hidden;
+    background:#F4F7FB;
+    border:3px solid #D6D3D1;
+  }
+  #stage .frame svg{display:block; width:100%; height:auto;}
+  #stage .frame.flood{border-color:#EA580C;}
+  #stage .bubble,
+  #stage .times{
+    position:absolute;
+    z-index:2;
+    font-weight:900;
+  }
+  #stage .bubble{
+    top:10px;
+    right:10px;
+    max-width:70%;
+    background:#fff;
+    color:#9A3412;
+    font-size:1.12rem;
+    line-height:1.3;
+    padding:8px 12px;
+    border-radius:16px 16px 6px 16px;
+    border:3px solid #FDBA74;
+    box-shadow:0 6px 16px rgba(80,40,10,.16);
+    animation:bubble-pop .4s cubic-bezier(.2,1.4,.4,1) both;
+  }
+  #stage .times{
+    top:10px;
+    left:10px;
+    min-width:44px;
+    min-height:44px;
+    padding:0 10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#7C3AED;
+    color:#fff;
+    border-radius:999px;
+    animation:bubble-pop .35s ease both;
+  }
+  #stage .grain{animation:grain-drop .55s cubic-bezier(.18,.8,.2,1) both;}
+  #stage .rise{animation:mound-rise .7s ease-out both;}
+  @keyframes grain-drop{
+    from{transform:translateY(-72px); opacity:0;}
+    to{transform:none; opacity:1;}
+  }
+  @keyframes mound-rise{
+    from{transform:translateY(28px); opacity:.15;}
+    to{transform:none; opacity:1;}
+  }
+  @keyframes bubble-pop{
+    from{transform:scale(.6) translateY(8px); opacity:0;}
+    to{transform:none; opacity:1;}
+  }
+
+  #stage .wait,
+  #stage .feel,
+  #stage .compare,
+  #stage .twice,
+  #stage .digits,
+  #stage .units,
+  #stage .nudge{
+    width:100%;
+    margin:0;
+    text-align:center;
+    line-height:1.45;
+  }
+  #stage .wait{font-weight:800; color:#6B7280; font-size:1.05rem;}
+  #stage .detail{width:100%; display:flex; flex-direction:column; gap:4px;}
+  #stage .detail[hidden],
+  #stage .nudge[hidden],
+  #stage .sum-box[hidden]{display:none !important;}
+  #stage .feel{
+    font-weight:900;
+    font-size:1.22rem;
+    color:#9A3412;
+  }
+  #stage .compare{font-weight:900; font-size:1.12rem;}
+  #stage .compare.under{color:#1D4ED8;}
+  #stage .compare.over{color:#C2410C;}
+  #stage .twice{font-weight:800; color:#6D28D9;}
+  #stage .digits,
+  #stage .sum-digits{
+    font-weight:800;
+    font-size:1rem;
+    letter-spacing:.01em;
+    font-variant-numeric:tabular-nums;
+    color:#6B7280;
+    overflow-wrap:anywhere;
+  }
+  #stage .units,
+  #stage .sum-units{
+    font-weight:800;
+    font-size:1.02rem;
+    color:#166534;
+    overflow-wrap:anywhere;
+  }
+  #stage .nudge{font-weight:800; color:#9A3412;}
+
   #stage .board{
     box-sizing:border-box;
-    width:min(100%, 520px);
+    width:min(100%, 560px);
     max-width:100%;
     display:grid;
-    grid-template-columns:repeat(8, 1fr);
-    gap:1px;
+    grid-template-columns:repeat(8, minmax(0, 1fr));
+    gap:2px;
     background:#6B4423;
     border:4px solid #6B4423;
     border-radius:12px;
@@ -46,23 +170,18 @@
     border:0;
     margin:0;
     padding:0;
+    position:relative;
     width:100%;
     aspect-ratio:1;
-    min-width:44px;
+    min-width:0;
     min-height:44px;
     font:inherit;
-    font-weight:800;
-    font-size:1.02rem;
-    line-height:1;
     color:#24160C;
     cursor:pointer;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    background:#F0D9B5;
     touch-action:manipulation;
   }
-  #stage .cell.light{background:#F0D9B5;}
-  #stage .cell.dark{background:#B58863;}
+  #stage .cell.dark{background:#C49262;}
   #stage .cell:active{filter:brightness(.94);}
   #stage .cell.on{
     box-shadow:inset 0 0 0 3px #6D28D9;
@@ -73,86 +192,58 @@
     outline-offset:-4px;
     z-index:1;
   }
-
-  #stage .readout,
-  #stage .guesses,
-  #stage .sum-box{
-    width:min(100%, 520px);
+  #stage .idx{
+    position:absolute;
+    top:1px;
+    left:2px;
+    z-index:1;
+    font-weight:900;
+    font-size:clamp(.62rem, 1.7vw, .82rem);
+    line-height:1;
+    text-shadow:0 0 2px #fff, 0 1px 0 #fff;
+    pointer-events:none;
   }
-  #stage .readout{
-    min-height:128px;
-    background:#fff;
-    border:3px solid #F0D9B5;
-    border-radius:22px;
-    box-shadow:0 8px 20px rgba(80,90,130,.1);
-    padding:12px 14px;
+  #stage .face{
+    position:absolute;
+    left:8%;
+    right:8%;
+    top:16px;
+    bottom:4px;
     display:flex;
-    flex-direction:column;
-    align-items:center;
+    align-items:flex-end;
     justify-content:center;
-    text-align:center;
+    pointer-events:none;
   }
-  #stage .wait{
-    margin:0;
-    font-weight:800;
-    color:#6B7280;
-    font-size:1.05rem;
+  #stage .seeds{
+    align-items:center;
+    align-content:center;
+    flex-wrap:wrap;
+    gap:1px;
   }
-  #stage .detail{width:100%;}
-  #stage .detail[hidden],
-  #stage .nudge[hidden],
-  #stage .sum-box[hidden]{display:none !important;}
-  #stage .cell-no{
-    margin:0;
-    font-weight:900;
-    font-size:1.2rem;
+  #stage .seeds i{
+    width:9px;
+    height:3.2px;
+    border-radius:40%;
+    background:#fffdf8;
+    box-shadow:0 0 0 .5px #b7a88f;
+    transform:rotate(-22deg);
   }
-  #stage .digits,
-  #stage .sum-digits{
-    margin:4px 0 0;
-    font-weight:900;
-    font-size:clamp(1.05rem, 3.2vw, 1.65rem);
-    letter-spacing:.01em;
-    font-variant-numeric:tabular-nums;
-    color:#9A3412;
-    overflow-wrap:anywhere;
-    line-height:1.35;
-  }
-  #stage .units,
-  #stage .sum-units{
-    margin:4px 0 0;
-    font-weight:800;
-    font-size:1.05rem;
-    color:#166534;
-    overflow-wrap:anywhere;
-    line-height:1.45;
-  }
-  #stage .compare{
-    margin:8px 0 0;
-    font-weight:900;
-    font-size:1.08rem;
-  }
-  #stage .compare.under{color:#1D4ED8;}
-  #stage .compare.over{color:#C2410C;}
-  #stage .nudge{
-    margin:6px 0 0;
-    font-weight:800;
-    color:#9A3412;
-    line-height:1.45;
-  }
+  #stage .seeds i:nth-child(even){transform:rotate(28deg); background:#f4efe6;}
+  #stage .seeds.n1 i{width:16px; height:4px;}
+  #stage .seeds.n2 i{width:13px; height:3.4px;}
+  #stage .seeds.n4 i{width:10px; height:2.8px;}
+  #stage .seeds.pile{align-content:flex-end; gap:1px 2px;}
 
-  #stage .guesses{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-  }
+  #stage .guesses,
+  #stage .sum-box{width:min(100%, 560px);}
+  #stage .guesses{display:flex; flex-direction:column; gap:10px;}
   #stage .guesses .lab-btn{
-    display:block;
+    display:flex;
     width:100%;
     min-height:48px;
     font:inherit;
     font-weight:800;
-    font-size:1.08rem;
+    font-size:1.05rem;
     line-height:1.35;
     touch-action:manipulation;
   }
@@ -164,9 +255,6 @@
     80%{transform:translateX(3px);}
   }
   #stage .lab-btn.shake{animation:maili-shake .4s linear;}
-  @media (prefers-reduced-motion:reduce){
-    #stage .lab-btn.shake{animation:none;}
-  }
 
   #stage .sum-box{
     background:#F0FDF4;
@@ -174,6 +262,16 @@
     border-radius:22px;
     padding:12px 14px;
     text-align:center;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+  }
+  #stage .sum-box svg{
+    width:min(100%, 420px);
+    height:auto;
+    border-radius:16px;
+    border:3px solid #86EFAC;
   }
   #stage .sum-kicker,
   #stage .sum-note{
@@ -182,7 +280,13 @@
     color:#166534;
     line-height:1.45;
   }
-  #stage .sum-note{margin-top:6px;}
+  @media (prefers-reduced-motion:reduce){
+    #stage .grain,
+    #stage .rise,
+    #stage .bubble,
+    #stage .times,
+    #stage .lab-btn.shake{animation:none;}
+  }
 </style>
 </head>
 <body>
@@ -191,50 +295,138 @@
   'use strict';
 
   const YI = 100000000n;
+  const VB_W = 560;
+  const VB_H = 270;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   let cells = [];
-  let wait, detail, cellNo, digitsEl, unitsEl, compareEl, nudge;
-  let sumBox, sumDigits, sumUnits, guessBtns;
+  let picSvg, bubble, times, wait, detail, feelEl, compareEl, twiceEl, digitsEl, unitsEl, nudge;
+  let sumBox, sumSvg, sumDigits, sumUnits, guessBtns, demoBtn;
+  let lastN = 0;
+  let demoTimer = 0;
+  let demoRunning = false;
+
+  function grainsAt(n){
+    return 2n ** BigInt(n - 1);
+  }
+
+  function sceneId(n){
+    if(n <= 6) return 'grains';
+    if(n <= 8) return 'hand';
+    if(n <= 13) return 'bowl';
+    if(n <= 18) return 'sack';
+    if(n <= 21) return 'cart';
+    if(n <= 25) return 'truck';
+    if(n <= 27) return 'barn';
+    return 'flood';
+  }
+
+  function feelLine(n){
+    const lines = {
+      1:'只有 1 粒。',
+      2:'2 粒。',
+      3:'4 粒，一粒粒数得清。',
+      4:'8 粒。',
+      5:'16 粒。',
+      6:'32 粒。',
+      7:'64 粒。翻了 6 次，才一小把。',
+      8:'128 粒，还是一小把。',
+      9:'一小碗。',
+      10:'小碗里堆高了一点。',
+      11:'半碗。',
+      12:'满满一碗。',
+      13:'碗要满出来了。',
+      14:'一小袋。',
+      15:'袋子鼓起来了，大半斤。',
+      16:'一袋，大约 1 斤多。',
+      17:'一袋，大约 2 斤半。',
+      18:'一大袋，大约 5 斤。',
+      19:'一小车，大约 10 斤。',
+      20:'一小车，大约 20 斤。',
+      21:'车快满了，大约 40 斤。',
+      22:'一卡车，大约 80 斤。',
+      23:'一卡车，一百多斤。',
+      24:'卡车堆高了，三百多斤。',
+      25:'卡车满出来了，六百多斤。',
+      26:'一个谷仓，一千多斤。',
+      27:'谷仓要溢出来。两千多斤，还不到 1 亿粒。',
+      28:'麦粒停住了。五千多斤，第一次超过 1 亿！',
+      29:'一万多斤，还在往外冒。',
+      30:'两万多斤。',
+      31:'四万多斤，多得送不完。',
+      32:'八万多斤。'
+    };
+    if(lines[n]) return lines[n];
+    if(n <= 40) return '一座米山。';
+    if(n <= 52) return '米把房子埋住了。';
+    return '堆到天上去了。';
+  }
+
+  function voiceLine(n){
+    if(n === 28) return '停住麦粒！第 28 格，第一次超过 1 亿。';
+    if(n === 1) return '第 1 格，只有 1 粒。';
+    if(n === 7) return '第 7 格，才一小把。';
+    if(n === 27) return '第 27 格，还不到 1 亿。';
+    if(n >= 29) return '停住麦粒！第 ' + n + ' 格，已经很大啦。';
+    if(n <= 8) return '第 ' + n + ' 格，' + grainsAt(n).toString() + ' 粒。';
+    return '第 ' + n + ' 格，' + feelLine(n);
+  }
+
+  function stopDemo(){
+    clearTimeout(demoTimer);
+    demoRunning = false;
+    if(demoBtn){
+      demoBtn.textContent = '看它翻倍';
+      demoBtn.setAttribute('aria-pressed', 'false');
+    }
+  }
 
   function resetPlay(){
+    stopDemo();
     if(!wait) return;
+    lastN = 0;
     cells.forEach(function(btn){
       btn.classList.remove('on');
       btn.setAttribute('aria-pressed', 'false');
     });
+    paintEmpty();
     wait.hidden = false;
     detail.hidden = true;
-    cellNo.textContent = '';
-    digitsEl.textContent = '';
-    unitsEl.textContent = '';
+    feelEl.textContent = '';
     compareEl.textContent = '';
     compareEl.className = 'compare';
+    twiceEl.textContent = '';
+    digitsEl.textContent = '';
+    unitsEl.textContent = '';
     nudge.hidden = true;
     nudge.textContent = '';
     sumBox.hidden = true;
+    sumSvg.innerHTML = '';
     sumDigits.textContent = '';
     sumUnits.textContent = '';
     guessBtns.forEach(function(btn){
       btn.disabled = false;
       btn.classList.remove('shake');
     });
-    Lab.toast('再点一格看看吧。');
+    Lab.toast('点一格，看麦粒掉下来。');
   }
 
   Lab.mount({
     id: 'lab-maili',
     title: '棋盘麦粒',
     emoji: '🌾',
-    lead: '点一格，麦粒就翻一倍。',
+    lead: '点一格，看麦粒翻一倍，堆成什么样。',
     goals: [
       {id:'yi', text:'找出第几格开始超过 1 亿'},
       {id:'sum', text:'猜一猜 64 格加起来有多少'}
     ],
     hints: [
-      {id:'h1', text:'先点第 27 格，再点它后面那一格，跟 1 亿比比。'},
+      {id:'h1', text:'先点第 27 格，看图，再点它后面那一格。'},
       {id:'h2', text:'最后一格几乎是一半。全部加起来，是最后一格的 2 倍再减 1。'}
     ],
     parent: [
       '<p>第 n 格是 2 的 (n-1) 次方。第 1 格是 1 粒，后一格总是前一格的 2 倍。</p>',
+      '<p>大图里的一把、一碗、一斤，是帮孩子感觉「多少」。大约 25000 粒算 1 斤（1 粒按 0.02 克估算），只是想象，不是称出来的。棋盘上的小堆也只表示越往后越多。</p>',
       '<p>第 27 格是 67,108,864，还不到 1 亿；第 28 格是 134,217,728，第一次超过 1 亿。</p>',
       '<p>64 格总和是 2 的 64 次方减 1，也就是 18,446,744,073,709,551,615（读作 1844亿亿6744万亿737亿955万1615）。</p>',
       '<p>请先别把总和说破，让孩子自己点三个猜测。</p>'
@@ -242,40 +434,344 @@
     onReset: resetPlay
   });
 
-  const stage = document.getElementById('stage');
-  const play = document.createElement('div');
-  play.className = 'play';
-
-  const tip = document.createElement('p');
-  tip.className = 'tip';
-  tip.textContent = '第 1 格在左上角，从左往右、从上往下数到 64。';
-  play.appendChild(tip);
-
-  const board = document.createElement('div');
-  board.className = 'board';
-  board.setAttribute('role', 'group');
-  board.setAttribute('aria-label', '麦粒棋盘，第 1 格到第 64 格');
-
-  function grainsAt(n){
-    return 2n ** BigInt(n - 1);
+  function num(v){
+    return (Math.round(v * 10) / 10).toString();
   }
 
-  function voiceFor(n, grains){
-    if(n === 28 && grains > YI) return '第 28 格，第一次超过 1 亿！';
-    if(n === 1) return '第 1 格，只有 1 粒。';
-    if(grains > YI) return '第 ' + n + ' 格，一亿多。';
-    return '第 ' + n + ' 格，还不到 1 亿。';
+  function kernelShape(len){
+    const w = len * 0.24;
+    const h = len / 2;
+    const d = 'M 0 ' + num(-h)
+      + ' C ' + num(w) + ' ' + num(-h * 0.58) + ' ' + num(w) + ' ' + num(h * 0.58) + ' 0 ' + num(h)
+      + ' C ' + num(-w) + ' ' + num(h * 0.58) + ' ' + num(-w) + ' ' + num(-h * 0.58) + ' 0 ' + num(-h)
+      + ' Z';
+    const crease = 'M 0 ' + num(-h * 0.58)
+      + ' C ' + num(w * 0.12) + ' ' + num(-h * 0.05) + ' ' + num(-w * 0.1) + ' ' + num(h * 0.22) + ' 0 ' + num(h * 0.52);
+    return {d:d, crease:crease, sw:Math.max(0.6, len * 0.045)};
   }
 
-  function showCell(n, grains){
+  function stillKernel(x, y, len, rot){
+    const k = kernelShape(len);
+    return '<g transform="translate(' + num(x) + ' ' + num(y) + ') rotate(' + rot + ')">'
+      + '<path d="' + k.d + '" fill="#FFFEFB" stroke="#B7A48C" stroke-width="' + num(k.sw) + '"/>'
+      + '<path d="' + k.crease + '" fill="none" stroke="#C4B094" stroke-width="' + num(Math.max(0.45, len * 0.04)) + '" stroke-linecap="round"/>'
+      + '</g>';
+  }
+
+  function defs(prefix, top, bot){
+    return '<defs>'
+      + '<linearGradient id="' + prefix + 'Sky" x1="0" y1="0" x2="0" y2="1">'
+      + '<stop offset="0" stop-color="' + top + '"/>'
+      + '<stop offset="1" stop-color="' + bot + '"/>'
+      + '</linearGradient>'
+      + '<pattern id="' + prefix + 'Pat" width="13" height="8" patternUnits="userSpaceOnUse">'
+      + '<rect width="13" height="8" fill="#E7DCC8"/>'
+      + stillKernel(3.2, 5, 7.5, 74)
+      + stillKernel(9.6, 2.6, 6.5, -82)
+      + '</pattern>'
+      + '</defs>'
+      + '<rect width="' + VB_W + '" height="' + VB_H + '" fill="url(#' + prefix + 'Sky)"/>';
+  }
+
+  function grain(x, y, len, rot, delay){
+    const k = kernelShape(len);
+    const shade = ((rot | 0) % 3 === 0) ? '#F7F1E8' : '#FFFEFB';
+    return '<g class="grain" style="animation-delay:' + (delay | 0) + 'ms">'
+      + '<g transform="translate(' + num(x) + ' ' + num(y) + ') rotate(' + (rot | 0) + ')">'
+      + '<path d="' + k.d + '" fill="' + shade + '" stroke="#B7A48C" stroke-width="' + num(k.sw) + '"/>'
+      + '<path d="' + k.crease + '" fill="none" stroke="#C4B094" stroke-width="' + num(Math.max(0.5, len * 0.045)) + '" stroke-linecap="round"/>'
+      + '</g></g>';
+  }
+
+  function spiral(count, cx, cy, spreadX, spreadY){
+    const pts = [];
+    const ga = Math.PI * (3 - Math.sqrt(5));
+    for(let i = 0; i < count; i++){
+      const t = count === 1 ? 0 : Math.sqrt((i + 0.5) / count);
+      const a = i * ga;
+      pts.push({
+        x: cx + Math.cos(a) * spreadX * t,
+        y: cy + Math.sin(a) * spreadY * t,
+        rot: (i * 47) % 180 - 90
+      });
+    }
+    return pts;
+  }
+
+  function grainPile(count, cx, cy, spreadX, spreadY, len){
+    const step = count > 40 ? 16 : 36;
+    return spiral(count, cx, cy, spreadX, spreadY).map(function(p, i){
+      return grain(p.x, p.y, len, p.rot, Math.min(i, 20) * step);
+    }).join('');
+  }
+
+  function buddy(x, y, pose){
+    const eyes = '<circle cx="22" cy="34" r="' + (pose === 'stop' ? 3.3 : 2.6) + '" fill="#1F2937"/>'
+      + '<circle cx="46" cy="34" r="' + (pose === 'stop' ? 3.3 : 2.6) + '" fill="#1F2937"/>';
+    let mouth;
+    if(pose === 'stop') mouth = '<ellipse cx="34" cy="52" rx="7" ry="5.5" fill="#7C2D12"/>';
+    else if(pose === 'worry') mouth = '<ellipse cx="34" cy="52" rx="4" ry="3.6" fill="#7C2D12"/>';
+    else mouth = '<path d="M26 50 Q34 58 42 50" fill="none" stroke="#7C2D12" stroke-width="2.4" stroke-linecap="round"/>';
+    let arms;
+    if(pose === 'stop') arms = '<path d="M10 28 L-2 4 M58 28 L70 4" stroke="#D97706" stroke-width="6" stroke-linecap="round"/>';
+    else if(pose === 'worry') arms = '<path d="M10 36 L0 18 M58 36 L68 18" stroke="#D97706" stroke-width="6" stroke-linecap="round"/>';
+    else if(pose === 'hold') arms = '<path d="M8 40 L-2 54 M60 40 L70 54" stroke="#D97706" stroke-width="6" stroke-linecap="round"/>';
+    else arms = '<path d="M8 40 L-2 34 M60 42 L72 50" stroke="#D97706" stroke-width="6" stroke-linecap="round"/>';
+    return '<g class="buddy" transform="translate(' + x + ' ' + y + ')">'
+      + '<ellipse cx="34" cy="84" rx="20" ry="5" fill="rgba(80,40,10,.15)"/>'
+      + arms
+      + '<rect x="8" y="16" width="24" height="24" rx="6" fill="#FDE68A" stroke="#D97706" stroke-width="2"/>'
+      + '<rect x="32" y="16" width="24" height="24" rx="6" fill="#FBBF24" stroke="#D97706" stroke-width="2"/>'
+      + '<rect x="8" y="40" width="24" height="24" rx="6" fill="#F59E0B" stroke="#D97706" stroke-width="2"/>'
+      + '<rect x="32" y="40" width="24" height="24" rx="6" fill="#FDE68A" stroke="#D97706" stroke-width="2"/>'
+      + eyes + mouth
+      + '<rect x="14" y="64" width="10" height="16" rx="4" fill="#D97706"/>'
+      + '<rect x="40" y="64" width="10" height="16" rx="4" fill="#B45309"/>'
+      + '</g>';
+  }
+
+  function floor(){
+    return '<rect x="0" y="232" width="560" height="38" fill="#E4E7EE"/>';
+  }
+
+  function skyFor(n){
+    if(n >= 28) return ['#EAF3FC', '#D7E6F6'];
+    return ['#F7F9FC', '#EEF2F7'];
+  }
+
+  function gridPile(cols, rows, cx, cy, gapX, gapY, len){
+    let out = '';
+    let i = 0;
+    const w = (cols - 1) * gapX;
+    const h = (rows - 1) * gapY;
+    for(let r = 0; r < rows; r++){
+      for(let c = 0; c < cols; c++){
+        const tilt = ((r * 3 + c * 5) % 7) * 10 - 28;
+        out += grain(cx - w / 2 + c * gapX, cy - h / 2 + r * gapY, len, 86 + tilt, i * 40);
+        i += 1;
+      }
+    }
+    return out;
+  }
+
+  function plateScene(n){
+    const count = Number(grainsAt(n));
+    let grains;
+    if(count === 1) grains = grain(230, 198, 42, 78, 0);
+    else if(count === 2) grains = gridPile(2, 1, 230, 196, 48, 0, 34);
+    else if(count === 4) grains = gridPile(2, 2, 230, 196, 46, 16, 28);
+    else if(count === 8) grains = gridPile(4, 2, 230, 196, 34, 16, 22);
+    else if(count === 16) grains = gridPile(4, 4, 230, 194, 32, 12, 16);
+    else grains = gridPile(8, 4, 230, 194, 22, 11, 12);
+    return floor()
+      + buddy(438, 150, 'look')
+      + '<ellipse cx="230" cy="214" rx="120" ry="16" fill="rgba(120,70,20,.12)"/>'
+      + '<ellipse cx="230" cy="206" rx="108" ry="14" fill="#FFF6E4" stroke="#E5C48A" stroke-width="3"/>'
+      + grains;
+  }
+
+  function handScene(n){
+    const count = Number(grainsAt(n));
+    return floor()
+      + grainPile(count, 250, 206, count > 64 ? 96 : 78, 20, count > 64 ? 8 : 11)
+      + buddy(214, 148, 'hold');
+  }
+
+  function bowlScene(n){
+    const fill = (n - 9) / 4;
+    const moundY = 196 - fill * 36;
+    const moundRy = 18 + fill * 28;
+    let overflow = '';
+    if(n >= 13) overflow = grainPile(8, 330, 118, 78, 14, 12);
+    return floor()
+      + buddy(36, 150, n >= 13 ? 'worry' : 'look')
+      + '<g class="rise">'
+      + '<ellipse cx="330" cy="224" rx="120" ry="14" fill="rgba(120,70,20,.12)"/>'
+      + '<path d="M210 158 C 228 236, 432 236, 450 158" fill="#FFF8EE" stroke="#C4A574" stroke-width="3"/>'
+      + '<clipPath id="pBowl"><path d="M218 162 C 234 228, 426 228, 442 162 Z"/></clipPath>'
+      + '<g clip-path="url(#pBowl)">'
+      + '<ellipse cx="330" cy="' + num(moundY) + '" rx="108" ry="' + num(moundRy) + '" fill="url(#pPat)"/>'
+      + grainPile(10, 330, moundY - moundRy * 0.35, 80, 12, 11)
+      + '</g>'
+      + '<path d="M210 158 Q 330 188 450 158" fill="none" stroke="#C4A574" stroke-width="8" stroke-linecap="round"/>'
+      + '</g>'
+      + overflow;
+  }
+
+  function sackScene(n){
+    const level = (n - 14) / 4;
+    const x = 292 - level * 10;
+    const w = 148 + level * 28;
+    const bottom = 226;
+    const top = 118 - level * 28;
+    const pose = level > 0.45 ? 'worry' : 'look';
+    const heap = 16 + level * 18;
+    return floor()
+      + buddy(28, 150, pose)
+      + '<g class="rise">'
+      + '<ellipse cx="' + num(x + w / 2) + '" cy="' + (bottom + 2) + '" rx="' + num(w * 0.48) + '" ry="8" fill="rgba(80,60,40,.12)"/>'
+      + '<path d="M' + num(x + 10) + ' ' + num(top + 28)
+      + ' L ' + num(x) + ' ' + num(bottom - 16)
+      + ' Q ' + num(x + w / 2) + ' ' + num(bottom + 8) + ' ' + num(x + w) + ' ' + num(bottom - 16)
+      + ' L ' + num(x + w - 10) + ' ' + num(top + 28)
+      + ' Z" fill="#F7F4EE" stroke="#C4B49C" stroke-width="3"/>'
+      + '<rect x="' + num(x + 8) + '" y="' + num(top + 78) + '" width="' + num(w - 16) + '" height="18" fill="#DC2626"/>'
+      + '<path d="M' + x + ' ' + num(top + 36)
+      + ' Q ' + num(x + w / 2) + ' ' + num(top + 8 - heap) + ' ' + num(x + w) + ' ' + num(top + 36)
+      + ' L ' + num(x + w - 8) + ' ' + num(top + 34)
+      + ' Q ' + num(x + w / 2) + ' ' + num(top + 18 - heap * 0.3) + ' ' + num(x + 8) + ' ' + num(top + 34)
+      + ' Z" fill="url(#pPat)"/>'
+      + grainPile(14, x + w / 2, top + 18 - heap * 0.35, w * 0.34, 10, 11)
+      + '</g>';
+  }
+
+  function cartScene(n){
+    const level = (n - 19) / 2;
+    const heap = 36 + level * 48;
+    return floor()
+      + buddy(16, 150, n >= 21 ? 'worry' : 'look')
+      + '<g class="rise">'
+      + '<rect x="168" y="178" width="270" height="36" rx="8" fill="#C4A574" stroke="#8C5A3C" stroke-width="3"/>'
+      + '<circle cx="214" cy="224" r="18" fill="#1F2937"/><circle cx="214" cy="224" r="7" fill="#FDE68A"/>'
+      + '<circle cx="386" cy="224" r="18" fill="#1F2937"/><circle cx="386" cy="224" r="7" fill="#FDE68A"/>'
+      + '<path d="M184 178 Q 300 ' + num(178 - heap) + ' 422 178 Z" fill="url(#pPat)"/>'
+      + grainPile(12, 300, 178 - heap * 0.55, 70, 12, 10)
+      + '</g>';
+  }
+
+  function truckScene(n){
+    const level = (n - 22) / 3;
+    const heap = 28 + level * 62;
+    let spill = '';
+    if(n >= 25) spill = grainPile(10, 430, 150, 36, 24, 11);
+    return floor()
+      + buddy(12, 150, 'worry')
+      + '<g class="rise">'
+      + '<rect x="168" y="156" width="250" height="58" rx="8" fill="#EA580C"/>'
+      + '<path d="M168 156 L168 118 Q168 104 186 104 L236 104 L268 146 L268 156 Z" fill="#C2410C"/>'
+      + '<rect x="184" y="116" width="34" height="24" rx="4" fill="#DBEAFE" stroke="#C2410C" stroke-width="2"/>'
+      + '<circle cx="210" cy="220" r="18" fill="#1F2937"/><circle cx="210" cy="220" r="7" fill="#E5E7EB"/>'
+      + '<circle cx="372" cy="220" r="18" fill="#1F2937"/><circle cx="372" cy="220" r="7" fill="#E5E7EB"/>'
+      + '<path d="M250 156 Q 340 ' + num(156 - heap) + ' 430 156 Z" fill="url(#pPat)"/>'
+      + grainPile(12, 340, 156 - heap * 0.55, 64, 12, 10)
+      + '</g>'
+      + spill;
+  }
+
+  function barnScene(n){
+    const level = n === 26 ? 0.45 : 1;
+    const heap = 40 + level * 70;
+    let spill = '';
+    if(n >= 27) spill = grainPile(12, 250, 150, 70, 28, 11);
+    return floor()
+      + buddy(18, 150, 'worry')
+      + '<g class="rise">'
+      + '<polygon points="300,64 470,64 500,118 270,118" fill="#C2410C"/>'
+      + '<rect x="292" y="118" width="186" height="104" fill="#F3D7A1" stroke="#A16207" stroke-width="3"/>'
+      + '<rect x="358" y="160" width="48" height="62" rx="2" fill="#7C4A2D"/>'
+      + '<path d="M300 222 Q 390 ' + num(222 - heap) + ' 470 200 L 470 228 L 300 228 Z" fill="url(#pPat)"/>'
+      + '</g>'
+      + spill;
+  }
+
+  function house(x, y, s){
+    return '<g transform="translate(' + x + ' ' + y + ')">'
+      + '<polygon points="' + (s / 2) + ',0 ' + s + ',28 0,28" fill="#C2410C"/>'
+      + '<rect x="0" y="28" width="' + s + '" height="' + Math.round(s * 0.72) + '" fill="#F7E7C6" stroke="#B08968" stroke-width="2"/>'
+      + '<rect x="' + Math.round(s * 0.38) + '" y="' + Math.round(28 + s * 0.28) + '" width="' + Math.round(s * 0.24) + '" height="' + Math.round(s * 0.44) + '" fill="#8C5A3C"/>'
+      + '</g>';
+  }
+
+  function floodScene(n, prefix){
+    const t = Math.max(0, Math.min(1, (n - 28) / 36));
+    const cover = 0.22 + t * 0.55;
+    const top = Math.round(VB_H * (1 - cover));
+    let backdrop = '';
+    if(n >= 37){
+      backdrop = house(70, 150, 70) + house(220, 132, 86) + house(390, 146, 74);
+    }
+    let crest = '';
+    for(let i = 0; i < 18; i++){
+      crest += stillKernel(16 + i * 30, top - 2 + (i % 3) * 2, 12, i % 2 ? 78 : -72);
+    }
+    const wave = '<g class="rise">'
+      + '<path d="M0 ' + top + ' Q 70 ' + (top - 16) + ' 140 ' + top + ' T 280 ' + (top - 8) + ' T 420 ' + top + ' T 560 ' + (top - 6) + ' L 560 ' + VB_H + ' L 0 ' + VB_H + ' Z" fill="url(#' + prefix + 'Pat)"/>'
+      + crest
+      + '</g>';
+    const airCount = 14;
+    let air = '';
+    for(let i = 0; i < airCount; i++){
+      const y = 24 + (i % 7) * 16;
+      if(y > top - 8) continue;
+      const x = 80 + (i * 97) % 400;
+      air += grain(x, y, 16, (i * 47) % 160 - 80, i * 40);
+    }
+    let who;
+    if(top > 150){
+      who = buddy(36, 150, 'stop') + wave;
+    }else{
+      const scale = top < 80 ? 0.62 : 0.8;
+      const by = Math.max(8, top - Math.round(82 * scale) - 4);
+      who = wave + '<g transform="translate(246 ' + by + ') scale(' + scale + ')">' + buddy(0, 0, 'stop') + '</g>';
+    }
+    return backdrop + who + air;
+  }
+
+  function pictureSvg(n, prefix){
+    const sky = n ? skyFor(n) : ['#F7F9FC', '#EEF2F7'];
+    let body = '';
+    if(!n){
+      body = floor()
+        + buddy(400, 150, 'look')
+        + '<ellipse cx="220" cy="214" rx="108" ry="16" fill="rgba(120,70,20,.12)"/>'
+        + '<ellipse cx="220" cy="206" rx="96" ry="14" fill="#FFF6E4" stroke="#E5C48A" stroke-width="3"/>';
+    }else if(n <= 6) body = plateScene(n);
+    else if(n <= 8) body = handScene(n);
+    else if(n <= 13) body = bowlScene(n);
+    else if(n <= 18) body = sackScene(n);
+    else if(n <= 21) body = cartScene(n);
+    else if(n <= 25) body = truckScene(n);
+    else if(n <= 27) body = barnScene(n);
+    else body = floodScene(n, prefix);
+    return defs(prefix, sky[0], sky[1]) + body;
+  }
+
+  function paintEmpty(){
+    picSvg.innerHTML = pictureSvg(0, 'p');
+    picSvg.parentNode.classList.remove('flood');
+    picSvg.parentNode.dataset.scene = 'empty';
+    picSvg.parentNode.dataset.cell = '';
+    bubble.hidden = true;
+    times.hidden = true;
+  }
+
+  function showAmount(n, grains){
+    const scene = sceneId(n);
+    picSvg.innerHTML = pictureSvg(n, 'p');
+    const frame = picSvg.parentNode;
+    frame.dataset.scene = scene;
+    frame.dataset.cell = String(n);
+    frame.classList.toggle('flood', scene === 'flood');
+    bubble.hidden = n < 28;
+    const doubled = lastN > 0 && n === lastN + 1;
+    times.hidden = !doubled;
+    frame.setAttribute('aria-label', '第 ' + n + ' 格的量：' + feelLine(n));
+
     const cn = Lab.formatCn(grains);
     const over = grains > YI;
     const first = n === 28 && over;
     wait.hidden = true;
     detail.hidden = false;
-    cellNo.textContent = '第 ' + n + ' 格';
+    feelEl.textContent = '第 ' + n + ' 格，' + feelLine(n);
     digitsEl.textContent = cn.digits;
     unitsEl.textContent = cn.units + '粒';
+    if(doubled && n <= 8){
+      twiceEl.textContent = grainsAt(lastN).toString() + ' 粒翻一倍，变成 ' + grains.toString() + ' 粒。';
+    }else if(doubled){
+      twiceEl.textContent = '是上一格的两倍。';
+    }else{
+      twiceEl.textContent = '';
+    }
     if(first){
       compareEl.textContent = '第一次超过 1 亿！';
       compareEl.className = 'compare over';
@@ -293,11 +789,106 @@
       nudge.hidden = true;
       nudge.textContent = '';
     }
-    detail.scrollIntoView({block:'nearest', inline:'nearest'});
   }
 
-  function onCell(n, btn){
-    Lab.click();
+  function sayUnlessWin(fresh, line){
+    const won = fresh && Lab.isGoal('yi') && Lab.isGoal('sum');
+    if(!won) Lab.say(line);
+  }
+
+  const stage = document.getElementById('stage');
+  const play = document.createElement('div');
+  play.className = 'play';
+
+  const tip = document.createElement('p');
+  tip.className = 'tip';
+  tip.textContent = '第 1 格在左上角。点一格，看这一格有多少。';
+  play.appendChild(tip);
+
+  const amount = document.createElement('div');
+  amount.className = 'amount';
+
+  const kicker = document.createElement('p');
+  kicker.className = 'kicker';
+  kicker.textContent = '这一格的量';
+  amount.appendChild(kicker);
+
+  demoBtn = document.createElement('button');
+  demoBtn.type = 'button';
+  demoBtn.className = 'lab-btn demo';
+  demoBtn.textContent = '看它翻倍';
+  demoBtn.setAttribute('aria-pressed', 'false');
+  amount.appendChild(demoBtn);
+
+  const frame = document.createElement('div');
+  frame.className = 'frame';
+  frame.dataset.scene = 'empty';
+  picSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  picSvg.setAttribute('viewBox', '0 0 ' + VB_W + ' ' + VB_H);
+  picSvg.setAttribute('aria-hidden', 'true');
+  frame.appendChild(picSvg);
+
+  times = document.createElement('div');
+  times.className = 'times';
+  times.hidden = true;
+  times.setAttribute('aria-hidden', 'true');
+  times.textContent = '×2';
+  frame.appendChild(times);
+
+  bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.hidden = true;
+  bubble.setAttribute('aria-hidden', 'true');
+  bubble.textContent = '停住麦粒！';
+  frame.appendChild(bubble);
+  amount.appendChild(frame);
+
+  const live = document.createElement('div');
+  live.setAttribute('aria-live', 'polite');
+  live.setAttribute('aria-atomic', 'true');
+  live.style.width = '100%';
+
+  wait = document.createElement('p');
+  wait.className = 'wait';
+  wait.textContent = '点一格，看麦粒掉下来。';
+
+  detail = document.createElement('div');
+  detail.className = 'detail';
+  detail.hidden = true;
+  feelEl = document.createElement('p');
+  feelEl.className = 'feel';
+  compareEl = document.createElement('p');
+  compareEl.className = 'compare';
+  twiceEl = document.createElement('p');
+  twiceEl.className = 'twice';
+  digitsEl = document.createElement('p');
+  digitsEl.className = 'digits';
+  unitsEl = document.createElement('p');
+  unitsEl.className = 'units';
+  nudge = document.createElement('p');
+  nudge.className = 'nudge';
+  nudge.hidden = true;
+  detail.appendChild(feelEl);
+  detail.appendChild(compareEl);
+  detail.appendChild(twiceEl);
+  detail.appendChild(digitsEl);
+  detail.appendChild(unitsEl);
+  detail.appendChild(nudge);
+  live.appendChild(wait);
+  live.appendChild(detail);
+  amount.appendChild(live);
+  play.appendChild(amount);
+
+  const board = document.createElement('div');
+  board.className = 'board';
+  board.setAttribute('role', 'group');
+  board.setAttribute('aria-label', '麦粒棋盘，第 1 格到第 64 格');
+
+  function onCell(n, btn, opts){
+    opts = opts || {};
+    if(!opts.demo) stopDemo();
+    if(!opts.demo) Lab.click();
+
     cells.forEach(function(el){
       el.classList.remove('on');
       el.setAttribute('aria-pressed', 'false');
@@ -306,22 +897,31 @@
     btn.setAttribute('aria-pressed', 'true');
 
     const grains = grainsAt(n);
-    showCell(n, grains);
+    showAmount(n, grains);
+    frame.scrollIntoView({block:'nearest', inline:'nearest'});
 
+    const line = voiceLine(n);
     if(n === 28 && grains > YI){
-      Lab.goal('yi');
-      Lab.toast('第 28 格，第一次超过 1 亿！');
-      Lab.say('第 28 格，第一次超过 1 亿！');
+      const fresh = Lab.goal('yi');
+      Lab.toast('停住麦粒！第 28 格，第一次超过 1 亿。');
+      if(!opts.quiet) sayUnlessWin(fresh, '停住麦粒！第 28 格，第一次超过 1 亿。');
+      lastN = n;
       return;
     }
     if(n >= 29 && !Lab.isGoal('yi')){
-      Lab.toast('这一格已经很大啦。再往前找找，哪一格是第一个超过 1 亿的？');
-      Lab.say(voiceFor(n, grains));
+      const back = '这一格已经很大啦。再往前找找，哪一格是第一个超过 1 亿的？';
+      if(!opts.quiet){
+        Lab.toast(back);
+        Lab.say(back);
+      }
+      lastN = n;
       return;
     }
-    const line = voiceFor(n, grains);
-    Lab.toast(line);
-    Lab.say(line);
+    if(!opts.quiet){
+      Lab.toast(line);
+      Lab.say(line);
+    }
+    lastN = n;
   }
 
   for(let n = 1; n <= 64; n++){
@@ -330,48 +930,58 @@
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'cell ' + ((row + col) % 2 === 0 ? 'light' : 'dark');
-    btn.textContent = String(n);
     btn.setAttribute('aria-label', '第 ' + n + ' 格');
     btn.setAttribute('aria-pressed', 'false');
+
+    const idx = document.createElement('span');
+    idx.className = 'idx';
+    idx.textContent = String(n);
+
+    const face = document.createElement('span');
+    if(n <= 4){
+      const count = 2 ** (n - 1);
+      face.className = 'face seeds n' + count;
+      for(let i = 0; i < count; i++) face.appendChild(document.createElement('i'));
+    }else{
+      const rows = Math.min(5, 1 + Math.floor((n - 5) / 10));
+      face.className = 'face seeds pile';
+      for(let i = 0; i < rows * 4; i++) face.appendChild(document.createElement('i'));
+    }
+    btn.appendChild(face);
+    btn.appendChild(idx);
     btn.addEventListener('click', function(){ onCell(n, btn); });
     cells.push(btn);
     board.appendChild(btn);
   }
   play.appendChild(board);
 
-  const readout = document.createElement('div');
-  readout.className = 'readout';
-  readout.setAttribute('aria-live', 'polite');
-  readout.setAttribute('aria-atomic', 'true');
-
-  wait = document.createElement('p');
-  wait.className = 'wait';
-  wait.textContent = '点一格，麦粒数字出现在这里。';
-
-  detail = document.createElement('div');
-  detail.className = 'detail';
-  detail.hidden = true;
-
-  cellNo = document.createElement('p');
-  cellNo.className = 'cell-no';
-  digitsEl = document.createElement('p');
-  digitsEl.className = 'digits';
-  unitsEl = document.createElement('p');
-  unitsEl.className = 'units';
-  compareEl = document.createElement('p');
-  compareEl.className = 'compare';
-  nudge = document.createElement('p');
-  nudge.className = 'nudge';
-  nudge.hidden = true;
-
-  detail.appendChild(cellNo);
-  detail.appendChild(digitsEl);
-  detail.appendChild(unitsEl);
-  detail.appendChild(compareEl);
-  detail.appendChild(nudge);
-  readout.appendChild(wait);
-  readout.appendChild(detail);
-  play.appendChild(readout);
+  demoBtn.addEventListener('click', function(){
+    Lab.click();
+    if(demoRunning){
+      stopDemo();
+      Lab.toast('停住了。想看哪一格，就点哪一格。');
+      return;
+    }
+    demoRunning = true;
+    demoBtn.textContent = '停一下';
+    demoBtn.setAttribute('aria-pressed', 'true');
+    let i = 1;
+    Lab.toast('从 1 粒开始翻倍。');
+    const step = function(){
+      if(!demoRunning) return;
+      onCell(i, cells[i - 1], {demo:true, quiet:true});
+      if(i === 7){
+        stopDemo();
+        const done = '第 7 格，才一小把。再往后点。';
+        Lab.toast(done);
+        Lab.say(done);
+        return;
+      }
+      i += 1;
+      demoTimer = setTimeout(step, reduceMotion ? 160 : 700);
+    };
+    step();
+  });
 
   const guesses = document.createElement('div');
   guesses.className = 'guesses';
@@ -416,13 +1026,16 @@
     Lab.say(msg);
   });
   const btnC = makeGuess('比最后一格的两倍少 1 粒', function(){
-    Lab.goal('sum');
+    const fresh = Lab.goal('sum');
     const cn = Lab.formatCn('18446744073709551615');
+    sumSvg.innerHTML = pictureSvg(64, 's');
     sumDigits.textContent = cn.digits;
     sumUnits.textContent = cn.units + '粒';
     sumBox.hidden = false;
     sumBox.scrollIntoView({block:'nearest', inline:'nearest'});
-    Lab.say('64 格加起来，是 2 的 64 次方减 1。');
+    const line = '64 格加起来，是 2 的 64 次方减 1。';
+    Lab.toast(line);
+    sayUnlessWin(fresh, line);
   });
   guessBtns = [btnA, btnB, btnC];
   play.appendChild(guesses);
@@ -433,21 +1046,26 @@
   sumBox.setAttribute('aria-live', 'polite');
   const sumKicker = document.createElement('p');
   sumKicker.className = 'sum-kicker';
-  sumKicker.textContent = '猜对啦！64 格加起来';
+  sumKicker.textContent = '猜对啦！麦粒堆到天上去了。';
+  sumSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  sumSvg.setAttribute('viewBox', '0 0 ' + VB_W + ' ' + VB_H);
+  sumSvg.setAttribute('aria-hidden', 'true');
   sumDigits = document.createElement('p');
   sumDigits.className = 'sum-digits';
   sumUnits = document.createElement('p');
   sumUnits.className = 'sum-units';
   const sumNote = document.createElement('p');
   sumNote.className = 'sum-note';
-  sumNote.textContent = '是 2 的 64 次方减 1。';
+  sumNote.textContent = '64 格加起来，是 2 的 64 次方减 1。';
   sumBox.appendChild(sumKicker);
+  sumBox.appendChild(sumSvg);
   sumBox.appendChild(sumDigits);
   sumBox.appendChild(sumUnits);
   sumBox.appendChild(sumNote);
   play.appendChild(sumBox);
 
   stage.appendChild(play);
+  paintEmpty();
 })();
 </script>
 </body>

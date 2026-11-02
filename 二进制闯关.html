@@ -5,42 +5,138 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>二进制闯关 · 数学小课堂</title>
 <link rel="stylesheet" href="lesson-engine.css">
+<style>
+  .bin-board{width:100%; text-align:center;}
+  .bin-key{
+    display:flex; justify-content:center; align-items:center; gap:8px;
+    margin:0 0 10px; color:#6B7280; font-weight:800; font-size:1rem;
+  }
+  .bin-dot{
+    width:22px; height:22px; border-radius:50%; display:inline-block;
+    background:radial-gradient(circle at 32% 28%, #f8fafc 0%, #d1d5db 46%, #9ca3af 80%);
+    box-shadow:inset 0 -3px 4px rgba(75,85,99,.28);
+  }
+  .bin-dot.on{
+    background:radial-gradient(circle at 32% 28%, #fffce8 0%, #fde047 36%, #f59e0b 72%, #ea580c 100%);
+    box-shadow:0 0 8px 3px rgba(251,191,36,.85);
+  }
+  .bin-goal{
+    margin:0 0 4px; color:#6B7280; font-weight:800; font-size:1.05rem;
+  }
+  .bin-goal b{
+    display:inline-block; margin-left:6px;
+    color:#7C3AED; font-size:2.6rem; line-height:1;
+    font-variant-numeric:tabular-nums; letter-spacing:-.03em;
+  }
+  .bin-kicker{margin:2px 0 8px; color:#6B7280; font-weight:800; font-size:.95rem;}
+  .bin-lamps{
+    display:grid; gap:14px 8px; width:100%;
+    margin:0 auto; justify-items:center; align-items:start;
+  }
+  .bin-cell{
+    display:flex; flex-direction:column; align-items:center; gap:6px; width:100%;
+  }
+  .bin-bit{
+    font-weight:900; font-size:clamp(1.35rem, 4vw, 1.8rem); line-height:1;
+    font-variant-numeric:tabular-nums; color:#6B7280;
+    min-height:28px; display:flex; align-items:center; justify-content:center;
+  }
+  .bin-bit.on{color:#EA580C;}
+  .bin-n4 .bin-lamps{grid-template-columns:repeat(4, minmax(0, 1fr));}
+  .bin-n5 .bin-lamps{grid-template-columns:repeat(5, minmax(0, 1fr));}
+  .bin-n8 .bin-lamps{grid-template-columns:repeat(4, minmax(0, 1fr));}
+  .bin-bulb{
+    width:100%; max-width:96px;
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+  }
+  .bin-face{
+    position:relative; display:block; width:100%; max-width:76px; aspect-ratio:1;
+    border-radius:50%;
+    background:radial-gradient(circle at 32% 28%, #f8fafc 0%, #d1d5db 46%, #9ca3af 80%);
+    box-shadow:inset 0 -8px 10px rgba(75,85,99,.28), 0 4px 8px rgba(15,23,42,.08);
+  }
+  .bin-face::before{
+    content:""; position:absolute; width:28%; height:18%; left:22%; top:16%;
+    border-radius:50%; background:rgba(255,255,255,.8);
+  }
+  .bin-bulb.on .bin-face{
+    background:radial-gradient(circle at 32% 28%, #fffce8 0%, #fde047 36%, #f59e0b 70%, #ea580c 100%);
+    box-shadow:
+      0 0 0 4px rgba(253,224,71,.35),
+      0 0 18px 8px rgba(251,191,36,.9),
+      inset 0 -8px 12px rgba(194,65,12,.28);
+  }
+  .bin-num{
+    font-weight:800; font-size:clamp(.95rem, 2.8vw, 1.15rem); line-height:1.2; color:#6B7280;
+    font-variant-numeric:tabular-nums;
+  }
+  .bin-bulb.on .bin-num{color:#C2410C;}
+  @media (min-width:720px){
+    .bin-n8 .bin-lamps{grid-template-columns:repeat(8, minmax(0, 1fr));}
+  }
+</style>
 </head>
 <body>
 <script>
+function lampVisual(opts){
+  var values = opts.values;
+  var lit = {};
+  (opts.on || []).forEach(function(n){ lit[n] = true; });
+  var lamps = '';
+  var labels = [];
+  values.forEach(function(v){
+    var on = !!lit[v];
+    lamps += '<div class="bin-cell">'
+      + '<span class="bin-bit' + (on ? ' on' : '') + '" aria-hidden="true">' + (on ? '1' : '0') + '</span>'
+      + '<div class="bin-bulb' + (on ? ' on' : '') + '" role="img" aria-label="' + v + (on ? '，亮着' : '，灭了') + '">'
+      + '<span class="bin-face" aria-hidden="true"></span>'
+      + '<span class="bin-num">' + v + '</span></div></div>';
+    labels.push(v + (on ? '亮' : '灭'));
+  });
+  var key = opts.key
+    ? '<p class="bin-key"><span class="bin-dot on" aria-hidden="true"></span>黄的亮<span class="bin-dot" aria-hidden="true"></span>灰的灭</p>'
+    : '';
+  var goal = opts.goal != null
+    ? '<p class="bin-goal">凑出 <b>' + opts.goal + '</b></p>'
+    : '';
+  return '<div class="bin-board bin-n' + values.length + '" role="group" aria-label="' + labels.join('，') + '">'
+    + key + goal
+    + '<p class="bin-kicker">亮是 1</p>'
+    + '<div class="bin-lamps">' + lamps + '</div></div>';
+}
 window.LESSON_CONFIG={
   id:'lab-quiz-binary',
   title:'二进制闯关',
   emoji:'💡🔢',
   heading:'二进制闯关',
   pinyin:'èr jìn zhì · 亮着的灯加一加',
-  intro:'小灯会数数：<b class="bl">1、2、4、8</b>。<br>往左一盏，数字<b class="or">翻一倍</b>。<br>亮着的灯<b class="pu">加一加</b>，就是这个数！',
-  parentNote:'二进制就是每盏灯翻一倍：1、2、4、8、16、32、64、128。亮着的灯相加就是这个数，暗着的不加。小例子是 11=8+2+1（4 那盏暗着）。100=64+32+4。八盏灯全亮是 255=128+64+32+16+8+4+2+1。陪玩时先只用右边几盏小灯，再让孩子自己凑 10、12 这种数。',
+  intro:'小灯会数数：<b class="bl">1、2、4、8</b>。<br>往左一盏，数字<b class="or">翻一倍</b>。<br>黄灯亮着就<b class="pu">加一加</b>，灰灯不算！',
+  parentNote:'和「二进制灯泡」是同一排灯：从左到右 128、64、32、16、8、4、2、1。黄灯亮着，灰灯灭了。灯上面的 1 表示亮，0 表示灭。亮着的灯相加就是这个数。闯关图里不直接写出总和，让孩子自己看灯加。小例子是 11=8+2+1（4 那盏灭着）。100=64+32+4。八盏灯全亮是 255。陪玩时先看右边几盏小灯。',
   explore:{
     title:'💡 小灯亮一亮',
-    lead:'右边起，灯是 <b class="bl">1、2、4、8</b>。<br>这一排：<b class="or">8 亮、4 暗、2 亮、1 亮</b>。<br>暗着的那盏，到底加不加？',
-    visual:{type:'row',items:[{text:'8亮',cls:'orange'},{text:'4暗',cls:'blue'},{text:'2亮',cls:'orange'},{text:'1亮',cls:'orange'}]},
+    lead:'右边起，灯是 <b class="bl">1、2、4、8</b>。<br>看这排灯：黄的亮，灰的灭。<br>灭着的那盏，到底加不加？',
+    visual:{html:lampVisual({key:true, values:[8,4,2,1], on:[8,2,1]})},
     note:'点卡片，看亮着的灯怎么相加。',
-    voice:'灯是 1、2、4、8。8 亮着，4 暗着，2 和 1 亮着。暗着的加不加？',
-    unlock:'🎉 你发现了：亮着的加一加，暗着的不算！',
-    unlockVoice:'你发现了！亮着的灯加一加，暗着的不算。',
+    voice:'看这排灯。黄的亮，灰的灭。灭着的那盏，加不加？',
+    unlock:'🎉 你发现了：亮着的加一加，灭着的不算！',
+    unlockVoice:'你发现了！亮着的灯加一加，灭着的不算。',
     reveals:[
       {pic:'💡',title:'一盏翻一倍',answer:'从右往左：<b>1、2、4、8</b>。<br>每往左一盏，数字翻一倍。',voice:'从右往左是 1、2、4、8。每往左一盏，数字翻一倍。'},
-      {pic:'➕',title:'亮着才加',answer:'8 亮、2 亮、1 亮。<br>8+2+1=<b>11</b>。',voice:'8、2、1 亮着。8 加 2 加 1 等于 11。'},
-      {pic:'🌙',title:'暗着不加',answer:'4 那盏是暗的。<br>所以<b>不加 4</b>，还是 11。',voice:'4 那盏暗着，不加 4，还是 11。'}
+      {pic:'➕',title:'亮着才加',answer:'8、2、1 这三盏是黄的。<br>8+2+1=<b>11</b>。',voice:'8、2、1 亮着。8 加 2 加 1 等于 11。'},
+      {pic:'🌙',title:'灭着不加',answer:'4 那盏是灰的。<br>所以<b>不加 4</b>，还是 11。',voice:'4 那盏灭着，不加 4，还是 11。'}
     ]
   },
   practice:[
-    {q:'8 和 2 两盏灯亮着，这个数是几？',hint:'只把亮着的加起来：8 和 2。',visual:{type:'row',items:[{text:'8亮',cls:'orange'},{text:'2亮',cls:'orange'}]},answer:'10',options:['6','10','16'],winVoice:'答对啦！8 加 2 等于 10。',wrong:'亮着才加。8 加 2，不是相减，也不是相乘。'},
-    {q:'想亮出 7，该亮哪几盏灯？',hint:'7 比 8 小，不用 8。从 4 往下凑满 7。',visual:{type:'clues',items:['7 比 8 小','从小灯开始凑']},answer:'4+2+1',options:['4+2','4+2+1','8+1'],winVoice:'答对啦！4 加 2 加 1 等于 7。',wrong:'4 加 2 还差 1。8 又太大了。'},
-    {q:'只亮 16 和 1，读出来是几？',hint:'两盏都亮，就把 16 和 1 相加。',visual:{type:'row',items:[{text:'16亮',cls:'orange'},{text:'1亮',cls:'green'}]},answer:'17',options:['15','17','18'],winVoice:'答对啦！16 加 1 等于 17。',wrong:'是相加，不是用 16 去减，也别加成 2。'},
-    {q:'要写出 12。8 已经亮了，还要再亮哪一盏？',hint:'12 比 8 多出来的那一截，就是还要亮的灯。',visual:{type:'clues',items:['8 已经亮了','还差一截才到 12']},answer:'4',options:['2','4','16'],winVoice:'答对啦！8 加 4 等于 12。',wrong:'用 12 减 8，看差几，就亮那一盏。'}
+    {q:'看这排灯。亮着的加一加，是几？',hint:'只加黄灯下面的数。灰灯不算。',visual:{html:lampVisual({values:[8,4,2,1], on:[4,2]})},answer:'6',options:['2','6','8'],winVoice:'答对啦！4 加 2 等于 6。',wrong:'两盏黄灯都要加。灰的 8 不算，也不是只留一盏。',voice:'看这排灯。黄的亮，灰的灭。亮着的加一加，是几？'},
+    {q:'想亮出 7，该亮哪几盏灯？',hint:'7 比 8 小，最大那盏先别亮。从 4 往下凑满 7。',visual:{html:lampVisual({goal:7, values:[8,4,2,1], on:[]})},answer:'4+2+1',options:['4+2','4+2+1','8+1'],winVoice:'答对啦！4 加 2 加 1 等于 7。',wrong:'4 加 2 还差 1。8 又太大了。',voice:'想亮出 7。看这四盏灯，该亮哪几盏？'},
+    {q:'看这排灯，读出来是几？',hint:'只加黄灯下面的数。中间灰着的不算。',visual:{html:lampVisual({values:[16,8,4,2,1], on:[16,1]})},answer:'17',options:['15','17','18'],winVoice:'答对啦！16 加 1 等于 17。',wrong:'是两盏黄灯相加。别用大的去减小的，也别加成旁边那盏灰灯。',voice:'看这排灯。亮着的加一加，是几？'},
+    {q:'要凑出 12。已经亮了一盏，还要再亮哪一盏？',hint:'用 12 减去黄灯下面的数，差几就再亮那一盏。',visual:{html:lampVisual({goal:12, values:[16,8,4,2,1], on:[8]})},answer:'4',options:['2','4','16'],winVoice:'答对啦！8 加 4 等于 12。',wrong:'用 12 减去已经亮着的。16 太大，2 又不够。',voice:'要凑出 12。已经亮了一盏，还要再亮哪一盏？'}
   ],
   challenge:[
-    {q:'挑战：64、32 和 4 这三盏灯同时亮，是几？',hint:'三盏都要加。最小的 4 也别漏。',visual:{type:'row',items:[{text:'64',cls:'orange'},{text:'32',cls:'purple'},{text:'4',cls:'blue'}]},answer:'100',options:['96','100','128'],winVoice:'答对啦！64 加 32 加 4 等于 100。',wrong:'64 加 32 还没完，最小的 4 也要加上。128 是另一盏灯。'},
-    {q:'挑战：从 1 到 128，八盏灯全部亮着，是几？',hint:'最大的灯是 128。比它小的每一盏也都亮着，要全部加上。',visual:{type:'clues',items:['八盏灯全亮','从 1 加到 128，一盏不落']},answer:'255',options:['128','255','256'],winVoice:'答对啦！八盏全亮是 255。',wrong:'不是只看最大的 128，也不是再多 1 变成 256。每一盏都要加。'}
+    {q:'挑战：看这排灯。亮着的加一加，是几？',hint:'黄灯有三盏。从左加到右，最小的那盏也别漏。',visual:{html:lampVisual({values:[128,64,32,16,8,4,2,1], on:[64,32,4]})},answer:'100',options:['96','100','128'],winVoice:'答对啦！64 加 32 加 4 等于 100。',wrong:'三盏黄灯都要加。64 加 32 还没完，最右边那盏小灯也要加上。128 是灭着的。',voice:'看这排灯。黄的亮，灰的灭。亮着的加一加，是几？'},
+    {q:'挑战：八盏灯全部亮着，是几？',hint:'最大的灯是 128。比它小的每一盏也都亮着，要全部加上。',visual:{html:lampVisual({values:[128,64,32,16,8,4,2,1], on:[128,64,32,16,8,4,2,1]})},answer:'255',options:['128','255','256'],winVoice:'答对啦！八盏全亮是 255。',wrong:'不是只看最大的 128，也不是再多 1 变成 256。每一盏都要加。',voice:'八盏灯全亮了。加一加，是几？'}
   ],
-  done:{badge:'💡',title:'💡 亮灯读数小达人',text:'你学会了<b class="pu">二进制小灯</b>！<br>往左一盏，数字翻倍，<br>亮着的加一加！',extra:'🌟 口诀：1、2、4、8，一盏翻一倍。',voice:'太棒了！你学会用小灯读数啦！'},
+  done:{badge:'💡',title:'💡 亮灯读数小达人',text:'你学会了<b class="pu">二进制小灯</b>！<br>往左一盏，数字翻倍，<br>黄灯亮着就加一加！',extra:'🌟 口诀：1、2、4、8，一盏翻一倍。',voice:'太棒了！你学会用小灯读数啦！'},
   nextText:'进入下一关：汉诺塔 →',
   nextHref:'汉诺塔.html'
 };

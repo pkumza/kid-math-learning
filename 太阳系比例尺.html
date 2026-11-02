@@ -12,53 +12,42 @@
   #stage button:focus-visible { outline: 3px solid #7C3AED; outline-offset: 2px; }
   .modes { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 12px; }
   .modes button {
-    flex: 1; min-width: 140px; min-height: 48px; border: none; border-radius: 16px;
-    font-size: 1.15rem; font-weight: 800; padding: 10px 14px;
+    flex: 1; min-width: 150px; min-height: 48px; border: none; border-radius: 16px;
+    font-size: 1.12rem; font-weight: 800; padding: 10px 14px;
   }
-  #stage .modes button[aria-pressed="true"] { background: #16A34A; color: #fff; }
-  #stage .modes button[aria-pressed="false"] {
+  .modes button[aria-pressed="true"] {
+    background: linear-gradient(135deg, #A78BFA, #7C3AED); color: #fff;
+    box-shadow: 0 8px 18px rgba(124,58,237,.28);
+  }
+  .modes button[aria-pressed="false"] {
     background: #fff; color: #1F2937; box-shadow: inset 0 0 0 3px #E5E7EB;
   }
   .modes button:active { transform: scale(.98); }
-  .hint-line { margin: 0 0 10px; font-weight: 800; color: #6B7280; }
-  .size-layout { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
-  .sun-col { flex: 0 0 auto; }
-  .sun-btn {
-    display: block; border: 4px solid transparent; background: transparent; padding: 0;
-    border-radius: 24px; min-width: 48px; min-height: 48px;
+  .sky-wrap { position: relative; }
+  canvas.sky {
+    display: block; width: 100%; height: clamp(300px, 58vw, 480px);
+    border-radius: 18px; background: #050816; touch-action: none; cursor: grab;
   }
-  .sun-btn svg { display: block; width: 200px; height: 200px; }
-  .sun-btn .sun-name { display: block; text-align: center; font-weight: 900; font-size: 1.15rem; margin-top: 4px; }
-  .sun-btn[aria-pressed="true"] { border-color: #7C3AED; }
-  .scale-tip { margin: 8px 0 0; font-weight: 800; color: #92400E; max-width: 220px; }
-  .planet-col { flex: 1 1 200px; min-width: 180px; }
-  .prow { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
-  .dot-slot {
-    width: 44px; height: 44px; flex: 0 0 44px; display: grid; place-items: center;
-    border-radius: 12px;
+  canvas.sky:active { cursor: grabbing; }
+  .zoom { position: absolute; right: 10px; bottom: 10px; display: flex; flex-direction: column; gap: 8px; }
+  .zoom button {
+    width: 48px; height: 48px; min-width: 48px; min-height: 48px; border-radius: 50%;
+    border: none; background: rgba(255,255,255,.92); color: #1F2937;
+    font-size: 1.5rem; font-weight: 900; line-height: 1;
+    box-shadow: 0 4px 10px rgba(0,0,0,.35);
   }
-  .prow.on .dot-slot { box-shadow: inset 0 0 0 3px #7C3AED; }
-  .dot-slot svg { width: 44px; height: 44px; overflow: visible; }
-  .name-btn {
-    flex: 1; min-height: 48px; min-width: 72px; border-radius: 14px; border: 3px solid #E5E7EB;
-    background: #fff; font-weight: 800; font-size: 1.08rem; padding: 8px 12px;
+  .zoom button:active { transform: scale(.94); }
+  .note { margin: 8px 2px 0; font-weight: 700; color: #6B7280; font-size: .95rem; line-height: 1.5; }
+  .card {
+    margin: 12px 0 0; background: #fff; border: 3px solid #E5E7EB; border-radius: 18px;
+    padding: 12px 14px; min-height: 86px;
   }
-  .name-btn[aria-pressed="true"] { border-color: #7C3AED; background: #F5F3FF; }
-  .name-btn:active { transform: scale(.98); }
-  .lens { flex: 0 1 230px; width: min(100%, 230px); }
-  .lens-title { margin: 0 0 4px; font-weight: 900; font-size: 1.15rem; text-align: center; }
-  .lens svg { width: 100%; height: auto; display: block; }
-  .lens-note { margin: 4px 0 0; text-align: center; color: #6B7280; font-weight: 700; font-size: .95rem; }
-  .feedback { margin: 8px 0 0; text-align: center; font-weight: 900; font-size: 1.15rem; line-height: 1.45; min-height: 1.45em; }
-  .feedback.soft { color: #6B7280; font-weight: 800; }
-  .feedback.bad { color: #C2410C; }
-  .feedback.good { color: #166534; }
-  .sun-fact { margin: 6px 0 0; text-align: center; font-weight: 900; font-size: 1.12rem; color: #166534; line-height: 1.45; }
-  .banner {
-    background: #FEF3C7; color: #92400E; font-weight: 800; border-radius: 14px;
-    padding: 10px 12px; margin: 0 0 10px; line-height: 1.45;
-  }
-  .slabel { display: flex; flex-direction: column; gap: 4px; font-weight: 800; font-size: 1.05rem; margin: 8px 0; }
+  .card .pname { margin: 0; font-size: 1.3rem; font-weight: 900; }
+  .card .pfact { margin: 6px 0 0; font-weight: 800; color: #374151; line-height: 1.55; }
+  .card .pfun { margin: 6px 0 0; font-weight: 700; color: #6B7280; line-height: 1.5; }
+  .card .strip { margin: 8px 0 0; }
+  .card .strip svg { display: block; max-width: 100%; height: auto; }
+  .slabel { display: flex; flex-direction: column; gap: 4px; font-weight: 800; font-size: 1.05rem; margin: 12px 0 0; }
   input[type=range] {
     -webkit-appearance: none; appearance: none; width: 100%; height: 44px;
     background: transparent; margin: 0; touch-action: manipulation;
@@ -79,126 +68,87 @@
     width: 44px; height: 44px; border-radius: 50%; background: #fff; border: 3px solid #7C3AED;
     box-shadow: 0 3px 8px rgba(0,0,0,.25); cursor: pointer;
   }
-  .orbit-scroll {
-    width: 100%; max-width: 540px; overflow-x: auto; overflow-y: hidden;
-    border-radius: 18px; background: #0B1026; -webkit-overflow-scrolling: touch;
-    touch-action: pan-x;
+  .mrow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 10px 0 0; }
+  .mcount { margin: 0; font-weight: 900; font-size: 1.15rem; color: #1F2937; flex: 1; min-width: 180px; }
+  canvas.zoomstrip {
+    display: block; width: 100%; height: 84px; border-radius: 14px;
+    background: #0B1026; margin: 6px 0 0;
   }
-  .orbit-track { position: relative; height: 320px; }
-  .orbit-line {
-    position: absolute; height: 3px; border-radius: 99px; background: rgba(255,255,255,.4);
+  #marble-fact {
+    margin: 10px 0 0; background: #FEF3C7; color: #92400E; font-weight: 800;
+    border-radius: 14px; padding: 10px 12px; line-height: 1.5;
   }
-  .sun-mark { position: absolute; width: 0; height: 0; }
-  .sun-glow {
-    position: absolute; left: 0; top: 0; width: 20px; height: 20px; border-radius: 50%;
-    background: radial-gradient(circle, #FEF9C3 0%, #F59E0B 55%, #EA580C 100%);
-    transform: translate(-50%, -50%);
-  }
-  .sun-tag {
-    position: absolute; left: 0; top: -34px; transform: translate(-50%, -100%);
-    color: #FDE68A; font-weight: 900; font-size: 1rem; white-space: nowrap;
-  }
-  .anchor { position: absolute; top: 0; width: 0; height: 0; }
-  .far-btn {
-    position: absolute; transform: translateX(-50%); height: 48px; min-height: 48px; min-width: 64px;
-    padding: 0 12px; border-radius: 999px; border: 3px solid transparent; background: #fff;
-    color: #1F2937; font-weight: 800; font-size: 1.05rem; white-space: nowrap; z-index: 2;
-  }
-  .far-btn[aria-pressed="true"] { border-color: #FDE68A; background: #FEF3C7; }
-  .far-btn:active { filter: brightness(.95); }
-  .far-dot {
-    position: absolute; width: 14px; height: 14px; border-radius: 50%; background: #F8FAFC;
-    transform: translate(-50%, -50%); box-shadow: 0 0 0 2px rgba(255,255,255,.35); z-index: 1;
-  }
-  .anchor:focus-within .far-dot { box-shadow: 0 0 0 4px #FDE68A; }
-  .far-msg { margin: 8px 0 0; font-weight: 900; font-size: 1.15rem; color: #166534; min-height: 1.4em; }
 </style>
 </head>
 <body>
 <script src="lab-kit.js"></script>
 <script>
 (function () {
-  var SUN_D = 1392700;
-  var SUN_PX = 200;
-  var FACT = '太阳的直径大约是地球的 109 倍。';
-  var BIG_LINE = '木星是最大的行星。';
-  var MISS = '再比比圆圈。';
-  var FAR_LINE = '海王星大约是日地距离的 30 倍。';
-  var PROMPT = '点一个名字，放大来看。';
-  var GOALS = ['big', 'sun', 'far'];
+  var TAU = Math.PI * 2;
+  var GOALS = ['big', 'far', 'marble'];
+  var BIG_LINE = '木星是行星里最大的，大约 11 个地球排成一排。';
+  var FAR_LINE = '海王星离太阳最远，大约 30 个日地距离。';
+  var MARBLE_LINE = '摆满啦！一个太阳，大约要 109 个地球排一排。';
   var PLANETS = [
-    { id: 'mercury', name: '水星', d: 4879, au: 0.39, color: '#9CA3AF' },
-    { id: 'venus', name: '金星', d: 12104, au: 0.72, color: '#EAB308' },
-    { id: 'earth', name: '地球', d: 12742, au: 1, color: '#2563EB' },
-    { id: 'mars', name: '火星', d: 6779, au: 1.52, color: '#DC2626' },
-    { id: 'jupiter', name: '木星', d: 139820, au: 5.2, color: '#F97316' },
-    { id: 'saturn', name: '土星', d: 116460, au: 9.6, color: '#FBBF24' },
-    { id: 'uranus', name: '天王星', d: 50724, au: 19.2, color: '#22D3EE' },
-    { id: 'neptune', name: '海王星', d: 49244, au: 30.1, color: '#4F46E5' }
+    { id: 'mercury', name: '水星', ratio: 0.38, au: 0.39, c1: '#E5E7EB', c2: '#9CA3AF', c3: '#4B5563',
+      w: '约 0.4 个地球宽', a: '离太阳不到半个日地距离', fun: '它跑得最快，88 天就绕太阳一圈。' },
+    { id: 'venus', name: '金星', ratio: 0.95, au: 0.72, c1: '#FDE68A', c2: '#EAB308', c3: '#92610E',
+      w: '和地球差不多宽', a: '离太阳约 0.7 个日地距离', fun: '它被厚厚的云包住，是最热的行星。' },
+    { id: 'earth', name: '地球', ratio: 1, au: 1, c1: '#93C5FD', c2: '#3B82F6', c3: '#1E3A8A', land: true,
+      w: '我们就住在这里', a: '离太阳正好 1 个日地距离', fun: '目前已知唯一有生命的星球。' },
+    { id: 'mars', name: '火星', ratio: 0.53, au: 1.52, c1: '#FCA5A5', c2: '#EF4444', c3: '#7F1D1D',
+      w: '约半个地球宽', a: '离太阳约 1.5 个日地距离', fun: '红红的，因为有生锈的尘土。' },
+    { id: 'jupiter', name: '木星', ratio: 11, au: 5.2, c1: '#FDE3B8', c2: '#F59E0B', c3: '#92400E', bands: true, spot: true,
+      w: '约 11 个地球排一排', a: '离太阳约 5 个日地距离', fun: '行星里最大，大红斑比地球还大。' },
+    { id: 'saturn', name: '土星', ratio: 9.1, au: 9.6, c1: '#FEF3C7', c2: '#FCD34D', c3: '#B45309', ring: true,
+      w: '约 9 个地球排一排', a: '离太阳约 10 个日地距离', fun: '它有一圈亮晶晶的冰环。' },
+    { id: 'uranus', name: '天王星', ratio: 4, au: 19.2, c1: '#A5F3FC', c2: '#67E8F9', c3: '#0E7490',
+      w: '约 4 个地球排一排', a: '离太阳约 19 个日地距离', fun: '它躺着打滚，像颗侧躺的球。' },
+    { id: 'neptune', name: '海王星', ratio: 3.9, au: 30.1, c1: '#A5B4FC', c2: '#6366F1', c3: '#312E81',
+      w: '约 4 个地球排一排', a: '离太阳约 30 个日地距离', fun: '离太阳最远，吹着最强的风。' }
   ];
-  var LANE_TOP = [8, 62, 196, 250];
-  var LINE_Y = 168;
-  var SUN_X = 48;
-  var AU_PX = 40;
-  var JUP_PX = 139820 / SUN_D * SUN_PX;
-  var LENS_ZOOM = 136 / JUP_PX;
-  var selected = null;
-  var revealed = false;
-  var latest = PROMPT;
-  var latestKind = 'soft';
-  var pendingScrollReset = true;
-
-  function diamPx(d) { return d / SUN_D * SUN_PX; }
-
-  function speakUnlessWin(newly, line) {
-    var all = GOALS.every(function (id) { return Lab.isGoal(id); });
-    if (newly && all) return;
-    Lab.say(line);
-  }
+  PLANETS.forEach(function (p, i) {
+    p.orbit = 560 + 300 * Math.sqrt(p.au);
+    p.rad = 10 + 17 * Math.pow(p.ratio, 0.8);
+    p.speed = 46 / p.orbit;
+    p.ang = i * 1.31 + 0.6;
+  });
 
   function resetPlay() {
     selected = null;
-    revealed = false;
-    latest = PROMPT;
-    latestKind = 'soft';
-    pendingScrollReset = true;
-    var fact = document.getElementById('sun-fact');
-    var farMsg = document.getElementById('far-msg');
-    var scroller = document.getElementById('orbit-scroll');
-    var pan = document.getElementById('pan');
-    if (!fact || !scroller) return;
-    fact.hidden = true;
-    fact.textContent = '';
-    farMsg.textContent = '';
-    Array.prototype.forEach.call(document.querySelectorAll('.far-btn'), function (b) {
-      b.setAttribute('aria-pressed', 'false');
-    });
-    scroller.scrollLeft = 0;
-    pan.value = '0';
-    paintSelection();
-    drawLens();
-    renderText();
-    setMode('size', true);
+    showInfo(null);
+    fillN = 0;
+    fillTarget = null;
+    marbleDone = false;
+    var slider = document.getElementById('marble-range');
+    if (slider) slider.value = '0';
+    paintCount();
+    var fact = document.getElementById('marble-fact');
+    if (fact) fact.hidden = true;
+    cam.yaw = 0.7; cam.pitch = 0.62; cam.dist = 5200; cam.distT = 5200;
+    mcam.yaw = 0.25; mcam.pitch = 0.35;
+    setMode('roam', true);
+    Lab.toast('');
   }
 
   Lab.mount({
     id: 'lab-solar',
     title: '太阳系比例尺',
     emoji: '☀️',
-    lead: '大小用一把尺，距离用另一把尺。',
-    parent: '<p>直径（千米）：太阳 1392700，水星 4879，金星 12104，地球 12742，火星 6779，木星 139820，土星 116460，天王星 50724，海王星 49244。</p>'
-      + '<p>到太阳的距离，把日地距离当作 1：水星 0.39，金星 0.72，地球 1，火星 1.52，木星 5.2，土星 9.6，天王星 19.2，海王星 30.1。</p>'
-      + '<p>太阳的直径大约是地球的 109 倍（1392700 ÷ 12742 ≈ 109）。木星大约是地球的 11 倍（139820 ÷ 12742 ≈ 11），它是最大的行星。</p>'
-      + '<p>为什么大小、距离要分开画？行星之间直径最多差几十倍，海王星却大约是日地距离的 30 倍。日地距离又是地球直径的一万多倍。用同一把尺，要么行星小到看不见，要么距离长出屏幕。所以大小用一把尺，距离用另一把尺。</p>',
+    lead: '拖一拖，把太阳系转起来。',
+    parent: '<p>真实的太阳系大得超乎想象。太阳直径约 139 万千米，是地球（约 1.27 万千米）的 109 倍；木星约是地球的 11 倍，是最大的行星。</p>'
+      + '<p>距离用「日地距离」（约 1.5 亿千米）来量：木星约 5 个，海王星约 30 个。</p>'
+      + '<p>为什么要分两个画面？如果太阳画成 1 米 4 的大球，地球只有 1 厘米多一点，还要放到 150 米外——一个半足球场那么远。同一张纸根本画不下。所以「逛太阳系」把行星画大、把太阳画小，「弹珠模型」只保证大小是真实比例（109 倍）。这就是比例尺：为了看得清，图和真实之间要做取舍。</p>'
+      + '<p>可以和孩子玩：拿一颗玻璃珠当地球，到操场上量出 150 米，体会太阳有多远。</p>',
     goals: [
       { id: 'big', text: '找出最大的行星' },
-      { id: 'sun', text: '看看太阳是地球的多少倍' },
-      { id: 'far', text: '看看海王星有多远' }
+      { id: 'far', text: '找出离太阳最远的行星' },
+      { id: 'marble', text: '用弹珠地球量一量太阳' }
     ],
     hints: [
-      { id: 'h1', text: '比比行星的圆，不要把太阳算进去。' },
-      { id: 'h2', text: '点一点地球，看它和太阳差多少。' },
-      { id: 'h3', text: '往右滑，最远的那颗就是海王星。' }
+      { id: 'h1', text: '找最大的行星：拖一拖转一圈，最大那颗带着大红斑。' },
+      { id: 'h2', text: '找最远的行星：轨道圈最大的那颗，在最外圈。' },
+      { id: 'h3', text: '弹珠模型：把滑块一直拖到最右边，就摆满啦。' }
     ],
     onReset: resetPlay
   });
@@ -206,279 +156,569 @@
   var stage = document.getElementById('stage');
   stage.innerHTML = ''
     + '<div class="modes">'
-    + '<button type="button" class="lab-btn" id="mode-size" aria-pressed="true">谁更大</button>'
-    + '<button type="button" class="lab-btn" id="mode-far" aria-pressed="false">谁更远</button>'
+    + '<button type="button" id="m-roam" aria-pressed="true">🪐 逛太阳系</button>'
+    + '<button type="button" id="m-marble" aria-pressed="false">🔮 弹珠模型</button>'
     + '</div>'
-    + '<div id="panel-size">'
-    + '<p class="hint-line">点名字，比比圆圈。</p>'
-    + '<div class="size-layout">'
-    + '<div class="sun-col">'
-    + '<button type="button" class="sun-btn" id="btn-sun" data-pick="sun" aria-pressed="false" aria-label="太阳">'
-    + '<svg viewBox="0 0 200 200" aria-hidden="true">'
-    + '<defs><radialGradient id="sunDisk" cx="38%" cy="36%">'
-    + '<stop offset="0%" stop-color="#FEF9C3"/><stop offset="55%" stop-color="#FBBF24"/><stop offset="100%" stop-color="#EA580C"/>'
-    + '</radialGradient></defs>'
-    + '<circle cx="100" cy="100" r="100" fill="url(#sunDisk)"/>'
-    + '</svg><span class="sun-name">太阳</span></button>'
-    + '<p class="scale-tip">这些圆和太阳用同一把尺。</p>'
+    + '<div id="pane-roam">'
+    + '<div class="sky-wrap">'
+    + '<canvas id="cv-roam" class="sky" role="img" aria-label="可以拖动旋转的 3D 太阳系，点行星可以看介绍"></canvas>'
+    + '<div class="zoom">'
+    + '<button type="button" id="zin" aria-label="拉近">＋</button>'
+    + '<button type="button" id="zout" aria-label="拉远">－</button>'
+    + '</div></div>'
+    + '<p class="note">拖一拖转一转，点一颗行星看看。图里把行星画大了、太阳画小了，不然小得看不见。</p>'
+    + '<div class="card" id="info"></div>'
     + '</div>'
-    + '<div class="planet-col" id="planet-col"></div>'
-    + '<div class="lens">'
-    + '<p class="lens-title">放大镜</p>'
-    + '<svg viewBox="0 0 210 230" aria-hidden="true">'
-    + '<defs><radialGradient id="lensSun" cx="38%" cy="36%">'
-    + '<stop offset="0%" stop-color="#FEF9C3"/><stop offset="60%" stop-color="#FBBF24"/><stop offset="100%" stop-color="#EA580C"/>'
-    + '</radialGradient><clipPath id="glassClip"><circle cx="92" cy="92" r="76"/></clipPath></defs>'
-    + '<circle cx="92" cy="92" r="76" fill="#F8FAFC"/>'
-    + '<g id="lens-g" clip-path="url(#glassClip)"></g>'
-    + '<circle cx="92" cy="92" r="76" fill="none" stroke="#1F2937" stroke-width="8"/>'
-    + '<line x1="150" y1="150" x2="196" y2="204" stroke="#1F2937" stroke-width="12" stroke-linecap="round"/>'
-    + '</svg>'
-    + '<p class="lens-note">放大镜只是拉近，不改大小。</p>'
-    + '<p class="feedback soft" id="feedback"></p>'
-    + '<p class="sun-fact" id="sun-fact" hidden></p>'
-    + '</div></div></div>'
-    + '<div id="panel-far" hidden>'
-    + '<p class="banner">这里只比距离，圆点不是真实大小。</p>'
-    + '<label class="slabel">往右看'
-    + '<input id="pan" type="range" min="0" max="1000" step="1" value="0" aria-label="往右看">'
+    + '<div id="pane-marble" hidden>'
+    + '<canvas id="cv-marble" class="sky" role="img" aria-label="真实大小的太阳和弹珠地球"></canvas>'
+    + '<label class="slabel">沿着太阳摆地球'
+    + '<input id="marble-range" type="range" min="0" max="109" step="1" value="0" aria-label="沿着太阳摆地球">'
     + '</label>'
-    + '<div class="orbit-scroll" id="orbit-scroll"><div class="orbit-track" id="orbit-track"></div></div>'
-    + '<p class="far-msg" id="far-msg"></p>'
+    + '<div class="mrow">'
+    + '<p class="mcount" id="mcount"></p>'
+    + '<button type="button" id="fill" class="lab-btn ghost">帮我摆满</button>'
+    + '</div>'
+    + '<p class="note">🔍 放大镜：尺子上的每一小格，都是 1 个地球弹珠。</p>'
+    + '<canvas id="cv-zoom" class="zoomstrip" role="img" aria-label="放大镜：尺子上的每一小格都是一个地球弹珠"></canvas>'
+    + '<p class="note">这里的太阳和弹珠地球是真实大小：太阳大约 109 个地球宽。</p>'
+    + '<p id="marble-fact" hidden>真的摆距离，弹珠地球要放到 150 米外，一个半足球场那么远！</p>'
     + '</div>';
 
-  function bodyGraphic(p, r, cx, cy, key, lens) {
-    var clip = 'clip-' + key + '-' + p.id;
-    var ring = '';
-    if (p.id === 'saturn' && r > 2) {
-      ring = '<ellipse cx="' + cx + '" cy="' + cy + '" rx="' + (r * 1.12).toFixed(2)
-        + '" ry="' + (r * 0.42).toFixed(2) + '" fill="none" stroke="#D97706" stroke-width="'
-        + Math.max(1.2, r * 0.1).toFixed(2) + '"/>';
+  /* ---------- 3D 工具 ---------- */
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  function makeProj(cam, cx, cy, f) {
+    var cyw = Math.cos(cam.yaw), syw = Math.sin(cam.yaw);
+    var cp = Math.cos(cam.pitch), sp = Math.sin(cam.pitch);
+    function rot(p) {
+      var x1 = p.x * cyw + p.z * syw;
+      var z1 = -p.x * syw + p.z * cyw;
+      var y2 = p.y * cp + z1 * sp;
+      var z2 = -p.y * sp + z1 * cp;
+      return { x: x1, y: y2, z: z2 };
     }
-    var bands = '';
-    if (p.id === 'jupiter' && r > 8) {
-      bands = '<rect x="' + (cx - r) + '" y="' + (cy - r * 0.22) + '" width="' + (r * 2)
-        + '" height="' + (r * 0.16) + '" fill="#C2410C"/>'
-        + '<rect x="' + (cx - r) + '" y="' + (cy + r * 0.18) + '" width="' + (r * 2)
-        + '" height="' + (r * 0.12) + '" fill="#FDE68A"/>';
-    }
-    var outline = (lens && r < 18)
-      ? '<circle cx="' + cx + '" cy="' + cy + '" r="' + r.toFixed(2) + '" fill="none" stroke="#1F2937" stroke-width="2"/>'
-      : '';
-    return '<defs><clipPath id="' + clip + '"><circle cx="' + cx + '" cy="' + cy + '" r="' + r.toFixed(2) + '"/></clipPath></defs>'
-      + ring
-      + '<g clip-path="url(#' + clip + ')">'
-      + '<circle cx="' + cx + '" cy="' + cy + '" r="' + r.toFixed(2) + '" fill="' + p.color + '"/>'
-      + bands
-      + '</g>' + outline;
+    return {
+      p: function (pt) {
+        var v = rot(pt);
+        var depth = v.z + cam.dist;
+        if (depth < 50) depth = 50;
+        var s = f / depth;
+        return { x: cx + v.x * s, y: cy - v.y * s, s: s, depth: depth };
+      },
+      d: rot
+    };
   }
-
-  var col = document.getElementById('planet-col');
-  PLANETS.forEach(function (p) {
-    var r = diamPx(p.d) / 2;
-    var row = document.createElement('div');
-    row.className = 'prow';
-    row.dataset.body = p.id;
-    var slot = document.createElement('div');
-    slot.className = 'dot-slot';
-    slot.dataset.px = diamPx(p.d).toFixed(2);
-    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('viewBox', '-22 -22 44 44');
-    svg.setAttribute('aria-hidden', 'true');
-    svg.innerHTML = bodyGraphic(p, r, 0, 0, 'main', false);
-    slot.appendChild(svg);
-    var btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'name-btn';
-    btn.dataset.pick = p.id;
-    btn.textContent = p.name;
-    btn.setAttribute('aria-pressed', 'false');
-    row.appendChild(slot);
-    row.appendChild(btn);
-    col.appendChild(row);
-  });
-
-  function drawLens() {
-    var g = document.getElementById('lens-g');
-    if (!selected) { g.innerHTML = ''; return; }
-    if (selected === 'sun') {
-      g.innerHTML = '<circle cx="92" cy="92" r="68" fill="url(#lensSun)"/>';
-      return;
-    }
-    var p = PLANETS.filter(function (x) { return x.id === selected; })[0];
-    var r = diamPx(p.d) * LENS_ZOOM / 2;
-    g.innerHTML = bodyGraphic(p, r, 92, 92, 'lens', true);
+  function seededRand(seed) {
+    return function () {
+      seed = (seed * 1664525 + 1013904223) >>> 0;
+      return seed / 4294967296;
+    };
   }
-
-  function renderText() {
-    var feedback = document.getElementById('feedback');
-    var fact = document.getElementById('sun-fact');
-    feedback.className = 'feedback ' + latestKind;
-    feedback.textContent = latest;
-    var showFact = revealed && latest !== FACT;
-    fact.hidden = !showFact;
-    fact.textContent = showFact ? FACT : '';
-  }
-
-  function paintSelection() {
-    document.getElementById('btn-sun').setAttribute('aria-pressed', selected === 'sun' ? 'true' : 'false');
-    Array.prototype.forEach.call(document.querySelectorAll('.prow'), function (row) {
-      var on = row.dataset.body === selected;
-      row.classList.toggle('on', on);
-      row.querySelector('.name-btn').setAttribute('aria-pressed', on ? 'true' : 'false');
+  var R = seededRand(20241031);
+  var STARS = [];
+  for (var si = 0; si < 170; si++) {
+    var sth = R() * TAU, sph = Math.acos(R() * 2 - 1);
+    STARS.push({
+      x: Math.sin(sph) * Math.cos(sth) * 9000,
+      y: Math.cos(sph) * 5400,
+      z: Math.sin(sph) * Math.sin(sth) * 9000,
+      r: 0.7 + R() * 1.5, tw: R() * TAU, sp: 0.5 + R() * 1.6
     });
   }
-
-  function selectBody(id) {
-    selected = id;
-    paintSelection();
-    drawLens();
-    if (id === 'jupiter') {
-      latest = BIG_LINE;
-      latestKind = 'good';
-      renderText();
-      var newlyBig = Lab.goal('big');
-      Lab.toast(BIG_LINE);
-      speakUnlessWin(newlyBig, BIG_LINE);
-      return;
+  function drawStars(ctx, P, t) {
+    for (var i = 0; i < STARS.length; i++) {
+      var q = P.p(STARS[i]);
+      if (q.depth < 800) continue;
+      ctx.globalAlpha = 0.22 + 0.5 * (0.5 + 0.5 * Math.sin(t * STARS[i].sp + STARS[i].tw));
+      ctx.fillStyle = '#E5EDFF';
+      ctx.beginPath();
+      ctx.arc(q.x, q.y, STARS[i].r, 0, TAU);
+      ctx.fill();
     }
-    if (id === 'earth' || id === 'sun') {
-      revealed = true;
-      latest = FACT;
-      latestKind = 'good';
-      renderText();
-      var newlySun = Lab.goal('sun');
-      Lab.toast(FACT);
-      speakUnlessWin(newlySun, FACT);
-      return;
-    }
-    latest = MISS;
-    latestKind = 'bad';
-    renderText();
-    Lab.bad();
-    Lab.toast(MISS);
-    Lab.say(MISS);
+    ctx.globalAlpha = 1;
   }
-
-  stage.addEventListener('click', function (e) {
-    var pick = e.target.closest('[data-pick]');
-    if (!pick || document.getElementById('panel-size').hidden) return;
-    selectBody(pick.dataset.pick);
-  });
-
-  var track = document.getElementById('orbit-track');
-  track.style.width = '1420px';
-  var line = document.createElement('div');
-  line.className = 'orbit-line';
-  line.style.left = SUN_X + 'px';
-  line.style.top = (LINE_Y - 1) + 'px';
-  line.style.width = (30.1 * AU_PX + 36) + 'px';
-  track.appendChild(line);
-
-  var sunMark = document.createElement('div');
-  sunMark.className = 'sun-mark';
-  sunMark.style.left = SUN_X + 'px';
-  sunMark.style.top = LINE_Y + 'px';
-  var glow = document.createElement('div');
-  glow.className = 'sun-glow';
-  var tag = document.createElement('div');
-  tag.className = 'sun-tag';
-  tag.textContent = '太阳';
-  tag.style.top = '-36px';
-  sunMark.appendChild(glow);
-  sunMark.appendChild(tag);
-  track.appendChild(sunMark);
-
-  var farBtns = {};
-  PLANETS.forEach(function (p, i) {
-    var x = SUN_X + p.au * AU_PX;
-    var anchor = document.createElement('div');
-    anchor.className = 'anchor';
-    anchor.style.left = x + 'px';
-    anchor.style.top = '0';
-    var btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'far-btn';
-    btn.textContent = p.name;
-    btn.style.top = LANE_TOP[i % 4] + 'px';
-    btn.dataset.far = p.id;
-    btn.dataset.x = x.toFixed(1);
-    btn.setAttribute('aria-pressed', 'false');
-    var dot = document.createElement('div');
-    dot.className = 'far-dot';
-    dot.style.top = LINE_Y + 'px';
-    anchor.appendChild(btn);
-    anchor.appendChild(dot);
-    track.appendChild(anchor);
-    farBtns[p.id] = btn;
-  });
-
-  function mostlyVisible(el, scroller) {
-    var er = el.getBoundingClientRect();
-    var sr = scroller.getBoundingClientRect();
-    if (er.width < 2 || sr.width < 2) return false;
-    var overlap = Math.min(er.right, sr.right) - Math.max(er.left, sr.left);
-    return overlap >= er.width * 0.6;
+  function spaceBg(ctx, w, h) {
+    var g = ctx.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, '#070B1D');
+    g.addColorStop(1, '#111736');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
   }
-
-  track.addEventListener('click', function (e) {
-    var btn = e.target.closest('[data-far]');
-    if (!btn) return;
-    Array.prototype.forEach.call(track.querySelectorAll('.far-btn'), function (b) {
-      b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
-    });
-    if (btn.dataset.far !== 'neptune') {
-      Lab.click();
-      return;
-    }
-    var scroller = document.getElementById('orbit-scroll');
-    if (!mostlyVisible(btn, scroller)) {
-      Lab.bad();
-      Lab.toast('再往右滑一点。');
-      Lab.say('再往右滑一点。');
-      return;
-    }
-    document.getElementById('far-msg').textContent = FAR_LINE;
-    var newlyFar = Lab.goal('far');
-    Lab.toast(FAR_LINE);
-    speakUnlessWin(newlyFar, FAR_LINE);
-  });
-
-  var scroller = document.getElementById('orbit-scroll');
-  var pan = document.getElementById('pan');
-  function maxScroll() {
-    return Math.max(0, scroller.scrollWidth - scroller.clientWidth);
+  function label(ctx, txt, x, y, color, size) {
+    ctx.font = '800 ' + (size || 13) + 'px -apple-system,"PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = 'rgba(2,6,23,.6)';
+    ctx.fillText(txt, x + 1, y + 1);
+    ctx.fillStyle = color;
+    ctx.fillText(txt, x, y);
   }
-  pan.addEventListener('input', function () {
-    scroller.scrollLeft = maxScroll() * (Number(pan.value) / 1000);
-  });
-  scroller.addEventListener('scroll', function () {
-    var m = maxScroll();
-    pan.value = m <= 0 ? '0' : String(Math.round(scroller.scrollLeft / m * 1000));
-  });
-
-  function setMode(mode, silent) {
-    var sizeOn = mode === 'size';
-    document.getElementById('panel-size').hidden = !sizeOn;
-    document.getElementById('panel-far').hidden = sizeOn;
-    document.getElementById('mode-size').setAttribute('aria-pressed', sizeOn ? 'true' : 'false');
-    document.getElementById('mode-far').setAttribute('aria-pressed', sizeOn ? 'false' : 'true');
-    if (!silent) Lab.click();
-    if (!sizeOn && pendingScrollReset) {
-      pendingScrollReset = false;
-      requestAnimationFrame(function () {
-        scroller.scrollLeft = 0;
-        pan.value = '0';
+  function fit(cv) {
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    var w = cv.clientWidth, h = cv.clientHeight;
+    if (!w || !h) return null;
+    if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) {
+      cv.width = Math.round(w * dpr);
+      cv.height = Math.round(h * dpr);
+    }
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: h };
+  }
+  function sunBall(ctx, x, y, r, t) {
+    var flick = 1 + 0.05 * Math.sin(t * 2.2);
+    var gl = ctx.createRadialGradient(x, y, r * 0.4, x, y, r * 3.1 * flick);
+    gl.addColorStop(0, 'rgba(253,224,71,.5)');
+    gl.addColorStop(1, 'rgba(253,224,71,0)');
+    ctx.fillStyle = gl;
+    ctx.beginPath(); ctx.arc(x, y, r * 3.1 * flick, 0, TAU); ctx.fill();
+    var sg = ctx.createRadialGradient(x - r * 0.25, y - r * 0.3, r * 0.1, x, y, r);
+    sg.addColorStop(0, '#FFFBE6');
+    sg.addColorStop(0.55, '#FBBF24');
+    sg.addColorStop(1, '#EA580C');
+    ctx.fillStyle = sg;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill();
+  }
+  function ball(ctx, x, y, r, p, ox, oy) {
+    if (r < 1) r = 1;
+    var g = ctx.createRadialGradient(x + ox * r * 0.55, y + oy * r * 0.55, Math.max(0.5, r * 0.12), x, y, r);
+    g.addColorStop(0, p.c1);
+    g.addColorStop(0.5, p.c2);
+    g.addColorStop(1, p.c3);
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill();
+    if (r > 6) {
+      ctx.save();
+      ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.clip();
+      if (p.bands) {
+        ctx.globalAlpha = 0.5;
+        ctx.fillStyle = p.c3;
+        ctx.fillRect(x - r, y - r * 0.30, r * 2, r * 0.18);
+        ctx.fillRect(x - r, y + r * 0.34, r * 2, r * 0.14);
+        ctx.fillStyle = '#FDE68A';
+        ctx.fillRect(x - r, y - r * 0.02, r * 2, r * 0.10);
+        ctx.globalAlpha = 1;
+      }
+      if (p.spot) {
+        ctx.fillStyle = 'rgba(194,65,12,.85)';
+        ctx.beginPath();
+        ctx.ellipse(x + r * 0.32, y + r * 0.30, r * 0.20, r * 0.12, -0.2, 0, TAU);
+        ctx.fill();
+      }
+      if (p.land) {
+        ctx.fillStyle = 'rgba(22,163,74,.8)';
+        ctx.beginPath();
+        ctx.ellipse(x - r * 0.28, y - r * 0.12, r * 0.34, r * 0.22, 0.5, 0, TAU);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,.55)';
+        ctx.beginPath();
+        ctx.ellipse(x + r * 0.15, y - r * 0.45, r * 0.4, r * 0.10, 0.15, 0, TAU);
+        ctx.fill();
+      }
+      var nx = x - ox * r, ny = y - oy * r;
+      var sh = ctx.createRadialGradient(nx, ny, r * 0.1, nx, ny, r * 1.7);
+      sh.addColorStop(0, 'rgba(2,6,23,.6)');
+      sh.addColorStop(1, 'rgba(2,6,23,0)');
+      ctx.fillStyle = sh;
+      ctx.fillRect(x - r, y - r, r * 2, r * 2);
+      ctx.restore();
+    }
+  }
+  function drawRing(ctx, P, it, front) {
+    var p = it.p, N = 40, tilt = 0.5;
+    var r1 = 1.45 * p.rad, r2 = 2.1 * p.rad;
+    var st = Math.sin(tilt), ct = Math.cos(tilt);
+    var pts = [];
+    for (var i = 0; i <= N; i++) {
+      var a = i / N * TAU, ca = Math.cos(a), sa = Math.sin(a);
+      pts.push({
+        o: P.p({ x: it.wx + ca * r2, y: sa * st * r2, z: it.wz + sa * ct * r2 }),
+        i: P.p({ x: it.wx + ca * r1, y: sa * st * r1, z: it.wz + sa * ct * r1 })
       });
     }
+    ctx.fillStyle = 'rgba(252,211,77,.75)';
+    for (var k = 0; k < N; k++) {
+      var mid = (pts[k].o.depth + pts[k + 1].o.depth) / 2;
+      if ((mid < it.q.depth) !== front) continue;
+      ctx.beginPath();
+      ctx.moveTo(pts[k].o.x, pts[k].o.y);
+      ctx.lineTo(pts[k + 1].o.x, pts[k + 1].o.y);
+      ctx.lineTo(pts[k + 1].i.x, pts[k + 1].i.y);
+      ctx.lineTo(pts[k].i.x, pts[k].i.y);
+      ctx.closePath();
+      ctx.fill();
+    }
   }
 
-  document.getElementById('mode-size').addEventListener('click', function () { setMode('size'); });
-  document.getElementById('mode-far').addEventListener('click', function () { setMode('far'); });
+  /* ---------- 状态 ---------- */
+  var cvRoam = document.getElementById('cv-roam');
+  var cvMarble = document.getElementById('cv-marble');
+  var paneRoam = document.getElementById('pane-roam');
+  var paneMarble = document.getElementById('pane-marble');
+  var info = document.getElementById('info');
+  var slider = document.getElementById('marble-range');
+  var mcount = document.getElementById('mcount');
+  var marbleFact = document.getElementById('marble-fact');
+  var cam = { yaw: 0.7, pitch: 0.62, dist: 5200, distT: 5200, pMin: 0.15, pMax: 1.25 };
+  var mcam = { yaw: 0.25, pitch: 0.35, dist: 300, distT: 300, pMin: 0.15, pMax: 0.75, yMin: -0.35, yMax: 0.45 };
+  var selected = null;
+  var lastHits = [];
+  var idle = 0;
+  var fillN = 0, fillTarget = null, marbleDone = false;
 
-  renderText();
-  drawLens();
-  setMode('size', true);
+  /* ---------- 逛太阳系 ---------- */
+  function drawRoam(t) {
+    var f0 = fit(cvRoam);
+    if (!f0) return;
+    var ctx = f0.ctx, w = f0.w, h = f0.h;
+    spaceBg(ctx, w, h);
+    var f = 1.15 * Math.min(w, h);
+    var P = makeProj(cam, w / 2, h * 0.5, f);
+    drawStars(ctx, P, t);
+    var i, a, q;
+    for (i = 0; i < PLANETS.length; i++) {
+      var p = PLANETS[i];
+      ctx.beginPath();
+      for (var k = 0; k <= 64; k++) {
+        a = k / 64 * TAU;
+        q = P.p({ x: Math.cos(a) * p.orbit, y: 0, z: Math.sin(a) * p.orbit });
+        if (k === 0) ctx.moveTo(q.x, q.y); else ctx.lineTo(q.x, q.y);
+      }
+      ctx.strokeStyle = selected === p.id ? 'rgba(253,224,113,.9)' : 'rgba(148,163,184,.30)';
+      ctx.lineWidth = selected === p.id ? 2 : 1.2;
+      ctx.stroke();
+    }
+    var sq = P.p({ x: 0, y: 0, z: 0 });
+    var sr = 190 * sq.s;
+    sunBall(ctx, sq.x, sq.y, sr, t);
+    label(ctx, '太阳', sq.x, sq.y + sr + 18, '#FDE68A');
+    var items = PLANETS.map(function (p) {
+      var wx = Math.cos(p.ang) * p.orbit, wz = Math.sin(p.ang) * p.orbit;
+      return { p: p, wx: wx, wz: wz, q: P.p({ x: wx, y: 0, z: wz }) };
+    });
+    items.sort(function (x, y) { return y.q.depth - x.q.depth; });
+    lastHits = [];
+    items.forEach(function (it) {
+      var p = it.p, q = it.q;
+      var r = Math.max(2.2, p.rad * q.s);
+      var len = Math.sqrt(it.wx * it.wx + it.wz * it.wz) || 1;
+      var L = P.d({ x: -it.wx / len, y: 0, z: -it.wz / len });
+      var m = Math.sqrt(L.x * L.x + L.y * L.y) || 1;
+      var ox = L.x / m, oy = -L.y / m;
+      if (p.ring) drawRing(ctx, P, it, false);
+      ball(ctx, q.x, q.y, r, p, ox, oy);
+      if (p.ring) drawRing(ctx, P, it, true);
+      if (selected === p.id) {
+        ctx.strokeStyle = '#FDE68A';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.arc(q.x, q.y, r + 7 + 2.5 * Math.sin(t * 4), 0, TAU);
+        ctx.stroke();
+      }
+      label(ctx, p.name, q.x, q.y + r + 16, selected === p.id ? '#FDE68A' : 'rgba(226,232,240,.85)');
+      lastHits.push({ id: p.id, x: q.x, y: q.y, r: Math.max(r, 26) });
+    });
+    lastHits.push({ id: 'sun', x: sq.x, y: sq.y, r: Math.max(sr, 30) });
+  }
+
+  function stripSvg(p) {
+    var n = Math.round(p.ratio);
+    var wpx = 52 + n * 16 + 8;
+    var s = '<svg viewBox="0 0 ' + wpx + ' 34" width="' + wpx + '" height="34" aria-hidden="true">';
+    s += '<circle cx="16" cy="17" r="13" fill="' + p.c2 + '"/>';
+    s += '<text x="34" y="22" font-size="14" font-weight="800" fill="#374151">≈</text>';
+    for (var i = 0; i < n; i++) {
+      s += '<circle cx="' + (52 + i * 16) + '" cy="17" r="6" fill="#3B82F6"/>';
+    }
+    return s + '</svg>';
+  }
+  function showInfo(id) {
+    if (!id) {
+      info.innerHTML = '<p class="pfact">点一颗行星，看看它有多大、有多远。拖一拖可以转动太阳系。</p>';
+      return;
+    }
+    if (id === 'sun') {
+      info.innerHTML = '<p class="pname">☀️ 太阳（恒星）</p>'
+        + '<p class="pfact">真实宽度 ≈ 109 个地球排一排。这张图里把它画小啦！</p>'
+        + '<p class="pfun">去「🔮 弹珠模型」摆一摆，看 109 个地球有多长。</p>';
+      return;
+    }
+    var p = PLANETS.filter(function (x) { return x.id === id; })[0];
+    var html = '<p class="pname">' + p.name + '</p>'
+      + '<p class="pfact">宽度：' + p.w + '　·　' + p.a + '</p>';
+    if (p.ratio >= 2 && p.ratio <= 12) {
+      html += '<div class="strip">' + stripSvg(p) + '</div>';
+    }
+    html += '<p class="pfun">' + p.fun + '</p>';
+    info.innerHTML = html;
+  }
+  function sayUnlessAll(newly, line) {
+    var all = GOALS.every(function (k) { return Lab.isGoal(k); });
+    if (newly && all) return;
+    Lab.say(line);
+  }
+  function selectBody(id) {
+    selected = id;
+    showInfo(id);
+    Lab.click();
+    if (id === 'jupiter') {
+      var nb = Lab.goal('big');
+      Lab.toast(BIG_LINE);
+      sayUnlessAll(nb, BIG_LINE);
+    } else if (id === 'neptune') {
+      var nf = Lab.goal('far');
+      Lab.toast(FAR_LINE);
+      sayUnlessAll(nf, FAR_LINE);
+    } else {
+      Lab.toast('');
+    }
+  }
+
+  /* ---------- 弹珠模型 ---------- */
+  var MARBLE_C = { x: -46, y: 6, z: 0 };
+  var MARBLE_M = { x: 118, y: -34, z: -56 };
+  function drawMarble(t) {
+    var f0 = fit(cvMarble);
+    if (!f0) return;
+    var ctx = f0.ctx, w = f0.w, h = f0.h;
+    spaceBg(ctx, w, h);
+    var f = 1.05 * Math.min(w, h);
+    var P = makeProj(mcam, w * 0.5, h * 0.54, f);
+    drawStars(ctx, P, t);
+    var sq = P.p(MARBLE_C);
+    var sr = 109 * sq.s;
+    sunBall(ctx, sq.x, sq.y, sr, t);
+    label(ctx, '太阳', sq.x, sq.y - sr - 14, '#FDE68A', 15);
+    /* 地球尺贴着太阳可见直径画（屏幕坐标）：109 格正好铺满。
+       单格只有 2~3px，画不出弹珠样，所以画成带刻度的尺子，
+       每一格长什么样交给下面的放大镜带。 */
+    var rowY = sq.y;
+    var dotR = sr / 109;
+    var x0 = sq.x - sr;
+    var x1 = sq.x + sr;
+    var filled = Math.floor(fillN);
+    ctx.strokeStyle = 'rgba(255,255,255,.4)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x0, rowY);
+    ctx.lineTo(x1, rowY);
+    ctx.stroke();
+    var fw = filled * 2 * dotR;
+    if (fw > 0) {
+      ctx.fillStyle = '#2563EB';
+      ctx.fillRect(x0, rowY - 3, fw, 6);
+    }
+    ctx.strokeStyle = 'rgba(255,255,255,.9)';
+    ctx.lineWidth = 1;
+    for (var m = 0; m <= 109; m += 10) {
+      var tx = Math.min(x1, x0 + m * 2 * dotR);
+      ctx.beginPath();
+      ctx.moveTo(tx, rowY - 6);
+      ctx.lineTo(tx, rowY + 6);
+      ctx.stroke();
+    }
+    ctx.beginPath();
+    ctx.moveTo(x1, rowY - 6);
+    ctx.lineTo(x1, rowY + 6);
+    ctx.stroke();
+    var mq = P.p(MARBLE_M);
+    var mr = Math.max(1.6, mq.s * 1);
+    var halo = 9 + 3 * Math.sin(t * 3);
+    ctx.strokeStyle = 'rgba(253,224,113,.95)';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(mq.x, mq.y, mr + halo, 0, TAU); ctx.stroke();
+    ctx.strokeStyle = 'rgba(253,224,113,.35)';
+    ctx.beginPath(); ctx.arc(mq.x, mq.y, mr + halo + 7, 0, TAU); ctx.stroke();
+    var eg = ctx.createRadialGradient(mq.x - mr * 0.4, mq.y - mr * 0.4, 0.2, mq.x, mq.y, mr);
+    eg.addColorStop(0, '#93C5FD');
+    eg.addColorStop(0.6, '#3B82F6');
+    eg.addColorStop(1, '#1E3A8A');
+    ctx.fillStyle = eg;
+    ctx.beginPath(); ctx.arc(mq.x, mq.y, mr, 0, TAU); ctx.fill();
+    var ix = w - 66, iy = h - 62, ir = 34;
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = 'rgba(253,224,113,.6)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(mq.x, mq.y);
+    ctx.lineTo(ix - ir * 0.7, iy - ir * 0.7);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(255,255,255,.10)';
+    ctx.beginPath(); ctx.arc(ix, iy, ir, 0, TAU); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,.85)';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.save();
+    ctx.beginPath(); ctx.arc(ix, iy, ir - 2, 0, TAU); ctx.clip();
+    ball(ctx, ix, iy, 24, PLANETS[2], -0.6, -0.4);
+    ctx.restore();
+    label(ctx, '放大看', ix, iy - ir - 12, 'rgba(226,232,240,.85)', 12);
+    label(ctx, '地球（弹珠）', mq.x, mq.y + mr + halo + 14, '#FDE68A');
+  }
+  /* 放大镜带：把当前位置附近的小格画成真正的大弹珠 */
+  var cvZoom = document.getElementById('cv-zoom');
+  function drawZoom(t) {
+    var f0 = fit(cvZoom);
+    if (!f0) return;
+    var ctx = f0.ctx, w = f0.w, h = f0.h;
+    var g = ctx.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, '#0B1026');
+    g.addColorStop(1, '#111736');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
+    var filled = Math.floor(fillN);
+    var N = 12;
+    var start = filled >= 109 ? 109 - N : Math.max(0, Math.min(109 - N, filled - 5));
+    var cell = Math.min(40, (w - 24) / N);
+    var x0 = (w - cell * N) / 2;
+    var y = h / 2 - 6;
+    var r = cell * 0.34;
+    for (var i = 0; i < N; i++) {
+      var idx = start + i;
+      if (idx >= 109) break;
+      var x = x0 + cell * (i + 0.5);
+      if (idx < filled) {
+        var mg = ctx.createRadialGradient(x - r * 0.4, y - r * 0.4, r * 0.15, x, y, r);
+        mg.addColorStop(0, '#BFDBFE');
+        mg.addColorStop(0.55, '#3B82F6');
+        mg.addColorStop(1, '#1E3A8A');
+        ctx.fillStyle = mg;
+        ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,.85)';
+        ctx.beginPath(); ctx.arc(x - r * 0.38, y - r * 0.42, r * 0.16, 0, TAU); ctx.fill();
+      } else {
+        ctx.setLineDash([4, 3]);
+        ctx.strokeStyle = 'rgba(226,232,240,.45)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.stroke();
+        ctx.setLineDash([]);
+        if (idx === filled) {
+          ctx.strokeStyle = '#FDE68A';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.arc(x, y, r + 4 + 2 * Math.sin(t * 4), 0, TAU);
+          ctx.stroke();
+        }
+      }
+      ctx.font = '700 10px -apple-system,"PingFang SC",sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = 'rgba(226,232,240,.6)';
+      ctx.fillText(String(idx + 1), x, y + r + 12);
+    }
+  }
+  function paintCount() {
+    mcount.innerHTML = '已摆 <span style="color:#2563EB">' + Math.floor(fillN) + '</span> / 109 个地球';
+  }
+  function finishMarble() {
+    if (marbleDone) return;
+    marbleDone = true;
+    marbleFact.hidden = false;
+    var newly = Lab.goal('marble');
+    Lab.toast(MARBLE_LINE);
+    sayUnlessAll(newly, MARBLE_LINE);
+  }
+  slider.addEventListener('input', function () {
+    fillTarget = null;
+    fillN = Number(slider.value);
+    paintCount();
+    if (fillN >= 109) finishMarble();
+  });
+  document.getElementById('fill').addEventListener('click', function () {
+    Lab.click();
+    fillTarget = 109;
+  });
+
+  /* ---------- 交互 ---------- */
+  function addDrag(cv, camObj, onTap) {
+    var down = false, lx = 0, ly = 0, moved = 0;
+    cv.addEventListener('pointerdown', function (e) {
+      down = true; moved = 0; lx = e.clientX; ly = e.clientY;
+      try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+      idle = 0;
+    });
+    cv.addEventListener('pointermove', function (e) {
+      if (!down) return;
+      var dx = e.clientX - lx, dy = e.clientY - ly;
+      lx = e.clientX; ly = e.clientY;
+      moved += Math.abs(dx) + Math.abs(dy);
+      var yLo = camObj.yMin != null ? camObj.yMin : -1e9;
+      var yHi = camObj.yMax != null ? camObj.yMax : 1e9;
+      camObj.yaw = clamp(camObj.yaw + dx * 0.005, yLo, yHi);
+      camObj.pitch = clamp(camObj.pitch + dy * 0.004, camObj.pMin, camObj.pMax);
+      idle = 0;
+    });
+    cv.addEventListener('pointerup', function (e) {
+      if (!down) return;
+      down = false;
+      idle = 0;
+      if (moved < 9 && onTap) onTap(e);
+    });
+    cv.addEventListener('pointercancel', function () { down = false; });
+  }
+  addDrag(cvRoam, cam, function (e) {
+    var r = cvRoam.getBoundingClientRect();
+    var x = e.clientX - r.left, y = e.clientY - r.top;
+    var best = null, bd = Infinity;
+    lastHits.forEach(function (hh) {
+      var d = (hh.x - x) * (hh.x - x) + (hh.y - y) * (hh.y - y);
+      if (d <= hh.r * hh.r && d < bd) { bd = d; best = hh.id; }
+    });
+    if (best) selectBody(best);
+  });
+  addDrag(cvMarble, mcam, null);
+  document.getElementById('zin').addEventListener('click', function () {
+    Lab.click();
+    cam.distT = Math.max(3000, cam.distT * 0.75);
+  });
+  document.getElementById('zout').addEventListener('click', function () {
+    Lab.click();
+    cam.distT = Math.min(9000, cam.distT * 1.33);
+  });
+
+  var marbleHintShown = false;
+  function setMode(m, silent) {
+    paneRoam.hidden = m !== 'roam';
+    paneMarble.hidden = m !== 'marble';
+    document.getElementById('m-roam').setAttribute('aria-pressed', m === 'roam' ? 'true' : 'false');
+    document.getElementById('m-marble').setAttribute('aria-pressed', m === 'marble' ? 'true' : 'false');
+    if (!silent) Lab.click();
+    if (m === 'marble' && !marbleHintShown) {
+      marbleHintShown = true;
+      Lab.toast('拖动滑块，沿着太阳摆地球。');
+    }
+  }
+  document.getElementById('m-roam').addEventListener('click', function () { setMode('roam'); });
+  document.getElementById('m-marble').addEventListener('click', function () { setMode('marble'); });
+
+  /* ---------- 主循环 ---------- */
+  var lastT = 0;
+  function loop(t) {
+    requestAnimationFrame(loop);
+    var dt = Math.min(0.05, (t - lastT) / 1000 || 0.016);
+    lastT = t;
+    idle += dt;
+    if (idle > 5) {
+      cam.yaw += dt * 0.06;
+    }
+    cam.dist += (cam.distT - cam.dist) * Math.min(1, dt * 6);
+    for (var i = 0; i < PLANETS.length; i++) PLANETS[i].ang += PLANETS[i].speed * dt;
+    if (fillTarget != null && fillN < fillTarget) {
+      fillN = Math.min(fillTarget, fillN + dt * 110);
+      slider.value = String(Math.round(fillN));
+      paintCount();
+      if (fillN >= 109) { fillTarget = null; finishMarble(); }
+    }
+    if (!paneRoam.hidden) drawRoam(t / 1000);
+    if (!paneMarble.hidden) {
+      drawMarble(t / 1000);
+      drawZoom(t / 1000);
+    }
+  }
+
+  showInfo(null);
+  paintCount();
+  requestAnimationFrame(loop);
 })();
 </script>
 </body>

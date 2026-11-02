@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>青蛙跳</title>
+<link rel="stylesheet" href="lab-kit.css">
+<style>
+  #stage, #stage *{box-sizing:border-box;}
+  #stage button{
+    font:inherit;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    touch-action:manipulation;
+  }
+  #stage .toolbar{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:8px;
+  }
+  #stage .kicker{
+    font-weight:900;
+    font-size:1.05rem;
+  }
+  #stage .toolbar .lab-btn{
+    min-width:52px;
+    min-height:48px;
+    padding:10px 14px;
+  }
+  #stage .toolbar .lab-btn[aria-pressed="true"]{
+    box-shadow:inset 0 0 0 3px #7C3AED;
+  }
+  #stage .undo{margin-left:auto;}
+  #stage .undo:disabled{
+    opacity:.45;
+    cursor:default;
+  }
+
+  #stage .status{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:baseline;
+    gap:8px 16px;
+    margin:10px 0 0;
+  }
+  #stage .steps{
+    margin:0;
+    font-size:1.45rem;
+    font-weight:900;
+    font-variant-numeric:tabular-nums;
+  }
+  #stage .best{
+    margin:0;
+    color:#6B7280;
+    font-weight:800;
+  }
+  #stage .help,
+  #stage .banner{
+    margin:6px 0 0;
+    min-height:1.45em;
+    font-weight:800;
+    line-height:1.45;
+  }
+  #stage .help{color:#6B7280; font-weight:700;}
+  #stage .banner.good{color:#15803D;}
+  #stage .banner.bad{color:#B91C1C;}
+  #stage .help[hidden],
+  #stage .banner[hidden],
+  #stage .best[hidden],
+  #stage .ask[hidden],
+  #stage caption.rule-note[hidden]{display:none !important;}
+
+  #stage .pond-wrap{margin-top:8px;}
+  #stage .pond{
+    display:flex;
+    gap:8px;
+    padding:72px 10px 12px;
+    border-radius:24px;
+    background:linear-gradient(180deg, #E0F2FE 0 64px, #7DD3FC 64px 100%);
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    touch-action:pan-x;
+    user-select:none;
+    -webkit-user-select:none;
+  }
+  #stage .pond.moving,
+  #stage .pond.moving *{pointer-events:none;}
+  #stage .pad{
+    position:relative;
+    flex:1 0 64px;
+    min-width:64px;
+    height:104px;
+    margin:0;
+    padding:0;
+    border:none;
+    border-radius:18px;
+    background:transparent;
+    color:inherit;
+    touch-action:pan-x;
+  }
+  #stage .pad:focus-visible{outline:3px solid #7C3AED; outline-offset:2px;}
+  #stage .pad.can{cursor:pointer;}
+  #stage .pad:not(.can){cursor:default;}
+  #stage .lily{
+    position:absolute;
+    left:12%;
+    right:12%;
+    bottom:8px;
+    height:24px;
+    border-radius:50%;
+    background:radial-gradient(circle at 50% 38%, #4ADE80, #15803D);
+    box-shadow:0 3px 0 #166534;
+    pointer-events:none;
+  }
+  #stage .lily::after{
+    content:"";
+    position:absolute;
+    left:50%;
+    top:3px;
+    bottom:3px;
+    width:3px;
+    transform:translateX(-50%);
+    border-radius:2px;
+    background:rgba(20,83,45,.35);
+  }
+  #stage .frog{
+    position:absolute;
+    left:50%;
+    bottom:18px;
+    width:46px;
+    height:40px;
+    transform:translateX(-50%);
+    border-radius:46% 46% 42% 42%;
+    z-index:2;
+    pointer-events:none;
+  }
+  #stage .frog.L{
+    background:
+      radial-gradient(circle at 50% 64%, #BBF7D0 0 14px, transparent 15px),
+      linear-gradient(180deg, #4ADE80, #16A34A);
+    box-shadow:0 5px 0 rgba(22,101,52,.35);
+  }
+  #stage .frog.R{
+    background:
+      radial-gradient(circle at 50% 64%, #FFEDD5 0 14px, transparent 15px),
+      linear-gradient(180deg, #FB923C, #C2410C);
+    box-shadow:0 5px 0 rgba(154,52,18,.28);
+  }
+  #stage .pad.can .frog{
+    box-shadow:0 0 0 3px #fff, 0 6px 0 rgba(15,23,42,.16);
+  }
+  #stage .eye{
+    position:absolute;
+    top:-7px;
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:#fff;
+    box-shadow:0 1px 0 rgba(0,0,0,.08);
+  }
+  #stage .frog.L .eye.a{left:16px;}
+  #stage .frog.L .eye.b{left:30px;}
+  #stage .frog.R .eye.a{left:2px;}
+  #stage .frog.R .eye.b{left:16px;}
+  #stage .pupil{
+    position:absolute;
+    top:4px;
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:#1F2937;
+  }
+  #stage .frog.L .pupil{left:7px;}
+  #stage .frog.R .pupil{left:1px;}
+  #stage .frog::after{
+    content:"";
+    position:absolute;
+    bottom:8px;
+    width:12px;
+    height:8px;
+    border-radius:0 0 8px 8px;
+    background:rgba(0,0,0,.18);
+  }
+  #stage .frog.L::after{right:1px;}
+  #stage .frog.R::after{left:1px;}
+  #stage .frog.flying{
+    position:fixed;
+    z-index:40;
+    bottom:auto;
+    right:auto;
+    margin:0;
+    transform:none;
+    pointer-events:none;
+    filter:drop-shadow(0 14px 8px rgba(15,23,42,.28));
+  }
+  #stage .frog.shake{animation:frog-shake .35s linear;}
+  @keyframes frog-shake{
+    0%,100%{transform:translateX(-50%);}
+    25%{transform:translateX(calc(-50% - 6px));}
+    75%{transform:translateX(calc(-50% + 6px));}
+  }
+  @media (prefers-reduced-motion:reduce){
+    #stage .frog.shake{animation:none; outline:3px solid #B91C1C;}
+  }
+
+  #stage .side{
+    width:100%;
+    margin-top:12px;
+    background:#fff;
+    border-radius:20px;
+    padding:12px;
+    box-shadow:0 8px 20px rgba(80,90,130,.08);
+  }
+  #stage .rec-title{
+    margin:0 0 8px;
+    font-weight:900;
+    font-size:1.08rem;
+  }
+  #stage .rec-wrap{overflow-x:auto;}
+  #stage .rec{
+    width:100%;
+    table-layout:fixed;
+    border-collapse:separate;
+    border-spacing:4px;
+  }
+  #stage .rec th,
+  #stage .rec td{
+    width:auto;
+    min-width:0;
+    height:48px;
+    text-align:center;
+    font-weight:800;
+    background:#F8FAFC;
+    border-radius:12px;
+    padding:4px;
+    font-variant-numeric:tabular-nums;
+  }
+  #stage .rec th:first-child{
+    min-width:72px;
+    white-space:nowrap;
+  }
+  #stage .rec th{background:#EEF2FF; color:#4338CA;}
+  #stage .rec td.perfect{background:#DCFCE7; color:#166534;}
+  #stage .rec td.empty{color:#9CA3AF;}
+  #stage .rec .now{box-shadow:inset 0 0 0 2px #7C3AED;}
+  #stage caption.rule-note{
+    caption-side:bottom;
+    text-align:left;
+    margin-top:8px;
+    padding:12px 14px;
+    border-radius:14px;
+    background:#F5F3FF;
+    color:#6D28D9;
+    font-weight:800;
+    line-height:1.45;
+  }
+  #stage .ask{margin-top:12px;}
+  #stage .ask p{
+    margin:0 0 8px;
+    font-weight:900;
+    font-size:1.15rem;
+  }
+  #stage .ask-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  #stage .ask-row .lab-btn{
+    min-width:76px;
+    min-height:48px;
+    font-size:1.35rem;
+  }
+</style>
+</head>
+<body>
+<script src="lab-kit.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  var MIN = {1:3, 2:8, 3:15, 4:24, 5:35};
+  var LEVELS = [1, 2, 3, 4];
+  var GUESSES = [35, 25, 33];
+  var MSG_NO = "这只现在跳不了。";
+  var MSG_DEAD = "过不去了。退一步，换一只试试。";
+  var MSG_RETRY = "换完啦！再试试，能不能更少。";
+  var MSG_RULE_NO = "多出来的步数，一次比一次多 2。";
+  var MSG_RULE_YES = "对啦，五五二十五，再加十，是 35 步。";
+  var MSG_RULE_NOTE = "只数乘只数，再把只数加两遍。";
+
+  var n = 2;
+  var pads = [];
+  var moves = 0;
+  var solved = false;
+  var best = {1:null, 2:null, 3:null, 4:null};
+  var history = [];
+  var ruleFound = false;
+  var banner = null;
+  var moving = false;
+  var flight = null;
+  var shakeIndex = null;
+
+  var stepsEl, bestEl, helpEl, bannerEl, pondEl, askEl, noteEl, undoBtn;
+  var padEls = [];
+  var levelBtns = [];
+  var headEls = {};
+  var cellEls = {};
+  var stage;
+
+  function makePads(k){
+    var row = [];
+    var i;
+    for(i = 0; i < k; i++) row.push("L");
+    row.push("");
+    for(i = 0; i < k; i++) row.push("R");
+    return row;
+  }
+
+  function destOf(i){
+    var frog = pads[i];
+    var other = frog === "L" ? "R" : "L";
+    if(frog === "L"){
+      if(pads[i + 1] === "") return i + 1;
+      if(pads[i + 1] === other && pads[i + 2] === "") return i + 2;
+    }else if(frog === "R"){
+      if(i - 1 >= 0 && pads[i - 1] === "") return i - 1;
+      if(i - 2 >= 0 && pads[i - 1] === other && pads[i - 2] === "") return i - 2;
+    }
+    return -1;
+  }
+
+  function hasMove(){
+    var i;
+    for(i = 0; i < pads.length; i++){
+      if(destOf(i) >= 0) return true;
+    }
+    return false;
+  }
+
+  function isSolved(){
+    var i;
+    for(i = 0; i < n; i++){
+      if(pads[i] !== "R") return false;
+    }
+    if(pads[n] !== "") return false;
+    for(i = n + 1; i < pads.length; i++){
+      if(pads[i] !== "L") return false;
+    }
+    return true;
+  }
+
+  function sayLine(kind, text){
+    banner = {kind:kind, text:text};
+    Lab.toast(text);
+    Lab.say(text);
+  }
+
+  var soundCtx = null;
+  var noiseBuf = null;
+
+  function soundMuted(){
+    var btn = document.getElementById("lab-mute");
+    return !!(btn && btn.getAttribute("aria-pressed") === "true");
+  }
+
+  function soundReady(){
+    if(soundMuted()) return null;
+    if(!soundCtx){
+      try{ soundCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+      catch(err){ return null; }
+    }
+    if(soundCtx.state === "suspended"){
+      try{ soundCtx.resume(); }catch(err){}
+    }
+    return soundCtx;
+  }
+
+  function noiseBuffer(ctx){
+    var len, buf, data, i;
+    if(noiseBuf && noiseBuf.sampleRate === ctx.sampleRate) return noiseBuf;
+    len = Math.floor(ctx.sampleRate * 0.2);
+    buf = ctx.createBuffer(1, len, ctx.sampleRate);
+    data = buf.getChannelData(0);
+    for(i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+    noiseBuf = buf;
+    return buf;
+  }
+
+  function softTone(ctx, when, freq, dur, vol){
+    var osc, gain, attack;
+    osc = ctx.createOscillator();
+    gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(freq, when);
+    attack = Math.min(0.015, dur * 0.25);
+    gain.gain.setValueAtTime(0.0001, when);
+    gain.gain.exponentialRampToValueAtTime(vol, when + attack);
+    gain.gain.exponentialRampToValueAtTime(0.0001, when + dur);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(when);
+    osc.stop(when + dur + 0.02);
+  }
+
+  function hopSound(isJump){
+    var ctx, t, osc, gain, src, filter, splash, dur, hi, lo;
+    ctx = soundReady();
+    if(!ctx) return;
+    t = ctx.currentTime;
+    dur = isJump ? 0.2 : 0.12;
+    hi = isJump ? 620 : 460;
+    lo = isJump ? 170 : 250;
+    osc = ctx.createOscillator();
+    gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(hi, t);
+    osc.frequency.exponentialRampToValueAtTime(lo, t + dur * 0.86);
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(isJump ? 0.06 : 0.045, t + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(t);
+    osc.stop(t + dur + 0.02);
+
+    osc = ctx.createOscillator();
+    gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(hi / 2, t);
+    osc.frequency.exponentialRampToValueAtTime(Math.max(lo / 2, 40), t + dur * 0.86);
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(0.022, t + 0.018);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(t);
+    osc.stop(t + dur + 0.02);
+
+    src = ctx.createBufferSource();
+    src.buffer = noiseBuffer(ctx);
+    filter = ctx.createBiquadFilter();
+    filter.type = "lowpass";
+    filter.frequency.setValueAtTime(isJump ? 1100 : 780, t);
+    filter.frequency.exponentialRampToValueAtTime(200, t + 0.07);
+    splash = ctx.createGain();
+    splash.gain.setValueAtTime(0.0001, t);
+    splash.gain.exponentialRampToValueAtTime(isJump ? 0.03 : 0.018, t + 0.006);
+    splash.gain.exponentialRampToValueAtTime(0.0001, t + 0.07);
+    src.connect(filter).connect(splash).connect(ctx.destination);
+    src.start(t);
+    src.stop(t + 0.08);
+  }
+
+  function noSound(){
+    var ctx, t;
+    ctx = soundReady();
+    if(!ctx) return;
+    t = ctx.currentTime;
+    softTone(ctx, t, 349.23, 0.08, 0.035);
+    softTone(ctx, t + 0.09, 293.66, 0.1, 0.03);
+  }
+
+  function chime(){
+    var ctx, notes, i, t;
+    ctx = soundReady();
+    if(!ctx) return;
+    t = ctx.currentTime;
+    notes = [523.25, 659.25, 783.99];
+    for(i = 0; i < notes.length; i++) softTone(ctx, t + i * 0.09, notes[i], 0.34, 0.045);
+  }
+
+  function award(id, text){
+    var fresh = Lab.goal(id);
+    if(!fresh) chime();
+    sayLine("good", text);
+  }
+
+  function celebrate(){
+    if(n === 2 && moves === 8){
+      award("d2", "2 对 2，8 步，最少啦！");
+      return;
+    }
+    if(n === 3 && moves === 15){
+      award("d3", "3 对 3，15 步，最少啦！");
+      return;
+    }
+    if(moves > MIN[n]){
+      chime();
+      sayLine("good", MSG_RETRY);
+      return;
+    }
+    chime();
+    sayLine("good", n + " 对 " + n + "，" + moves + " 步，最少啦！");
+  }
+
+  function copyRect(r){
+    return {left:r.left, top:r.top, width:r.width, height:r.height};
+  }
+
+  function motionOk(){
+    if(!window.Element || typeof Element.prototype.animate !== "function") return false;
+    if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
+    return true;
+  }
+
+  function finishFlight(token){
+    var flyer, landEl;
+    if(!flight || flight.token !== token) return;
+    flyer = flight.el;
+    landEl = flight.landEl;
+    flight = null;
+    moving = false;
+    if(pondEl) pondEl.classList.remove("moving");
+    if(flyer && flyer.parentNode) flyer.remove();
+    if(landEl && landEl.isConnected) landEl.style.visibility = "";
+    syncUndo();
+  }
+
+  function cancelFlight(){
+    var f = flight;
+    flight = null;
+    moving = false;
+    if(pondEl) pondEl.classList.remove("moving");
+    if(!f) return;
+    if(f.anim){
+      try{ f.anim.cancel(); }catch(err){}
+    }
+    if(f.el && f.el.parentNode) f.el.remove();
+    if(f.landEl && f.landEl.isConnected) f.landEl.style.visibility = "";
+  }
+
+  function buildFrog(kind){
+    var frog, eyeA, eyeB, pupilA, pupilB;
+    frog = document.createElement("span");
+    frog.className = "frog " + kind;
+    frog.setAttribute("aria-hidden", "true");
+    eyeA = document.createElement("span");
+    eyeA.className = "eye a";
+    pupilA = document.createElement("span");
+    pupilA.className = "pupil";
+    eyeA.appendChild(pupilA);
+    eyeB = document.createElement("span");
+    eyeB.className = "eye b";
+    pupilB = document.createElement("span");
+    pupilB.className = "pupil";
+    eyeB.appendChild(pupilB);
+    frog.appendChild(eyeA);
+    frog.appendChild(eyeB);
+    return frog;
+  }
+
+  function beginHop(kind, toIndex, start, isJump){
+    var landEl, land, w, h, x0, y0, y1, x2, y2, flyer, pondRect;
+    var dx, lift, drop, liftMs, dropMs, travelMs, total, o1, o2, token, anim;
+    landEl = padEls[toIndex] && padEls[toIndex].querySelector(".frog");
+    if(!landEl || !stage) return;
+    land = copyRect(landEl.getBoundingClientRect());
+    landEl.style.visibility = "hidden";
+    w = land.width;
+    h = land.height;
+    x0 = start.left + (start.width - w) / 2;
+    y0 = start.top + (start.height - h) / 2;
+    pondRect = pondEl.getBoundingClientRect();
+    y1 = y0 - (isJump ? 56 : 28);
+    if(y1 < pondRect.top + 6) y1 = pondRect.top + 6;
+    x2 = land.left;
+    y2 = land.top;
+    flyer = buildFrog(kind);
+    flyer.classList.add("flying");
+    flyer.style.left = x0 + "px";
+    flyer.style.top = y0 + "px";
+    flyer.style.width = w + "px";
+    flyer.style.height = h + "px";
+    flyer.style.bottom = "auto";
+    flyer.style.right = "auto";
+    flyer.style.transform = "translate(0px, 0px)";
+    stage.appendChild(flyer);
+    dx = x2 - x0;
+    lift = y1 - y0;
+    drop = y2 - y0;
+    liftMs = isJump ? 180 : 150;
+    dropMs = isJump ? 200 : 160;
+    travelMs = Math.round(Math.max(isJump ? 200 : 150, Math.min(340, Math.abs(dx) * 0.85)));
+    total = liftMs + travelMs + dropMs;
+    o1 = liftMs / total;
+    o2 = (liftMs + travelMs) / total;
+    token = {};
+    anim = flyer.animate([
+      {transform:"translate(0px, 0px)", easing:"cubic-bezier(.16,.84,.32,1)"},
+      {transform:"translate(0px, " + lift + "px)", offset:o1, easing:"cubic-bezier(.45,0,.55,1)"},
+      {transform:"translate(" + dx + "px, " + lift + "px)", offset:o2, easing:"cubic-bezier(.42,0,1,1)"},
+      {transform:"translate(" + dx + "px, " + drop + "px)", offset:1}
+    ], {duration:total, easing:"linear", fill:"forwards"});
+    moving = true;
+    pondEl.classList.add("moving");
+    flight = {token:token, el:flyer, landEl:landEl, anim:anim, toIndex:toIndex};
+    syncUndo();
+    anim.finished.then(function(){ finishFlight(token); }).catch(function(){});
+  }
+
+  function tryHop(i){
+    var to, frogEl, raw, box, startRel, kind, isJump, now;
+    if(moving || solved) return;
+    to = destOf(i);
+    if(to < 0){
+      shakeIndex = i;
+      noSound();
+      banner = {kind:"bad", text:MSG_NO};
+      Lab.toast(MSG_NO);
+      Lab.say(MSG_NO);
+      paint();
+      return;
+    }
+    kind = pads[i];
+    isJump = Math.abs(to - i) === 2;
+    startRel = null;
+    frogEl = padEls[i] && padEls[i].querySelector(".frog");
+    if(frogEl){
+      raw = frogEl.getBoundingClientRect();
+      box = pondEl.getBoundingClientRect();
+      startRel = {
+        left:raw.left - box.left,
+        top:raw.top - box.top,
+        width:raw.width,
+        height:raw.height
+      };
+    }
+    history.push({pads:pads.slice(), moves:moves});
+    pads[to] = pads[i];
+    pads[i] = "";
+    moves += 1;
+    hopSound(isJump);
+    if(banner && banner.kind === "bad") banner = null;
+    if(isSolved()){
+      solved = true;
+      if(best[n] == null || moves < best[n]) best[n] = moves;
+      celebrate();
+    }else if(!hasMove()){
+      banner = {kind:"bad", text:MSG_DEAD};
+      Lab.toast(MSG_DEAD);
+      Lab.say(MSG_DEAD);
+    }
+    paint();
+    if(!startRel || !motionOk()) return;
+    now = pondEl.getBoundingClientRect();
+    beginHop(kind, to, {
+      left:startRel.left + now.left,
+      top:startRel.top + now.top,
+      width:startRel.width,
+      height:startRel.height
+    }, isJump);
+  }
+
+  function undo(){
+    var prev, i, from, to, kind, frogEl, raw, box, startRel, now, isJump;
+    if(moving || !history.length) return;
+    prev = history.pop();
+    from = -1;
+    to = -1;
+    for(i = 0; i < pads.length; i++){
+      if(pads[i] && !prev.pads[i]) from = i;
+      if(!pads[i] && prev.pads[i]) to = i;
+    }
+    kind = from >= 0 ? pads[from] : "";
+    isJump = from >= 0 && to >= 0 && Math.abs(from - to) === 2;
+    startRel = null;
+    frogEl = from >= 0 && padEls[from] ? padEls[from].querySelector(".frog") : null;
+    if(frogEl){
+      raw = frogEl.getBoundingClientRect();
+      box = pondEl.getBoundingClientRect();
+      startRel = {
+        left:raw.left - box.left,
+        top:raw.top - box.top,
+        width:raw.width,
+        height:raw.height
+      };
+    }
+    pads = prev.pads.slice();
+    moves = prev.moves;
+    solved = false;
+    banner = null;
+    if(kind) hopSound(isJump);
+    paint();
+    if(!startRel || to < 0 || !motionOk()) return;
+    now = pondEl.getBoundingClientRect();
+    beginHop(kind, to, {
+      left:startRel.left + now.left,
+      top:startRel.top + now.top,
+      width:startRel.width,
+      height:startRel.height
+    }, isJump);
+  }
+
+  function onGuess(value){
+    var already;
+    if(ruleFound) return;
+    if(best[2] !== 8 || best[3] !== 15) return;
+    if(value === 35){
+      ruleFound = true;
+      already = Lab.isGoal("rule");
+      Lab.goal("rule");
+      if(already) chime();
+      sayLine("good", MSG_RULE_YES);
+    }else{
+      noSound();
+      banner = {kind:"bad", text:MSG_RULE_NO};
+      Lab.toast(MSG_RULE_NO);
+      Lab.say(MSG_RULE_NO);
+    }
+    paint();
+  }
+
+  function frogLabel(kind, can){
+    var text = kind === "L" ? "绿青蛙，往右" : "橙青蛙，往左";
+    if(can) text += "，可以跳";
+    return text;
+  }
+
+  function paintPads(){
+    var i, pad, lily, frog, can, node;
+    pondEl.replaceChildren();
+    padEls = [];
+    for(i = 0; i < pads.length; i++){
+      pad = document.createElement("button");
+      pad.type = "button";
+      pad.className = "pad";
+      pad.dataset.i = String(i);
+      lily = document.createElement("span");
+      lily.className = "lily";
+      lily.setAttribute("aria-hidden", "true");
+      pad.appendChild(lily);
+      if(pads[i]){
+        can = !solved && destOf(i) >= 0;
+        if(can) pad.classList.add("can");
+        frog = buildFrog(pads[i]);
+        pad.appendChild(frog);
+        pad.setAttribute("aria-label", frogLabel(pads[i], can));
+      }else{
+        pad.setAttribute("aria-label", "空荷叶");
+      }
+      pondEl.appendChild(pad);
+      padEls.push(pad);
+    }
+    if(shakeIndex !== null && padEls[shakeIndex]){
+      node = padEls[shakeIndex].querySelector(".frog");
+      shakeIndex = null;
+      if(node){
+        node.classList.remove("shake");
+        void node.offsetWidth;
+        node.classList.add("shake");
+      }
+    }
+    if(flight && flight.toIndex != null && padEls[flight.toIndex]){
+      node = padEls[flight.toIndex].querySelector(".frog");
+      if(node){
+        node.style.visibility = "hidden";
+        flight.landEl = node;
+      }
+    }
+  }
+
+  function syncUndo(){
+    if(!undoBtn) return;
+    undoBtn.disabled = moving || history.length === 0;
+  }
+
+  function paint(){
+    var k, btn, on, value, perfect;
+    if(!stepsEl) return;
+    stepsEl.textContent = "已跳 " + moves + " 步";
+    if(best[n] == null){
+      bestEl.hidden = true;
+      bestEl.textContent = "";
+    }else{
+      bestEl.hidden = false;
+      bestEl.textContent = "这关最好 " + best[n] + " 步";
+    }
+    if(banner){
+      bannerEl.hidden = false;
+      bannerEl.textContent = banner.text;
+      bannerEl.className = "banner " + banner.kind;
+      helpEl.hidden = true;
+    }else{
+      bannerEl.hidden = true;
+      bannerEl.textContent = "";
+      bannerEl.className = "banner";
+      helpEl.hidden = false;
+      if(solved) helpEl.textContent = "两边换好啦。";
+      else helpEl.textContent = "点一只青蛙。它只朝自己的脸跳。";
+    }
+    for(k = 0; k < levelBtns.length; k++){
+      btn = levelBtns[k];
+      on = Number(btn.dataset.n) === n;
+      btn.className = "lab-btn" + (on ? "" : " ghost");
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+    }
+    paintPads();
+    syncUndo();
+    for(k = 1; k <= 4; k++){
+      value = best[k];
+      perfect = value != null && value === MIN[k];
+      headEls[k].classList.toggle("now", k === n);
+      cellEls[k].classList.toggle("now", k === n);
+      cellEls[k].classList.toggle("perfect", perfect);
+      cellEls[k].classList.toggle("empty", value == null);
+      if(value == null){
+        cellEls[k].textContent = "—";
+        cellEls[k].setAttribute("aria-label", k + " 对还没有");
+      }else{
+        cellEls[k].textContent = String(value);
+        cellEls[k].setAttribute("aria-label", k + " 对 " + value + " 步");
+      }
+    }
+    noteEl.hidden = !ruleFound;
+    askEl.hidden = !(best[2] === 8 && best[3] === 15 && !ruleFound);
+  }
+
+  function resetRound(){
+    cancelFlight();
+    history = [];
+    solved = false;
+    moves = 0;
+    banner = null;
+    shakeIndex = null;
+    pads = makePads(n);
+    paint();
+  }
+
+  function setCount(k){
+    if(k === n) return;
+    n = k;
+    resetRound();
+  }
+
+  function fullReset(){
+    n = 2;
+    best = {1:null, 2:null, 3:null, 4:null};
+    ruleFound = false;
+    resetRound();
+  }
+
+  Lab.mount({
+    id:"lab-frogs",
+    title:"青蛙跳",
+    emoji:"🐸",
+    lead:"绿青蛙往右，橙青蛙往左。用最少的跳，把两边换过来。",
+    parent:"<p>两边各 n 只，中间一张空荷叶。绿蛙只能往右，橙蛙只能往左。旁边空着可以滑过去，也可以跳过对面的一只，落在空荷叶上。</p>"
+      + "<p>最少步数是只数乘只数，再把只数加两遍。1 对 1 是 3，2 对 2 是 8，3 对 3 是 15，4 对 4 是 24，5 对 5 是 35。多出来的步数是 5、7、9、11。</p>"
+      + "<p>卡住就点「退一步」。最优是滑和跳轮流来，别让同色青蛙堵住空位。</p>",
+    goals:[
+      {id:"d2", text:"2 对 2，8 步换完"},
+      {id:"d3", text:"3 对 3，15 步换完"},
+      {id:"rule", text:"在记录表里发现步数规律"}
+    ],
+    hints:[
+      {id:"h1", text:"绿青蛙只往右，橙青蛙只往左。旁边空着就滑过去，对面挡路就跳过它。"},
+      {id:"h2", text:"1 对 1 是 3 步。多出来的是 5、7、9、11。先推 4 对 4，再推 5 对 5。"}
+    ],
+    onReset:fullReset
+  });
+
+  stage = document.getElementById("stage");
+  var play = document.createElement("div");
+  var toolbar = document.createElement("div");
+  var kicker = document.createElement("span");
+  var resetBtn = document.createElement("button");
+  var status = document.createElement("div");
+  var side = document.createElement("div");
+  var recTitle = document.createElement("p");
+  var recWrap = document.createElement("div");
+  var table = document.createElement("table");
+  var thead = document.createElement("thead");
+  var headRow = document.createElement("tr");
+  var corner = document.createElement("th");
+  var tbody = document.createElement("tbody");
+  var bodyRow = document.createElement("tr");
+  var rowHead = document.createElement("th");
+  var askTitle = document.createElement("p");
+  var askRow = document.createElement("div");
+  var i, th, td, guessBtn;
+
+  play.className = "play";
+  toolbar.className = "toolbar";
+  kicker.className = "kicker";
+  kicker.textContent = "几对？";
+  toolbar.appendChild(kicker);
+  for(i = 0; i < LEVELS.length; i++){
+    (function(level){
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "lab-btn";
+      btn.dataset.n = String(level);
+      btn.textContent = level + " 对";
+      btn.addEventListener("click", function(){ setCount(level); });
+      levelBtns.push(btn);
+      toolbar.appendChild(btn);
+    })(LEVELS[i]);
+  }
+  undoBtn = document.createElement("button");
+  undoBtn.type = "button";
+  undoBtn.className = "lab-btn ghost undo";
+  undoBtn.id = "frog-undo";
+  undoBtn.textContent = "退一步";
+  undoBtn.addEventListener("click", undo);
+  toolbar.appendChild(undoBtn);
+  resetBtn.type = "button";
+  resetBtn.className = "lab-btn orange";
+  resetBtn.id = "frog-reset";
+  resetBtn.textContent = "重新摆";
+  resetBtn.addEventListener("click", resetRound);
+  toolbar.appendChild(resetBtn);
+
+  status.className = "status";
+  stepsEl = document.createElement("p");
+  stepsEl.className = "steps";
+  stepsEl.id = "frog-steps";
+  bestEl = document.createElement("p");
+  bestEl.className = "best";
+  bestEl.hidden = true;
+  status.appendChild(stepsEl);
+  status.appendChild(bestEl);
+
+  helpEl = document.createElement("p");
+  helpEl.className = "help";
+  bannerEl = document.createElement("p");
+  bannerEl.className = "banner";
+  bannerEl.id = "frog-banner";
+  bannerEl.setAttribute("aria-live", "polite");
+  bannerEl.hidden = true;
+
+  pondEl = document.createElement("div");
+  pondEl.className = "pond";
+  pondEl.id = "frog-pond";
+  pondEl.setAttribute("role", "group");
+  pondEl.setAttribute("aria-label", "荷叶");
+  pondEl.addEventListener("click", function(e){
+    var pad = e.target.closest(".pad");
+    if(!pad || !pondEl.contains(pad)) return;
+    if(!pads[Number(pad.dataset.i)]) return;
+    tryHop(Number(pad.dataset.i));
+  });
+
+  side.className = "side";
+  recTitle.className = "rec-title";
+  recTitle.textContent = "记录表";
+  recWrap.className = "rec-wrap";
+  table.className = "rec";
+  table.id = "frog-table";
+  corner.textContent = "几对";
+  corner.scope = "row";
+  headRow.appendChild(corner);
+  for(i = 1; i <= 4; i++){
+    th = document.createElement("th");
+    th.scope = "col";
+    th.textContent = String(i);
+    headEls[i] = th;
+    headRow.appendChild(th);
+  }
+  thead.appendChild(headRow);
+  rowHead.textContent = "最少步";
+  rowHead.scope = "row";
+  bodyRow.appendChild(rowHead);
+  for(i = 1; i <= 4; i++){
+    td = document.createElement("td");
+    cellEls[i] = td;
+    bodyRow.appendChild(td);
+  }
+  tbody.appendChild(bodyRow);
+  noteEl = document.createElement("caption");
+  noteEl.className = "rule-note";
+  noteEl.id = "frog-note";
+  noteEl.textContent = MSG_RULE_NOTE;
+  noteEl.hidden = true;
+  table.appendChild(noteEl);
+  table.appendChild(thead);
+  table.appendChild(tbody);
+  recWrap.appendChild(table);
+
+  askEl = document.createElement("div");
+  askEl.className = "ask";
+  askEl.id = "frog-ask";
+  askEl.hidden = true;
+  askTitle.textContent = "5 对 5 最少几步？";
+  askRow.className = "ask-row";
+  for(i = 0; i < GUESSES.length; i++){
+    (function(value){
+      guessBtn = document.createElement("button");
+      guessBtn.type = "button";
+      guessBtn.className = "lab-btn purple";
+      guessBtn.dataset.guess = String(value);
+      guessBtn.textContent = String(value);
+      guessBtn.setAttribute("aria-label", value + " 步");
+      guessBtn.addEventListener("click", function(){ onGuess(value); });
+      askRow.appendChild(guessBtn);
+    })(GUESSES[i]);
+  }
+  askEl.appendChild(askTitle);
+  askEl.appendChild(askRow);
+
+  side.appendChild(recTitle);
+  side.appendChild(recWrap);
+  side.appendChild(askEl);
+
+  play.appendChild(toolbar);
+  play.appendChild(status);
+  play.appendChild(helpEl);
+  play.appendChild(bannerEl);
+  play.appendChild(pondEl);
+  play.appendChild(side);
+  stage.appendChild(play);
+
+  fullReset();
+})();
+</script>
+</body>
+</html>

@@ -594,6 +594,13 @@
         <div class="desc">每边人数一样，四个角别数两次！</div></div>
       <span class="go">→</span>
     </a>
+    <a class="stop nums" href="数珠一百.html" data-id="shuzhu91">
+      <span class="visited-star">⭐</span>
+      <div class="num">91</div><span class="emoji">🧮</span>
+      <div class="body"><div class="title">数珠一百 <span class="tag js-status">新</span></div>
+        <div class="desc">一行拨满是一个十，十行就是一百。</div></div>
+      <span class="go">→</span>
+    </a>
   </div>
 
   <!-- 图形与生活 -->
@@ -842,7 +849,7 @@
       <span class="visited-star">⭐</span>
       <div class="num">101</div><span class="emoji">🌾</span>
       <div class="body"><div class="title">棋盘麦粒 <span class="tag js-status">新</span></div>
-        <div class="desc">点一格，麦粒翻一倍。第几格超过 1 亿？</div></div>
+        <div class="desc">点一格，看见麦粒翻倍堆起来。第几格超过 1 亿？</div></div>
       <span class="go">→</span>
     </a>
     <a class="stop lab" href="二进制灯泡.html" data-id="lab-binary">
@@ -856,7 +863,7 @@
       <span class="visited-star">⭐</span>
       <div class="num">103</div><span class="emoji">💡</span>
       <div class="body"><div class="title">二进制闯关 <span class="tag quiz">闯关</span> <span class="tag js-status">新</span></div>
-        <div class="desc">看灯读数，再把数变成灯。</div></div>
+        <div class="desc">看黄灯和灰灯，亮着的加一加。</div></div>
       <span class="go">→</span>
     </a>
     <a class="stop lab" href="汉诺塔.html" data-id="lab-hanoi">
@@ -919,7 +926,7 @@
       <span class="visited-star">⭐</span>
       <div class="num">112</div><span class="emoji">☀️</span>
       <div class="body"><div class="title">太阳系比例尺 <span class="tag js-status">新</span></div>
-        <div class="desc">行星有多大？离太阳有多远？</div></div>
+        <div class="desc">拖一拖 3D 太阳系，用弹珠量出真比例。</div></div>
       <span class="go">→</span>
     </a>
     <a class="stop lab" href="月相.html" data-id="lab-moon">
@@ -934,6 +941,13 @@
       <div class="num">114</div><span class="emoji">🌅</span>
       <div class="body"><div class="title">影子长短 <span class="tag js-status">新</span></div>
         <div class="desc">太阳低，影子就拉长。</div></div>
+      <span class="go">→</span>
+    </a>
+    <a class="stop lab" href="青蛙跳.html" data-id="lab-frogs">
+      <span class="visited-star">⭐</span>
+      <div class="num">115</div><span class="emoji">🐸</span>
+      <div class="body"><div class="title">青蛙跳 <span class="tag js-status">新</span></div>
+        <div class="desc">点青蛙换位置，找找最少跳几步。</div></div>
       <span class="go">→</span>
     </a>
   </div>
@@ -961,7 +975,7 @@
       <b>㉙ 旋转与平移 · ㉚ 谁更可能</b>：图形变换；比可能性大小。<br>
       <b>㉛ 角的认识 · ㉟ 数图形</b>：直角/锐角/钝角；火眼金睛数图形。<br>
       <b>㉜ 容量 · ㉝ 三角形数 · ㉞ 24时计时 · ㊱ 加减竖式</b>：升与毫升、三角形数规律、24时法、进位退位竖式。<br><br>
-      建议按顺序闯关，每关 5–10 分钟，让他<b>动手操作、说出想法</b>。每一课的欢迎页里还有针对那一课的陪玩提示。通关一节课后，地图会自动点亮 <b>✓ 已学</b>，顶部进度条同步增长。第 81 到 90 关接着学相遇、小数乘法、同分母加减、三角形内角和、体积、追及、重叠、百分数、折线图和方阵。其中追及和方阵是困难关。
+      建议按顺序闯关，每关 5–10 分钟，让他<b>动手操作、说出想法</b>。每一课的欢迎页里还有针对那一课的陪玩提示。通关一节课后，地图会自动点亮 <b>✓ 已学</b>，顶部进度条同步增长。第 81 到 90 关接着学相遇、小数乘法、同分母加减、三角形内角和、体积、追及、重叠、百分数、折线图和方阵。其中追及和方阵是困难关。第 91 关用数珠：一行拨满是一个十，十行是一百。
     </p>
   </details>
 
@@ -970,8 +984,8 @@
 <script>
 "use strict";
 /* 通关进度（存在浏览器本地 localStorage；通关一节课会自动点亮） */
-const LESSON_IDS=['fenpei','jiehe','liangwei','chufa','yushu','fenshu','qiou','guilv','beishu','weizhi','duicheng','shijian','liangwei2','jifen','renminbi','pingfang','tongji','liti','zhishu','changdu','mianji','zhouchang','jishi','kenengxing','yinshu','dashu','zhongliang','shijianjisuan','xuanzhuan','gengkeneng','jiao','rongliang','sanjiaoxing','ershisi','shutuxing','shushi','yunsuan','gongbei','sanwei','chushu','fangwei','rili','shuzhou','nianyueri','pingjun','xiaoshu','zhouqi','jitu','ditu49','dengshi50','fenge51','fuhao52','dengcha53','shuang54','nixiang55','kuohao56','dailiang57','tuxingsuanshi58','jiqi59','boss60','meiju61','dengdai62','chabei63','hebei64','zhishu65','luoji66','nianling67','yuan68','gusuan69','hecha70','guiyi71','lucheng72','fenbi73','xsjj74','yingkui75','tongchou76','shuzimi77','huanfang78','manjian79','mianji80','xiangyu81','xscheng82','tongfen83','neijiao84','tiji85','zhuiji86','chongdie87','baifen88','zhexian89','fangzhen90'];
-const LAB_IDS=['lab-maili','lab-binary','lab-quiz-binary','lab-hanoi','lab-quiz-hanoi','lab-pascal','lab-hail','lab-sum','lab-quiz-sum','lab-knight','lab-queens','lab-solar','lab-moon','lab-shadow'];
+const LESSON_IDS=['fenpei','jiehe','liangwei','chufa','yushu','fenshu','qiou','guilv','beishu','weizhi','duicheng','shijian','liangwei2','jifen','renminbi','pingfang','tongji','liti','zhishu','changdu','mianji','zhouchang','jishi','kenengxing','yinshu','dashu','zhongliang','shijianjisuan','xuanzhuan','gengkeneng','jiao','rongliang','sanjiaoxing','ershisi','shutuxing','shushi','yunsuan','gongbei','sanwei','chushu','fangwei','rili','shuzhou','nianyueri','pingjun','xiaoshu','zhouqi','jitu','ditu49','dengshi50','fenge51','fuhao52','dengcha53','shuang54','nixiang55','kuohao56','dailiang57','tuxingsuanshi58','jiqi59','boss60','meiju61','dengdai62','chabei63','hebei64','zhishu65','luoji66','nianling67','yuan68','gusuan69','hecha70','guiyi71','lucheng72','fenbi73','xsjj74','yingkui75','tongchou76','shuzimi77','huanfang78','manjian79','mianji80','xiangyu81','xscheng82','tongfen83','neijiao84','tiji85','zhuiji86','chongdie87','baifen88','zhexian89','fangzhen90','shuzhu91'];
+const LAB_IDS=['lab-maili','lab-binary','lab-quiz-binary','lab-hanoi','lab-quiz-hanoi','lab-pascal','lab-hail','lab-sum','lab-quiz-sum','lab-knight','lab-queens','lab-solar','lab-moon','lab-shadow','lab-frogs'];
 function isDone(id){ try{ return localStorage.getItem('yswg:done:'+id)==='1'; }catch(e){ return false; } }
 /* 首次打开：默认把前 36 关设为已完成（只跑一次；之后可用重置按钮清空） */
 (function seedDone(){ try{
