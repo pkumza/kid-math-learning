@@ -3,7 +3,7 @@
   "sentences": 2114,
   "fragments": 3482,
   "seconds": 15829,
-  "bytes": 114558036,
+  "bytes": 114557508,
   "voice": "zf_001",
   "model": "Kokoro-82M-v1.1-zh",
   "speed": 0.9,

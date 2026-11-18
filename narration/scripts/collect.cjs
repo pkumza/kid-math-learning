@@ -37,7 +37,10 @@ for(const level of levels){
   d.querySelectorAll('.reveal-card').forEach(click);
   if(level.number===92){
    click(d.querySelector('#exploreHint button'));
-   for(let i=0;i<7;i++)click(d.querySelector('#moveToTall'));
+   for(const amount of [16,18]){
+    click(d.querySelector(`[name="stickCount"][value="${amount}"]`));
+    for(let i=0;i<amount/2-1;i++)click(d.querySelector('#moveToTall'));
+   }
   }
   click(d.querySelector('#toPractice'));
   for(const q of [...cfg.practice,...cfg.challenge]){

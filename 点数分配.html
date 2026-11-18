@@ -10,6 +10,15 @@
   .allocation-lesson .hint-btn { min-height: 44px; }
   .allocation-lesson #questionStage:empty { display: none; }
   .allocation-lesson #exploreStage { padding: 14px 10px; }
+  .stick-count { min-width: 0; width: min(100%, 440px); margin: 0; padding: 0; border: 0; }
+  .stick-count legend { margin: 0 auto 6px; font-weight: 800; }
+  .stick-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stick-choices label {
+    display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 48px;
+    border: 1px solid #d7c5ad; border-radius: 12px; background: #fff; font-weight: 800; cursor: pointer;
+  }
+  .stick-choices label:has(input:checked) { border-color: #9a3412; background: #fff7ed; color: #9a3412; }
+  .stick-choices input { accent-color: #9a3412; }
   .side-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: min(100%, 440px); }
   .side-control { min-width: 0; padding: 10px 4px; border-radius: 14px; text-align: center; font-weight: 800; }
   .side-control.horizontal { background: #ffedd5; color: #9a3412; }
@@ -20,10 +29,11 @@
     border-radius: 10px; background: #fff; color: inherit; font: inherit; cursor: pointer;
   }
   .stick-move:disabled { opacity: .65; cursor: default; }
-  .plot-record { margin: 0; text-align: center; font-weight: 700; }
+  .plot-result { text-align: center; }
+  .plot-record { margin: 4px 0 0; font-weight: 700; }
   .plot-board {
     --tile-size: clamp(21px, 5.5vw, 29px);
-    display: grid; place-items: center; min-height: calc(7 * var(--tile-size) + 24px);
+    display: grid; place-items: center; min-height: calc(8 * var(--tile-size) + 24px);
     width: min(100%, 440px); border-radius: 14px; background: #f5f0e7;
     color: #78350f; text-align: center;
   }
@@ -50,12 +60,19 @@
 <body class="allocation-lesson">
 <script>
 function renderStickExperiment(stage, unlockPractice) {
-  const halfPerimeter = 8;
-  const target = (halfPerimeter / 2) ** 2;
-  let width = 7;
-  let best = 0;
+  const amounts = [16, 18];
+  const trials = new Map(amounts.map(amount => [amount, { width: amount / 2 - 1, best: 0 }]));
+  let amount = amounts[0];
 
   stage.innerHTML = `
+    <fieldset class="stick-count">
+      <legend>选木棍数量</legend>
+      <div class="stick-choices">
+        ${amounts.map(choice => `<label>
+          <input type="radio" name="stickCount" value="${choice}" ${choice === amount ? 'checked' : ''}> ${choice} 根
+        </label>`).join('')}
+      </div>
+    </fieldset>
     <div class="side-controls">
       <div class="side-control horizontal">
         每条横边
@@ -69,8 +86,10 @@ function renderStickExperiment(stage, unlockPractice) {
       </div>
     </div>
     <div class="plot-board" aria-hidden="true"></div>
-    <output class="plot-score" aria-live="polite" aria-atomic="true"></output>
-    <p class="plot-record"></p>
+    <div class="plot-result" role="status" aria-atomic="true">
+      <div class="plot-score"></div>
+      <p class="plot-record"></p>
+    </div>
   `;
 
   const widthCount = stage.querySelector('#widthCount');
@@ -86,15 +105,24 @@ function renderStickExperiment(stage, unlockPractice) {
   }
 
   function update() {
+    const trial = trials.get(amount);
+    const { width } = trial;
+    const halfPerimeter = amount / 2;
     const height = halfPerimeter - width;
     const area = width * height;
-    best = Math.max(best, area);
+    const shorterSide = Math.floor(halfPerimeter / 2);
+    const longerSide = halfPerimeter - shorterSide;
+    const target = shorterSide * longerSide;
+    trial.best = Math.max(trial.best, area);
 
     widthCount.textContent = `${width} 根`;
     heightCount.textContent = `${height} 根`;
     toWide.disabled = height === 0;
     toTall.disabled = width === 0;
-    record.textContent = `本轮最多围出 ${best} 格`;
+    const bestShape = shorterSide === longerSide ? '这时围成正方形。' : '这时长和宽差 1 根。';
+    record.textContent = trial.best === target
+      ? `最多围出 ${trial.best} 格！${bestShape}`
+      : `本轮最多围出 ${trial.best} 格`;
 
     if (area === 0) {
       board.textContent = '有一对边没有木棍。';
@@ -110,12 +138,16 @@ function renderStickExperiment(stage, unlockPractice) {
     if (area === target) unlockPractice();
   }
 
+  stage.querySelector('.stick-count').addEventListener('change', event => {
+    amount = Number(event.target.value);
+    update();
+  });
   toWide.addEventListener('click', () => {
-    width += 1;
+    trials.get(amount).width += 1;
     update();
   });
   toTall.addEventListener('click', () => {
-    width -= 1;
+    trials.get(amount).width -= 1;
     update();
   });
   update();
@@ -126,16 +158,16 @@ window.LESSON_CONFIG = {
   title: '点数分配',
   emoji: '🪵📐',
   heading: '点数分配',
-  intro: '小狐狸有 16 根一样长的小木棍。<br>全用上，围成一个长方形。怎么围，里面的方格最多？',
-  parentNote: '可以用 16 根一样长的木棍在桌上试一试。对边一样长，所以每条横边和每条竖边的根数加起来是 8。当横边和竖边一样长，围成的正方形面积最大。两个数的和固定时，它们越接近，乘积就越大。总数是奇数时，两个整数最接近会差 1。最后一题有起步点数，请孩子比较加完后的点数。',
+  intro: '选 16 根或 18 根一样长的小木棍。<br>全用上，围成一个长方形。怎么围，里面的方格最多？',
+  parentNote: '可以用一样长的木棍在桌上试一试。对边一样长，每条横边和每条竖边的根数之和是总数的一半。16 根能围成 4×4 的正方形，面积最大。18 根的长宽之和是 9，长宽都是整数时，最接近的两个数是 4 和 5，面积最大是 20。最后一题有起步点数，请孩子比较加完后的点数。',
   explore: {
     title: '🪵 小木棍围方格',
-    lead: '一共 16 根木棍。横边各加 1 根，竖边就各少 1 根。反过来也一样。',
-    note: '每个小方格的边长和木棍一样。挪一挪，看看最多能围出几格。',
-    voice: '用十六根一样长的木棍围长方形。试试最多能围出几格。',
+    lead: '横边各加 1 根，竖边就各少 1 根。反过来也一样。',
+    note: '每个小方格的边长和木棍一样长。挪一挪，看看最多能围出几格。',
+    voice: '选十六根或十八根木棍。全用上，试试最多能围出几格。',
     hint: '试试让横边和竖边的长度更接近。每挪一次，比一比方格数。',
-    unlock: '围成正方形啦！再挪一次，比比哪个面积大。',
-    unlockVoice: '围成正方形啦！再比比面积。',
+    unlock: '可以去闯关啦！也可以换个数量接着试。',
+    unlockVoice: '可以去闯关啦！也可以接着试。',
     render: renderStickExperiment
   },
   practice: [

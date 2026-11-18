@@ -16816,28 +16816,12 @@
     "spokenText": "11 除以 3 等于 3 余 2，就是这组第 2 个。所以第 11 个是蓝色。"
   },
   {
-    "text": "用十六根一样长的木棍围长方形。试试最多能围出几格。",
-    "levels": [
-      92
-    ],
-    "file": "narration/audio/5db937e8fa2596e68a62.mp3",
-    "spokenText": "用十六根一样长的木棍围长方形。试试最多能围出几格。"
-  },
-  {
     "text": "试试让横边和竖边的长度更接近。每挪一次，比一比方格数。",
     "levels": [
       92
     ],
     "file": "narration/audio/57975e01b2c0386db309.mp3",
     "spokenText": "试试让横边和竖边的长度更接近。每挪一次，比一比方格数。"
-  },
-  {
-    "text": "围成正方形啦！再比比面积。",
-    "levels": [
-      92
-    ],
-    "file": "narration/audio/e11bb00020b6322c2416.mp3",
-    "spokenText": "围成正方形啦！再比比面积。"
   },
   {
     "text": "游园会投球。每投中 1 球得 4 分。连中 3 球，一共得几分？",
@@ -17070,5 +17054,21 @@
     ],
     "file": "narration/audio/f8be56790c961c652d01.mp3",
     "spokenText": "你找到最高分的分法啦！"
+  },
+  {
+    "text": "选十六根或十八根木棍。全用上，试试最多能围出几格。",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/fe93c22a0914be766047.mp3",
+    "spokenText": "选十六根或十八根木棍。全用上，试试最多能围出几格。"
+  },
+  {
+    "text": "可以去闯关啦！也可以接着试。",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/e00db4a3d299ad893d6f.mp3",
+    "spokenText": "可以去闯关啦！也可以接着试。"
   }
 ]

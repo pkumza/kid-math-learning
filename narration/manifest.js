@@ -2081,9 +2081,7 @@ window.LESSON_AUDIO = {
   "9 除以 3 等于 3，正好分完，余 0，就是这组最后一个，第 3 个。所以第 9 个是黄色。": "narration/audio/9a3e8193a5582c1f07a0.mp3",
   "10 除以 3 等于 3 余 1，就是这组第 1 个。所以第 10 个是红色。": "narration/audio/0530e7d2fa94bc447005.mp3",
   "11 除以 3 等于 3 余 2，就是这组第 2 个。所以第 11 个是蓝色。": "narration/audio/75a9ea572528f2f49441.mp3",
-  "用十六根一样长的木棍围长方形。试试最多能围出几格。": "narration/audio/5db937e8fa2596e68a62.mp3",
   "试试让横边和竖边的长度更接近。每挪一次，比一比方格数。": "narration/audio/57975e01b2c0386db309.mp3",
-  "围成正方形啦！再比比面积。": "narration/audio/e11bb00020b6322c2416.mp3",
   "游园会投球。每投中 1 球得 4 分。连中 3 球，一共得几分？": "narration/audio/4bdad695e4f66c8e668a.mp3",
   "有几个 4 分？": "narration/audio/cf78b102707e0dfdfcfd.mp3",
   "再数数投中了几球。": "narration/audio/8df3f7868dc8e3c2f5a7.mp3",
@@ -2112,5 +2110,7 @@ window.LESSON_AUDIO = {
   "先把新加的圈和原有的 4 个圈加起来。再用最后的圈数乘每圈分值。": "narration/audio/af41b5087823181864e5.mp3",
   "这组分法还没拿到最高分。换一组试试。": "narration/audio/18275f01f3332a99c7ad.mp3",
   "答对啦！加完后有 6 个圈，每圈 6 分，一共 36 分。最后两边一样大，得分最高。": "narration/audio/c17e5a6a3c7fcf494525.mp3",
-  "你找到最高分的分法啦！": "narration/audio/f8be56790c961c652d01.mp3"
+  "你找到最高分的分法啦！": "narration/audio/f8be56790c961c652d01.mp3",
+  "选十六根或十八根木棍。全用上，试试最多能围出几格。": "narration/audio/fe93c22a0914be766047.mp3",
+  "可以去闯关啦！也可以接着试。": "narration/audio/e00db4a3d299ad893d6f.mp3"
 };
