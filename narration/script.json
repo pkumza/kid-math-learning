@@ -197,7 +197,8 @@
       77,
       78,
       79,
-      80
+      80,
+      92
     ],
     "file": "narration/audio/3d1f22c0ef5f84bf5ba4.mp3"
   },
@@ -9701,7 +9702,8 @@
       77,
       78,
       79,
-      80
+      80,
+      92
     ],
     "file": "narration/audio/7576fb749372875f8b1f.mp3"
   },
@@ -16812,5 +16814,261 @@
     ],
     "file": "narration/audio/75a9ea572528f2f49441.mp3",
     "spokenText": "11 除以 3 等于 3 余 2，就是这组第 2 个。所以第 11 个是蓝色。"
+  },
+  {
+    "text": "用十六根一样长的木棍围长方形。试试最多能围出几格。",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/5db937e8fa2596e68a62.mp3",
+    "spokenText": "用十六根一样长的木棍围长方形。试试最多能围出几格。"
+  },
+  {
+    "text": "试试让横边和竖边的长度更接近。每挪一次，比一比方格数。",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/57975e01b2c0386db309.mp3",
+    "spokenText": "试试让横边和竖边的长度更接近。每挪一次，比一比方格数。"
+  },
+  {
+    "text": "围成正方形啦！再比比面积。",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/e11bb00020b6322c2416.mp3",
+    "spokenText": "围成正方形啦！再比比面积。"
+  },
+  {
+    "text": "游园会投球。每投中 1 球得 4 分。连中 3 球，一共得几分？",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/4bdad695e4f66c8e668a.mp3",
+    "spokenText": "游园会投球。每投中 1 球得 4 分。连中 3 球，一共得几分？"
+  },
+  {
+    "text": "有几个 4 分？",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/cf78b102707e0dfdfcfd.mp3",
+    "spokenText": "有几个 4 分？"
+  },
+  {
+    "text": "再数数投中了几球。",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/8df3f7868dc8e3c2f5a7.mp3",
+    "spokenText": "再数数投中了几球。"
+  },
+  {
+    "text": "答对啦！3 个 4 相加就是 12。",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/c3636df2c659c03e776e.mp3",
+    "spokenText": "答对啦！3 个 4 相加就是 12。"
+  },
+  {
+    "text": "小火车每趟能坐 6 人。今天它一趟也没开，一共载了几人？",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/4d8af8da9a5d7e8bb09c.mp3",
+    "spokenText": "小火车每趟能坐 6 人。今天它一趟也没开，一共载了几人？"
+  },
+  {
+    "text": "一趟也没开，就是开了 0 趟。",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/ad7eea3047788deb47a6.mp3",
+    "spokenText": "一趟也没开，就是开了 0 趟。"
+  },
+  {
+    "text": "再读一遍小火车开了几趟。",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/3a003c47b66b5131ef22.mp3",
+    "spokenText": "再读一遍小火车开了几趟。"
+  },
+  {
+    "text": "答对啦！6 乘以 0，结果是 0。",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/b1b18fec71bc47e44487.mp3",
+    "spokenText": "答对啦！6 乘以 0，结果是 0。"
+  },
+  {
+    "text": "两个篮子里有 7 个和 3 个橘子。把多的那篮里 2 个橘子挪给少的那篮，各有几个？",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/e94fe95ab8edcf1397b2.mp3",
+    "spokenText": "两个篮子里有 7 个和 3 个橘子。把多的那篮里 2 个橘子挪给少的那篮，各有几个？"
+  },
+  {
+    "text": "一篮减 2，另一篮就加 2。",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/bf23d5f20d8c55799cd5.mp3",
+    "spokenText": "一篮减 2，另一篮就加 2。"
+  },
+  {
+    "text": "再看看两个篮子都发生了什么。",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/1f951cb8c17df9eba88c.mp3",
+    "spokenText": "再看看两个篮子都发生了什么。"
+  },
+  {
+    "text": "答对啦！一篮剩 5 个，另一篮也有 5 个。总数还是 10。",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/a2da7ea6dc2360555b66.mp3",
+    "spokenText": "答对啦！一篮剩 5 个，另一篮也有 5 个。总数还是 10。"
+  },
+  {
+    "text": "小雨摆 3 盘点心，每盘 4 块。小乐摆 4 盘，每盘 3 块。谁摆得多？",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/01effdeb53d40f4b110d.mp3",
+    "spokenText": "小雨摆 3 盘点心，每盘 4 块。小乐摆 4 盘，每盘 3 块。谁摆得多？"
+  },
+  {
+    "text": "把两个人摆的总块数分别算出来。",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/d89063b6e5c58b1aec46.mp3",
+    "spokenText": "把两个人摆的总块数分别算出来。"
+  },
+  {
+    "text": "先算两个人各摆了几块。",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/c2c697761442a248b3f7.mp3",
+    "spokenText": "先算两个人各摆了几块。"
+  },
+  {
+    "text": "答对啦！3 乘以 4 和 4 乘以 3，都是 12。",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/6093fcb659792eed4138.mp3",
+    "spokenText": "答对啦！3 乘以 4 和 4 乘以 3，都是 12。"
+  },
+  {
+    "text": "纸花墙原来是 2 行，每行 10 朵。改成 3 行，每行 9 朵。哪种排法用的纸花多？",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/6f26addf824999532ed2.mp3",
+    "spokenText": "纸花墙原来是 2 行，每行 10 朵。改成 3 行，每行 9 朵。哪种排法用的纸花多？"
+  },
+  {
+    "text": "行数加每行的朵数，两种排法都等于 12。再比较乘出来的结果。",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/d4681da260359fb8fb04.mp3",
+    "spokenText": "行数加每行的朵数，两种排法都等于 12。再比较乘出来的结果。"
+  },
+  {
+    "text": "再比一比两种排法的总朵数。",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/f65b6e247b1333bf92e9.mp3",
+    "spokenText": "再比一比两种排法的总朵数。"
+  },
+  {
+    "text": "答对啦！原来有 20 朵，改过后有 27 朵。",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/9e98d0336715b3319525.mp3",
+    "spokenText": "答对啦！原来有 20 朵，改过后有 27 朵。"
+  },
+  {
+    "text": "春游做徽章。每枚选一种颜色和一个图案。颜色数和图案数加起来是 9。最多能搭出几种徽章？",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/c287dda4488c227e82bb.mp3",
+    "spokenText": "春游做徽章。每枚选一种颜色和一个图案。颜色数和图案数加起来是 9。最多能搭出几种徽章？"
+  },
+  {
+    "text": "先列出加起来等于 9 的分法，再把颜色数和图案数相乘。",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/0ffe1873411f05e12ca1.mp3",
+    "spokenText": "先列出加起来等于 9 的分法，再把颜色数和图案数相乘。"
+  },
+  {
+    "text": "再试试。颜色数和图案数加起来要等于 9。",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/ca71c3e816582c45d43a.mp3",
+    "spokenText": "再试试。颜色数和图案数加起来要等于 9。"
+  },
+  {
+    "text": "答对啦！4 种颜色搭 5 种图案，或者反过来，都能搭出 20 种。",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/c8f9b1481111fa06f25c.mp3",
+    "spokenText": "答对啦！4 种颜色搭 5 种图案，或者反过来，都能搭出 20 种。"
+  },
+  {
+    "text": "开局有四个圈，每圈零分。八个升级点，怎么分能得最高分？",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/18dd5ddb04da6dd51df7.mp3",
+    "spokenText": "开局有四个圈，每圈零分。八个升级点，怎么分能得最高分？"
+  },
+  {
+    "text": "先把新加的圈和原有的 4 个圈加起来。再用最后的圈数乘每圈分值。",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/af41b5087823181864e5.mp3",
+    "spokenText": "先把新加的圈和原有的 4 个圈加起来。再用最后的圈数乘每圈分值。"
+  },
+  {
+    "text": "这组分法还没拿到最高分。换一组试试。",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/18275f01f3332a99c7ad.mp3",
+    "spokenText": "这组分法还没拿到最高分。换一组试试。"
+  },
+  {
+    "text": "答对啦！加完后有 6 个圈，每圈 6 分，一共 36 分。最后两边一样大，得分最高。",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/c17e5a6a3c7fcf494525.mp3",
+    "spokenText": "答对啦！加完后有 6 个圈，每圈 6 分，一共 36 分。最后两边一样大，得分最高。"
+  },
+  {
+    "text": "你找到最高分的分法啦！",
+    "levels": [
+      92
+    ],
+    "file": "narration/audio/f8be56790c961c652d01.mp3",
+    "spokenText": "你找到最高分的分法啦！"
   }
 ]

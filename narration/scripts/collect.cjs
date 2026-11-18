@@ -34,9 +34,14 @@ for(const level of levels){
  click(d.querySelector('#startBtn'));
  const cfg=w.LESSON_CONFIG;
  if(cfg){
-  d.querySelectorAll('.reveal-card').forEach(click);click(d.querySelector('#toPractice'));
+  d.querySelectorAll('.reveal-card').forEach(click);
+  if(level.number===92){
+   click(d.querySelector('#exploreHint button'));
+   for(let i=0;i<7;i++)click(d.querySelector('#moveToTall'));
+  }
+  click(d.querySelector('#toPractice'));
   for(const q of [...cfg.practice,...cfg.challenge]){
-   const hint=d.querySelector('.hint-btn')||d.querySelector('#qHint button');click(hint);
+   click(d.querySelector('#qHint button'));
    const opts=[...d.querySelectorAll('#options button')];
    if(!opts.length)throw Error('No question options '+level.file);
    click(opts.find(b=>b.textContent!==String(q.answer)));

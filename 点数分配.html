@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>点数分配 · 数学小课堂</title>
+<link rel="stylesheet" href="lesson-engine.css">
+<style>
+  .allocation-lesson .pill,
+  .allocation-lesson .hint-btn { min-height: 44px; }
+  .allocation-lesson #questionStage:empty { display: none; }
+  .allocation-lesson #exploreStage { padding: 14px 10px; }
+  .side-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: min(100%, 440px); }
+  .side-control { min-width: 0; padding: 10px 4px; border-radius: 14px; text-align: center; font-weight: 800; }
+  .side-control.horizontal { background: #ffedd5; color: #9a3412; }
+  .side-control.vertical { background: #fef3c7; color: #854d0e; }
+  .side-control strong { display: block; font-size: 1.6rem; }
+  .stick-move {
+    width: 100%; min-height: 48px; margin-top: 5px; border: 1px solid currentColor;
+    border-radius: 10px; background: #fff; color: inherit; font: inherit; cursor: pointer;
+  }
+  .stick-move:disabled { opacity: .65; cursor: default; }
+  .plot-record { margin: 0; text-align: center; font-weight: 700; }
+  .plot-board {
+    --tile-size: clamp(21px, 5.5vw, 29px);
+    display: grid; place-items: center; min-height: calc(7 * var(--tile-size) + 24px);
+    width: min(100%, 440px); border-radius: 14px; background: #f5f0e7;
+    color: #78350f; text-align: center;
+  }
+  .plot {
+    position: relative; display: grid;
+    grid-template: repeat(var(--height), var(--tile-size)) / repeat(var(--width), var(--tile-size));
+  }
+  .plot-tile { background: #bbf7d0; border: 1px solid #6ee7b7; }
+  .plot-edge { position: absolute; display: flex; }
+  .plot-edge.top, .plot-edge.bottom { left: 0; right: 0; height: 8px; color: #b45309; }
+  .plot-edge.left, .plot-edge.right { top: 0; bottom: 0; width: 8px; flex-direction: column; color: #78350f; }
+  .plot-edge.top { top: -4px; }
+  .plot-edge.bottom { bottom: -4px; }
+  .plot-edge.left { left: -4px; }
+  .plot-edge.right { right: -4px; }
+  .wood-stick { flex: 1; background: currentColor; border: 1px solid #fef3c7; border-radius: 3px; }
+  .plot-score { font-size: 1.35rem; font-weight: 900; }
+</style>
+<script src="narration/manifest.js"></script>
+<script src="narration/parts.js"></script>
+<script src="narration/resolver.js"></script>
+<script src="narration/player.js"></script>
+</head>
+<body class="allocation-lesson">
+<script>
+function renderStickExperiment(stage, unlockPractice) {
+  const halfPerimeter = 8;
+  const target = (halfPerimeter / 2) ** 2;
+  let width = 7;
+  let best = 0;
+
+  stage.innerHTML = `
+    <div class="side-controls">
+      <div class="side-control horizontal">
+        每条横边
+        <strong id="widthCount"></strong>
+        <button type="button" class="stick-move" id="moveToWide">横边各加 1 根</button>
+      </div>
+      <div class="side-control vertical">
+        每条竖边
+        <strong id="heightCount"></strong>
+        <button type="button" class="stick-move" id="moveToTall">竖边各加 1 根</button>
+      </div>
+    </div>
+    <div class="plot-board" aria-hidden="true"></div>
+    <output class="plot-score" aria-live="polite" aria-atomic="true"></output>
+    <p class="plot-record"></p>
+  `;
+
+  const widthCount = stage.querySelector('#widthCount');
+  const heightCount = stage.querySelector('#heightCount');
+  const toWide = stage.querySelector('#moveToWide');
+  const toTall = stage.querySelector('#moveToTall');
+  const board = stage.querySelector('.plot-board');
+  const score = stage.querySelector('.plot-score');
+  const record = stage.querySelector('.plot-record');
+
+  function edge(side, sticks) {
+    return `<div class="plot-edge ${side}">${'<span class="wood-stick"></span>'.repeat(sticks)}</div>`;
+  }
+
+  function update() {
+    const height = halfPerimeter - width;
+    const area = width * height;
+    best = Math.max(best, area);
+
+    widthCount.textContent = `${width} 根`;
+    heightCount.textContent = `${height} 根`;
+    toWide.disabled = height === 0;
+    toTall.disabled = width === 0;
+    record.textContent = `本轮最多围出 ${best} 格`;
+
+    if (area === 0) {
+      board.textContent = '有一对边没有木棍。';
+      score.textContent = '围不成长方形';
+      return;
+    }
+
+    board.innerHTML = `<div class="plot" style="--width:${width}; --height:${height}">
+      ${'<span class="plot-tile"></span>'.repeat(area)}
+      ${edge('top', width)}${edge('bottom', width)}${edge('left', height)}${edge('right', height)}
+    </div>`;
+    score.textContent = `${width} × ${height} = ${area} 格`;
+    if (area === target) unlockPractice();
+  }
+
+  toWide.addEventListener('click', () => {
+    width += 1;
+    update();
+  });
+  toTall.addEventListener('click', () => {
+    width -= 1;
+    update();
+  });
+  update();
+}
+
+window.LESSON_CONFIG = {
+  id: 'dianshu92',
+  title: '点数分配',
+  emoji: '🪵📐',
+  heading: '点数分配',
+  intro: '小狐狸有 16 根一样长的小木棍。<br>全用上，围成一个长方形。怎么围，里面的方格最多？',
+  parentNote: '可以用 16 根一样长的木棍在桌上试一试。对边一样长，所以每条横边和每条竖边的根数加起来是 8。当横边和竖边一样长，围成的正方形面积最大。两个数的和固定时，它们越接近，乘积就越大。总数是奇数时，两个整数最接近会差 1。最后一题有起步点数，请孩子比较加完后的点数。',
+  explore: {
+    title: '🪵 小木棍围方格',
+    lead: '一共 16 根木棍。横边各加 1 根，竖边就各少 1 根。反过来也一样。',
+    note: '每个小方格的边长和木棍一样。挪一挪，看看最多能围出几格。',
+    voice: '用十六根一样长的木棍围长方形。试试最多能围出几格。',
+    hint: '试试让横边和竖边的长度更接近。每挪一次，比一比方格数。',
+    unlock: '围成正方形啦！再挪一次，比比哪个面积大。',
+    unlockVoice: '围成正方形啦！再比比面积。',
+    render: renderStickExperiment
+  },
+  practice: [
+    {
+      q: '游园会投球。每投中 1 球得 4 分。连中 3 球，一共得几分？',
+      hint: '有几个 4 分？',
+      answer: '12 分',
+      options: ['7 分', '12 分', '16 分'],
+      explanation: '3 个 4 相加就是 12。',
+      wrong: '再数数投中了几球。'
+    },
+    {
+      q: '小火车每趟能坐 6 人。今天它一趟也没开，一共载了几人？',
+      hint: '一趟也没开，就是开了 0 趟。',
+      answer: '0 人',
+      options: ['0 人', '6 人', '12 人'],
+      explanation: '6 乘以 0，结果是 0。',
+      wrong: '再读一遍小火车开了几趟。'
+    },
+    {
+      q: '两个篮子里有 7 个和 3 个橘子。把多的那篮里 2 个橘子挪给少的那篮，各有几个？',
+      hint: '一篮减 2，另一篮就加 2。',
+      answer: '5 个和 5 个',
+      options: ['5 个和 5 个', '5 个和 3 个', '7 个和 5 个'],
+      explanation: '一篮剩 5 个，另一篮也有 5 个。总数还是 10。',
+      wrong: '再看看两个篮子都发生了什么。'
+    },
+    {
+      q: '小雨摆 3 盘点心，每盘 4 块。小乐摆 4 盘，每盘 3 块。谁摆得多？',
+      hint: '把两个人摆的总块数分别算出来。',
+      answer: '一样多',
+      options: ['小雨多', '小乐多', '一样多'],
+      explanation: '3 乘以 4 和 4 乘以 3，都是 12。',
+      wrong: '先算两个人各摆了几块。'
+    },
+    {
+      q: '纸花墙原来是 2 行，每行 10 朵。改成 3 行，每行 9 朵。哪种排法用的纸花多？',
+      hint: '行数加每行的朵数，两种排法都等于 12。再比较乘出来的结果。',
+      answer: '改过的排法',
+      options: ['原来的排法', '改过的排法', '一样多'],
+      explanation: '原来有 20 朵，改过后有 27 朵。',
+      wrong: '再比一比两种排法的总朵数。'
+    }
+  ],
+  challenge: [
+    {
+      q: '春游做徽章。每枚选一种颜色和一个图案。颜色数和图案数加起来是 9。最多能搭出几种徽章？',
+      hint: '先列出加起来等于 9 的分法，再把颜色数和图案数相乘。',
+      answer: '20 种',
+      options: ['18 种', '20 种', '24 种'],
+      explanation: '4 种颜色搭 5 种图案，或者反过来，都能搭出 20 种。',
+      wrong: '再试试。颜色数和图案数加起来要等于 9。'
+    },
+    {
+      q: '套圈游戏一开始有 4 个圈，每圈值 0 分。你还有 8 个升级点。每加 1 点，就多 1 个圈或让每圈多值 1 分。怎样加，总分最高？',
+      voice: '开局有四个圈，每圈零分。八个升级点，怎么分能得最高分？',
+      visual: { type: 'row', items: [{ text: '总分', cls: 'purple' }, '=', { text: '圈数', cls: 'blue' }, '×', { text: '每圈分值', cls: 'orange' }] },
+      hint: '先把新加的圈和原有的 4 个圈加起来。再用最后的圈数乘每圈分值。',
+      answer: '圈数加 2，分值加 6',
+      options: ['圈数加 0，分值加 8', '圈数加 2，分值加 6', '圈数加 4，分值加 4'],
+      explanation: '加完后有 6 个圈，每圈 6 分，一共 36 分。最后两边一样大，得分最高。',
+      wrong: '这组分法还没拿到最高分。换一组试试。',
+      hard: true
+    }
+  ],
+  done: {
+    badge: '🏆',
+    title: '分配小能手',
+    text: '总点数固定时，两个数越接近，乘出来就越大！',
+    voice: '你找到最高分的分法啦！'
+  },
+  nextText: '回到冒险地图 🗺️',
+  nextHref: 'index.html'
+};
+</script>
+<script src="lesson-engine.js"></script>
+</body>
+</html>

@@ -18,7 +18,7 @@
     if(p.length<3||p.length>6) warn('practice 题量 '+p.length+' 超出 3~6 规则');
     if(c.length<1||c.length>2) warn('challenge 题量 '+c.length+' 超出 1~2 规则');
     p.concat(c).forEach((q,i)=>{ if(!q.hint) warn('第 '+(i+1)+' 题缺少 hint'); });
-    if(!cfg.explore||!cfg.explore.reveals||!cfg.explore.reveals.length) warn('explore.reveals 为空');
+    if(!cfg.explore || (!cfg.explore.render && !cfg.explore.reveals?.length)) warn('explore 缺少互动或揭晓卡片');
   }
   validateConfig();
 
@@ -74,8 +74,7 @@
   function cleanText(html){
     return String(html||'').replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();
   }
-  function renderHint(text){
-    const hint=$('#qHint');
+  function renderHint(hint,text,bodyId='hintText'){
     hint.innerHTML='';
     if(!text) return;
     const btn=document.createElement('button');
@@ -83,10 +82,10 @@
     btn.className='hint-btn';
     btn.textContent='💡 提示';
     btn.setAttribute('aria-expanded','false');
-    btn.setAttribute('aria-controls','hintText');
+    btn.setAttribute('aria-controls',bodyId);
     const body=document.createElement('span');
     body.className='hint-text';
-    body.id='hintText';
+    body.id=bodyId;
     body.setAttribute('role','note');
     body.hidden=true;
     body.innerHTML='💡 '+text;
@@ -123,7 +122,9 @@
           '<div class="hard-banner">🌟 困难关 Boss！先看线索，再做判断</div>'+
           '<h2 tabindex="-1">'+cfg.explore.title+'</h2><p class="lead" style="margin-top:0">'+cfg.explore.lead+'</p>'+
           '<div class="stage" id="exploreStage">'+visualHTML(cfg.explore.visual)+'</div>'+
-          '<div class="reveal-grid" id="revealGrid"></div><div class="note" id="note">'+cfg.explore.note+'</div>'+
+          (cfg.explore.hint?'<div class="q-hint" id="exploreHint"></div>':'')+
+          (cfg.explore.render?'':'<div class="reveal-grid" id="revealGrid"></div>')+
+          '<div class="note" id="note">'+cfg.explore.note+'</div>'+
           '<div class="unlock" id="unlock" aria-live="polite"></div><button class="big-btn purple" id="toPractice" disabled>去闯关 →</button>'+
         '</div></section>'+
         '<section class="screen" id="practice"><div class="card" id="practiceCard">'+
@@ -165,11 +166,17 @@
   }
   function unlockPractice(){
     const btn=$('#toPractice');
+    if(!btn.disabled) return;
     btn.disabled=false; btn.classList.add('ready');
     $('#unlock').textContent=cfg.explore.unlock||'🎉 你发现了小秘密！去闯关吧！';
     sWin(); say(cfg.explore.unlockVoice||cfg.explore.unlock||'去闯关吧！');
   }
   function renderExplore(){
+    if(cfg.explore.hint) renderHint($('#exploreHint'),cfg.explore.hint,'exploreHintText');
+    if(cfg.explore.render){
+      cfg.explore.render($('#exploreStage'),unlockPractice);
+      return;
+    }
     const grid=$('#revealGrid'); grid.innerHTML='';
     revealedCount=0;
     (cfg.explore.reveals||[]).forEach((r,i)=>{
@@ -198,7 +205,7 @@
     card.classList.toggle('hard', inChallenge||!!p.hard);
     $('#levelTag').textContent=inChallenge ? `🌟 挑战 ${idx+1} / ${arr.length}` : `第 ${idx+1} / ${arr.length} 关`;
     $('#qBig').innerHTML=p.q;
-    renderHint(p.hint||'');
+    renderHint($('#qHint'),p.hint);
     $('#questionStage').innerHTML=visualHTML(p.visual);
     $('#ask').textContent=p.ask||'选一选 👇';
     $('#feedback').textContent='';
@@ -222,7 +229,13 @@
       answered=true;
       btn.classList.add('correct'); sGood();
       $('#feedback').innerHTML='<span class="gr">答对啦！🎉</span><div class="stars" aria-hidden="true">⭐⭐⭐</div>';
-      say(p.winVoice||'答对啦！你真厉害！');
+      if(p.explanation){
+        const explanation=document.createElement('p');
+        explanation.className='lead';
+        explanation.textContent=p.explanation;
+        $('#feedback').appendChild(explanation);
+      }
+      say(p.winVoice||(p.explanation?'答对啦！'+p.explanation:'答对啦！你真厉害！'));
       $$('.opt').forEach(o=>o.disabled=true);
       const arr=inChallenge?cfg.challenge:cfg.practice;
       const idx=inChallenge?challengeIndex:practiceIndex;
